@@ -129,11 +129,20 @@ See [CONTRIBUTING.md](docs/contributing.md) for detailed guidelines.
 
 Coming soon: Performance comparisons with NVIDIA GPUs and optimization results.
 
-## 📚 Resources
+## 📚 Documentation & Resources
 
+### Project Documentation
+- **[Deep Architecture Philosophy](docs/deep_philosophy.md)** - Innovative mathematical approaches and "out-of-the-box" thinking
+- **[Mathematical Experiments](docs/mathematical_experiments.md)** - Concrete experiments to validate hypotheses
+- **[Architecture Guide](docs/architecture.md)** - System architecture and design
+- **[Optimization Techniques](docs/optimization.md)** - Performance optimization strategies
+- **[Contributing Guidelines](docs/contributing.md)** - How to contribute
+
+### External Resources
 - [AMD ROCm Documentation](https://rocmdocs.amd.com/)
 - [OpenCL Programming Guide](https://www.khronos.org/opencl/)
-- [Stable Diffusion Optimization Techniques](https://huggingface.co/docs/diffusers/optimization/fp16)
+- [GCN Architecture Whitepaper](https://gpuopen.com/)
+- [Stable Diffusion Optimization](https://huggingface.co/docs/diffusers/optimization/fp16)
 
 ## 📝 License
 
