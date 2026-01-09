@@ -1,0 +1,35 @@
+# Optimized Configuration for Radeon RX 580
+# This configuration prioritizes performance and memory efficiency
+
+# GPU Settings
+gpu_backend: opencl
+gpu_device_id: 0
+
+# Memory Settings
+max_vram_usage_mb: 6656  # More conservative, leave 1.5GB headroom
+enable_cpu_offload: true
+offload_threshold_mb: 256  # Aggressive offloading
+
+# Optimization Settings
+use_quantization: true
+quantization_bits: 8
+use_flash_attention: false  # May not be supported on Polaris
+use_xformers: false  # May not be compatible
+
+# Inference Settings
+default_batch_size: 1
+max_batch_size: 1  # Single image at a time for 512x512
+num_inference_steps: 15  # Reduced for faster generation
+guidance_scale: 7.0
+
+# Model Settings
+model_cache_dir: ./models
+default_model: stabilityai/stable-diffusion-2-1-base
+
+# Logging
+log_level: INFO
+log_file: logs/rx580ai.log
+
+# Performance
+enable_profiling: true
+benchmark_mode: false

@@ -1,0 +1,34 @@
+# Default Configuration for Radeon RX 580 AI Framework
+
+# GPU Settings
+gpu_backend: auto  # auto, opencl, rocm, cpu
+gpu_device_id: 0
+
+# Memory Settings
+max_vram_usage_mb: 7168  # Leave 1GB headroom for 8GB cards
+enable_cpu_offload: true
+offload_threshold_mb: 512
+
+# Optimization Settings
+use_quantization: false
+quantization_bits: 8  # 4 or 8
+use_flash_attention: false
+use_xformers: false
+
+# Inference Settings
+default_batch_size: 1
+max_batch_size: 2
+num_inference_steps: 20
+guidance_scale: 7.5
+
+# Model Settings
+model_cache_dir: ./models
+default_model: stabilityai/stable-diffusion-2-1-base
+
+# Logging
+log_level: INFO
+log_file: null  # Set to a path to enable file logging
+
+# Performance
+enable_profiling: false
+benchmark_mode: false
