@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Status: Alpha](https://img.shields.io/badge/status-alpha-orange.svg)](https://github.com/yourusername/radeon-rx580-ai)
+[![Version: 0.4.0](https://img.shields.io/badge/version-0.4.0-green.svg)](https://github.com/yourusername/radeon-rx580-ai)
 
 ## 🎯 Project Vision
 
@@ -20,14 +20,16 @@ This project unlocks the potential of AMD Radeon RX 580 (Polaris 20) GPUs for **
 - 🌱 **Agriculture**: Crop disease detection for small farmers
 - 📚 **Education**: Bring AI education to underserved schools
 - 💰 **Cost**: Complete system under $750 vs $1000+ for modern GPUs
+- 🇨🇴 **NEW**: [Wildlife Monitoring in Colombia](docs/USE_CASE_WILDLIFE_COLOMBIA.md) - Real deployment example
 
-See [Real-World Use Cases](docs/use_cases.md) for detailed examples.
+**Real-World Demo**: [Colombian Wildlife Monitoring](docs/USE_CASE_WILDLIFE_COLOMBIA.md) - 96.2% cost reduction ($26,400/year → $993/year)
 
 ## 🚀 Features
 
 ### Core Infrastructure (✅ Production Ready)
 - ✅ **Hardware Management**: GPU detection, OpenCL support, VRAM/RAM tracking
 - ✅ **ONNX Inference Engine**: Complete implementation with FP16/INT8/FP32 support
+- ✅ **Multiple Models**: MobileNetV2, ResNet-50, EfficientNet-B0, YOLOv5
 - ✅ **Performance Profiling**: Detailed timing, bottleneck identification, statistics
 - ✅ **Memory Management**: Smart allocation planning, optimization recommendations
 - ✅ **Configuration System**: YAML-based hierarchical configuration
@@ -39,7 +41,16 @@ See [Real-World Use Cases](docs/use_cases.md) for detailed examples.
 - ✅ **Memory Efficiency**: Reduce VRAM usage by 50-75% with FP16/INT8
 - ✅ **Speed Modes**: Fast (1.5x), Ultra-Fast (2.5x) with validated accuracy
 - ✅ **User-Friendly CLI**: Simple commands for non-technical users
+- ✅ **Web Interface**: Visual UI for non-technical users
 - ✅ **Professional API**: Clean integration for developers
+
+### Multiple Model Support (🆕 New in 0.4.0)
+- 📱 **MobileNetV2**: Lightweight, real-time (14MB, ~500ms)
+- 🏥 **ResNet-50**: High accuracy, medical imaging (98MB, ~1200ms)
+- ⚡ **EfficientNet-B0**: Balanced efficiency (20MB, ~600ms)
+- 🎯 **YOLOv5**: Object detection, 80 classes (14-52MB, real-time)
+- 🔽 **Auto-Download**: One-command model acquisition
+- 🌐 **Web UI**: Visual interface for all models
 
 ### Mathematical Validation (✅ Proven Safe)
 - ✅ **FP16 Precision**: 73.6 dB SNR (safe for medical imaging)
@@ -86,7 +97,20 @@ source venv/bin/activate
 pip install -e .
 ```
 
-### 2. Verify Hardware
+### 2. Download Models
+
+```bash
+# Download all models (~150MB total)
+python scripts/download_models.py --all
+
+# Or download specific models
+python scripts/download_models.py --model mobilenet
+python scripts/download_models.py --model resnet50
+python scripts/download_models.py --model efficientnet
+python scripts/download_models.py --model yolov5 --size s
+```
+
+### 3. Verify Hardware
 
 ```bash
 # Check GPU detection and OpenCL
@@ -100,9 +124,21 @@ Expected output:
 ✅ System is ready for AI workloads!
 ```
 
-### 3. Run Demos
+### 4. Choose Your Interface
 
-**Option A: Simple CLI (Recommended for end users)**
+**Option A: Web UI (🆕 Easiest for non-technical users)**
+
+```bash
+# Start web server
+python src/web_ui.py
+
+# Open browser to http://localhost:5000
+# 1. Upload an image
+# 2. Select model and optimization mode
+# 3. Click "Classify Image"
+```
+
+**Option B: Simple CLI (Recommended for terminal users)**
 
 ```bash
 # Get system information
@@ -124,10 +160,13 @@ python -m src.cli classify examples/test_images/*.jpg --batch 4 --fast
 python -m src.cli benchmark
 ```
 
-**Option B: Python Examples (For developers)**
+**Option C: Python Examples (For developers)**
 
 ```bash
-# Image classification demo (production inference)
+# Multi-model comparison demo
+python examples/multi_model_demo.py
+
+# Image classification with specific model
 python examples/image_classification.py
 
 # Optimized inference with FP16/INT8/batch processing
