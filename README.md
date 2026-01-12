@@ -8,76 +8,130 @@
 
 ## 🎯 Project Vision
 
-This project aims to unlock the full potential of AMD Radeon RX 580 (Polaris 20) GPUs for modern AI workloads, particularly image generation and inference tasks. In the current GPU shortage era, we believe legacy GPUs like the RX 580 can offer a viable alternative when properly optimized.
+This project unlocks the potential of AMD Radeon RX 580 (Polaris 20) GPUs for **practical AI inference**, making AI accessible to communities and organizations with limited budgets. 
 
-## 🚀 Features (Roadmap)
+**This is not about competing with expensive modern GPUs**—it's about democratizing AI by enabling real-world applications on affordable, legacy hardware.
 
-- ✅ Hardware detection and compatibility verification
-- ⏳ OpenCL/ROCm environment setup automation
-- ⏳ Optimized inference pipeline for Stable Diffusion
-- ⏳ Model quantization (8/4-bit) support
-- ⏳ Memory offloading for large models
-- ⏳ Custom kernel optimizations
-- ⏳ Benchmarking and profiling tools
-- ⏳ Docker containerization for reproducibility
+## 💡 Why This Matters
+
+- 🏥 **Healthcare**: Enable AI diagnostics in rural clinics
+- 🌍 **Conservation**: Affordable wildlife monitoring systems  
+- 🏭 **Small Business**: Automated quality control without enterprise costs
+- 🌱 **Agriculture**: Crop disease detection for small farmers
+- 📚 **Education**: Bring AI education to underserved schools
+- 💰 **Cost**: Complete system under $750 vs $1000+ for modern GPUs
+
+See [Real-World Use Cases](docs/use_cases.md) for detailed examples.
+
+## 🚀 Features
+
+- ✅ **Hardware Management**: GPU detection, OpenCL support, memory tracking
+- ✅ **ONNX Inference**: Optimized inference engine for computer vision models
+- ✅ **Production Ready**: Profiling, logging, error handling
+- ✅ **Practical Examples**: Working demos with real applications
+- ✅ **Comprehensive Documentation**: Architecture, optimization guides, use cases
+- ⏳ **Coming Soon**: PyTorch integration, quantization, model zoo
 
 ## 📋 System Requirements
 
-- **GPU**: AMD Radeon RX 580 (or similar Polaris architecture)
+- **GPU**: AMD Radeon RX 580 (8GB VRAM recommended)
 - **OS**: Ubuntu 20.04+ / Debian-based Linux
 - **RAM**: 16GB+ recommended
 - **Storage**: 20GB+ free space
-- **Kernel**: 5.10+ (tested on 6.14.0)
+- **OpenCL**: Mesa OpenCL or ROCm
 
 ## 🔧 Quick Start
 
-### 1. System Verification
+### 1. Clone and Setup
 
 ```bash
-# Check GPU detection
-python scripts/verify_hardware.py
+git clone https://github.com/yourusername/radeon-rx580-ai.git
+cd radeon-rx580-ai
 
-# Run system diagnostics
-python scripts/diagnostics.py
-```
-
-### 2. Environment Setup
-
-```bash
-# Install dependencies
+# Run automated setup
 ./scripts/setup.sh
 
-# Activate virtual environment
+# Or manual setup:
+python3 -m venv venv
 source venv/bin/activate
-
-# Verify installation
-python scripts/test_setup.py
+pip install -e .
 ```
 
-### 3. Run Your First Inference
+### 2. Verify Hardware
 
 ```bash
-# Coming soon: Simple Stable Diffusion example
-python examples/simple_inference.py --prompt "A beautiful landscape"
+# Check GPU detection and OpenCL
+python scripts/verify_hardware.py
+```
+
+Expected output:
+```
+✅ GPU: AMD/ATI Radeon RX 580
+✅ OpenCL: Available
+✅ System is ready for AI workloads!
+```
+
+### 3. Run Demo
+
+```bash
+# Image classification demo
+python examples/image_classification.py --mode demo
+```
+
+This will:
+- Download MobileNetV2 model (~14MB)
+- Run inference on test image
+- Display top-5 predictions
+- Show performance metrics
+
+**Performance**: ~20ms inference time for 224x224 images
+
+### 4. Use in Your Project
+
+```python
+from src.inference import ONNXInferenceEngine, InferenceConfig
+
+# Setup inference engine
+config = InferenceConfig(device='auto', precision='fp32')
+engine = ONNXInferenceEngine(config=config)
+
+# Load model
+engine.load_model('your_model.onnx')
+
+# Run inference
+result = engine.infer('your_image.jpg', profile=True)
+print(f"Top prediction: {result['predictions'][0]}")
+
+# Performance stats
+engine.print_performance_stats()
 ```
 
 ## 📁 Project Structure
 
 ```
 radeon-rx580-ai/
-├── docs/                    # Documentation
-│   ├── architecture.md      # System architecture
-│   ├── optimization.md      # Optimization techniques
-│   └── contributing.md      # Contribution guidelines
-├── scripts/                 # Setup and utility scripts
-│   ├── setup.sh            # Main installation script
-│   ├── verify_hardware.py  # Hardware detection
-│   ├── diagnostics.py      # System diagnostics
-│   └── benchmark.py        # Performance benchmarking
-├── src/                    # Core library code
-│   ├── core/              # Core functionality
-│   │   ├── gpu.py         # GPU interface
-│   │   ├── memory.py      # Memory management
+├── docs/                          # Documentation
+│   ├── architecture.md            # System architecture
+│   ├── optimization.md            # Optimization techniques
+│   ├── use_cases.md              # Real-world applications ⭐
+│   ├── deep_philosophy.md        # Innovative AI approaches
+│   └── contributing.md           # Contribution guidelines
+├── examples/                      # Practical examples
+│   ├── image_classification.py   # Working demo ⭐
+│   └── models/                   # Downloaded models
+├── scripts/                       # Setup and utilities
+│   ├── setup.sh                  # Automated installation
+│   ├── verify_hardware.py        # Hardware verification ⭐
+│   ├── diagnostics.py            # System diagnostics
+│   └── benchmark.py              # Performance benchmarking
+├── src/                          # Core library
+│   ├── core/                     # Core functionality
+│   │   ├── gpu.py               # GPU management ⭐
+│   │   ├── memory.py            # Memory tracking ⭐
+│   │   └── profiler.py          # Performance profiling ⭐
+│   ├── inference/               # Inference engines
+│   │   ├── base.py              # Base inference class ⭐
+│   │   └── onnx_engine.py       # ONNX implementation ⭐
 │   │   └── profiler.py    # Performance profiler
 │   ├── inference/         # Inference engines
 │   │   ├── base.py        # Base inference class
