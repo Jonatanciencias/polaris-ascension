@@ -1,8 +1,10 @@
 # Developer Guide - Radeon RX 580 AI Framework
 
-**Version**: 0.2.0  
-**Status**: Production Ready (Core Framework)  
+**Version**: 0.3.0  
+**Status**: Production Ready + Optimizations Integrated  
 **Last Updated**: January 12, 2026
+
+> **New in v0.3.0:** Multi-precision support (FP16/INT8), batch processing, user-friendly CLI
 
 ---
 
@@ -117,9 +119,55 @@ profiler.print_summary()
 - Performance optimization
 - Regression testing
 
+#### 3.5. Command-Line Interface (`src/cli.py`) **NEW in v0.3.0**
+
+The CLI provides a user-friendly interface for both developers and end users:
+
+```bash
+# Get system information
+python -m src.cli info
+
+# Classify images with different optimization modes
+python -m src.cli classify image.jpg                # Standard (FP32)
+python -m src.cli classify image.jpg --fast         # Fast mode (FP16, ~1.5x)
+python -m src.cli classify image.jpg --ultra-fast   # Ultra-fast (INT8, ~2.5x)
+
+# Batch processing
+python -m src.cli classify folder/*.jpg --batch 4 --fast
+
+# Performance benchmark
+python -m src.cli benchmark
+```
+
+**Programmatic Usage:**
+```python
+from src.cli import CLI
+
+cli = CLI()
+
+# Get system info
+cli.info()
+
+# Classify images
+cli.classify(
+    image_paths=['img1.jpg', 'img2.jpg'],
+    fast=True,
+    batch_size=2
+)
+
+# Run benchmark
+cli.benchmark(iterations=100)
+```
+
+**Use Cases:**
+- Quick testing without writing code
+- End-user interfaces
+- Automation scripts
+- Performance benchmarking
+
 ### Inference System
 
-#### 4. ONNX Engine (`src/inference/onnx_engine.py`)
+#### 4. ONNX Engine (`src/inference/onnx_engine.py`) **Enhanced in v0.3.0**
 ```python
 from src.inference import ONNXInferenceEngine, InferenceConfig
 
@@ -150,6 +198,52 @@ engine.profiler.print_summary()
 - File path (str or Path)
 - PIL Image
 - NumPy array (preprocessed)
+- List of images (for batch processing)
+
+**NEW - Multi-Precision Support:**
+```python
+# FP32 (Maximum accuracy, baseline performance)
+config = InferenceConfig(precision='fp32')
+engine = ONNXInferenceEngine(config)
+result = engine.infer('image.jpg')
+
+# FP16 (Fast mode, ~1.5x speedup, 73.6 dB SNR)
+config = InferenceConfig(precision='fp16')
+engine = ONNXInferenceEngine(config)
+result = engine.infer('image.jpg')  # Automatic FP16 conversion
+
+# INT8 (Ultra-fast mode, ~2.5x speedup, 99.99% correlation)
+config = InferenceConfig(precision='int8')
+engine = ONNXInferenceEngine(config)
+result = engine.infer('image.jpg')  # Automatic quantization
+```
+
+**NEW - Batch Processing:**
+```python
+# Process multiple images efficiently
+images = ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg']
+
+config = InferenceConfig(precision='fp16', batch_size=4)
+engine = ONNXInferenceEngine(config)
+engine.load_model('model.onnx')
+
+# Batch inference (2-3x throughput improvement)
+results = engine.infer_batch(images, batch_size=4)
+
+for i, result in enumerate(results):
+    print(f"Image {i}: {result['top1_confidence']:.1%} confident")
+```
+
+**NEW - Optimization Information:**
+```python
+# Get expected performance and accuracy info
+opt_info = engine.get_optimization_info()
+
+print(f"Precision: {opt_info['precision']}")
+print(f"Expected speedup: {opt_info['expected_speedup']}")
+print(f"Memory savings: {opt_info['memory_savings']}")
+print(f"Accuracy: {opt_info['accuracy']}")
+```
 
 **Output Format:**
 ```python

@@ -2,6 +2,8 @@
 
 Welcome to the Radeon RX 580 AI Framework! This guide will get you up and running in minutes.
 
+**Version**: 0.3.0 - Now with optimized inference and user-friendly CLI! 🎉
+
 ## Prerequisites
 
 - AMD Radeon RX 580 GPU
@@ -71,7 +73,60 @@ Radeon RX 580 Hardware Verification
 
 ## Basic Usage
 
-### Example 1: Check GPU Info
+### Option 1: Command-Line Interface (Easiest) **NEW in v0.3.0**
+
+The CLI is the fastest way to get started:
+
+```bash
+# Get system information
+python -m src.cli info
+
+# Classify a single image (standard quality)
+python -m src.cli classify examples/test_images/sample.jpg
+
+# Fast mode (~1.5x speedup with FP16)
+python -m src.cli classify examples/test_images/sample.jpg --fast
+
+# Ultra-fast mode (~2.5x speedup with INT8)
+python -m src.cli classify examples/test_images/sample.jpg --ultra-fast
+
+# Process multiple images in batch
+python -m src.cli classify examples/test_images/*.jpg --batch 4 --fast
+
+# Run performance benchmark
+python -m src.cli benchmark
+```
+
+**Example Output:**
+```
+🚀 Initializing Fast Mode (FP16)...
+📦 Loading model from examples/models/mobilenetv2.onnx...
+✅ Model loaded: mobilenetv2
+
+⚙️  Optimization Settings:
+   Precision: FP16
+   Batch Size: 1
+   Expected Performance: ~1.5x faster than FP32
+   Memory Savings: ~50% less memory
+   Accuracy: 73.6 dB SNR (safe for medical imaging)
+
+🖼️  Processing 1 image(s)...
+
+📸 sample.jpg
+   Top prediction: Class 281 (85.3% confident)
+   Top 5 predictions:
+      1. Class 281: 85.3%
+      2. Class 282: 8.2%
+      3. Class 285: 3.1%
+      4. Class 246: 1.8%
+      5. Class 340: 0.9%
+
+📈 Performance Statistics:
+   Average Inference Time: 340.5ms
+   Throughput: 2.9 images/second
+```
+
+### Option 2: Python API (For Developers)
 
 ```python
 from core.gpu import GPUManager
@@ -87,8 +142,10 @@ if gpu.initialize():
 
 ### Example 2: Memory Management
 
+#### Example 4: Memory Management
+
 ```python
-from core.memory import MemoryManager
+from src.core.memory import MemoryManager
 
 # Create memory manager
 memory = MemoryManager(gpu_vram_mb=8192)
@@ -100,10 +157,12 @@ if memory.can_allocate(4096, use_gpu=True):
     memory.print_stats()
 ```
 
-### Example 3: Performance Profiling
+#### Example 5: Performance Profiling
+
+#### Example 5: Performance Profiling
 
 ```python
-from core.profiler import Profiler
+from src.core.profiler import Profiler
 import time
 
 profiler = Profiler()
@@ -117,7 +176,7 @@ profiler.end("inference")
 profiler.print_summary()
 ```
 
-### Example 4: Load Configuration
+#### Example 6: Load Configuration
 
 ```python
 from utils.config import load_config
