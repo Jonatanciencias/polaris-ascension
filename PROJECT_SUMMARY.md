@@ -9,16 +9,16 @@
 ## 📊 What We've Achieved
 
 ### Code Statistics
-- **Total Files**: 38+
-- **Total Lines**: 12,500+
+- **Total Files**: 41+
+- **Total Lines**: 14,470+
 - **Core Framework**: 1,619 lines (production ready + CLI)
 - **Web Interface**: 640 lines (Flask app with embedded UI)
 - **Inference System**: 646 lines (complete + optimizations)
 - **Mathematical Experiments**: 1,465 lines (validated)
-- **Documentation**: 5,100+ lines (comprehensive + model guide)
+- **Documentation**: 5,950+ lines (comprehensive + model guide + wildlife case)
 - **Tests**: 343 lines (24/24 passing ✅)
-- **Examples**: 1,938 lines (5 working demos)
-- **Scripts**: 890+ lines (4 utilities + model downloader)
+- **Examples**: 2,588 lines (6 working demos + wildlife use case)
+- **Scripts**: 1,360+ lines (5 utilities + model + wildlife downloader)
 
 ### Development Timeline
 
@@ -61,6 +61,8 @@
 - ✅ Web UI with Flask (640 lines)
 - ✅ Multi-model demo examples (430 lines)
 - ✅ Comprehensive model guide (650 lines)
+- ✅ Wildlife monitoring case study - Colombia (1,970 lines)
+- ✅ Real-world ROI analysis: 96.2% cost reduction
 - ✅ Version 0.4.0 release
 
 ---
