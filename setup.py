@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="radeon-rx580-ai",
-    version="0.1.0",
+    version="0.4.0",
     author="RX580 AI Framework Contributors",
     description="AI framework optimized for AMD Radeon RX 580 GPUs",
     long_description=long_description,
