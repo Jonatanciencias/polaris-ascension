@@ -296,6 +296,103 @@ class ModelDownloader:
         print(f"✅ Saved: {labels_path} (80 classes)")
         return labels_path
     
+    def download_imagenet_labels(self) -> Path:
+        """
+        Download ImageNet class labels.
+        
+        Downloads the 1000 ImageNet class labels used by classification models.
+        These labels map model output indices to human-readable class names.
+        
+        Returns:
+            Path to the labels file
+        """
+        print("\n" + "="*60)
+        print("📋 ImageNet Labels (1000 classes)")
+        print("="*60)
+        
+        labels_path = self.models_dir / "imagenet_labels.txt"
+        
+        if labels_path.exists():
+            print(f"✅ Labels already exist: {labels_path}")
+            return labels_path
+        
+        print("📥 Downloading ImageNet class labels...")
+        
+        # URL to ImageNet labels (from PyTorch hub)
+        url = "https://raw.githubusercontent.com/pytorch/hub/master/imagenet_classes.txt"
+        
+        try:
+            urllib.request.urlretrieve(url, labels_path)
+            
+            # Verify download
+            with open(labels_path, 'r') as f:
+                labels = f.read().strip().split('\n')
+            
+            print(f"✅ Downloaded {len(labels)} class labels")
+            print(f"   File: {labels_path}")
+            print(f"   Examples: {', '.join(labels[:3])}")
+            
+            return labels_path
+            
+        except Exception as e:
+            print(f"❌ Error downloading labels: {e}")
+            print("   Creating placeholder labels...")
+            
+            # Create placeholder labels if download fails
+            with open(labels_path, 'w') as f:
+                for i in range(1000):
+                    f.write(f"class_{i}\n")
+            
+            print(f"⚠️  Created placeholder labels: {labels_path}")
+            return labels_path
+    
+    def download_coco_labels(self) -> Path:
+        """
+        Download COCO dataset labels.
+        
+        Downloads the 80 COCO class labels used by detection models like YOLO.
+        
+        Returns:
+            Path to the labels file
+        """
+        print("\n" + "="*60)
+        print("📋 COCO Labels (80 classes)")
+        print("="*60)
+        
+        labels_path = self.models_dir / "coco_labels.txt"
+        
+        if labels_path.exists():
+            print(f"✅ Labels already exist: {labels_path}")
+            return labels_path
+        
+        print("📥 Downloading COCO class labels...")
+        
+        # COCO class names
+        coco_classes = [
+            'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck',
+            'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter', 'bench',
+            'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra',
+            'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee',
+            'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove',
+            'skateboard', 'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup',
+            'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
+            'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
+            'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse',
+            'remote', 'keyboard', 'cell phone', 'microwave', 'oven', 'toaster', 'sink',
+            'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear', 'hair drier',
+            'toothbrush'
+        ]
+        
+        with open(labels_path, 'w') as f:
+            for label in coco_classes:
+                f.write(f"{label}\n")
+        
+        print(f"✅ Created {len(coco_classes)} COCO class labels")
+        print(f"   File: {labels_path}")
+        print(f"   Examples: {', '.join(coco_classes[:5])}")
+        
+        return labels_path
+    
     def download_all(self):
         """Download all available models."""
         print("\n" + "="*70)
@@ -354,6 +451,7 @@ Examples:
     parser.add_argument('--all', action='store_true', help='Download all models')
     parser.add_argument('--model', choices=['mobilenet', 'resnet50', 'efficientnet', 'yolov5'],
                        help='Download specific model')
+    parser.add_argument('--labels', action='store_true', help='Download only labels (ImageNet + COCO)')
     parser.add_argument('--size', default='s', choices=['n', 's', 'm', 'l'],
                        help='YOLOv5 size (nano, small, medium, large)')
     parser.add_argument('--list', action='store_true', help='List available models')
@@ -378,6 +476,9 @@ Examples:
     
     if args.all:
         downloader.download_all()
+    elif args.labels:
+        downloader.download_imagenet_labels()
+        downloader.download_coco_labels()
     elif args.model:
         if args.model == 'mobilenet':
             downloader.download_mobilenetv2()
