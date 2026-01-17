@@ -18,10 +18,10 @@ def test_gpu_detection():
     # Should detect GPU or return None
     if gpu_info:
         assert isinstance(gpu_info, GPUInfo)
-        assert gpu_info.name
+        assert gpu_info.device_name
         assert gpu_info.pci_id
         assert gpu_info.architecture
-        print(f"\nDetected: {gpu_info.name}")
+        print(f"\nDetected: {gpu_info.device_name}")
     else:
         print("\nNo GPU detected (may be expected in CI)")
 
@@ -50,14 +50,14 @@ def test_compute_backend_detection():
 def test_gpu_info_dataclass():
     """Test GPUInfo dataclass"""
     info = GPUInfo(
-        name="Test GPU",
+        device_name="Test GPU",
         pci_id="00:00.0",
-        architecture="Test Arch",
-        vram_mb=8192
+        architecture="GCN 4.0",
+        memory_total_gb=8.0
     )
     
-    assert info.name == "Test GPU"
+    assert info.device_name == "Test GPU"
     assert info.pci_id == "00:00.0"
-    assert info.vram_mb == 8192
+    assert info.memory_total_gb == 8.0
     assert not info.opencl_available
     assert not info.rocm_available
