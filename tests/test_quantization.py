@@ -640,6 +640,130 @@ class TestIntegration:
         assert not np.array_equal(weights, fake_quant_weights)
 
 
+class TestPerChannelQuantization:
+    """Test per-channel quantization methods."""
+    
+    def test_per_channel_quantization_basic(self):
+        """Test basic per-channel quantization along axis 0."""
+        quantizer = AdaptiveQuantizer(gpu_family="polaris")
+        
+        # Create tensor with different statistics per channel
+        weights = np.random.randn(64, 32, 3, 3).astype(np.float32)
+        # Make channels have different ranges
+        for i in range(64):
+            weights[i] *= (i + 1) / 32  # Varying scales
+        
+        # Quantize per-channel (method specified in call)
+        quantized, scales, zero_points = quantizer.quantize_tensor_per_channel(
+            weights, axis=0, method=CalibrationMethod.MINMAX
+        )
+        
+        # Verify shapes
+        assert quantized.shape == weights.shape
+        assert len(scales) == 64  # One per output channel
+        assert len(zero_points) == 64
+        
+        # Verify quantized values are in INT8 range
+        assert np.all(quantized >= -128)
+        assert np.all(quantized <= 127)
+        
+        # Verify scales vary (indicating per-channel adaptation)
+        assert np.std(scales) > 0.001
+        
+    def test_per_channel_vs_per_tensor_accuracy(self):
+        """Compare per-channel and per-tensor quantization accuracy."""
+        quantizer = AdaptiveQuantizer(gpu_family="polaris")
+        
+        # Create weights with varying channel statistics
+        weights = np.random.randn(32, 16, 3, 3).astype(np.float32)
+        for i in range(32):
+            weights[i] *= np.random.uniform(0.5, 2.0)
+        
+        # Per-tensor quantization
+        quant_per_tensor, scale, zp = quantizer.quantize_tensor(
+            weights, method=CalibrationMethod.MINMAX
+        )
+        dequant_per_tensor = quantizer.dequantize_tensor(
+            quant_per_tensor, scale, zp
+        )
+        error_per_tensor = np.mean(np.abs(weights - dequant_per_tensor))
+        
+        # Per-channel quantization
+        quant_per_channel, scales, zero_points = quantizer.quantize_tensor_per_channel(
+            weights, axis=0, method=CalibrationMethod.MINMAX
+        )
+        dequant_per_channel = quantizer.dequantize_tensor_per_channel(
+            quant_per_channel, scales, zero_points, axis=0
+        )
+        error_per_channel = np.mean(np.abs(weights - dequant_per_channel))
+        
+        # Per-channel should be more accurate (lower error)
+        assert error_per_channel < error_per_tensor * 0.9  # At least 10% better
+        
+    def test_per_channel_different_axes(self):
+        """Test per-channel quantization along different axes."""
+        quantizer = AdaptiveQuantizer(gpu_family="polaris")
+        
+        # Test on 4D tensor
+        weights = np.random.randn(16, 32, 3, 3).astype(np.float32)
+        
+        for axis in [0, 1]:
+            quantized, scales, zero_points = quantizer.quantize_tensor_per_channel(
+                weights, axis=axis, method=CalibrationMethod.MINMAX
+            )
+            
+            # Verify scales shape matches the axis dimension
+            expected_num_scales = weights.shape[axis]
+            assert len(scales) == expected_num_scales
+            assert len(zero_points) == expected_num_scales
+            
+    def test_per_channel_round_trip(self):
+        """Test quantization-dequantization round trip preserves approximate values."""
+        quantizer = AdaptiveQuantizer(gpu_family="polaris")
+        
+        weights = np.random.randn(8, 16, 3, 3).astype(np.float32)
+        
+        # Quantize per-channel
+        quantized, scales, zero_points = quantizer.quantize_tensor_per_channel(
+            weights, axis=0, method=CalibrationMethod.MSE
+        )
+        
+        # Dequantize
+        reconstructed = quantizer.dequantize_tensor_per_channel(
+            quantized, scales, zero_points, axis=0
+        )
+        
+        # Verify shape preserved
+        assert reconstructed.shape == weights.shape
+        
+        # Calculate SQNR (should be > 30 dB for good quantization)
+        noise = weights - reconstructed
+        signal_power = np.mean(weights ** 2)
+        noise_power = np.mean(noise ** 2)
+        sqnr_db = 10 * np.log10(signal_power / (noise_power + 1e-10))
+        
+        assert sqnr_db > 30.0  # Good quality threshold
+        
+    def test_per_channel_edge_cases(self):
+        """Test edge cases for per-channel quantization."""
+        quantizer = AdaptiveQuantizer(gpu_family="polaris")
+        
+        # Test with constant channels
+        weights = np.ones((8, 4, 3, 3), dtype=np.float32)
+        weights[0] = 2.0  # One different channel
+        
+        quantized, scales, zero_points = quantizer.quantize_tensor_per_channel(
+            weights, axis=0, method=CalibrationMethod.MINMAX
+        )
+        reconstructed = quantizer.dequantize_tensor_per_channel(
+            quantized, scales, zero_points, axis=0
+        )
+        
+        # Should still work, though may have large quantization error for constant values
+        assert reconstructed.shape == weights.shape
+        assert np.isfinite(reconstructed).all()
+
+
 if __name__ == "__main__":
     # Run tests with pytest
     pytest.main([__file__, "-v", "--tb=short"])

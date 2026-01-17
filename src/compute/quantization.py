@@ -852,23 +852,189 @@ class AdaptiveQuantizer:
         
         return quantized, scale, zero_point
     
-    def dequantize_tensor(
+    def quantize_tensor_per_channel(
+        self,
+        tensor: np.ndarray,
+        axis: int = 0,
+        precision: Optional[QuantizationPrecision] = None,
+        method: Optional[CalibrationMethod] = None
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """
+        Per-channel quantization for higher accuracy.
+        
+        Computes separate scale and zero_point for each channel (output channel
+        for weights). This provides better accuracy than per-tensor quantization
+        at the cost of slightly more memory for scales/zero_points.
+        
+        Args:
+            tensor: Input tensor (FP32), shape e.g. [out_channels, in_channels, H, W]
+            axis: Axis along which to compute scales (typically 0 for output channels)
+            precision: Target precision (uses config if None)
+            method: Calibration method (uses config if None)
+            
+        Returns:
+            Tuple of (quantized_tensor, scales_array, zero_points_array)
+            - scales_array: shape [num_channels]
+            - zero_points_array: shape [num_channels]
+            
+        Example:
+            >>> # Conv2D weights shape: [64, 32, 3, 3]
+            >>> q_weights, scales, zps = quantizer.quantize_tensor_per_channel(
+            ...     weights, axis=0  # per output channel
+            ... )
+            >>> # scales.shape = [64], one per output channel
+            
+        References:
+            Jacob et al. (2018) - Per-channel quantization reduces error by 2-3x
+        """
+        if not self.config.per_channel:
+            warnings.warn(
+                "per_channel=False in config but using per-channel quantization. "
+                "Consider setting config.per_channel=True"
+            )
+        
+        precision = precision or self.config.precision
+        method = method or self.config.calibration_method
+        
+        # Handle FP16/FP32 (no quantization needed)
+        if precision in [QuantizationPrecision.FP16, QuantizationPrecision.FP32]:
+            if precision == QuantizationPrecision.FP16:
+                return tensor.astype(np.float16), np.array([1.0]), np.array([0])
+            return tensor, np.array([1.0]), np.array([0])
+        
+        # Move axis to first position for easier iteration
+        tensor = np.moveaxis(tensor, axis, 0)
+        num_channels = tensor.shape[0]
+        
+        # Initialize arrays for scales and zero_points
+        scales = np.zeros(num_channels, dtype=np.float32)
+        zero_points = np.zeros(num_channels, dtype=np.int32)
+        
+        # Quantize each channel separately
+        quantized_channels = []
+        
+        for i in range(num_channels):
+            channel = tensor[i]
+            
+            # Compute scale/zero_point for this channel
+            if method == CalibrationMethod.MINMAX:
+                scale, zp = self._compute_scale_zeropoint_minmax(channel.flatten(), precision)
+            elif method == CalibrationMethod.PERCENTILE:
+                scale, zp, _ = self._compute_scale_zeropoint_percentile(
+                    channel.flatten(), precision, self.config.percentile
+                )
+            elif method == CalibrationMethod.KL_DIVERGENCE:
+                scale, zp = self._compute_scale_zeropoint_kl_divergence(
+                    channel.flatten(), precision, self.config.num_bins
+                )
+            elif method == CalibrationMethod.MSE:
+                scale, zp = self._compute_scale_zeropoint_mse(channel.flatten(), precision)
+            else:
+                scale, zp, _ = self._compute_scale_zeropoint_percentile(
+                    channel.flatten(), precision
+                )
+            
+            scales[i] = scale
+            zero_points[i] = zp
+            
+            # Quantize this channel
+            qmin, qmax = precision.qmin, precision.qmax
+            quantized_channel = np.clip(
+                np.round(channel / scale) + zp,
+                qmin, qmax
+            )
+            quantized_channels.append(quantized_channel)
+        
+        # Stack quantized channels
+        quantized = np.stack(quantized_channels, axis=0)
+        
+        # Move axis back to original position
+        quantized = np.moveaxis(quantized, 0, axis)
+        
+        # Cast to appropriate dtype
+        if precision == QuantizationPrecision.INT8:
+            if self.config.symmetric:
+                quantized = quantized.astype(np.int8)
+            else:
+                quantized = quantized.astype(np.uint8)
+        elif precision == QuantizationPrecision.INT4:
+            quantized = quantized.astype(np.int8)
+        
+        if self.verbose:
+            print(f"[Per-channel quantization] {num_channels} channels")
+            print(f"  Scale range: [{scales.min():.6f}, {scales.max():.6f}]")
+            print(f"  Zero-point range: [{zero_points.min()}, {zero_points.max()}]")
+        
+        return quantized, scales, zero_points
+    
+    def dequantize_tensor_per_channel(
         self,
         quantized: np.ndarray,
-        scale: float,
-        zero_point: int = 0
+        scales: np.ndarray,
+        zero_points: np.ndarray,
+        axis: int = 0
     ) -> np.ndarray:
         """
-        Dequantize a tensor back to FP32.
+        Dequantize a per-channel quantized tensor back to FP32.
         
         Args:
             quantized: Quantized tensor
-            scale: Quantization scale
-            zero_point: Quantization zero point
+            scales: Per-channel scales array
+            zero_points: Per-channel zero_points array
+            axis: Axis along which channels are organized
             
         Returns:
             Dequantized FP32 tensor
         """
+        # Move axis to first position
+        quantized = np.moveaxis(quantized, axis, 0)
+        num_channels = quantized.shape[0]
+        
+        # Dequantize each channel
+        dequantized_channels = []
+        for i in range(num_channels):
+            channel = quantized[i].astype(np.float32)
+            dequantized = (channel - zero_points[i]) * scales[i]
+            dequantized_channels.append(dequantized)
+        
+        # Stack and move axis back
+        result = np.stack(dequantized_channels, axis=0)
+        result = np.moveaxis(result, 0, axis)
+        
+        return result
+    
+    def dequantize_tensor(
+        self,
+        quantized: np.ndarray,
+        scale: Union[float, np.ndarray],
+        zero_point: Union[int, np.ndarray] = 0,
+        axis: Optional[int] = None
+    ) -> np.ndarray:
+        """
+        Dequantize a tensor back to FP32.
+        
+        Supports both per-tensor and per-channel dequantization.
+        
+        Args:
+            quantized: Quantized tensor
+            scale: Quantization scale (scalar or array for per-channel)
+            zero_point: Quantization zero point (scalar or array)
+            axis: If per-channel, axis along which channels are organized
+            
+        Returns:
+            Dequantized FP32 tensor
+        """
+        # Check if per-channel (scale is array)
+        if isinstance(scale, np.ndarray) and scale.size > 1:
+            if axis is None:
+                raise ValueError("axis must be specified for per-channel dequantization")
+            return self.dequantize_tensor_per_channel(
+                quantized, scale, 
+                zero_point if isinstance(zero_point, np.ndarray) else np.full(scale.shape, zero_point),
+                axis
+            )
+        
+        # Per-tensor dequantization
         return (quantized.astype(np.float32) - zero_point) * scale
     
     def get_optimal_precision(
