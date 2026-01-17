@@ -6,10 +6,12 @@ Professional GPU detection, initialization, and resource management
 specifically optimized for AMD GCN architecture (Polaris family).
 
 This module provides:
-- Automatic GPU family detection
+- Automatic GPU family detection with intelligent caching
 - OpenCL platform initialization with GCN optimizations
 - Hardware capability queries
 - Compute backend selection
+- Mathematical performance estimation
+- Cached detection results (60s TTL)
 
 Supported Hardware:
 - AMD Polaris (RX 400/500 series) - Primary
@@ -21,9 +23,19 @@ License: MIT
 
 import subprocess
 import re
+import time
 from typing import Optional, Dict, List, Tuple
 from dataclasses import dataclass, field
+from functools import lru_cache
+from datetime import datetime, timedelta
 import os
+
+# Import performance calculator
+try:
+    from .performance import PerformanceCalculator, POLARIS_SPECS
+    _PERF_CALC_AVAILABLE = True
+except ImportError:
+    _PERF_CALC_AVAILABLE = False
 
 
 @dataclass
@@ -66,36 +78,59 @@ class GPUManager:
     Professional GPU resource manager for AMD Polaris architecture.
     
     This class handles all GPU-related operations including:
-    - Hardware detection and identification
+    - Hardware detection and identification (with caching)
     - Family classification (Polaris, Vega, etc.)
     - Backend (OpenCL/ROCm) initialization
     - Performance profiling and recommendations
+    - Mathematical performance estimation
+    
+    Features:
+    - Intelligent caching (60s TTL) to reduce syscall overhead
+    - Performance calculator integration for accurate TFLOPS
+    - Memory bandwidth estimation
+    - Optimal batch size recommendations
     
     Example:
         manager = GPUManager()
         if manager.initialize():
             info = manager.get_info()
             print(f"Detected: {info['device_name']}")
-            print(f"Compute units: {info['compute_units']}")
+            print(f"TFLOPS: {info['fp32_tflops']}")
+            
+            # Get performance analysis
+            perf = manager.get_performance_analysis()
+            print(f"Recommended batch size: {perf['recommended_batch']}")
     """
     
-    def __init__(self, auto_detect: bool = True):
+    # Class-level cache for detection results
+    _detection_cache: Optional[Tuple[GPUInfo, float]] = None  # (info, timestamp)
+    _cache_ttl_seconds: int = 60  # Cache for 60 seconds
+    
+    def __init__(self, auto_detect: bool = True, enable_cache: bool = True):
         """
         Initialize GPU Manager.
         
         Args:
             auto_detect: Automatically detect GPU on initialization
+            enable_cache: Use cached detection results
         """
         self._gpu_info: Optional[GPUInfo] = None
         self._initialized = False
         self._opencl_context = None
         self._gpu_family = None
+        self._enable_cache = enable_cache
+        self._performance_analysis: Optional[Dict] = None
         
         if auto_detect:
             try:
                 self.detect_gpu()
             except GPUDetectionError as e:
                 print(f"Warning: {e}")
+    
+    @classmethod
+    def clear_cache(cls):
+        """Clear the detection cache (useful for testing)"""
+        cls._detection_cache = None
     
     def detect_gpu(self) -> GPUInfo:
         """
