@@ -2,25 +2,30 @@
 GPU Family Detection and Abstraction
 ====================================
 
-This module provides multi-GPU family support, enabling the platform
-to work seamlessly across different generations of AMD legacy GPUs.
+This module provides GPU family support for the Legacy GPU AI Platform,
+with primary focus on AMD Polaris (GCN 4.0) architecture.
 
-Supported GPU Families:
-----------------------
-1. Polaris (GCN 4.0) - Primary Target
+SUPPORTED GPU Families (Tested):
+-------------------------------
+1. Polaris (GCN 4.0) - PRIMARY & TESTED
    - RX 580, RX 570, RX 480, RX 470
+   - RX 560, RX 550 (limited)
    - 8GB / 4GB variants
-   - Compute Units: 32-36
-   
-2. Vega (GCN 5.0) - Secondary Target
+   - Compute Units: 16-36
+   - This is the ONLY architecture we can test directly
+
+COMMUNITY-CONTRIBUTED (Untested):
+--------------------------------
+2. Vega (GCN 5.0) - Community contributions welcome
    - Vega 56, Vega 64
-   - Rapid Packed Math (FP16 acceleration)
-   - Compute Units: 56-64
+   - Should work but NOT TESTED by maintainers
    
-3. Navi (RDNA 1.0) - Experimental
-   - RX 5700 XT, RX 5700, RX 5600 XT
-   - Wave32 execution
-   - Compute Units: 36-40
+3. Other GCN - May work with degraded performance
+   - GCN 3.0 (Tonga, Fiji)
+   - GCN 2.0 (Bonaire, Hawaii)
+
+NOTE: RDNA (Navi) architecture has different wavefront size (32 vs 64)
+and may require different optimizations. Not officially supported.
 
 Architecture Abstraction:
 ------------------------
@@ -48,14 +53,22 @@ import re
 
 class Architecture(Enum):
     """AMD GPU architectures."""
-    GCN_1_0 = "gcn1.0"     # Southern Islands
-    GCN_2_0 = "gcn2.0"     # Sea Islands
-    GCN_3_0 = "gcn3.0"     # Volcanic Islands
-    GCN_4_0 = "gcn4.0"     # Polaris
-    GCN_5_0 = "gcn5.0"     # Vega
-    RDNA_1_0 = "rdna1.0"   # Navi
-    RDNA_2_0 = "rdna2.0"   # Big Navi
+    GCN_1_0 = "gcn1.0"     # Southern Islands (HD 7000)
+    GCN_2_0 = "gcn2.0"     # Sea Islands (R7/R9 200)
+    GCN_3_0 = "gcn3.0"     # Volcanic Islands (R9 285/380)
+    GCN_4_0 = "gcn4.0"     # Polaris - PRIMARY TARGET
+    GCN_5_0 = "gcn5.0"     # Vega - Community supported
+    RDNA_1_0 = "rdna1.0"   # Navi - NOT SUPPORTED (different wavefront)
+    RDNA_2_0 = "rdna2.0"   # Big Navi - NOT SUPPORTED
     UNKNOWN = "unknown"
+
+
+class SupportLevel(Enum):
+    """Level of support for a GPU family."""
+    TESTED = "tested"           # Tested by maintainers
+    COMMUNITY = "community"     # Community contributed, untested
+    EXPERIMENTAL = "experimental"  # May work, no guarantees
+    UNSUPPORTED = "unsupported"    # Known incompatible
 
 
 @dataclass
@@ -216,7 +229,7 @@ VEGA_56 = GPUFamily(
 )
 
 NAVI_5700XT = GPUFamily(
-    name="Navi 5700 XT",
+    name="Navi 5700 XT (UNSUPPORTED)",
     architecture=Architecture.RDNA_1_0,
     compute_units=40,
     vram_gb=8.0,
@@ -225,7 +238,7 @@ NAVI_5700XT = GPUFamily(
         fp16_tflops=19.5,
         memory_bandwidth_gbps=448,
         has_rapid_packed_math=True,
-        wavefront_size=32,  # RDNA uses Wave32!
+        wavefront_size=32,  # RDNA uses Wave32 - INCOMPATIBLE with GCN optimizations!
     ),
     recommended_batch_size=8,
     recommended_precision="fp16",
@@ -233,14 +246,52 @@ NAVI_5700XT = GPUFamily(
     device_patterns=["5700 XT", "Navi 10"],
 )
 
-# GPU family registry
+# Additional Polaris variants
+POLARIS_LITE = GPUFamily(
+    name="Polaris Lite (RX 560/550)",
+    architecture=Architecture.GCN_4_0,
+    compute_units=16,
+    vram_gb=4.0,
+    capabilities=GPUCapabilities(
+        fp32_tflops=2.6,
+        fp16_tflops=2.6,
+        memory_bandwidth_gbps=112,
+        has_rapid_packed_math=False,
+        wavefront_size=64,
+    ),
+    recommended_batch_size=1,
+    recommended_precision="fp32",
+    memory_strategy="aggressive",
+    device_patterns=["RX 560", "RX 550", "Polaris 11", "Polaris 12"],
+)
+
+# GPU family registry with support levels
 GPU_FAMILIES: Dict[str, GPUFamily] = {
+    # TESTED - Primary support
     "polaris_8gb": POLARIS_8GB,
     "polaris_4gb": POLARIS_4GB,
+    "polaris_lite": POLARIS_LITE,
+    # COMMUNITY - May work, untested
     "vega_64": VEGA_64,
     "vega_56": VEGA_56,
+    # UNSUPPORTED - Different architecture
     "navi_5700xt": NAVI_5700XT,
 }
+
+# Support level mapping
+GPU_SUPPORT_LEVELS: Dict[str, SupportLevel] = {
+    "polaris_8gb": SupportLevel.TESTED,
+    "polaris_4gb": SupportLevel.TESTED,
+    "polaris_lite": SupportLevel.TESTED,
+    "vega_64": SupportLevel.COMMUNITY,
+    "vega_56": SupportLevel.COMMUNITY,
+    "navi_5700xt": SupportLevel.UNSUPPORTED,
+}
+
+
+def get_support_level(family_id: str) -> SupportLevel:
+    """Get the support level for a GPU family."""
+    return GPU_SUPPORT_LEVELS.get(family_id.lower(), SupportLevel.EXPERIMENTAL)
 
 
 def detect_gpu_family() -> GPUFamily:
@@ -249,6 +300,11 @@ def detect_gpu_family() -> GPUFamily:
     
     Returns:
         Detected GPUFamily or default (Polaris 8GB)
+        
+    Note:
+        - Polaris GPUs are fully supported and tested
+        - Vega GPUs may work but are community-supported
+        - RDNA (Navi) GPUs are NOT supported due to architecture differences
     """
     device_name = _get_gpu_device_name()
     
@@ -258,26 +314,43 @@ def detect_gpu_family() -> GPUFamily:
     
     device_lower = device_name.lower()
     
-    # Check against known patterns
+    # Check for unsupported RDNA first and warn
+    if any(x in device_lower for x in ["5700", "5600", "5500", "navi", "6700", "6800", "6900"]):
+        print("⚠️  WARNING: RDNA (Navi) GPU detected!")
+        print("    This architecture uses Wave32 instead of Wave64.")
+        print("    The platform is optimized for GCN (Polaris/Vega).")
+        print("    Proceeding with limited compatibility mode...")
+        return NAVI_5700XT
+    
+    # Check against known Polaris patterns (TESTED)
+    if "580" in device_lower or "480" in device_lower:
+        print("✅ Detected: Polaris 8GB (RX 580/480) - TESTED & SUPPORTED")
+        return POLARIS_8GB
+    elif "570" in device_lower or "470" in device_lower:
+        print("✅ Detected: Polaris 4GB (RX 570/470) - TESTED & SUPPORTED")
+        return POLARIS_4GB
+    elif "560" in device_lower or "550" in device_lower:
+        print("✅ Detected: Polaris Lite (RX 560/550) - TESTED & SUPPORTED")
+        return POLARIS_LITE
+        
+    # Vega (community supported)
+    elif "vega 64" in device_lower or "vega64" in device_lower:
+        print("⚡ Detected: Vega 64 - COMMUNITY SUPPORTED (untested by maintainers)")
+        return VEGA_64
+    elif "vega 56" in device_lower or "vega56" in device_lower:
+        print("⚡ Detected: Vega 56 - COMMUNITY SUPPORTED (untested by maintainers)")
+        return VEGA_56
+    
+    # Check generic patterns
     for family_id, family in GPU_FAMILIES.items():
         for pattern in family.device_patterns:
             if pattern.lower() in device_lower:
-                print(f"Detected GPU family: {family.name}")
+                support = get_support_level(family_id)
+                print(f"Detected GPU family: {family.name} ({support.value})")
                 return family
     
-    # Try to infer from common naming patterns
-    if "580" in device_lower or "480" in device_lower:
-        return POLARIS_8GB
-    elif "570" in device_lower or "470" in device_lower:
-        return POLARIS_4GB
-    elif "vega 64" in device_lower:
-        return VEGA_64
-    elif "vega 56" in device_lower:
-        return VEGA_56
-    elif "5700" in device_lower:
-        return NAVI_5700XT
-    
     print(f"Warning: Unknown GPU '{device_name}'. Using default Polaris 8GB profile.")
+    print("  If you have a Polaris/Vega GPU, please report this for better detection.")
     return POLARIS_8GB
 
 

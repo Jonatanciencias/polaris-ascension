@@ -2,60 +2,75 @@
 Legacy GPU AI Platform - Distributed Computing Layer
 ====================================================
 
-This module provides distributed computing capabilities for clusters
-of legacy AMD GPUs, enabling organizations in emerging countries to
-build cost-effective AI infrastructure.
+This module provides three operating modes for the platform:
 
-Vision:
-------
-In Latin America and other emerging regions, organizations may have
-access to multiple older GPUs (university labs, refurbished equipment,
-community centers). This layer enables them to work together as a
-unified compute resource.
+1. STANDALONE MODE (Single Machine)
+   - One GPU, local processing
+   - Simplest setup, no network required
+   - Ideal for: Individual developers, learning, prototyping
+
+2. LOCAL NETWORK MODE (LAN Cluster)
+   - Multiple machines on same network
+   - Low latency, high bandwidth
+   - Ideal for: University labs, office clusters
+
+3. INTERNET MODE (WAN Distributed)
+   - Machines across the internet
+   - Higher latency, security considerations
+   - Ideal for: Research collaborations, distributed communities
 
 Architecture:
 ------------
-                    ┌─────────────────┐
-                    │  Coordinator    │
-                    │  (Master Node)  │
-                    └────────┬────────┘
-                             │
-            ┌────────────────┼────────────────┐
-            │                │                │
-     ┌──────▼──────┐  ┌──────▼──────┐  ┌──────▼──────┐
-     │   Worker    │  │   Worker    │  │   Worker    │
-     │  RX 580 #1  │  │  RX 580 #2  │  │  RX 570 #3  │
-     └─────────────┘  └─────────────┘  └─────────────┘
+    ┌─────────────────────────────────────────────────────────────┐
+    │                    OPERATING MODES                          │
+    ├─────────────────────────────────────────────────────────────┤
+    │                                                              │
+    │  [STANDALONE]     [LOCAL NETWORK]      [INTERNET]           │
+    │   Single GPU       LAN Cluster         WAN Distributed      │
+    │      │                 │                    │                │
+    │   ┌──┴──┐         ┌────┴────┐         ┌────┴────┐           │
+    │   │RX580│         │Coordinator        │Coordinator          │
+    │   └─────┘         │  (LAN)  │         │  (WAN)  │           │
+    │                   └────┬────┘         └────┬────┘           │
+    │                   ┌────┼────┐         ┌────┼────┐           │
+    │                  W1   W2   W3        W1   W2   W3           │
+    │                                    (encrypted)              │
+    └─────────────────────────────────────────────────────────────┘
 
 Communication:
 -------------
 - ZeroMQ for lightweight, high-performance messaging
 - MessagePack for efficient serialization
 - Heartbeat system for worker health monitoring
+- TLS encryption for internet mode (planned)
 
 Use Cases:
 ---------
-1. University Computer Labs
-   - Pool GPUs from multiple workstations
-   - Enable larger batch sizes for training
+1. Standalone (v0.5.0)
+   - Single developer workflow
+   - Full platform functionality on one machine
    
-2. Community AI Centers
-   - Distributed inference for local services
-   - Cost-effective image classification at scale
+2. Local Network (v0.7.0)
+   - University computer labs
+   - Office GPU pools
+   - Educational clusters
    
-3. Educational Clusters
-   - Students learn distributed AI concepts
-   - Real-world cluster management experience
+3. Internet (v0.8.0+)
+   - Research collaborations across institutions
+   - Community computing projects
+   - Geographically distributed teams
 
-Version: 0.5.0-dev (Planned for v0.7.0)
+Version: 0.5.0-dev (Modes 2&3 planned for v0.7.0+)
 License: MIT
 """
 
 __version__ = "0.5.0-dev"
 __all__ = [
+    "OperatingMode",
     "Coordinator",
     "Worker", 
     "ClusterConfig",
+    "StandaloneRunner",
     "create_local_cluster",
 ]
 
@@ -63,6 +78,13 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any
 from enum import Enum
 import time
+
+
+class OperatingMode(Enum):
+    """Platform operating modes."""
+    STANDALONE = "standalone"     # Single machine, no network
+    LOCAL_NETWORK = "local"       # LAN cluster
+    INTERNET = "internet"         # WAN distributed
 
 
 class WorkerStatus(Enum):
@@ -362,6 +384,83 @@ def create_local_cluster(num_workers: int = 2) -> tuple:
     return coordinator, workers
 
 
+class StandaloneRunner:
+    """
+    Standalone mode runner for single-machine operation.
+    
+    This is the simplest operating mode - no network, no coordination,
+    just direct inference on the local GPU.
+    
+    Example:
+        from src.distributed import StandaloneRunner
+        
+        runner = StandaloneRunner()
+        runner.initialize()
+        
+        result = runner.run_inference("model.onnx", input_data)
+    """
+    
+    def __init__(self):
+        """Initialize standalone runner."""
+        self.mode = OperatingMode.STANDALONE
+        self.platform = None
+        self._initialized = False
+        
+    def initialize(self) -> bool:
+        """
+        Initialize the standalone runner.
+        
+        Returns:
+            True if initialization successful
+        """
+        try:
+            from src.sdk import Platform
+            self.platform = Platform.initialize()
+            self._initialized = True
+            print(f"✅ Standalone mode initialized")
+            print(f"   GPU: {self.platform.gpu_name}")
+            return True
+        except Exception as e:
+            print(f"❌ Failed to initialize standalone mode: {e}")
+            return False
+    
+    def run_inference(self, model_path: str, input_data: Any) -> Any:
+        """
+        Run inference in standalone mode.
+        
+        Args:
+            model_path: Path to ONNX model
+            input_data: Input tensor
+            
+        Returns:
+            Inference results
+        """
+        if not self._initialized:
+            raise RuntimeError("Runner not initialized. Call initialize() first.")
+            
+        model = self.platform.load_model(model_path)
+        return model.infer(input_data)
+    
+    def get_status(self) -> dict:
+        """Get standalone runner status."""
+        return {
+            "mode": self.mode.value,
+            "initialized": self._initialized,
+            "gpu": self.platform.gpu_info() if self.platform else None,
+        }
+
+
+def get_recommended_mode() -> OperatingMode:
+    """
+    Recommend an operating mode based on environment.
+    
+    Returns:
+        Recommended OperatingMode
+    """
+    # For now, always recommend standalone until distributed is fully implemented
+    return OperatingMode.STANDALONE
+
+
 def cluster_status_report(coordinator: Coordinator) -> str:
     """Generate a formatted cluster status report."""
     status = coordinator.get_cluster_status()
@@ -384,3 +483,4 @@ def cluster_status_report(coordinator: Coordinator) -> str:
 ╚══════════════════════════════════════════════════════════════════╝
 """
     return report
+
