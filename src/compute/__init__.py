@@ -58,6 +58,12 @@ __all__ = [
     "RigLPruner",
     "DynamicSparsityAllocator",
     "RigLConfig",
+    # Sparse Matrix Formats (Session 12)
+    "CSRMatrix",
+    "CSCMatrix",
+    "BlockSparseMatrix",
+    "DynamicSparseActivations",
+    "SparseMatrixStats",
     # Planned for future versions:
     "HybridScheduler",
     "NeuralArchitectureSearch",
@@ -104,6 +110,19 @@ except ImportError as e:
     import warnings
     warnings.warn(f"Failed to import dynamic_sparse module: {e}")
     RigLPruner = None
+
+try:
+    from .sparse_formats import (
+        CSRMatrix,
+        CSCMatrix,
+        BlockSparseMatrix,
+        DynamicSparseActivations,
+        SparseMatrixStats,
+    )
+except ImportError as e:
+    import warnings
+    warnings.warn(f"Failed to import sparse_formats module: {e}")
+    CSRMatrix = None
 
 # Placeholder imports for future modules
 # from .scheduler import HybridScheduler
