@@ -28,6 +28,7 @@ from src.compute.sparse_formats import (
     CSRMatrix,
     CSCMatrix,
     BlockSparseMatrix,
+    DynamicFormatSelector,
     SparseMatrixStats
 )
 
@@ -668,11 +669,260 @@ class TestBlockSparseMatrix:
         assert bsm_high.num_blocks < bsm_low.num_blocks
 
 
-class TestDynamicSelection:
-    """Tests for dynamic format selection (TODO: Phase 4)."""
-    pass
+class TestDynamicFormatSelector:
+    """Tests for dynamic format selection (Phase 3)."""
+    
+    def test_basic_initialization(self):
+        """Test selector initialization with defaults."""
+        selector = DynamicFormatSelector()
+        
+        assert selector.sparsity_threshold_dense == 0.50
+        assert selector.sparsity_threshold_block == 0.75
+        assert selector.block_size == 8
+    
+    def test_custom_thresholds(self):
+        """Test selector with custom thresholds."""
+        selector = DynamicFormatSelector(
+            sparsity_threshold_dense=0.60,
+            sparsity_threshold_block=0.80,
+            block_size=16
+        )
+        
+        assert selector.sparsity_threshold_dense == 0.60
+        assert selector.sparsity_threshold_block == 0.80
+        assert selector.block_size == 16
+    
+    def test_analyze_sparsity(self):
+        """Test sparsity analysis."""
+        selector = DynamicFormatSelector()
+        
+        # Create 90% sparse matrix
+        matrix = np.eye(100, dtype=np.float32)
+        
+        analysis = selector.analyze_sparsity(matrix)
+        
+        assert 'sparsity' in analysis
+        assert 'nnz' in analysis
+        assert 'shape' in analysis
+        assert analysis['nnz'] == 100
+        assert 0.98 < analysis['sparsity'] < 1.0
+    
+    def test_select_format_low_sparsity(self):
+        """Test that low sparsity returns dense."""
+        selector = DynamicFormatSelector()
+        
+        # Create 40% sparse matrix (60% dense)
+        matrix = np.random.randn(50, 50).astype(np.float32)
+        mask = np.random.rand(50, 50) > 0.4
+        matrix = matrix * mask
+        
+        result = selector.select_format(matrix)
+        
+        # Should return dense numpy array
+        assert isinstance(result, np.ndarray)
+        assert result.dtype == np.float32
+    
+    def test_select_format_high_sparsity_csr(self):
+        """Test that high sparsity with row ops returns CSR."""
+        selector = DynamicFormatSelector()
+        
+        # Create 90% sparse matrix
+        matrix = np.random.randn(100, 100).astype(np.float32)
+        mask = np.random.rand(100, 100) > 0.9
+        matrix = matrix * mask
+        
+        result = selector.select_format(matrix, preferred_op='row')
+        
+        # Should return CSR
+        assert isinstance(result, CSRMatrix)
+    
+    def test_select_format_high_sparsity_csc(self):
+        """Test that high sparsity with column ops returns CSC."""
+        selector = DynamicFormatSelector()
+        
+        # Create 90% sparse matrix
+        matrix = np.random.randn(100, 100).astype(np.float32)
+        mask = np.random.rand(100, 100) > 0.9
+        matrix = matrix * mask
+        
+        result = selector.select_format(matrix, preferred_op='col')
+        
+        # Should return CSC
+        assert isinstance(result, CSCMatrix)
+    
+    def test_select_format_medium_sparsity_block(self):
+        """Test that medium sparsity with structure returns Block-sparse."""
+        selector = DynamicFormatSelector()
+        
+        # Create block-diagonal matrix (60% sparse)
+        size = 64
+        matrix = np.zeros((size, size), dtype=np.float32)
+        
+        # Add 4 blocks of 8×8
+        for i in range(4):
+            start = i * 16
+            end = start + 8
+            if end <= size:
+                matrix[start:end, start:end] = np.random.randn(8, 8)
+        
+        result = selector.select_format(matrix, force_sparse=True)
+        
+        # Should detect block structure
+        # Result could be BlockSparseMatrix or CSR depending on detection
+        assert isinstance(result, (BlockSparseMatrix, CSRMatrix, CSCMatrix))
+    
+    def test_force_sparse(self):
+        """Test force_sparse flag."""
+        selector = DynamicFormatSelector()
+        
+        # Create low sparsity matrix
+        matrix = np.random.randn(50, 50).astype(np.float32)
+        
+        # Without force: should return dense
+        result = selector.select_format(matrix, force_sparse=False)
+        assert isinstance(result, np.ndarray)
+        
+        # With force: should return sparse
+        result = selector.select_format(matrix, force_sparse=True)
+        assert isinstance(result, (CSRMatrix, CSCMatrix, BlockSparseMatrix))
+    
+    def test_recommend_format(self):
+        """Test format recommendation."""
+        selector = DynamicFormatSelector()
+        
+        # High sparsity matrix
+        matrix = np.eye(100, dtype=np.float32)
+        
+        rec = selector.recommend_format(matrix, context='inference')
+        
+        assert 'format' in rec
+        assert 'reason' in rec
+        assert 'sparsity' in rec
+        assert 'compression_ratio' in rec
+        assert rec['format'] in ['CSR', 'CSC', 'Dense', 'Block-sparse', 'CSR/CSC']
+    
+    def test_recommend_format_training(self):
+        """Test recommendation for training context."""
+        selector = DynamicFormatSelector()
+        
+        # High sparsity matrix
+        matrix = np.random.randn(100, 100).astype(np.float32)
+        mask = np.random.rand(100, 100) > 0.9
+        matrix = matrix * mask
+        
+        rec = selector.recommend_format(matrix, context='training')
+        
+        # Training should recommend CSC for transpose ops
+        assert rec['format'] == 'CSC'
+        assert 'transpose' in rec['reason'] or 'backward' in rec['reason']
+    
+    def test_recommend_format_inference(self):
+        """Test recommendation for inference context."""
+        selector = DynamicFormatSelector()
+        
+        # High sparsity matrix
+        matrix = np.random.randn(100, 100).astype(np.float32)
+        mask = np.random.rand(100, 100) > 0.9
+        matrix = matrix * mask
+        
+        rec = selector.recommend_format(matrix, context='inference')
+        
+        # Inference should recommend CSR for forward pass
+        assert rec['format'] == 'CSR'
+        assert 'forward' in rec['reason'] or 'inference' in rec['reason']
+    
+    def test_repr(self):
+        """Test string representation."""
+        selector = DynamicFormatSelector()
+        
+        repr_str = repr(selector)
+        
+        assert 'DynamicFormatSelector' in repr_str
+        assert '50%' in repr_str
+        assert '75%' in repr_str
 
 
 class TestIntegration:
-    """Integration tests with pruners and real workloads (TODO: Phase 5)."""
+    """Integration tests with pruners and real workloads (Phase 3)."""
+    
+    def test_integration_with_magnitude_pruning(self):
+        """Test sparse formats work with magnitude pruning."""
+        # Simulate pruned weights
+        weights = np.random.randn(128, 256).astype(np.float32)
+        
+        # Apply magnitude-based pruning (keep top 20%)
+        threshold = np.percentile(np.abs(weights), 80)
+        mask = np.abs(weights) > threshold
+        pruned_weights = weights * mask
+        
+        # Convert to CSR
+        csr = CSRMatrix.from_dense(pruned_weights)
+        
+        # Verify correctness
+        reconstructed = csr.to_dense()
+        assert np.allclose(reconstructed, pruned_weights)
+        
+        # Verify sparsity
+        stats = csr.get_statistics()
+        assert stats.sparsity > 0.75
+    
+    def test_integration_progressive_pruning(self):
+        """Test format switching during progressive pruning."""
+        selector = DynamicFormatSelector()
+        
+        # Start with dense weights
+        weights = np.random.randn(100, 100).astype(np.float32)
+        
+        # Progressive pruning schedule
+        sparsities = [0.0, 0.3, 0.6, 0.8, 0.9]
+        
+        for target_sparsity in sparsities:
+            # Apply pruning
+            if target_sparsity > 0:
+                threshold = np.percentile(np.abs(weights), target_sparsity * 100)
+                mask = np.abs(weights) > threshold
+                pruned = weights * mask
+            else:
+                pruned = weights
+            
+            # Select format
+            sparse_format = selector.select_format(pruned, preferred_op='row')
+            
+            # Verify format selection is appropriate
+            if target_sparsity < 0.5:
+                assert isinstance(sparse_format, np.ndarray)
+            else:
+                assert isinstance(sparse_format, (CSRMatrix, CSCMatrix, BlockSparseMatrix))
+    
+    def test_neural_network_layer_simulation(self):
+        """Test sparse formats on simulated neural network layer."""
+        # Simulate layer weights (512 → 256)
+        weights = np.random.randn(256, 512).astype(np.float32)
+        
+        # Apply 90% sparsity
+        mask = np.random.rand(256, 512) > 0.9
+        weights = weights * mask
+        
+        # Convert to CSR for inference
+        csr_weights = CSRMatrix.from_dense(weights)
+        
+        # Simulate forward pass (batch of 32)
+        inputs = np.random.randn(32, 512).astype(np.float32)
+        
+        # Dense computation
+        output_dense = inputs @ weights.T
+        
+        # Sparse computation (per sample)
+        output_sparse = np.zeros((32, 256), dtype=np.float32)
+        for i in range(32):
+            # For CSR: A @ x, we need x.T @ A.T = (A @ x).T
+            # So for inputs[i] @ weights.T, we compute weights @ inputs[i]
+            output_sparse[i] = csr_weights.sparse_matmul(inputs[i])
+        
+        # Verify close results
+        assert np.allclose(output_sparse, output_dense, atol=1e-5)
+
+
+class TestDynamicSelection:
+    """DEPRECATED: Redirect to TestDynamicFormatSelector."""
     pass

@@ -62,7 +62,8 @@ __all__ = [
     "CSRMatrix",
     "CSCMatrix",
     "BlockSparseMatrix",
-    "DynamicSparseActivations",
+    "DynamicFormatSelector",
+    "DynamicSparseActivations",  # Deprecated, use DynamicFormatSelector
     "SparseMatrixStats",
     # Planned for future versions:
     "HybridScheduler",
@@ -116,13 +117,15 @@ try:
         CSRMatrix,
         CSCMatrix,
         BlockSparseMatrix,
-        DynamicSparseActivations,
+        DynamicFormatSelector,
+        DynamicSparseActivations,  # Deprecated, use DynamicFormatSelector
         SparseMatrixStats,
     )
 except ImportError as e:
     import warnings
     warnings.warn(f"Failed to import sparse_formats module: {e}")
     CSRMatrix = None
+    DynamicFormatSelector = None
 
 # Placeholder imports for future modules
 # from .scheduler import HybridScheduler

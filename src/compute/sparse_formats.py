@@ -1051,6 +1051,327 @@ class BlockSparseMatrix:
         )
 
 
+class DynamicFormatSelector:
+    """
+    Automatic sparse format selection based on matrix characteristics.
+    
+    This class analyzes matrix properties (sparsity, size, access patterns) and
+    automatically selects the most efficient sparse format for the RX 580.
+    
+    Selection Strategy:
+    ------------------
+    1. Analyze sparsity level
+    2. Check for structured patterns (blocks)
+    3. Consider matrix size
+    4. Select optimal format
+    
+    Format Rules:
+    ------------
+    - Dense:        sparsity < 50%
+    - Block-sparse: 50% ≤ sparsity < 75% AND structured
+    - CSR:          sparsity ≥ 75% (row-major operations)
+    - CSC:          sparsity ≥ 75% (column-major operations)
+    
+    Example:
+    -------
+    >>> selector = DynamicFormatSelector()
+    >>> sparse_matrix = selector.select_format(dense_matrix, preferred_op='row')
+    >>> result = sparse_matrix.sparse_matmul(x)
+    
+    RX 580 Optimization:
+    -------------------
+    - Considers wavefront size (64) for block selection
+    - Balances compression vs compute efficiency
+    - Adaptive thresholds based on matrix size
+    
+    References:
+    ----------
+    - Gale et al. (2020) "Sparse GPU Kernels for Deep Learning"
+    - NVIDIA (2020) "Accelerating Sparse DNN"
+    """
+    
+    def __init__(
+        self,
+        sparsity_threshold_dense: float = 0.50,
+        sparsity_threshold_block: float = 0.75,
+        block_size: int = 8,
+        block_density_threshold: float = 0.20
+    ):
+        """
+        Initialize format selector with thresholds.
+        
+        Args:
+            sparsity_threshold_dense: Below this, use dense (default: 0.50)
+            sparsity_threshold_block: Above this, use CSR/CSC (default: 0.75)
+            block_size: Block size for block-sparse (default: 8 for RX 580)
+            block_density_threshold: Min density for blocks (default: 0.20)
+        """
+        self.sparsity_threshold_dense = sparsity_threshold_dense
+        self.sparsity_threshold_block = sparsity_threshold_block
+        self.block_size = block_size
+        self.block_density_threshold = block_density_threshold
+    
+    def analyze_sparsity(self, matrix: np.ndarray) -> Dict[str, Any]:
+        """
+        Analyze matrix sparsity and structure.
+        
+        Args:
+            matrix: Dense numpy array
+        
+        Returns:
+            Dictionary with analysis results
+        """
+        if matrix.ndim != 2:
+            raise ValueError(f"Expected 2D matrix, got shape {matrix.shape}")
+        
+        nrows, ncols = matrix.shape
+        total_elements = nrows * ncols
+        nnz = np.count_nonzero(matrix)
+        sparsity = 1.0 - (nnz / total_elements) if total_elements > 0 else 0.0
+        
+        # Check for block structure
+        has_blocks = self._detect_block_structure(matrix)
+        
+        # Estimate compute cost
+        dense_cost = nrows * ncols
+        sparse_cost = nnz * 2  # Approximate sparse ops cost
+        
+        return {
+            'shape': (nrows, ncols),
+            'nnz': nnz,
+            'sparsity': sparsity,
+            'density': 1.0 - sparsity,
+            'has_block_structure': has_blocks,
+            'dense_cost': dense_cost,
+            'sparse_cost': sparse_cost,
+            'size_category': self._categorize_size(nrows, ncols)
+        }
+    
+    def _detect_block_structure(self, matrix: np.ndarray) -> bool:
+        """
+        Detect if matrix has block-diagonal or block structure.
+        
+        Simple heuristic: check if non-zeros cluster in blocks.
+        """
+        nrows, ncols = matrix.shape
+        block_size = self.block_size
+        
+        if nrows < block_size or ncols < block_size:
+            return False
+        
+        # Sample a few blocks and check density variance
+        num_row_blocks = nrows // block_size
+        num_col_blocks = ncols // block_size
+        
+        if num_row_blocks == 0 or num_col_blocks == 0:
+            return False
+        
+        # Sample up to 16 blocks
+        sample_blocks = min(16, num_row_blocks * num_col_blocks)
+        densities = []
+        
+        for _ in range(sample_blocks):
+            i = np.random.randint(0, num_row_blocks)
+            j = np.random.randint(0, num_col_blocks)
+            
+            block = matrix[
+                i*block_size:(i+1)*block_size,
+                j*block_size:(j+1)*block_size
+            ]
+            
+            block_nnz = np.count_nonzero(block)
+            block_density = block_nnz / (block_size * block_size)
+            densities.append(block_density)
+        
+        # High variance in block densities suggests block structure
+        # (some blocks dense, some sparse)
+        if len(densities) > 1:
+            variance = np.var(densities)
+            return variance > 0.05  # Threshold for "structured"
+        
+        return False
+    
+    def _categorize_size(self, nrows: int, ncols: int) -> str:
+        """Categorize matrix size for optimization decisions."""
+        total = nrows * ncols
+        
+        if total < 10000:
+            return 'small'
+        elif total < 1000000:
+            return 'medium'
+        else:
+            return 'large'
+    
+    def select_format(
+        self,
+        matrix: np.ndarray,
+        preferred_op: str = 'row',
+        force_sparse: bool = False
+    ) -> Union[np.ndarray, CSRMatrix, CSCMatrix, BlockSparseMatrix]:
+        """
+        Automatically select best sparse format for given matrix.
+        
+        Args:
+            matrix: Dense numpy array
+            preferred_op: 'row' for A@x, 'col' for A.T@x (default: 'row')
+            force_sparse: Force sparse format even if dense is better
+        
+        Returns:
+            Matrix in optimal format (dense array or sparse matrix object)
+        
+        Selection Logic:
+        ---------------
+        1. If sparsity < 50% and not forced: return dense
+        2. If 50% ≤ sparsity < 75% and has block structure: Block-sparse
+        3. If sparsity ≥ 75%:
+           - Use CSR for row operations
+           - Use CSC for column operations
+        
+        Example:
+        -------
+        >>> selector = DynamicFormatSelector()
+        >>> # 90% sparse matrix
+        >>> dense = np.random.randn(256, 512)
+        >>> mask = np.random.rand(256, 512) > 0.9
+        >>> dense = dense * mask
+        >>> 
+        >>> # Auto-select format
+        >>> sparse = selector.select_format(dense, preferred_op='row')
+        >>> type(sparse).__name__
+        'CSRMatrix'
+        """
+        analysis = self.analyze_sparsity(matrix)
+        sparsity = analysis['sparsity']
+        
+        # Decision tree
+        if sparsity < self.sparsity_threshold_dense and not force_sparse:
+            # Use dense
+            return matrix.astype(np.float32)
+        
+        elif sparsity < self.sparsity_threshold_block:
+            # Medium sparsity: check for block structure
+            if analysis['has_block_structure']:
+                return BlockSparseMatrix.from_dense(
+                    matrix,
+                    block_size=self.block_size,
+                    threshold=self.block_density_threshold
+                )
+            else:
+                # No block structure, use CSR/CSC
+                if preferred_op == 'col':
+                    return CSCMatrix.from_dense(matrix)
+                else:
+                    return CSRMatrix.from_dense(matrix)
+        
+        else:
+            # High sparsity: use CSR or CSC
+            if preferred_op == 'col':
+                return CSCMatrix.from_dense(matrix)
+            else:
+                return CSRMatrix.from_dense(matrix)
+    
+    def recommend_format(
+        self,
+        matrix: np.ndarray,
+        context: str = 'inference'
+    ) -> Dict[str, Any]:
+        """
+        Provide detailed format recommendation with reasoning.
+        
+        Args:
+            matrix: Dense numpy array
+            context: 'inference', 'training', or 'generic'
+        
+        Returns:
+            Dictionary with recommendation and explanation
+        
+        Example:
+        -------
+        >>> selector = DynamicFormatSelector()
+        >>> recommendation = selector.recommend_format(matrix, context='training')
+        >>> print(recommendation['format'])
+        'CSC'
+        >>> print(recommendation['reason'])
+        'High sparsity (92%), training needs transpose ops'
+        """
+        analysis = self.analyze_sparsity(matrix)
+        sparsity = analysis['sparsity']
+        
+        # Base recommendation
+        if sparsity < self.sparsity_threshold_dense:
+            format_name = 'Dense'
+            reason = f"Low sparsity ({sparsity*100:.1f}%), overhead not justified"
+        elif sparsity < self.sparsity_threshold_block:
+            if analysis['has_block_structure']:
+                format_name = 'Block-sparse'
+                reason = f"Medium sparsity ({sparsity*100:.1f}%) with block structure"
+            else:
+                format_name = 'CSR'
+                reason = f"Medium sparsity ({sparsity*100:.1f}%), unstructured"
+        else:
+            format_name = 'CSR/CSC'
+            reason = f"High sparsity ({sparsity*100:.1f}%), maximum compression"
+        
+        # Context-specific adjustments
+        if context == 'training' and sparsity >= self.sparsity_threshold_dense:
+            format_name = 'CSC'
+            reason += ", training needs transpose (backward pass)"
+        elif context == 'inference' and sparsity >= self.sparsity_threshold_dense:
+            format_name = 'CSR'
+            reason += ", inference uses forward pass only"
+        
+        # Estimate savings
+        if format_name != 'Dense':
+            mem_dense = analysis['shape'][0] * analysis['shape'][1] * 4
+            if 'Block' in format_name:
+                # Estimate block-sparse memory
+                mem_sparse = analysis['nnz'] * 6  # Approximate
+            else:
+                # CSR/CSC memory
+                mem_sparse = analysis['nnz'] * 8 + analysis['shape'][0] * 4
+            
+            compression = mem_dense / mem_sparse if mem_sparse > 0 else 1.0
+            savings_mb = (mem_dense - mem_sparse) / 1024 / 1024
+        else:
+            compression = 1.0
+            savings_mb = 0.0
+        
+        return {
+            'format': format_name,
+            'reason': reason,
+            'sparsity': sparsity,
+            'compression_ratio': compression,
+            'memory_savings_mb': savings_mb,
+            'size_category': analysis['size_category'],
+            'has_structure': analysis['has_block_structure']
+        }
+    
+    def __repr__(self) -> str:
+        """String representation."""
+        return (
+            f"DynamicFormatSelector("
+            f"dense<{self.sparsity_threshold_dense*100:.0f}%, "
+            f"block<{self.sparsity_threshold_block*100:.0f}%, "
+            f"block_size={self.block_size})"
+        )
+
+
 class DynamicSparseActivations:
-    """Dynamic format selection based on runtime sparsity (TODO: Session 12 Phase 4)."""
-    pass
+    """
+    DEPRECATED: Use DynamicFormatSelector instead.
+    
+    This class name is kept for backward compatibility but redirects
+    to DynamicFormatSelector.
+    """
+    
+    def __init__(self, *args, **kwargs):
+        import warnings
+        warnings.warn(
+            "DynamicSparseActivations is deprecated, use DynamicFormatSelector instead",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        self._selector = DynamicFormatSelector(*args, **kwargs)
+    
+    def __getattr__(self, name):
+        return getattr(self._selector, name)
