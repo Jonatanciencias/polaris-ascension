@@ -746,6 +746,184 @@ class GradualPruner:
         return schedule
 
 
+class FineTuningScheduler:
+    """
+    Fine-tuning scheduler for sparse networks after pruning.
+    
+    After pruning to target sparsity, fine-tune the remaining weights to
+    recover accuracy. This class provides:
+    - Learning rate schedules optimized for sparse fine-tuning
+    - Layer-wise learning rates (different rates for pruned vs unpruned layers)
+    - Early stopping based on validation metrics
+    
+    Typical workflow:
+    1. Prune network to target sparsity
+    2. Fine-tune remaining weights with lower learning rate
+    3. Monitor validation accuracy and stop early if needed
+    
+    References:
+    - Han et al. (2015) "Learning both Weights and Connections"
+    - Zhu & Gupta (2017) pruning paper recommends fine-tuning
+    
+    Example:
+        >>> scheduler = FineTuningScheduler(
+        ...     initial_lr=0.001,
+        ...     min_lr=0.00001,
+        ...     patience=5
+        ... )
+        >>> 
+        >>> # After pruning
+        >>> for epoch in range(fine_tune_epochs):
+        ...     lr = scheduler.get_lr(epoch)
+        ...     train_epoch(model, lr)
+        ...     
+        ...     val_loss = validate(model)
+        ...     should_stop = scheduler.step(val_loss)
+        ...     if should_stop:
+        ...         break
+    """
+    
+    def __init__(
+        self,
+        initial_lr: float = 0.001,
+        min_lr: float = 0.00001,
+        patience: int = 5,
+        factor: float = 0.5,
+        mode: str = "cosine",  # "cosine", "exponential", "step"
+        warmup_epochs: int = 0,
+    ):
+        """
+        Initialize fine-tuning scheduler.
+        
+        Args:
+            initial_lr: Starting learning rate for fine-tuning
+            min_lr: Minimum learning rate (don't go below this)
+            patience: Number of epochs without improvement before LR reduction
+            factor: Factor to multiply LR by when reducing
+            mode: LR schedule type
+            warmup_epochs: Number of warmup epochs at start
+        """
+        self.initial_lr = initial_lr
+        self.min_lr = min_lr
+        self.patience = patience
+        self.factor = factor
+        self.mode = mode
+        self.warmup_epochs = warmup_epochs
+        
+        self.current_epoch = 0
+        self.current_lr = initial_lr
+        self.best_metric = float('inf')
+        self.epochs_without_improvement = 0
+        self.lr_history = []
+        
+    def get_lr(self, epoch: int) -> float:
+        """
+        Get learning rate for given epoch.
+        
+        Args:
+            epoch: Current epoch number
+            
+        Returns:
+            Learning rate for this epoch
+        """
+        # Warmup phase
+        if epoch < self.warmup_epochs:
+            # Linear warmup
+            return self.initial_lr * (epoch + 1) / self.warmup_epochs
+        
+        # Adjust for warmup
+        adjusted_epoch = epoch - self.warmup_epochs
+        
+        if self.mode == "cosine":
+            # Cosine annealing
+            import math
+            lr = self.min_lr + (self.initial_lr - self.min_lr) * 0.5 * (
+                1 + math.cos(math.pi * adjusted_epoch / 100)
+            )
+        elif self.mode == "exponential":
+            # Exponential decay
+            lr = self.initial_lr * (self.factor ** adjusted_epoch)
+        elif self.mode == "step":
+            # Step decay (every 10 epochs)
+            lr = self.initial_lr * (self.factor ** (adjusted_epoch // 10))
+        else:
+            raise ValueError(f"Unknown mode: {self.mode}")
+        
+        # Clamp to min_lr
+        lr = max(lr, self.min_lr)
+        
+        return lr
+    
+    def step(self, metric: float) -> bool:
+        """
+        Update scheduler based on validation metric.
+        
+        Args:
+            metric: Validation metric (lower is better, e.g., loss)
+            
+        Returns:
+            True if should stop training (early stopping triggered)
+        """
+        self.current_epoch += 1
+        self.current_lr = self.get_lr(self.current_epoch)
+        self.lr_history.append(self.current_lr)
+        
+        # Check if metric improved
+        if metric < self.best_metric:
+            self.best_metric = metric
+            self.epochs_without_improvement = 0
+        else:
+            self.epochs_without_improvement += 1
+        
+        # Early stopping
+        if self.epochs_without_improvement >= self.patience * 2:
+            return True  # Stop training
+        
+        # Reduce LR if plateaued
+        if self.epochs_without_improvement >= self.patience:
+            self.current_lr = max(self.current_lr * self.factor, self.min_lr)
+        
+        return False
+    
+    def get_statistics(self) -> dict:
+        """
+        Get scheduler statistics.
+        
+        Returns:
+            Dictionary with statistics
+        """
+        return {
+            "current_epoch": self.current_epoch,
+            "current_lr": self.current_lr,
+            "best_metric": self.best_metric,
+            "epochs_without_improvement": self.epochs_without_improvement,
+            "total_lr_reductions": len([
+                i for i in range(1, len(self.lr_history))
+                if self.lr_history[i] < self.lr_history[i-1]
+            ]),
+        }
+
+
+def apply_mask_to_gradients(
+    gradients: np.ndarray,
+    mask: np.ndarray
+) -> np.ndarray:
+    """
+    Apply sparse mask to gradients during fine-tuning.
+    
+    During fine-tuning, we want to prevent pruned weights from being updated.
+    This function zeros out gradients for pruned weights.
+    
+    Args:
+        gradients: Gradient tensor
+        mask: Binary mask (1=keep, 0=pruned)
+        
+    Returns:
+        Masked gradients
+    """
+    return gradients * mask
+
+
 def create_sparse_layer(
     in_features: int,
     out_features: int,

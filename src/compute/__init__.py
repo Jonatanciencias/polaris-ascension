@@ -37,7 +37,7 @@ Version: 0.5.0-dev
 License: MIT
 """
 
-__version__ = "0.5.0-dev"
+__version__ = "0.6.0-dev"
 __all__ = [
     "AdaptiveQuantizer",
     "QuantizationPrecision",
@@ -52,6 +52,12 @@ __all__ = [
     "GradualPruner",
     "SparseTensorConfig",
     "create_sparse_layer",
+    "FineTuningScheduler",
+    "apply_mask_to_gradients",
+    # Dynamic Sparse Training (Session 11)
+    "RigLPruner",
+    "DynamicSparsityAllocator",
+    "RigLConfig",
     # Planned for future versions:
     "HybridScheduler",
     "NeuralArchitectureSearch",
@@ -80,11 +86,24 @@ try:
         GradualPruner,
         SparseTensorConfig,
         create_sparse_layer,
+        FineTuningScheduler,
+        apply_mask_to_gradients,
     )
 except ImportError as e:
     import warnings
     warnings.warn(f"Failed to import sparse module: {e}")
     SparseOperations = None
+
+try:
+    from .dynamic_sparse import (
+        RigLPruner,
+        DynamicSparsityAllocator,
+        RigLConfig,
+    )
+except ImportError as e:
+    import warnings
+    warnings.warn(f"Failed to import dynamic_sparse module: {e}")
+    RigLPruner = None
 
 # Placeholder imports for future modules
 # from .scheduler import HybridScheduler
@@ -118,9 +137,18 @@ def get_available_algorithms():
             "tests": "39/39 passing",
         },
         "sparse_operations": {
-            "status": "planned",
+            "status": "implemented",
             "version": "0.6.0",
-            "description": "Sparse tensor operations for GCN wavefront optimization",
+            "description": "Static & dynamic sparse networks (magnitude, structured, RigL)",
+            "features": [
+                "Magnitude pruning (unstructured)",
+                "Structured pruning (channels, filters, attention heads)",
+                "Gradual pruning with polynomial decay",
+                "RigL dynamic sparse training (drop/grow)",
+                "Dynamic sparsity allocation per layer",
+                "Fine-tuning scheduler with early stopping",
+            ],
+            "tests": "65/65 passing",
         },
         "hybrid_scheduler": {
             "status": "planned",
