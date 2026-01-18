@@ -40,6 +40,13 @@ from enum import Enum
 import logging
 
 from .base import BaseInferenceEngine, InferenceConfig, ModelInfo
+from .model_loaders import (
+    BaseModelLoader,
+    ONNXModelLoader,
+    PyTorchModelLoader,
+    ModelMetadata,
+    create_loader
+)
 from ..core.gpu import GPUManager
 from ..core.memory import MemoryManager
 from ..core.profiler import Profiler
@@ -524,7 +531,9 @@ class MultiModelServer:
         self.max_models = max_models
         self.memory_limit_mb = memory_limit_mb
         
-        self.models: Dict[str, Any] = {}
+        self.models: Dict[str, Any] = {}  # Original model objects
+        self.loaders: Dict[str, BaseModelLoader] = {}  # Model loaders (ONNX/PyTorch)
+        self.model_metadata: Dict[str, ModelMetadata] = {}  # Model metadata
         self.model_stats: Dict[str, ModelStats] = {}
         self.model_configs: Dict[str, InferenceConfig] = {}
         self.schedulers: Dict[str, AdaptiveBatchScheduler] = {}
@@ -573,28 +582,37 @@ class MultiModelServer:
                 for stats in self.model_stats.values()
             )
             
-            # Estimate new model size (simplified)
-            estimated_size = 100.0  # Would inspect actual model
-            
-            if current_memory + estimated_size > self.memory_limit_mb:
-                logger.error(
-                    f"Insufficient memory: {current_memory + estimated_size:.1f}MB "
-                    f"exceeds limit {self.memory_limit_mb}MB"
-                )
-                # Try to unload least recently used model
-                if not self._evict_lru_model():
-                    return False
-            
-            # Load model (simplified - would use actual inference engine)
+            # Load model with appropriate loader
             try:
-                # Placeholder for actual model loading
-                model = {"path": str(model_path), "name": model_name}
+                # Create loader based on model type
+                loader = create_loader(model_path)
+                metadata = loader.load(model_path)
                 
-                self.models[model_name] = model
+                estimated_size = metadata.estimated_memory_mb
+                
+                if current_memory + estimated_size > self.memory_limit_mb:
+                    logger.error(
+                        f"Insufficient memory: {current_memory + estimated_size:.1f}MB "
+                        f"exceeds limit {self.memory_limit_mb}MB"
+                    )
+                    # Try to unload least recently used model
+                    if not self._evict_lru_model():
+                        loader.unload()
+                        return False
+                
+                # Store loader and metadata
+                self.loaders[model_name] = loader
+                self.model_metadata[model_name] = metadata
+                self.models[model_name] = loader  # For compatibility
                 self.model_configs[model_name] = config or InferenceConfig()
                 self.model_stats[model_name] = ModelStats(
                     model_name=model_name,
                     memory_usage_mb=estimated_size
+                )
+                
+                logger.info(
+                    f"✅ Model '{model_name}' loaded successfully"
+                    f" ({metadata.framework}, {metadata.provider})"
                 )
                 
                 # Setup adaptive batching if enabled
@@ -629,7 +647,15 @@ class MultiModelServer:
                 self.schedulers[model_name].stop()
                 del self.schedulers[model_name]
             
-            # Remove model
+            # Unload model loader
+            if model_name in self.loaders:
+                self.loaders[model_name].unload()
+                del self.loaders[model_name]
+            
+            # Remove model data
+            if model_name in self.model_metadata:
+                del self.model_metadata[model_name]
+            
             del self.models[model_name]
             del self.model_stats[model_name]
             del self.model_configs[model_name]
@@ -692,10 +718,18 @@ class MultiModelServer:
         return outputs
     
     def _run_inference(self, model_name: str, inputs: np.ndarray) -> np.ndarray:
-        """Run inference on a model (simplified)"""
-        # Placeholder for actual inference
-        time.sleep(0.01)  # Simulate inference time
-        return np.zeros((inputs.shape[0], 10))  # Mock output
+        """Run inference on a model using appropriate loader"""
+        try:
+            loader = self.loaders.get(model_name)
+            if not loader:
+                logger.error(f"Loader not found for model '{model_name}'")
+                return None
+            
+            outputs = loader.predict(inputs)
+            return outputs
+        except Exception as e:
+            logger.error(f"Inference failed for '{model_name}': {e}")
+            return None
     
     def _evict_lru_model(self) -> bool:
         """Evict least recently used model"""
@@ -922,4 +956,9 @@ __all__ = [
     'BatchRequest',
     'BatchResponse',
     'ModelStats',
+    # Re-export from model_loaders
+    'ONNXModelLoader',
+    'PyTorchModelLoader',
+    'ModelMetadata',
+    'create_loader',
 ]
