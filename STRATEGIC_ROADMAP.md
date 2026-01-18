@@ -58,17 +58,25 @@
 - 8.5× speedup sparse operations
 - scipy.sparse parity validated
 
-### ✅ CAPA 3: INFERENCE (100% Complete)
+### ✅ CAPA 3: INFERENCE (Enhanced - Session 15 & 16)
 - ✅ ONNX Runtime integration
 - ✅ Multi-precision (FP32/FP16/INT8)
 - ✅ Batch processing
-- ✅ 17 tests passing
+- ✅ Model Compression (Session 15)
+- ✅ Adaptive Batching (Session 15)
+- ✅ Multi-Model Serving (Session 15)
+- ✅ ONNX/PyTorch Model Loaders (Session 16) ← NEW
+- ✅ Hardware-aware Provider Selection (Session 16) ← NEW
+- ✅ 50+ tests passing (42 enhanced + 8 loaders)
 
-### ✅ CAPA 4: SDK (100% Complete)
+### 🔄 CAPA 4: SDK (70% Complete - Session 16)
 - ✅ Platform class (high-level API)
 - ✅ Model class (easy inference)
 - ✅ quick_inference() function
-- ✅ 12 tests passing
+- ✅ Real model integration (ONNX/PyTorch) ← NEW Session 16
+- 📝 REST API (planned Session 17)
+- 📝 Docker deployment (planned Session 17)
+- ✅ 20+ tests passing
 
 ### 📝 CAPA 5: DISTRIBUTED (Planned)
 - Cluster coordination

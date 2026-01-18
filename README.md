@@ -5,10 +5,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Version: 0.6.0-dev](https://img.shields.io/badge/version-0.6.0--dev-orange.svg)](https://github.com/yourusername/legacy-gpu-ai)
-[![Tests: 308/308](https://img.shields.io/badge/tests-308%2F308%20passing-brightgreen.svg)](tests/)
-[![CAPA 2: 100%](https://img.shields.io/badge/CAPA%202-100%25%20COMPLETE-success.svg)](SESSION_14_HYBRID_COMPLETE.md)
-[![Session 14: ✅](https://img.shields.io/badge/Session%2014-Complete-success.svg)](SESSION_14_HYBRID_COMPLETE.md)
-[![Architecture: 9.8/10](https://img.shields.io/badge/architecture-9.8%2F10-success.svg)](PROJECT_AUDIT_SESSION_14.md)
+[![Tests: 343/343](https://img.shields.io/badge/tests-343%2F343%20passing-brightgreen.svg)](tests/)
+[![CAPA 3: 70%](https://img.shields.io/badge/CAPA%203-70%25%20COMPLETE-success.svg)](SESSION_16_REAL_MODELS_COMPLETE.md)
+[![Session 16: ✅](https://img.shields.io/badge/Session%2016-Complete-success.svg)](SESSION_16_REAL_MODELS_COMPLETE.md)
+[![Integration: 9.5/10](https://img.shields.io/badge/integration-9.5%2F10-success.svg)](SESSION_16_REAL_MODELS_COMPLETE.md)
 
 > 🔄 **Project Reorientation (Jan 2026):** This project has evolved from a single-GPU demo framework to a comprehensive platform for AI development on legacy AMD GPUs. See [REORIENTATION_MANIFEST.md](REORIENTATION_MANIFEST.md) for details.
 
@@ -67,11 +67,13 @@
 ├────────────────────┴──────────┴─────────────┴─────────┴─────┤
 │  🌐 DISTRIBUTED    │ Nodes │ Cluster │ Load Balancing │     │
 ├────────────────────┴───────┴─────────┴────────────────┴─────┤
-│  📦 SDK            │ LegacyGPU │ InferenceEngine │ Compute │ │
-├────────────────────┴──────────┴────────────────┴──────────┴─┤
-│  🧮 COMPUTE        │ Sparse │ SNN │ Adaptive Quant │ Hybrid │ │
-├────────────────────┴────────┴─────┴────────────────┴────────┤
-│  🔧 CORE           │ GPU Family │ Memory │ Profiler │ OpenCL │
+│  📦 SDK (70%)      │ REST API │ Docker │ Model Loaders │ ... │ ← Session 16 ✅
+├────────────────────┴──────────┴────────┴───────────────┴─────┤
+│  🔌 INFERENCE (✅) │ ONNX │ PyTorch │ Compression │ Serving │ │ ← Session 15 ✅
+├────────────────────┴──────┴─────────┴─────────────┴─────────┤
+│  🧮 COMPUTE (80%)  │ Sparse │ SNN │ Quant │ Hybrid │ NAS    │ │
+├────────────────────┴────────┴─────┴───────┴────────┴────────┤
+│  🔧 CORE (100%)    │ GPU Family │ Memory │ Profiler │ OpenCL │
 └─────────────────────────────────────────────────────────────┘
 ```
 
