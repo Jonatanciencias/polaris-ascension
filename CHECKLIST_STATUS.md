@@ -60,23 +60,80 @@ Implementar 5 áreas de compute:
 ## 🚀 FASE 2: Sparse Networks (EN CURSO)
 
 ### Sesión 10: Magnitude & Structured Pruning
-**Status**: 🚀 EN PROGRESO (17 Enero 2026)
+**Status**: ✅ COMPLETO (17 Enero 2026)  
+**Commits**: f68b8c9, 5d908a0
+
+**Implementado**:
+- [x] `MagnitudePruner` class (300 líneas)
+  - [x] Global pruning con threshold percentile-based
+  - [x] Local (per-layer) pruning
+  - [x] Compression statistics tracking
+  - [x] Pruning history
+- [x] `StructuredPruner` class (300 líneas)
+  - [x] Channel pruning para CNNs
+  - [x] Filter pruning (input channels)
+  - [x] Head pruning para attention
+  - [x] L1/L2/Taylor importance metrics
+- [x] `GradualPruner` class (200 líneas)
+  - [x] Polynomial decay schedule (cubic)
+  - [x] Flexible begin/end/frequency configuration
+  - [x] Integration con MagnitudePruner y StructuredPruner
+- [x] SparseOperations (CSR format, analysis)
+- [x] Tests (40 tests, 100% passing)
+- [x] Demo con 5 benchmarks completos
+- [x] Documentación (COMPUTE_SPARSE_SUMMARY.md, 600 líneas)
+
+**Métricas**:
+- Código: 1,750 líneas (sparse.py, test_sparse.py, demo_sparse.py)
+- Tests: 40/40 passing (100%)
+- Compression: 2x-20x (50%-95% sparsity)
+- Papers: 3 implementados (Han, Li, Zhu & Gupta)
+- Tiempo: ~14 horas
+
+### Sesión 11: Dynamic Sparse Training (RigL) 🎯 SIGUIENTE
+**Status**: 📝 PLANEADO (Por iniciar)  
+**Timeline**: 12-17 horas (2-3 días)  
+**Objetivo**: Sparse training desde cero sin prune-retrain
 
 **Por implementar**:
-- [ ] `MagnitudePruner` class
-  - [ ] Global pruning con threshold
-  - [ ] Layer-wise pruning
-  - [ ] Gradual pruning con schedule
-- [ ] `StructuredPruner` class
-  - [ ] Channel pruning para CNNs
-  - [ ] Filter pruning
-  - [ ] Head pruning para attention
-- [ ] `GradualPruner` class
-  - [ ] Polynomial decay
-  - [ ] Fine-tuning durante pruning
-- [ ] Tests (15+ tests)
-- [ ] Demo con benchmark
+- [ ] `RigLPruner` class (~400 líneas)
+  - [ ] Drop lowest magnitude weights
+  - [ ] Grow highest gradient connections
+  - [ ] Maintain constant sparsity
+  - [ ] Update schedule control
+- [ ] `DynamicSparsityAllocator` class (~400 líneas)
+  - [ ] Per-layer sensitivity analysis
+  - [ ] Non-uniform sparsity distribution
+  - [ ] Gradient-based importance
+  - [ ] Adaptive reallocation
+- [ ] Enhanced `GradualPruner` with fine-tuning
+  - [ ] Automatic retraining loop
+  - [ ] Optimizer integration
+- [ ] Tests (20 tests objetivo)
+  - [ ] RigL logic (8 tests)
+  - [ ] Dynamic allocation (6 tests)
+  - [ ] Fine-tuning (6 tests)
+- [ ] Demo dynamic training (~500 líneas)
+  - [ ] Training from scratch
+  - [ ] Convergence visualization
+  - [ ] Static vs Dynamic comparison
 - [ ] Documentación
+  - [ ] COMPUTE_DYNAMIC_SPARSE_SUMMARY.md
+  - [ ] SESSION_11_DYNAMIC_SPARSE_COMPLETE.md
+
+**Papers a implementar**:
+1. Evci et al. (2020) - "Rigging the Lottery" (RigL)
+2. Mostafa & Wang (2019) - "Parameter Efficient Training"
+3. Gale et al. (2019) - "State of Sparsity in DNNs"
+
+**Métricas objetivo**:
+- Código: ~1,200 líneas
+- Tests: 20/20 passing
+- Accuracy: 97-99% @ 90% sparsity (mejor que static)
+- Training time: 1.0x (sin retraining overhead)
+- Papers: 2-3 implementados
+
+**Key advantage**: Train sparse desde cero, evitar ciclo prune-retrain
 
 **Objetivos**:
 - 70-90% sparsity sin accuracy loss
