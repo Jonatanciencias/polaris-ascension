@@ -26,6 +26,8 @@ import pytest
 import numpy as np
 from src.compute.sparse_formats import (
     CSRMatrix,
+    CSCMatrix,
+    BlockSparseMatrix,
     SparseMatrixStats
 )
 
@@ -273,15 +275,397 @@ class TestCSRMatrix:
         np.testing.assert_array_almost_equal(result, expected)
 
 
-# Placeholder test classes for future phases
+# ==================== Phase 2: CSC and Block-Sparse Tests ====================
+
 class TestCSCMatrix:
-    """Tests for CSC format (TODO: Phase 2)."""
-    pass
+    """Tests for Compressed Sparse Column format (Phase 2)."""
+    
+    def test_basic_initialization(self):
+        """Test basic CSC matrix creation."""
+        # Create simple 3x3 identity matrix in CSC format
+        values = np.array([1.0, 1.0, 1.0], dtype=np.float32)
+        row_indices = np.array([0, 1, 2], dtype=np.int32)
+        col_ptr = np.array([0, 1, 2, 3], dtype=np.int32)
+        
+        csc = CSCMatrix(values, row_indices, col_ptr, shape=(3, 3))
+        
+        assert csc.shape == (3, 3)
+        assert csc.nnz == 3
+        assert csc.nrows == 3
+        assert csc.ncols == 3
+        assert np.array_equal(csc.values, values)
+    
+    def test_invalid_dimensions(self):
+        """Test that invalid dimensions raise ValueError."""
+        values = np.array([1.0], dtype=np.float32)
+        row_indices = np.array([0], dtype=np.int32)
+        
+        # Wrong col_ptr length
+        with pytest.raises(ValueError, match="col_ptr length"):
+            col_ptr = np.array([0, 1], dtype=np.int32)
+            CSCMatrix(values, row_indices, col_ptr, shape=(3, 3))
+        
+        # Mismatched row_indices length
+        with pytest.raises(ValueError, match="row_indices length"):
+            col_ptr = np.array([0, 1, 1, 1], dtype=np.int32)
+            row_indices = np.array([0, 1], dtype=np.int32)
+            CSCMatrix(values, row_indices, col_ptr, shape=(3, 3))
+    
+    def test_from_dense_conversion(self):
+        """Test conversion from dense to CSC."""
+        # Create a simple sparse matrix
+        dense = np.array([
+            [1, 0, 2],
+            [0, 3, 0],
+            [4, 0, 5]
+        ], dtype=np.float32)
+        
+        csc = CSCMatrix.from_dense(dense)
+        
+        # Check nnz
+        assert csc.nnz == 5
+        
+        # Verify reconstruction
+        reconstructed = csc.to_dense()
+        assert np.allclose(reconstructed, dense)
+    
+    def test_to_dense_conversion(self):
+        """Test conversion from CSC to dense."""
+        # Create CSC matrix (3x3 diagonal)
+        values = np.array([1.0, 2.0, 3.0], dtype=np.float32)
+        row_indices = np.array([0, 1, 2], dtype=np.int32)
+        col_ptr = np.array([0, 1, 2, 3], dtype=np.int32)
+        
+        csc = CSCMatrix(values, row_indices, col_ptr, shape=(3, 3))
+        dense = csc.to_dense()
+        
+        expected = np.diag([1.0, 2.0, 3.0])
+        assert np.allclose(dense, expected)
+    
+    def test_sparse_matmul_vector(self):
+        """Test CSC matrix-vector multiplication."""
+        # Create simple CSC matrix
+        dense = np.array([
+            [1, 0, 2],
+            [0, 3, 0],
+            [4, 0, 5]
+        ], dtype=np.float32)
+        
+        csc = CSCMatrix.from_dense(dense)
+        
+        # Test vector multiplication
+        x = np.array([1, 2, 3], dtype=np.float32)
+        result = csc.sparse_matmul(x)
+        expected = dense @ x
+        
+        assert np.allclose(result, expected)
+    
+    def test_sparse_matmul_matrix(self):
+        """Test CSC matrix-matrix multiplication."""
+        dense_a = np.array([
+            [1, 0, 2],
+            [0, 3, 0],
+            [4, 0, 5]
+        ], dtype=np.float32)
+        
+        csc = CSCMatrix.from_dense(dense_a)
+        
+        # Test matrix multiplication
+        B = np.array([
+            [1, 2],
+            [3, 4],
+            [5, 6]
+        ], dtype=np.float32)
+        
+        result = csc.sparse_matmul(B)
+        expected = dense_a @ B
+        
+        assert np.allclose(result, expected)
+    
+    def test_transpose_matmul(self):
+        """Test efficient transpose multiplication (CSC strength)."""
+        dense = np.array([
+            [1, 0, 2],
+            [0, 3, 0],
+            [4, 0, 5]
+        ], dtype=np.float32)
+        
+        csc = CSCMatrix.from_dense(dense)
+        
+        # Test A.T @ x (this is where CSC excels)
+        x = np.array([1, 2, 3], dtype=np.float32)
+        result = csc.transpose_matmul(x)
+        expected = dense.T @ x
+        
+        assert np.allclose(result, expected)
+    
+    def test_memory_footprint(self):
+        """Test memory calculation for CSC."""
+        dense = np.eye(100, dtype=np.float32)
+        csc = CSCMatrix.from_dense(dense)
+        
+        mem = csc.memory_footprint()
+        
+        assert 'values' in mem
+        assert 'row_indices' in mem
+        assert 'col_ptr' in mem
+        assert 'total_sparse' in mem
+        assert 'total_dense' in mem
+        assert 'compression_ratio' in mem
+        
+        # Sparse should be smaller for diagonal matrix
+        assert mem['total_sparse'] < mem['total_dense']
+    
+    def test_get_statistics(self):
+        """Test statistics gathering for CSC."""
+        dense = np.eye(50, dtype=np.float32)
+        csc = CSCMatrix.from_dense(dense)
+        
+        stats = csc.get_statistics()
+        
+        assert stats.nnz == 50
+        assert stats.shape == (50, 50)
+        assert 0.95 < stats.sparsity < 1.0  # High sparsity for diagonal
+        assert stats.compression_ratio > 1.0
+    
+    def test_from_csr_conversion(self):
+        """Test CSR to CSC conversion."""
+        dense = np.array([
+            [1, 0, 2],
+            [0, 3, 0],
+            [4, 0, 5]
+        ], dtype=np.float32)
+        
+        # Create CSR
+        csr = CSRMatrix.from_dense(dense)
+        
+        # Convert to CSC
+        csc = CSCMatrix.from_csr(csr)
+        
+        # Verify
+        assert csc.shape == csr.shape
+        assert np.allclose(csc.to_dense(), dense)
+    
+    def test_high_sparsity(self):
+        """Test CSC with very sparse matrix (99%)."""
+        size = 1000
+        dense = np.zeros((size, size), dtype=np.float32)
+        
+        # Add 1% non-zeros
+        num_nonzeros = int(size * size * 0.01)
+        for _ in range(num_nonzeros):
+            i, j = np.random.randint(0, size, 2)
+            dense[i, j] = np.random.randn()
+        
+        csc = CSCMatrix.from_dense(dense)
+        
+        # Verify sparsity
+        stats = csc.get_statistics()
+        assert stats.sparsity > 0.98
+        assert stats.compression_ratio > 10.0
 
 
 class TestBlockSparseMatrix:
-    """Tests for Block-sparse format (TODO: Phase 3)."""
-    pass
+    """Tests for Block-sparse format (Phase 2)."""
+    
+    def test_basic_initialization(self):
+        """Test basic block-sparse matrix creation."""
+        # Create 2 blocks of 2x2
+        blocks = [
+            np.array([[1, 2], [3, 4]], dtype=np.float32),
+            np.array([[5, 6], [7, 8]], dtype=np.float32)
+        ]
+        block_indices = np.array([[0, 0], [1, 1]], dtype=np.int32)
+        
+        bsm = BlockSparseMatrix(
+            blocks=blocks,
+            block_indices=block_indices,
+            block_size=2,
+            shape=(4, 4)
+        )
+        
+        assert bsm.shape == (4, 4)
+        assert bsm.num_blocks == 2
+        assert bsm.block_size == 2
+    
+    def test_invalid_dimensions(self):
+        """Test that invalid dimensions raise ValueError."""
+        blocks = [np.array([[1, 2], [3, 4]], dtype=np.float32)]
+        
+        # Mismatched indices length
+        with pytest.raises(ValueError, match="Number of blocks"):
+            block_indices = np.array([[0, 0], [1, 1]], dtype=np.int32)
+            BlockSparseMatrix(blocks, block_indices, 2, (4, 4))
+        
+        # Wrong block shape
+        with pytest.raises(ValueError, match="Block .* has shape"):
+            blocks_wrong = [np.array([[1, 2, 3]], dtype=np.float32)]
+            block_indices = np.array([[0, 0]], dtype=np.int32)
+            BlockSparseMatrix(blocks_wrong, block_indices, 2, (4, 4))
+    
+    def test_from_dense_conversion(self):
+        """Test conversion from dense to block-sparse."""
+        # Create block-diagonal matrix
+        dense = np.block([
+            [np.eye(4), np.zeros((4, 4))],
+            [np.zeros((4, 4)), np.eye(4) * 2]
+        ]).astype(np.float32)
+        
+        # Convert with block_size=4, threshold=0.2 (20% density minimum)
+        # Diagonal blocks have 4/16 = 0.25 density, so they'll be kept
+        bsm = BlockSparseMatrix.from_dense(dense, block_size=4, threshold=0.2)
+        
+        # Should have 2 blocks (diagonal blocks)
+        assert bsm.num_blocks >= 2
+        assert bsm.block_size == 4
+    
+    def test_to_dense_conversion(self):
+        """Test conversion from block-sparse to dense."""
+        # Create simple block-sparse matrix
+        blocks = [
+            np.eye(2, dtype=np.float32),
+            np.eye(2, dtype=np.float32) * 2
+        ]
+        block_indices = np.array([[0, 0], [1, 1]], dtype=np.int32)
+        
+        bsm = BlockSparseMatrix(blocks, block_indices, 2, (4, 4))
+        dense = bsm.to_dense()
+        
+        expected = np.block([
+            [np.eye(2), np.zeros((2, 2))],
+            [np.zeros((2, 2)), np.eye(2) * 2]
+        ]).astype(np.float32)
+        
+        assert np.allclose(dense, expected)
+    
+    def test_sparse_matmul_vector(self):
+        """Test block-sparse matrix-vector multiplication."""
+        # Create block-diagonal matrix
+        blocks = [
+            np.array([[1, 2], [3, 4]], dtype=np.float32),
+            np.array([[5, 6], [7, 8]], dtype=np.float32)
+        ]
+        block_indices = np.array([[0, 0], [1, 1]], dtype=np.int32)
+        
+        bsm = BlockSparseMatrix(blocks, block_indices, 2, (4, 4))
+        
+        # Test vector multiplication
+        x = np.array([1, 2, 3, 4], dtype=np.float32)
+        result = bsm.sparse_matmul(x)
+        
+        # Compare with dense
+        dense = bsm.to_dense()
+        expected = dense @ x
+        
+        assert np.allclose(result, expected)
+    
+    def test_sparse_matmul_matrix(self):
+        """Test block-sparse matrix-matrix multiplication."""
+        blocks = [
+            np.array([[1, 2], [3, 4]], dtype=np.float32),
+            np.array([[5, 6], [7, 8]], dtype=np.float32)
+        ]
+        block_indices = np.array([[0, 0], [1, 1]], dtype=np.int32)
+        
+        bsm = BlockSparseMatrix(blocks, block_indices, 2, (4, 4))
+        
+        # Test matrix multiplication
+        B = np.array([
+            [1, 0],
+            [0, 1],
+            [1, 0],
+            [0, 1]
+        ], dtype=np.float32)
+        
+        result = bsm.sparse_matmul(B)
+        
+        # Compare with dense
+        dense = bsm.to_dense()
+        expected = dense @ B
+        
+        assert np.allclose(result, expected)
+    
+    def test_memory_footprint(self):
+        """Test memory calculation for block-sparse."""
+        dense = np.block([
+            [np.eye(8), np.zeros((8, 8))],
+            [np.zeros((8, 8)), np.eye(8)]
+        ]).astype(np.float32)
+        
+        bsm = BlockSparseMatrix.from_dense(dense, block_size=8, threshold=0.1)
+        mem = bsm.memory_footprint()
+        
+        assert 'blocks' in mem
+        assert 'indices' in mem
+        assert 'total_sparse' in mem
+        assert 'compression_ratio' in mem
+        
+        # Should have compression
+        assert mem['compression_ratio'] > 1.0
+    
+    def test_get_statistics(self):
+        """Test statistics gathering for block-sparse."""
+        dense = np.eye(16, dtype=np.float32)
+        bsm = BlockSparseMatrix.from_dense(dense, block_size=8, threshold=0.1)
+        
+        stats = bsm.get_statistics()
+        
+        assert 'num_blocks' in stats
+        assert 'block_size' in stats
+        assert 'sparsity' in stats
+        assert 'compression_ratio' in stats
+        assert stats['compression_ratio'] > 1.0
+    
+    def test_wavefront_alignment_rx580(self):
+        """Test that 8x8 blocks are wavefront-aligned for RX 580."""
+        dense = np.eye(64, dtype=np.float32)
+        
+        # Use block_size=8 (8x8=64 elements = RX 580 wavefront size)
+        bsm = BlockSparseMatrix.from_dense(dense, block_size=8, threshold=0.1)
+        
+        stats = bsm.get_statistics()
+        
+        # Check wavefront alignment
+        assert stats['wavefront_aligned'] == True
+        assert bsm.block_size == 8
+    
+    def test_optimal_block_sizes(self):
+        """Test various block sizes for different use cases."""
+        sizes = [4, 8, 16]
+        dense = np.eye(64, dtype=np.float32)
+        
+        for block_size in sizes:
+            # Diagonal matrix has 1/block_size^2 density per block
+            # For 4x4: 1/16 = 0.0625, for 8x8: 1/64 = 0.0156, for 16x16: 1/256 = 0.0039
+            # Use threshold=0.01 to keep diagonal blocks
+            bsm = BlockSparseMatrix.from_dense(
+                dense,
+                block_size=block_size,
+                threshold=0.01
+            )
+            
+            assert bsm.block_size == block_size
+            assert bsm.num_blocks > 0
+    
+    def test_threshold_filtering(self):
+        """Test that low-density blocks are filtered out."""
+        # Create matrix with sparse and dense regions
+        dense = np.zeros((16, 16), dtype=np.float32)
+        
+        # Dense block (will be kept)
+        dense[0:4, 0:4] = np.random.randn(4, 4)
+        
+        # Very sparse block (should be filtered with high threshold)
+        dense[8:12, 8:12] = np.eye(4) * 0.1  # Only diagonal
+        
+        # High threshold should filter sparse blocks
+        bsm_high = BlockSparseMatrix.from_dense(dense, block_size=4, threshold=0.8)
+        
+        # Low threshold should keep both
+        bsm_low = BlockSparseMatrix.from_dense(dense, block_size=4, threshold=0.1)
+        
+        # High threshold should have fewer blocks
+        assert bsm_high.num_blocks < bsm_low.num_blocks
 
 
 class TestDynamicSelection:
