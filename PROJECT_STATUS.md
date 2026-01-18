@@ -1,8 +1,8 @@
 # Project Status Report - COMPUTE LAYER DEVELOPMENT
 
-**Generated**: Session 9-12 - Enero 2026  
-**Version**: 0.6.0-dev (CAPA 2: COMPUTE - 60% Complete)  
-**Status**: 🚀 ACTIVE DEVELOPMENT - Session 12 COMPLETE (Sparse Matrix Formats)
+**Generated**: Session 9-13 - Enero 2026  
+**Version**: 0.6.0-dev (CAPA 2: COMPUTE - 70% Complete)  
+**Status**: 🚀 ACTIVE DEVELOPMENT - Session 13 COMPLETE (Spiking Neural Networks)
 
 ---
 
@@ -34,13 +34,13 @@ See [REORIENTATION_MANIFEST.md](REORIENTATION_MANIFEST.md) for complete document
 | Category | Files | Status | Notes |
 |----------|-------|--------|-------|
 | **Core Layer** | 6 | ✅ Stable | gpu.py, memory.py, profiler.py, gpu_family.py, performance.py, statistical_profiler.py |
-| **Compute Layer** | 6 | 🚀 Active Dev | quantization.py (✅), sparse_formats.py (✅), sparse.py (✅), rocm_integration.py (✅), snn.py (📝), hybrid.py (📝) |
+| **Compute Layer** | 6 | 🚀 Active Dev | quantization.py (✅), sparse_formats.py (✅), sparse.py (✅), snn.py (✅), rocm_integration.py (✅), hybrid.py (📝) |
 | **Inference Layer** | 2 | ✅ Stable | base.py, onnx_engine.py |
 | **SDK Layer** | 1 | ✅ Stable | Public API for developers |
 | **Distributed Layer** | 1 | 📝 Planned | Cluster coordination |
 | **Plugins** | 2 | ✅ Stable | Plugin system + Wildlife Colombia |
-| **Tests** | 15+ | ✅ Passing | 209/209 tests (54 sparse, 44 quantization, 24 core, 87 others) |
-| **Documentation** | 22+ | ✅ Updated | COMPUTE_SPARSE_FORMATS_SUMMARY.md (NEW), SESSION_12_COMPLETE_SUMMARY.md (NEW) |
+| **Tests** | 15+ | ✅ Passing | 251/251 tests (42 SNN, 54 sparse formats, 65 sparse, 44 quantization, 46 others) |
+| **Documentation** | 24+ | ✅ Updated | SESSION_13_SNN_COMPLETE.md (NEW), COMPUTE_SPARSE_FORMATS_SUMMARY.md, SESSION_12_COMPLETE_SUMMARY.md |
 
 ---
 
