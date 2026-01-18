@@ -1,0 +1,211 @@
+# ==============================================================================
+# Docker Compose - Radeon RX 580 AI API Stack
+# Session 17: REST API + Docker Deployment
+#
+# Services:
+# - api: FastAPI server (main service)
+# - prometheus: Metrics collection (optional)
+# - grafana: Visualization dashboard (optional)
+# ==============================================================================
+
+version: '3.8'
+
+# ==============================================================================
+# SERVICES
+# ==============================================================================
+
+services:
+  
+  # ----------------------------------------------------------------------------
+  # API Service - FastAPI Server
+  # ----------------------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: radeon-rx580-ai-api:latest
+    container_name: rx580-api
+    
+    # Ports
+    ports:
+      - "8000:8000"  # API
+    
+    # Volumes
+    volumes:
+      - ./models:/models:ro  # Models (read-only)
+      - ./logs:/logs         # Logs (writable)
+      - /dev/dri:/dev/dri    # GPU access
+      - /dev/kfd:/dev/kfd    # ROCm kernel driver
+    
+    # Devices (GPU access)
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    
+    # Group add (video group for GPU)
+    group_add:
+      - video
+    
+    # Environment variables
+    environment:
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - LOG_LEVEL=info
+      - MAX_MEMORY_MB=7000
+      - PYTHONUNBUFFERED=1
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Resource limits (adjust según hardware)
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 8G
+        reservations:
+          cpus: '2.0'
+          memory: 4G
+    
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Networks
+    networks:
+      - rx580-network
+  
+  # ----------------------------------------------------------------------------
+  # Prometheus - Metrics Collection (Optional)
+  # ----------------------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: rx580-prometheus
+    
+    # Ports
+    ports:
+      - "9090:9090"  # Prometheus UI
+    
+    # Volumes
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    
+    # Command
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Networks
+    networks:
+      - rx580-network
+    
+    # Depends on
+    depends_on:
+      - api
+    
+    # Optional: comentar para deshabilitar
+    profiles:
+      - monitoring
+  
+  # ----------------------------------------------------------------------------
+  # Grafana - Visualization Dashboard (Optional)
+  # ----------------------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:latest
+    container_name: rx580-grafana
+    
+    # Ports
+    ports:
+      - "3000:3000"  # Grafana UI
+    
+    # Volumes
+    volumes:
+      - grafana-data:/var/lib/grafana
+    
+    # Environment
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # CAMBIAR EN PRODUCCIÓN!
+      - GF_INSTALL_PLUGINS=
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Networks
+    networks:
+      - rx580-network
+    
+    # Depends on
+    depends_on:
+      - prometheus
+    
+    # Optional: comentar para deshabilitar
+    profiles:
+      - monitoring
+
+# ==============================================================================
+# NETWORKS
+# ==============================================================================
+
+networks:
+  rx580-network:
+    driver: bridge
+    name: rx580-network
+
+# ==============================================================================
+# VOLUMES
+# ==============================================================================
+
+volumes:
+  prometheus-data:
+    name: rx580-prometheus-data
+  grafana-data:
+    name: rx580-grafana-data
+
+# ==============================================================================
+# USAGE INSTRUCTIONS
+# ==============================================================================
+#
+# Start API only:
+#   docker-compose up -d api
+#
+# Start with monitoring:
+#   docker-compose --profile monitoring up -d
+#
+# Stop all:
+#   docker-compose down
+#
+# View logs:
+#   docker-compose logs -f api
+#
+# Rebuild:
+#   docker-compose build --no-cache
+#
+# Scale API (load balancing):
+#   docker-compose up -d --scale api=3
+#
+# Access services:
+#   API:        http://localhost:8000
+#   API Docs:   http://localhost:8000/docs
+#   Prometheus: http://localhost:9090 (with --profile monitoring)
+#   Grafana:    http://localhost:3000 (with --profile monitoring)
+#
+# ==============================================================================
