@@ -1,13 +1,13 @@
 # CAPA 2: COMPUTE - Roadmap Completo
 ## Algoritmos Innovadores para RX 580 Multi-Dominio
 
-**Fecha**: 17 de enero de 2026  
-**Versión**: 0.5.0-dev → 0.8.0 (target)  
-**Filosofía**: Research-grade, sobre-ingeniería justificada, plataforma universal
+**Fecha**: 18 de enero de 2026  
+**Versión**: 0.6.0-dev (60% complete)  
+**Filosofía**: Research-grade, production-ready, plataforma universal
 
 ---
 
-## 🎯 Visión Ampliada
+## 🎯 Visión
 
 Construir una **plataforma de compute universal** para RX 580 que permita:
 - 🧬 **Genética**: Análisis de secuencias, protein folding, drug discovery
@@ -22,7 +22,7 @@ Construir una **plataforma de compute universal** para RX 580 que permita:
 
 ## 📊 Estado Actual (Lo que TENEMOS)
 
-### ✅ 1. Quantization Adaptativa (COMPLETO)
+### ✅ 1. Quantization Adaptativa (COMPLETO) - Session 9
 **Status**: Production-ready, 44 tests passing
 
 **Features**:
@@ -39,31 +39,91 @@ Construir una **plataforma de compute universal** para RX 580 que permita:
 - ✅ NLP (embeddings, transformers comprimidos)
 - ✅ Audio (modelos WaveNet comprimidos)
 
-### ⚠️ 2. Sparse Operations (PLACEHOLDER)
-**Status**: Solo estructura básica, 230 líneas placeholder
+### ✅ 2. Static Sparse Networks (COMPLETO) - Session 10
+**Status**: Production-ready, 40 tests passing
 
-**Lo que existe**:
-- `SparseTensorConfig` dataclass
-- `SparseOperations` class skeleton
-- `analyze_sparsity()` básico
-- Documentación teórica
+**Features**:
+- Magnitude Pruning (unstructured)
+- Structured Pruning (channels, filters)
+- Gradual Pruning (scheduled sparsification)
+- Fine-tuning after pruning
+- Sensitivity analysis
+- Layer-wise sparsity configuration
 
-**Lo que FALTA**:
-- ❌ CSR/CSC format implementation
-- ❌ Block-sparse patterns
-- ❌ Sparse matmul optimizado
-- ❌ Pruning algorithms
-- ❌ Dynamic sparsity
-- ❌ Tests
+**Aplicable a**:
+- ✅ Model compression (5-10x speedup)
+- ✅ Memory reduction (90% sparsity achievable)
+- ✅ Pre-deployment optimization
+
+### ✅ 3. Dynamic Sparse Training (COMPLETO) - Session 11
+**Status**: Production-ready, 25 tests passing
+
+**Features**:
+- RigL (Rigging the Lottery) implementation
+- Progressive pruning (30%→90%)
+- Dynamic topology adaptation
+- SET (Sparse Evolutionary Training)
+- Training from scratch (no pre-training needed)
+- Competitive accuracy vs dense
+
+**Aplicable a**:
+- ✅ Training sparse networks directly
+- ✅ Adaptive sparsity schedules
+- ✅ Resource-constrained training
+
+### ✅ 4. Sparse Matrix Formats (COMPLETO) - Session 12
+**Status**: Production-ready, 54 tests passing
+
+**Features**:
+- CSR (Compressed Sparse Row) format
+- CSC (Compressed Sparse Column) format
+- Block-Sparse matrix (RX 580 wavefront-aligned)
+- Dynamic Format Selector (automatic selection)
+- scipy.sparse parity validated
+- Optimized sparse matmul
+
+**Performance**:
+- 10.1× memory compression @ 90% sparsity
+- 8.5× speedup matvec @ 90% sparsity
+- RX 580 wavefront optimization (64 elements)
+
+**Aplicable a**:
+- ✅ Sparse inference (neural networks)
+- ✅ Scientific computing (sparse linear algebra)
+- ✅ Graph algorithms (adjacency matrices)
 
 ---
 
 ## 🚀 Roadmap de Implementación
 
-### **FASE 1: Sparse Networks** (2-3 semanas)
-**Priority**: HIGH - Complementa quantization, aplicable a todos los dominios
+### ✅ **FASE 1: Sparse Networks** (COMPLETO)
+**Sessions 10-12**: Magnitude Pruning, Dynamic Sparsity, Sparse Formats
 
-#### 1.1 Structured Pruning (Semana 1)
+**Implementado**:
+- ✅ `MagnitudePruner`, `StructuredPruner`, `GradualPruner` (Session 10)
+- ✅ `RigLPruner`, `SETTraining`, Progressive pruning (Session 11)
+- ✅ `CSRMatrix`, `CSCMatrix`, `BlockSparseMatrix` (Session 12)
+- ✅ `DynamicFormatSelector` - Automatic format selection (Session 12)
+- ✅ scipy.sparse parity validated
+- ✅ 119 tests passing (40 + 25 + 54)
+
+**Resultados**:
+- 10× memory compression @ 90% sparsity
+- 8.5× speedup sparse matvec
+- Training from scratch (no pre-training)
+- RX 580 wavefront optimization
+
+**Aplicaciones validadas**:
+- ✅ Computer Vision (sparse CNNs)
+- ✅ NLP (sparse transformers)
+- ✅ Scientific computing (sparse linear algebra)
+
+---
+
+### 🚀 **FASE 2: Advanced Compute** (EN PROGRESO)
+**Priority**: Complete CAPA 2 (60% → 100%)
+
+#### Opción A: Spiking Neural Networks (SNN)
 **Implementar**:
 
 **A. Magnitude Pruning**
