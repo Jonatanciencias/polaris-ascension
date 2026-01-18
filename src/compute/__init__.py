@@ -45,8 +45,14 @@ __all__ = [
     "QuantizationConfig",
     "create_quantizer_for_gpu",
     "benchmark_calibration_methods",
-    # Planned for future versions:
+    # Sparse Networks (Session 10)
     "SparseOperations",
+    "MagnitudePruner",
+    "StructuredPruner",
+    "GradualPruner",
+    "SparseTensorConfig",
+    "create_sparse_layer",
+    # Planned for future versions:
     "HybridScheduler",
     "NeuralArchitectureSearch",
 ]
@@ -66,8 +72,21 @@ except ImportError as e:
     warnings.warn(f"Failed to import quantization module: {e}")
     AdaptiveQuantizer = None
 
+try:
+    from .sparse import (
+        SparseOperations,
+        MagnitudePruner,
+        StructuredPruner,
+        GradualPruner,
+        SparseTensorConfig,
+        create_sparse_layer,
+    )
+except ImportError as e:
+    import warnings
+    warnings.warn(f"Failed to import sparse module: {e}")
+    SparseOperations = None
+
 # Placeholder imports for future modules
-# from .sparse import SparseOperations
 # from .scheduler import HybridScheduler
 # from .nas import NeuralArchitectureSearch
 
