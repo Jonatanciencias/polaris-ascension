@@ -64,7 +64,7 @@ Version: 0.5.0-dev (Modes 2&3 planned for v0.7.0+)
 License: MIT
 """
 
-__version__ = "0.5.0-dev"
+__version__ = "0.6.0-dev"
 __all__ = [
     "OperatingMode",
     "Coordinator",

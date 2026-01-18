@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="legacy-gpu-ai",
-    version="0.5.0-dev",
+    version="0.6.0-dev",
     author="Legacy GPU AI Platform Contributors",
     description="Open-source AI platform for AMD legacy GPUs - Democratizing AI through accessible hardware",
     long_description=long_description,

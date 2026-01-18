@@ -192,7 +192,11 @@ class SparseOperations:
         # Analyze sparsity
         analysis = self.analyze_sparsity(weight_matrix)
         
-        # TODO v0.6.0: Implement GPU-accelerated sparse matmul
+        # TODO [Session 12-13]: Implement GPU-accelerated sparse matmul
+        # See: COMPUTE_LAYER_ACTION_PLAN.md - Session 12 (Sparse Formats)
+        # Priority: HIGH (next session)
+        # Expected: CSR/CSC format + HIP SpMM kernel
+        # Reference: Gray et al. (2017) "GPU Kernels for Block-Sparse Weights"
         # For now, use numpy dense multiplication
         if analysis["recommendation"] in ["highly_sparse", "sparse"]:
             # Placeholder: Would use CSR-based GPU kernel

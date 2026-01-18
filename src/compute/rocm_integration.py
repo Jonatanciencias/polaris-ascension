@@ -257,7 +257,10 @@ class ROCmQuantizationBackend:
         if not self.is_available():
             return None
         
-        # TODO: Implement GPU kernel for quantization
+        # TODO [Session 13+]: Implement HIP/ROCm GPU kernel for quantization
+        # See: COMPUTE_LAYER_ROADMAP.md - FASE 3: ROCm/HIP Kernels
+        # Priority: MEDIUM (CPU fallback works well for now)
+        # Expected: INT8 GEMM kernel optimized for GCN wavefronts
         # For now, this is a placeholder that documents the interface
         warnings.warn(
             "GPU quantization kernel not yet implemented. "
