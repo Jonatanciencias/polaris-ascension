@@ -5,8 +5,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Version: 0.6.0-dev](https://img.shields.io/badge/version-0.6.0--dev-orange.svg)](https://github.com/yourusername/legacy-gpu-ai)
-[![Tests: 130/130](https://img.shields.io/badge/tests-130%2F130%20passing-brightgreen.svg)](tests/)
-[![CAPA 2: 40%](https://img.shields.io/badge/CAPA%202-40%25%20complete-blue.svg)](COMPUTE_LAYER_ROADMAP.md)
+[![Tests: 209/209](https://img.shields.io/badge/tests-209%2F209%20passing-brightgreen.svg)](tests/)
+[![CAPA 2: 60%](https://img.shields.io/badge/CAPA%202-60%25%20complete-blue.svg)](COMPUTE_LAYER_ROADMAP.md)
+[![Session 12: ✅](https://img.shields.io/badge/Session%2012-Complete-success.svg)](SESSION_12_COMPLETE_SUMMARY.md)
 
 > 🔄 **Project Reorientation (Jan 2026):** This project has evolved from a single-GPU demo framework to a comprehensive platform for AI development on legacy AMD GPUs. See [REORIENTATION_MANIFEST.md](REORIENTATION_MANIFEST.md) for details.
 
