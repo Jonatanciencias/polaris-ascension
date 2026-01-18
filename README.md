@@ -5,9 +5,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Version: 0.6.0-dev](https://img.shields.io/badge/version-0.6.0--dev-orange.svg)](https://github.com/yourusername/legacy-gpu-ai)
-[![Tests: 209/209](https://img.shields.io/badge/tests-209%2F209%20passing-brightgreen.svg)](tests/)
-[![CAPA 2: 60%](https://img.shields.io/badge/CAPA%202-60%25%20complete-blue.svg)](COMPUTE_LAYER_ROADMAP.md)
-[![Session 12: ✅](https://img.shields.io/badge/Session%2012-Complete-success.svg)](SESSION_12_COMPLETE_SUMMARY.md)
+[![Tests: 308/308](https://img.shields.io/badge/tests-308%2F308%20passing-brightgreen.svg)](tests/)
+[![CAPA 2: 100%](https://img.shields.io/badge/CAPA%202-100%25%20COMPLETE-success.svg)](SESSION_14_HYBRID_COMPLETE.md)
+[![Session 14: ✅](https://img.shields.io/badge/Session%2014-Complete-success.svg)](SESSION_14_HYBRID_COMPLETE.md)
+[![Architecture: 9.8/10](https://img.shields.io/badge/architecture-9.8%2F10-success.svg)](PROJECT_AUDIT_SESSION_14.md)
 
 > 🔄 **Project Reorientation (Jan 2026):** This project has evolved from a single-GPU demo framework to a comprehensive platform for AI development on legacy AMD GPUs. See [REORIENTATION_MANIFEST.md](REORIENTATION_MANIFEST.md) for details.
 
@@ -142,26 +143,44 @@ results = cluster.map(inference_fn, images, strategy="round_robin")
 
 ## 📊 Features
 
-### ✅ Production Ready (v0.4.0)
-- Hardware management (GPU detection, VRAM tracking)
-- ONNX inference (FP32/FP16/INT8)
-- Multiple models (MobileNetV2, ResNet-50, EfficientNet, YOLOv5)
-- Performance profiling
-- Web UI and CLI
-- 24 unit tests (100% passing)
+### ✅ Production Ready (CAPA 2: COMPUTE - 100% Complete)
 
-### 🔄 In Development (v0.5.0)
-- Multi-GPU family support (Polaris, Vega)
-- SDK with clean API
-- Sparse Neural Networks implementation
-- Developer documentation
+**Core Layer** (v0.4.0):
+- ✅ Hardware management (GPU detection, VRAM tracking)
+- ✅ Multi-GPU family support (Polaris, Vega, Navi)
+- ✅ Performance profiling & statistical analysis
+- ✅ Memory management with strategies
 
-### 🔮 Planned (v0.6.0+)
-- Spiking Neural Networks (SNN)
-- Adaptive quantization
-- Hybrid CPU-GPU scheduling
+**Compute Layer** (v0.6.0-dev - Sessions 9-14):
+- ✅ **Adaptive Quantization** (INT8/INT4, 4 calibration methods) - Session 9
+- ✅ **Sparse Networks** (Magnitude, Structured, RigL) - Sessions 10-11
+- ✅ **Sparse Matrix Formats** (CSR, CSC, Block-sparse) - Session 12
+- ✅ **Spiking Neural Networks** (LIF, STDP, temporal encoding) - Session 13
+- ✅ **Hybrid CPU/GPU Scheduler** (automatic task distribution) - Session 14
+
+**Inference Layer** (v0.4.0):
+- ✅ ONNX inference (FP32/FP16/INT8)
+- ✅ Multiple models (MobileNetV2, ResNet-50, EfficientNet, YOLOv5)
+- ✅ Web UI and CLI
+
+**Testing**:
+- ✅ 308 tests passing (100%)
+- ✅ Core: 24 tests
+- ✅ Compute: 248 tests
+- ✅ Statistical profiling: 13 tests
+- ✅ Others: 23 tests
+
+### 🔄 In Development (v0.6.0)
+- Inference integration with compute primitives (Session 15)
+- Model compression pipeline
+- Adaptive batch sizing
+- Multi-model serving
+
+### 🔮 Planned (v0.7.0+)
 - Distributed cluster support
-- Plugin ecosystem
+- Multi-GPU coordination (single node)
+- Plugin ecosystem expansion
+- Production deployment tools
 
 ---
 
@@ -237,14 +256,16 @@ We welcome contributions! See [CONTRIBUTING.md](docs/contributing.md).
 
 ## 📈 Roadmap
 
-- [x] **v0.4.0** - Core inference, Web UI, demos
-- [ ] **v0.5.0** - Multi-GPU support, SDK, sparse networks
-- [ ] **v0.6.0** - SNN, adaptive quantization
-- [ ] **v0.7.0** - Distributed clusters
-- [ ] **v0.8.0** - Plugin ecosystem
+- [x] **v0.4.0** - Core inference, Web UI, demos ✅
+- [x] **v0.5.0** - Multi-GPU support, SDK ✅
+- [x] **v0.6.0** - Compute Layer 100% (Quantization, Sparse, SNN, Hybrid) ✅
+- [ ] **v0.7.0** - Inference integration, distributed clusters
+- [ ] **v0.8.0** - Plugin ecosystem, production tools
 - [ ] **v1.0.0** - Production release
 
-See [STRATEGIC_ROADMAP.md](STRATEGIC_ROADMAP.md) for details.
+**Current Status**: v0.6.0-dev (Compute Layer 100% Complete - 308 tests passing)
+
+See [PROJECT_STATUS.md](PROJECT_STATUS.md) and [NEXT_STEPS.md](NEXT_STEPS.md) for details.
 
 ---
 
