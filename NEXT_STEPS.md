@@ -1,8 +1,349 @@
-# 🎯 Next Steps - Session 8 Planning
+# 🎯 Next Steps - CAPA 2: COMPUTE Development
 
-**Last Updated**: 13 de enero de 2026 (Post-Session 7)  
-**Current Version**: 0.4.0  
-**Status**: Production Ready + Real Wildlife Data
+**Last Updated**: 17 de enero de 2026 (Post-Sesión 9)  
+**Current Version**: 0.5.0-dev → 0.8.0  
+**Status**: Research-Grade Compute Primitives
+
+---
+
+## 📋 Resumen de Sesión 9 (COMPLETA)
+
+### ✅ Quantization Module - 100% COMPLETO
+
+**Implementado**:
+1. **Per-channel quantization** (200 líneas)
+   - Separate scale/zero_point por canal
+   - 2-3x mejora en error vs per-tensor
+   - +8.2 dB SQNR improvement
+
+2. **ROCm/HIP integration** (415 líneas)
+   - GPU memory management
+   - Automatic CPU fallback
+   - Multi-device ready
+
+3. **Comprehensive demo** (650 líneas)
+   - 6 demos completos
+   - Benchmarks y comparativas
+   - Professional output
+
+4. **Additional tests** (+5 tests)
+   - Per-channel accuracy
+   - Different axes
+   - Round-trip validation
+   - **44/44 tests passing (100%)**
+
+**Métricas finales**:
+- Código: 3,400 líneas
+- Tests: 44/44 passing
+- Demo: 6/6 exitosos
+- Documentación: Completa
+
+**Commit**: `fe56d2f` - "feat(compute): Complete quantization module"
+
+---
+
+## 🚀 Sesión 10: Sparse Networks - Magnitude & Structured Pruning
+
+### 🎯 Objetivos
+
+**Priority**: HIGH  
+**Duration**: 1-2 días  
+**Status**: 🚀 EN CURSO
+
+### Tareas por Completar
+
+#### 1. Implementar MagnitudePruner (4-5 horas)
+- [ ] Clase base `MagnitudePruner`
+- [ ] Método `prune_layer()` con threshold
+- [ ] Método `global_pruning()` para modelo completo
+- [ ] Método `gradual_pruning()` con schedule
+- [ ] Percentile-based threshold selection
+- [ ] Tests básicos (5 tests)
+
+**Deliverable**: ~300 líneas en `sparse.py`
+
+#### 2. Implementar StructuredPruner (4-5 horas)
+- [ ] Clase `StructuredPruner`
+- [ ] Método `prune_channels()` para CNNs
+- [ ] Método `prune_filters()` para convoluciones
+- [ ] Método `prune_heads()` para attention mechanisms
+- [ ] Importance scoring
+- [ ] Tests estructurados (5 tests)
+
+**Deliverable**: ~300 líneas en `sparse.py`
+
+#### 3. Implementar GradualPruner (3-4 horas)
+- [ ] Clase `GradualPruner`
+- [ ] Polynomial decay schedule
+- [ ] Fine-tuning integration
+- [ ] Iterative pruning loop
+- [ ] Tests graduales (5 tests)
+
+**Deliverable**: ~200 líneas en `sparse.py`
+
+#### 4. Demo & Benchmark (2-3 horas)
+- [ ] `demo_sparse.py` con casos de uso
+- [ ] Benchmark sparse vs dense
+- [ ] Visualización de sparsity patterns
+- [ ] Timing comparisons
+
+**Deliverable**: ~400 líneas en `demo_sparse.py`
+
+#### 5. Tests Comprehensivos (2-3 horas)
+- [ ] Tests de accuracy preservation
+- [ ] Tests de sparsity targets
+- [ ] Tests de edge cases
+- [ ] Integration tests
+- [ ] **Target: 15/15 tests passing**
+
+**Deliverable**: ~400 líneas en `test_sparse.py`
+
+#### 6. Documentación (1-2 horas)
+- [ ] `COMPUTE_SPARSE_SUMMARY.md`
+- [ ] Docstrings completos
+- [ ] Referencias académicas
+- [ ] Ejemplos de uso
+
+**Deliverable**: ~600 líneas documentación
+
+---
+
+## 📊 Roadmap CAPA 2: COMPUTE
+
+### Timeline Global (5-6 meses)
+
+```
+✅ Enero 2026:  Quantization (Sesión 9)
+🚀 Febrero:     Sparse Networks (Sesiones 10-12)
+📝 Marzo:       Spiking Neural Networks (Sesiones 13-16)
+📝 Abril:       Hybrid CPU-GPU (Sesiones 17-19)
+📝 Mayo:        Neural Architecture Search (Sesiones 20-24)
+📝 Junio+:      Domain-Specific Algorithms (Sesiones 25+)
+```
+
+### Fases Detalladas
+
+| Fase | Sesiones | Duración | Status |
+|------|----------|----------|--------|
+| **1. Quantization** | 8-9 | 2 semanas | ✅ COMPLETO |
+| **2. Sparse Networks** | 10-12 | 2-3 semanas | 🚀 EN CURSO |
+| **3. SNN** | 13-16 | 3-4 semanas | 📝 Planeado |
+| **4. Hybrid CPU-GPU** | 17-19 | 2-3 semanas | 📝 Planeado |
+| **5. NAS** | 20-24 | 4-5 semanas | 📝 Planeado |
+| **6. Domain-Specific** | 25-30+ | Ongoing | 📝 Planeado |
+
+---
+
+## 📚 Documentos Clave
+
+### Lectura Obligatoria Antes de Cada Sesión
+
+1. **COMPUTE_LAYER_ACTION_PLAN.md**
+   - Plan detallado sesión por sesión
+   - Checklist de tareas
+   - Entregables esperados
+
+2. **COMPUTE_LAYER_ROADMAP.md**
+   - Visión completa de CAPA 2
+   - Aplicaciones multi-dominio
+   - Referencias académicas
+
+3. **COMPUTE_LAYER_AUDIT.md**
+   - Análisis técnico detallado
+   - Gap analysis
+   - Recomendaciones
+
+4. **CHECKLIST_STATUS.md**
+   - Progreso por fase
+   - Estado de cada componente
+   - Métricas actuales
+
+---
+
+## 🎯 Quick Start Sesión 10
+
+### Preparación (5 minutos)
+
+```bash
+# 1. Revisar plan de acción
+cat COMPUTE_LAYER_ACTION_PLAN.md
+
+# 2. Ver estado actual
+cat CHECKLIST_STATUS.md
+
+# 3. Abrir sparse.py
+vim src/compute/sparse.py
+```
+
+### Orden de Implementación
+
+```
+1. MagnitudePruner      (4-5h)
+   ↓
+2. StructuredPruner     (4-5h)
+   ↓
+3. GradualPruner        (3-4h)
+   ↓
+4. Tests                (2-3h)
+   ↓
+5. Demo                 (2-3h)
+   ↓
+6. Documentación        (1-2h)
+   
+Total: 16-22 horas (~2 días intensivos)
+```
+
+### Validación Final
+
+- [ ] `pytest tests/test_sparse.py -v` → 15/15 passing
+- [ ] `python examples/demo_sparse.py` → ejecuta sin errores
+- [ ] Sparsity 70-90% sin accuracy loss significativa
+- [ ] 5-10x speedup en sparse matmul
+- [ ] Documentación completa
+- [ ] Commit realizado
+
+---
+
+## 💡 Tips para Desarrollo Eficiente
+
+### 1. Test-Driven Development
+Escribe tests ANTES de implementar:
+```python
+def test_magnitude_pruning_70_percent():
+    """Should prune 70% of smallest weights."""
+    weights = np.random.randn(100, 100)
+    pruner = MagnitudePruner(sparsity=0.7)
+    pruned, mask = pruner.prune_layer(weights)
+    
+    assert np.sum(mask == 0) / mask.size == 0.7
+    assert pruned[mask == 0].sum() == 0
+```
+
+### 2. Incremental Implementation
+No implementes todo de una vez:
+- Primero: método básico que funcione
+- Segundo: optimizaciones
+- Tercero: edge cases
+
+### 3. Benchmark Early
+Compara performance constantemente:
+```python
+# Dense
+t0 = time.time()
+result_dense = dense_matmul(A, B)
+t_dense = time.time() - t0
+
+# Sparse
+t0 = time.time()
+result_sparse = sparse_matmul(A_sparse, B)
+t_sparse = time.time() - t0
+
+print(f"Speedup: {t_dense/t_sparse:.2f}x")
+```
+
+### 4. Visualize Sparsity
+Ayuda a debuggear:
+```python
+import matplotlib.pyplot as plt
+plt.spy(pruned_weights)
+plt.title(f"Sparsity: {sparsity:.1%}")
+plt.show()
+```
+
+---
+
+## 🔄 Proceso Iterativo
+
+### Por Cada Feature
+
+```
+1. Design (10-15 min)
+   - Definir API
+   - Pensar edge cases
+   
+2. Test (15-20 min)
+   - Escribir 2-3 tests
+   - Test básico, test edge case
+   
+3. Implement (30-60 min)
+   - Implementación core
+   - Pasar tests
+   
+4. Refactor (10-15 min)
+   - Limpiar código
+   - Agregar docstrings
+   
+5. Validate (5-10 min)
+   - Ejecutar todos los tests
+   - Verificar performance
+```
+
+---
+
+## 📈 Métricas de Éxito
+
+### Por Sesión
+
+- [ ] Todos los tests passing
+- [ ] Demo ejecutable sin errores
+- [ ] Documentación completa con ejemplos
+- [ ] Performance según objetivos
+- [ ] Commit realizado con mensaje descriptivo
+
+### Por Fase
+
+- [ ] Integration tests pasando
+- [ ] Benchmarks documentados
+- [ ] Paper de referencia implementado correctamente
+- [ ] Casos de uso reales demostrados
+
+---
+
+## 🎯 Próximas 3 Sesiones
+
+### Sesión 10 (Hoy/Mañana)
+**Sparse Networks - Pruning Algorithms**
+- MagnitudePruner
+- StructuredPruner
+- GradualPruner
+- 15+ tests
+
+### Sesión 11 (Próxima)
+**Sparse Formats & Operations**
+- CSRMatrix
+- BlockSparseMatrix
+- DynamicSparseActivations
+- 20+ tests
+
+### Sesión 12 (Siguiente)
+**ROCm Sparse Kernels** (Opcional)
+- HIP kernels
+- GPU acceleration
+- Benchmarks
+
+---
+
+## 📞 Referencias Rápidas
+
+### Papers a Implementar (Sesión 10)
+1. Han et al. (2015) - "Learning both Weights and Connections"
+2. Li et al. (2017) - "Pruning Filters for Efficient ConvNets"
+3. Zhu & Gupta (2017) - "To prune, or not to prune"
+
+### Código de Referencia
+- PyTorch `torch.nn.utils.prune`
+- TensorFlow Model Optimization Toolkit
+- NVIDIA Apex
+
+### Documentos del Proyecto
+- `COMPUTE_LAYER_ACTION_PLAN.md` - Plan sesión por sesión
+- `COMPUTE_LAYER_ROADMAP.md` - Visión completa
+- `COMPUTE_SPARSE_SUMMARY.md` - (Crear en Sesión 10)
+
+---
+
+🚀 **¡Let's build something amazing!** 🚀
+
 
 ---
 

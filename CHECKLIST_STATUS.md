@@ -1,13 +1,209 @@
-# 📋 Checklist Status - Radeon RX 580 AI Framework
+# 📋 Checklist Status - CAPA 2: COMPUTE Development
 
-**Última actualización**: 12 de enero de 2026  
-**Versión actual**: 0.4.0
+**Última actualización**: 17 de enero de 2026 (Sesión 9-10)  
+**Versión actual**: 0.5.0-dev → 0.8.0  
+**Fase**: CAPA 2: COMPUTE - Research-grade algorithms
 
 ---
 
-## ✅ Completados (7/8)
+## 🎯 Objetivo: CAPA 2 COMPLETA
 
-### 1. ✅ Probar con modelos más grandes (ResNet-50, EfficientNet)
+Implementar 5 áreas de compute:
+1. ✅ **Quantization Adaptativa** (COMPLETO - Sesión 9)
+2. 🚀 **Sparse Networks** (EN CURSO - Sesión 10-12)
+3. 📝 **Spiking Neural Networks** (Sesiones 13-16)
+4. 📝 **Híbrido CPU-GPU** (Sesiones 17-19)
+5. 📝 **NAS Polaris** (Sesiones 20-24)
+
+---
+
+## ✅ FASE 1: Quantization Adaptativa (COMPLETO)
+
+### Sesión 9: Complete Quantization Module
+**Status**: ✅ COMPLETO (17 Enero 2026)  
+**Commit**: fe56d2f
+
+**Implementado**:
+- [x] 4 métodos de calibración (minmax, percentile, KL, MSE)
+- [x] Per-channel quantization (2-3x mejora vs per-tensor)
+- [x] Per-tensor quantization
+- [x] Quantization-Aware Training (QAT)
+- [x] Mixed-precision optimization
+- [x] INT4 packing/unpacking (8x compression)
+- [x] ROCm/HIP integration
+- [x] GPU-specific optimizations (Polaris, Vega, RDNA)
+- [x] Sensitivity analysis (SQNR, Hessian, cosine similarity)
+- [x] Export/import configuration
+- [x] Factory functions
+
+**Tests**:
+- [x] 44 tests comprehensivos (100% passing)
+- [x] Per-channel accuracy tests
+- [x] Edge cases coverage
+- [x] Integration tests
+- [x] GPU-specific tests
+
+**Demos & Docs**:
+- [x] demo_quantization.py (6 demos completos)
+- [x] COMPUTE_QUANTIZATION_SUMMARY.md (950 líneas)
+- [x] SESSION_9_QUANTIZATION_COMPLETE.md
+
+**Métricas**:
+- Código: 3,400 líneas
+- Tests: 44/44 passing
+- Compression: 4-8x
+- Accuracy loss: <1%
+- Speedup: 1.5-2x
+
+---
+
+## 🚀 FASE 2: Sparse Networks (EN CURSO)
+
+### Sesión 10: Magnitude & Structured Pruning
+**Status**: 🚀 EN PROGRESO (17 Enero 2026)
+
+**Por implementar**:
+- [ ] `MagnitudePruner` class
+  - [ ] Global pruning con threshold
+  - [ ] Layer-wise pruning
+  - [ ] Gradual pruning con schedule
+- [ ] `StructuredPruner` class
+  - [ ] Channel pruning para CNNs
+  - [ ] Filter pruning
+  - [ ] Head pruning para attention
+- [ ] `GradualPruner` class
+  - [ ] Polynomial decay
+  - [ ] Fine-tuning durante pruning
+- [ ] Tests (15+ tests)
+- [ ] Demo con benchmark
+- [ ] Documentación
+
+**Objetivos**:
+- 70-90% sparsity sin accuracy loss
+- 5-10x speedup en sparse ops
+- Tests 15/15 passing
+
+### Sesión 11: Sparse Formats & Operations
+**Status**: 📝 PLANEADO
+
+**Por implementar**:
+- [ ] `CSRMatrix` class (Compressed Sparse Row)
+- [ ] `CSCMatrix` class (Compressed Sparse Column)
+- [ ] `BlockSparseMatrix` class (wavefront-aligned)
+- [ ] `DynamicSparseActivations` class
+- [ ] Sparse matmul optimizado
+- [ ] Tests (20+ tests)
+- [ ] Benchmarks
+
+### Sesión 12: ROCm Sparse Kernels (Opcional)
+**Status**: 📝 PLANEADO
+
+**Por implementar**:
+- [ ] HIP kernel para SpMV
+- [ ] HIP kernel para SpMM
+- [ ] Memory coalescing
+- [ ] Python bindings
+
+---
+
+## 📝 FASE 3: Spiking Neural Networks (PLANEADO)
+
+### Sesión 13: LIF Neurons & Basic SNN
+- [ ] `LIFNeuron` class
+- [ ] `SNNLayer` class
+- [ ] `SNNNetwork` class
+- [ ] Tests (10+ tests)
+
+### Sesión 14: STDP Learning
+- [ ] `STDPLearning` class
+- [ ] Online learning
+- [ ] Tests (10+ tests)
+
+### Sesión 15: Encoding Schemes
+- [ ] `RateEncoder` class
+- [ ] `TemporalEncoder` class
+- [ ] `PopulationEncoder` class
+- [ ] Tests (10+ tests)
+
+### Sesión 16: SNN Applications
+- [ ] `SNNImageClassifier`
+- [ ] `SNNTimeSeriesPredictor`
+- [ ] Benchmarks SNN vs ANN
+
+---
+
+## 📝 FASE 4: Híbrido CPU-GPU (PLANEADO)
+
+### Sesión 17: Dynamic Scheduler
+- [ ] `HybridScheduler` class
+- [ ] Roofline-based decisions
+- [ ] Tests (10+ tests)
+
+### Sesión 18: Async Pipeline
+- [ ] `AsyncPipeline` class
+- [ ] Overlapped execution
+- [ ] Tests (10+ tests)
+
+### Sesión 19: Heterogeneous Models
+- [ ] `HeterogeneousModel` class
+- [ ] Device placement optimizer
+- [ ] Tests (10+ tests)
+
+---
+
+## 📝 FASE 5: Neural Architecture Search (PLANEADO)
+
+### Sesiones 20-21: Search Space & DARTS
+- [ ] `PolarisSearchSpace` class
+- [ ] `DARTS_Polaris` class
+- [ ] Supernet construction
+- [ ] Tests (10+ tests)
+
+### Sesión 22: Hardware-Aware Predictor
+- [ ] `LatencyPredictor` class
+- [ ] Feature extraction
+- [ ] Tests (10+ tests)
+
+### Sesiones 23-24: Multi-Objective NAS
+- [ ] `MultiObjectiveNAS` class
+- [ ] NSGA-II algorithm
+- [ ] Pareto frontier
+- [ ] Tests (10+ tests)
+
+---
+
+## 📊 Progreso General CAPA 2
+
+| Área | Sesiones | Status | Progreso |
+|------|----------|--------|----------|
+| Quantization | 8-9 | ✅ COMPLETO | 100% |
+| Sparse Networks | 10-12 | 🚀 EN CURSO | 5% |
+| SNN | 13-16 | 📝 PLANEADO | 0% |
+| Hybrid CPU-GPU | 17-19 | 📝 PLANEADO | 0% |
+| NAS | 20-24 | 📝 PLANEADO | 0% |
+
+**Total**: 5% completado (1/5 áreas)
+
+---
+
+## 🎯 Próxima Sesión
+
+**Sesión 10**: Sparse Networks - Magnitude & Structured Pruning
+
+**Comenzar con**:
+1. Implementar `MagnitudePruner`
+2. Implementar `StructuredPruner`
+3. Implementar `GradualPruner`
+4. Tests comprehensivos
+5. Demo con benchmark
+
+**Documentos clave**:
+- `COMPUTE_LAYER_ACTION_PLAN.md` (Plan detallado)
+- `COMPUTE_LAYER_ROADMAP.md` (Visión completa)
+- `COMPUTE_LAYER_AUDIT.md` (Análisis técnico)
+
+🚀 **¡Continuemos construyendo!** 🚀
+
 **Status**: COMPLETADO en v0.4.0
 
 **Implementación**:
