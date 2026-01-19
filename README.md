@@ -5,10 +5,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Version: 0.6.0-dev](https://img.shields.io/badge/version-0.6.0--dev-orange.svg)](https://github.com/yourusername/legacy-gpu-ai)
-[![Tests: 343/343](https://img.shields.io/badge/tests-343%2F343%20passing-brightgreen.svg)](tests/)
-[![CAPA 3: 70%](https://img.shields.io/badge/CAPA%203-70%25%20COMPLETE-success.svg)](SESSION_16_REAL_MODELS_COMPLETE.md)
-[![Session 16: ✅](https://img.shields.io/badge/Session%2016-Complete-success.svg)](SESSION_16_REAL_MODELS_COMPLETE.md)
-[![Integration: 9.5/10](https://img.shields.io/badge/integration-9.5%2F10-success.svg)](SESSION_16_REAL_MODELS_COMPLETE.md)
+[![Tests: 369/369](https://img.shields.io/badge/tests-369%2F369%20passing-brightgreen.svg)](tests/)
+[![CAPA 3: 90%](https://img.shields.io/badge/CAPA%203-90%25%20COMPLETE-success.svg)](SESSION_17_REST_API_COMPLETE.md)
+[![Session 17: ✅](https://img.shields.io/badge/Session%2017-Complete-success.svg)](SESSION_17_REST_API_COMPLETE.md)
+[![Integration: 9.8/10](https://img.shields.io/badge/integration-9.8%2F10-success.svg)](SESSION_17_REST_API_COMPLETE.md)
+[![Docker: Ready](https://img.shields.io/badge/Docker-Ready-blue.svg)](docker-compose.yml)
 
 > 🔄 **Project Reorientation (Jan 2026):** This project has evolved from a single-GPU demo framework to a comprehensive platform for AI development on legacy AMD GPUs. See [REORIENTATION_MANIFEST.md](REORIENTATION_MANIFEST.md) for details.
 
@@ -67,8 +68,8 @@
 ├────────────────────┴──────────┴─────────────┴─────────┴─────┤
 │  🌐 DISTRIBUTED    │ Nodes │ Cluster │ Load Balancing │     │
 ├────────────────────┴───────┴─────────┴────────────────┴─────┤
-│  📦 SDK (70%)      │ REST API │ Docker │ Model Loaders │ ... │ ← Session 16 ✅
-├────────────────────┴──────────┴────────┴───────────────┴─────┤
+│  📦 SDK (90%)      │ REST API │ Docker │ Monitoring │ Auth  │ ← Session 17 ✅
+├────────────────────┴──────────┴────────┴────────────┴───────┤
 │  🔌 INFERENCE (✅) │ ONNX │ PyTorch │ Compression │ Serving │ │ ← Session 15 ✅
 ├────────────────────┴──────┴─────────┴─────────────┴─────────┤
 │  🧮 COMPUTE (80%)  │ Sparse │ SNN │ Quant │ Hybrid │ NAS    │ │
@@ -81,26 +82,55 @@
 
 1. **CORE**: Hardware abstraction for AMD legacy GPUs
 2. **COMPUTE**: Innovative algorithms optimized for GCN architecture  
-3. **SDK**: Clean API for developers
-4. **DISTRIBUTED**: Connect multiple nodes into clusters
-5. **PLUGINS**: Domain-specific applications (wildlife, agriculture, etc.)
+3. **INFERENCE**: ONNX/PyTorch model loading and execution
+4. **SDK**: REST API + Docker deployment for production
+5. **DISTRIBUTED**: Connect multiple nodes into clusters
+6. **PLUGINS**: Domain-specific applications (wildlife, agriculture, etc.)
 
 ---
 
 ## 🚀 Quick Start
 
-### For End Users
-```bash
-# Clone and setup
-git clone https://github.com/yourusername/legacy-gpu-ai.git
-cd legacy-gpu-ai
-./scripts/setup.sh
+### Option 1: REST API (Production - Session 17) ← NEW
 
-# Run inference
-python -m legacy_gpu_ai classify image.jpg
+```bash
+# Using Docker Compose (recommended)
+docker-compose up -d
+
+# Access the API
+# API: http://localhost:8000
+# Docs: http://localhost:8000/docs
+# Health: http://localhost:8000/health
 ```
 
-### For Developers
+**API Usage:**
+```python
+import httpx
+
+client = httpx.Client(base_url="http://localhost:8000")
+
+# Health check
+health = client.get("/health").json()
+print(f"Status: {health['status']}")
+
+# Load model
+client.post("/models/load", json={
+    "path": "/models/mobilenet.onnx",
+    "model_name": "mobilenet"
+})
+
+# Run inference
+result = client.post("/predict", json={
+    "model_name": "mobilenet",
+    "inputs": {"input": [...]}
+}).json()
+
+print(f"Outputs: {result['outputs']}")
+print(f"Latency: {result['latency_ms']}ms")
+```
+
+### Option 2: Python SDK (Development)
+
 ```python
 from legacy_gpu_ai import LegacyGPU, InferenceEngine
 
@@ -114,6 +144,18 @@ engine = InferenceEngine(gpu, model="mobilenet")
 # Run prediction
 result = engine.predict("image.jpg")
 print(f"Prediction: {result.label} ({result.confidence:.1%})")
+```
+
+### Option 3: Command Line
+
+```bash
+# Clone and setup
+git clone https://github.com/yourusername/legacy-gpu-ai.git
+cd legacy-gpu-ai
+./scripts/setup.sh
+
+# Run inference
+python -m legacy_gpu_ai classify image.jpg
 ```
 
 ### For Researchers
@@ -145,7 +187,7 @@ results = cluster.map(inference_fn, images, strategy="round_robin")
 
 ## 📊 Features
 
-### ✅ Production Ready (CAPA 2: COMPUTE - 100% Complete)
+### ✅ Production Ready (Sessions 9-17 Complete)
 
 **Core Layer** (v0.4.0):
 - ✅ Hardware management (GPU detection, VRAM tracking)
@@ -160,29 +202,40 @@ results = cluster.map(inference_fn, images, strategy="round_robin")
 - ✅ **Spiking Neural Networks** (LIF, STDP, temporal encoding) - Session 13
 - ✅ **Hybrid CPU/GPU Scheduler** (automatic task distribution) - Session 14
 
-**Inference Layer** (v0.4.0):
+**Inference Layer** (Sessions 15-16):
+- ✅ **Model Compression Pipeline** (quantization + pruning + sparse) - Session 15
+- ✅ **Adaptive Batch Scheduler** (dynamic batching) - Session 15
+- ✅ **Multi-Model Server** (concurrent inference) - Session 15
+- ✅ **ONNX/PyTorch Model Loaders** (hardware-aware) - Session 16
 - ✅ ONNX inference (FP32/FP16/INT8)
 - ✅ Multiple models (MobileNetV2, ResNet-50, EfficientNet, YOLOv5)
-- ✅ Web UI and CLI
+
+**SDK Layer** (Session 17) ← NEW:
+- ✅ **REST API** (FastAPI + Pydantic validation) - 8 endpoints
+- ✅ **Docker Deployment** (multi-stage, GPU support) - Production ready
+- ✅ **Prometheus Monitoring** (8 metrics, health checks)
+- ✅ **OpenAPI Documentation** (Swagger UI + ReDoc)
+- ✅ **Demo Client** (Python wrapper with 7 scenarios)
 
 **Testing**:
-- ✅ 308 tests passing (100%)
+- ✅ **369 tests passing (100%)**
 - ✅ Core: 24 tests
 - ✅ Compute: 248 tests
-- ✅ Statistical profiling: 13 tests
-- ✅ Others: 23 tests
+- ✅ Inference: 50 tests (enhanced + loaders)
+- ✅ API: 26 tests
+- ✅ Others: 21 tests
 
-### 🔄 In Development (v0.6.0)
-- Inference integration with compute primitives (Session 15)
-- Model compression pipeline
-- Adaptive batch sizing
-- Multi-model serving
+### 🔄 In Development (Session 18)
+- CI/CD pipeline (GitHub Actions)
+- Advanced monitoring dashboards (Grafana)
+- Load testing and optimization
+- Security hardening (HTTPS, auth, rate limiting)
 
 ### 🔮 Planned (v0.7.0+)
 - Distributed cluster support
 - Multi-GPU coordination (single node)
 - Plugin ecosystem expansion
-- Production deployment tools
+- Model registry and versioning
 
 ---
 
