@@ -1,0 +1,151 @@
+# ==============================================================================
+# Alertmanager Configuration
+# ==============================================================================
+# Configuración para envío de notificaciones de alertas
+#
+# Soporta:
+# - Slack
+# - Discord (via webhook)
+# - Email
+# - PagerDuty
+# - Webhook genérico
+# ==============================================================================
+
+global:
+  # Tiempo para agrupar alertas similares
+  resolve_timeout: 5m
+
+# ==============================================================================
+# Templates (opcional)
+# ==============================================================================
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+# ==============================================================================
+# Route configuration
+# ==============================================================================
+route:
+  # Receiver por defecto
+  receiver: 'default'
+  
+  # Agrupar alertas por estas labels
+  group_by: ['alertname', 'severity', 'component']
+  
+  # Esperar este tiempo antes de enviar primera alerta
+  group_wait: 10s
+  
+  # Esperar este tiempo antes de enviar nuevas alertas del mismo grupo
+  group_interval: 10s
+  
+  # Re-enviar alerta si no se resuelve en este tiempo
+  repeat_interval: 3h
+  
+  # Sub-routes para diferentes severidades
+  routes:
+    # Alertas críticas
+    - match:
+        severity: critical
+      receiver: 'critical'
+      group_wait: 5s
+      repeat_interval: 1h
+    
+    # Alertas de warning
+    - match:
+        severity: warning
+      receiver: 'warning'
+      repeat_interval: 6h
+
+# ==============================================================================
+# Receivers configuration
+# ==============================================================================
+receivers:
+  
+  # ------------------------------------------------------------------------------
+  # Default receiver (logs only)
+  # ------------------------------------------------------------------------------
+  - name: 'default'
+    # Sin configuración = solo logs
+  
+  # ------------------------------------------------------------------------------
+  # Critical alerts receiver
+  # ------------------------------------------------------------------------------
+  - name: 'critical'
+    
+    # Slack (descomentar y configurar)
+    # slack_configs:
+    #   - api_url: 'YOUR_SLACK_WEBHOOK_URL'
+    #     channel: '#alerts-critical'
+    #     title: '🚨 CRITICAL: {{ .GroupLabels.alertname }}'
+    #     text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+    #     send_resolved: true
+    
+    # Discord (descomentar y configurar)
+    # webhook_configs:
+    #   - url: 'YOUR_DISCORD_WEBHOOK_URL'
+    #     send_resolved: true
+    
+    # Email (descomentar y configurar)
+    # email_configs:
+    #   - to: 'alerts@example.com'
+    #     from: 'prometheus@example.com'
+    #     smarthost: 'smtp.gmail.com:587'
+    #     auth_username: 'your-email@gmail.com'
+    #     auth_password: 'your-app-password'
+    #     headers:
+    #       Subject: '🚨 CRITICAL ALERT: {{ .GroupLabels.alertname }}'
+  
+  # ------------------------------------------------------------------------------
+  # Warning alerts receiver
+  # ------------------------------------------------------------------------------
+  - name: 'warning'
+    
+    # Slack (descomentar y configurar)
+    # slack_configs:
+    #   - api_url: 'YOUR_SLACK_WEBHOOK_URL'
+    #     channel: '#alerts-warning'
+    #     title: '⚠️ WARNING: {{ .GroupLabels.alertname }}'
+    #     text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+    #     send_resolved: true
+
+# ==============================================================================
+# Inhibit rules (opcional)
+# ==============================================================================
+# Evita enviar ciertas alertas si otra más importante está activa
+inhibit_rules:
+  # Si hay alerta crítica, no enviar warnings del mismo componente
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['component']
+  
+  # Si el contenedor está down, no enviar otras alertas del mismo
+  - source_match:
+      alertname: 'ContainerDown'
+    target_match_re:
+      component: 'api|inference|model_loader'
+
+# ==============================================================================
+# CONFIGURACIÓN RÁPIDA
+# ==============================================================================
+#
+# Para configurar Slack:
+# 1. Ir a https://api.slack.com/messaging/webhooks
+# 2. Crear webhook para tu workspace
+# 3. Copiar URL del webhook
+# 4. Descomentar slack_configs arriba y pegar URL
+#
+# Para configurar Discord:
+# 1. Ir a Server Settings → Integrations → Webhooks
+# 2. Crear nuevo webhook
+# 3. Copiar webhook URL
+# 4. Agregar /slack al final de la URL (Discord compatible con Slack format)
+# 5. Descomentar webhook_configs arriba y pegar URL
+#
+# Para configurar Email:
+# 1. Habilitar "App Passwords" en tu cuenta de Gmail
+# 2. Generar nueva app password
+# 3. Descomentar email_configs arriba
+# 4. Configurar SMTP settings y credenciales
+#
+# ==============================================================================

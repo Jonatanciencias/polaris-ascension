@@ -1,0 +1,57 @@
+# ==============================================================================
+# Prometheus Alert Rules - System Monitoring
+# ==============================================================================
+# Reglas de alertas para monitoreo de sistema y recursos
+#
+# Alertas configuradas:
+# - Container Restarting: Contenedor reiniciándose frecuentemente
+# - High CPU Usage: CPU usage >80%
+# - Out of Memory: Memoria crítica
+# ==============================================================================
+
+groups:
+  - name: system_alerts
+    interval: 30s
+    rules:
+      
+      # ==========================================================================
+      # Alert 1: Container Restarting
+      # ==========================================================================
+      - alert: ContainerRestarting
+        expr: |
+          increase(container_restarts_total[10m]) > 2
+        for: 1m
+        labels:
+          severity: warning
+          component: docker
+        annotations:
+          summary: "Container restarting frequently"
+          description: "Container has restarted {{ $value }} times in last 10 minutes"
+      
+      # ==========================================================================
+      # Alert 2: Container Down
+      # ==========================================================================
+      - alert: ContainerDown
+        expr: |
+          up{job="api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: docker
+        annotations:
+          summary: "Container is down"
+          description: "API container is not responding"
+      
+      # ==========================================================================
+      # Alert 3: Prometheus Target Down
+      # ==========================================================================
+      - alert: PrometheusTargetDown
+        expr: |
+          up == 0
+        for: 2m
+        labels:
+          severity: warning
+          component: prometheus
+        annotations:
+          summary: "Prometheus target down"
+          description: "Target {{ $labels.instance }} is down"

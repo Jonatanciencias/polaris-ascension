@@ -1,0 +1,140 @@
+# ==============================================================================
+# Prometheus Alert Rules - API Monitoring
+# ==============================================================================
+# Reglas de alertas para monitoreo del API REST
+#
+# Alertas configuradas:
+# - High Error Rate: >5% de requests con errores
+# - High Latency: p95 latency >100ms
+# - API Down: No requests en 1 minuto
+# - High Request Rate: >100 req/s (posible ataque)
+# ==============================================================================
+
+groups:
+  - name: api_alerts
+    interval: 30s
+    rules:
+      
+      # ==========================================================================
+      # Alert 1: High Error Rate
+      # ==========================================================================
+      - alert: HighErrorRate
+        expr: |
+          (
+            rate(api_requests_total{status=~"5.."}[5m])
+            /
+            rate(api_requests_total[5m])
+          ) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High API error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+      
+      # ==========================================================================
+      # Alert 2: Critical Error Rate
+      # ==========================================================================
+      - alert: CriticalErrorRate
+        expr: |
+          (
+            rate(api_requests_total{status=~"5.."}[5m])
+            /
+            rate(api_requests_total[5m])
+          ) > 0.10
+        for: 1m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "CRITICAL: Very high API error rate"
+          description: "Error rate is {{ $value | humanizePercentage }} (threshold: 10%)"
+      
+      # ==========================================================================
+      # Alert 3: High Latency (P95)
+      # ==========================================================================
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.95, 
+            rate(api_request_duration_seconds_bucket[5m])
+          ) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High API latency detected"
+          description: "P95 latency is {{ $value | humanizeDuration }} (threshold: 100ms)"
+      
+      # ==========================================================================
+      # Alert 4: API Down / No Requests
+      # ==========================================================================
+      - alert: APIDown
+        expr: |
+          rate(api_requests_total[1m]) == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "API appears to be down"
+          description: "No requests received in the last minute"
+      
+      # ==========================================================================
+      # Alert 5: High Request Rate (Potential Attack)
+      # ==========================================================================
+      - alert: HighRequestRate
+        expr: |
+          rate(api_requests_total[1m]) > 100
+        for: 2m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "Unusually high request rate"
+          description: "Request rate is {{ $value | humanize }} req/s (threshold: 100 req/s)"
+      
+      # ==========================================================================
+      # Alert 6: Model Load Failures
+      # ==========================================================================
+      - alert: ModelLoadFailures
+        expr: |
+          increase(models_loaded_total{status="failed"}[10m]) > 3
+        for: 1m
+        labels:
+          severity: warning
+          component: model_loader
+        annotations:
+          summary: "Multiple model load failures"
+          description: "{{ $value }} model load failures in last 10 minutes"
+      
+      # ==========================================================================
+      # Alert 7: Slow Inference
+      # ==========================================================================
+      - alert: SlowInference
+        expr: |
+          histogram_quantile(0.95,
+            rate(inference_duration_seconds_bucket[5m])
+          ) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          component: inference
+        annotations:
+          summary: "Slow model inference detected"
+          description: "P95 inference time is {{ $value | humanizeDuration }} (threshold: 1s)"
+      
+      # ==========================================================================
+      # Alert 8: High Memory Usage
+      # ==========================================================================
+      - alert: HighMemoryUsage
+        expr: |
+          memory_usage_bytes / 1024 / 1024 / 1024 > 7.0
+        for: 5m
+        labels:
+          severity: warning
+          component: memory
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanize }}GB (threshold: 7GB)"

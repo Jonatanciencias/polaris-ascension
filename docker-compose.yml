@@ -100,6 +100,7 @@ services:
     # Volumes
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts:/etc/prometheus/alerts:ro
       - prometheus-data:/prometheus
     
     # Command
@@ -109,6 +110,7 @@ services:
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--web.enable-lifecycle'
+      - '--storage.tsdb.retention.time=30d'
     
     # Restart policy
     restart: unless-stopped
@@ -139,12 +141,53 @@ services:
     # Volumes
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     
     # Environment
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin  # CAMBIAR EN PRODUCCIÓN!
       - GF_INSTALL_PLUGINS=
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/api-overview.json
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Networks
+    networks:
+      - rx580-network
+    
+    # Depends on
+    depends_on:
+      - prometheus
+    
+    # Optional: comentar para deshabilitar
+    profiles:
+      - monitoring
+  
+  # ----------------------------------------------------------------------------
+  # Alertmanager - Alert Notifications (Optional)
+  # ----------------------------------------------------------------------------
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: rx580-alertmanager
+    
+    # Ports
+    ports:
+      - "9093:9093"  # Alertmanager UI
+    
+    # Volumes
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    
+    # Command
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
     
     # Restart policy
     restart: unless-stopped
@@ -179,6 +222,8 @@ volumes:
     name: rx580-prometheus-data
   grafana-data:
     name: rx580-grafana-data
+  alertmanager-data:
+    name: rx580-alertmanager-data
 
 # ==============================================================================
 # USAGE INSTRUCTIONS
@@ -203,9 +248,10 @@ volumes:
 #   docker-compose up -d --scale api=3
 #
 # Access services:
-#   API:        http://localhost:8000
-#   API Docs:   http://localhost:8000/docs
-#   Prometheus: http://localhost:9090 (with --profile monitoring)
-#   Grafana:    http://localhost:3000 (with --profile monitoring)
+#   API:           http://localhost:8000
+#   API Docs:      http://localhost:8000/docs
+#   Prometheus:    http://localhost:9090 (with --profile monitoring)
+#   Grafana:       http://localhost:3000 (with --profile monitoring, admin/admin)
+#   Alertmanager:  http://localhost:9093 (with --profile monitoring)
 #
 # ==============================================================================

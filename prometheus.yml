@@ -15,19 +15,19 @@ global:
     environment: 'production'
 
 # ==============================================================================
-# Alertmanager configuration (opcional)
+# Alertmanager configuration
 # ==============================================================================
-# alerting:
-#   alertmanagers:
-#     - static_configs:
-#         - targets:
-#           # - alertmanager:9093
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
 
 # ==============================================================================
-# Rule files (opcional)
+# Rule files
 # ==============================================================================
-# rule_files:
-#   - "alert_rules.yml"
+rule_files:
+  - "/etc/prometheus/alerts/*.yml"
 
 # ==============================================================================
 # Scrape configurations
