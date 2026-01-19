@@ -1,0 +1,136 @@
+# ==============================================================================
+# Pylint Configuration File
+# ==============================================================================
+# Configuración para análisis estático avanzado de código Python
+# ==============================================================================
+
+[MASTER]
+# Usar múltiples procesos para acelerar pylint
+jobs=0
+
+# Python code to execute, usually for sys.path manipulation
+init-hook='import sys; sys.path.append("src")'
+
+# Archivos o directorios a ignorar
+ignore=CVS,.git,__pycache__,.venv,venv,build,dist
+
+# Patrones de archivos a ignorar
+ignore-patterns=test_.*?\.py,conftest\.py
+
+[MESSAGES CONTROL]
+# Deshabilitar algunos checks específicos
+disable=
+    C0111,  # missing-docstring
+    C0103,  # invalid-name (permite nombres cortos como x, y, z)
+    R0903,  # too-few-public-methods
+    R0913,  # too-many-arguments
+    W0212,  # protected-access (permite _var en tests)
+    W0511,  # fixme (TODOs)
+    C0330,  # bad-continuation (deprecated)
+    C0326,  # bad-whitespace (deprecated)
+    E1101,  # no-member (false positives con numpy/torch)
+
+[REPORTS]
+# Set output format
+output-format=colorized
+
+# Include message's id in output
+include-ids=yes
+
+# Reports
+reports=yes
+
+# Python expression to evaluate
+evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)
+
+[BASIC]
+# Good variable names
+good-names=i,j,k,x,y,z,_,f,fp,lr,df,np,pd
+
+# Regular expression for constant names
+const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
+
+# Regular expression for variable names
+variable-rgx=[a-z_][a-z0-9_]{0,30}$
+
+[FORMAT]
+# Maximum number of characters on a single line
+max-line-length=100
+
+# Maximum number of lines in a module
+max-module-lines=1000
+
+# String used as indentation unit
+indent-string='    '
+
+# Number of spaces of indent required inside a hanging or continued line
+indent-after-paren=4
+
+[DESIGN]
+# Maximum number of arguments for function / method
+max-args=7
+
+# Maximum number of attributes for a class
+max-attributes=10
+
+# Maximum number of boolean expressions in an if statement
+max-bool-expr=5
+
+# Maximum number of branch for function / method body
+max-branches=15
+
+# Maximum number of locals for function / method body
+max-locals=20
+
+# Maximum number of parents for a class
+max-parents=7
+
+# Maximum number of public methods for a class
+max-public-methods=20
+
+# Maximum number of return / yield for function / method body
+max-returns=6
+
+# Maximum number of statements in function / method body
+max-statements=50
+
+# Minimum number of public methods for a class
+min-public-methods=0
+
+[SIMILARITIES]
+# Minimum lines number of a similarity
+min-similarity-lines=4
+
+# Ignore comments when computing similarities
+ignore-comments=yes
+
+# Ignore docstrings when computing similarities
+ignore-docstrings=yes
+
+# Ignore imports when computing similarities
+ignore-imports=yes
+
+[TYPECHECK]
+# List of module names for which member attributes should not be checked
+ignored-modules=numpy,torch,pyopencl,cv2
+
+# List of classes names for which member attributes should not be checked
+ignored-classes=numpy,torch,pyopencl
+
+[IMPORTS]
+# Allow wildcard imports from these modules
+allow-wildcard-with-all=yes
+
+[CLASSES]
+# List of method names used to declare instance attributes
+defining-attr-methods=__init__,__new__,setUp
+
+# List of valid names for the first argument in a class method
+valid-classmethod-first-arg=cls
+
+# List of valid names for the first argument in a metaclass class method
+valid-metaclass-classmethod-first-arg=mcs
+
+[EXCEPTIONS]
+# Exceptions that will emit a warning when being caught
+overgeneral-exceptions=Exception

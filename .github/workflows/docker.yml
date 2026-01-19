@@ -1,0 +1,203 @@
+# ==============================================================================
+# Docker Build & Push Workflow
+# ==============================================================================
+# Workflow para construir y publicar imágenes Docker automáticamente
+# Se ejecuta en push a main/master, tags y workflow_dispatch manual
+# 
+# Incluye:
+# - Multi-stage build optimizado
+# - Multi-platform support (amd64, arm64)
+# - Automatic tagging (latest, version, commit SHA)
+# - Docker Hub + GitHub Container Registry
+# - Build cache para optimizar tiempos
+# - Security scanning con Trivy
+# ==============================================================================
+
+name: Docker Build & Push
+
+on:
+  # Ejecutar en push a branches principales
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'src/**'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - 'requirements.txt'
+  
+  # Ejecutar en tags de versión
+  push:
+    tags:
+      - 'v*.*.*'
+  
+  # Permitir ejecución manual
+  workflow_dispatch:
+    inputs:
+      push_to_registry:
+        description: 'Push to registry'
+        required: false
+        default: 'true'
+
+# Permisos necesarios
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  # ==============================================================================
+  # Job 1: Build y Push Docker Image
+  # ==============================================================================
+  docker-build:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      # Checkout del código
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history para versioning
+      
+      # Setup Docker Buildx para multi-platform builds
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+      
+      # Setup QEMU para emulación multi-platform
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+      
+      # Login a Docker Hub (opcional - comentar si no se usa)
+      # - name: Login to Docker Hub
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      # Login a GitHub Container Registry
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      # Extraer metadata (tags, labels) para Docker
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+      
+      # Build y Push de la imagen
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64  # Agregar ,linux/arm64 si se necesita
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+      
+      # Scan de seguridad con Trivy
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ github.repository }}:latest
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+      
+      # Upload de resultados de seguridad
+      - name: Upload Trivy results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+      
+      # Test básico de la imagen
+      - name: Test Docker image
+        run: |
+          echo "Testing Docker image..."
+          docker run --rm ghcr.io/${{ github.repository }}:latest python -c "import src; print('✅ Import successful')"
+      
+      # Output de información del build
+      - name: Image digest
+        run: |
+          echo "Image built and pushed successfully!"
+          echo "Digest: ${{ steps.build.outputs.digest }}"
+          echo "Tags: ${{ steps.meta.outputs.tags }}"
+
+  # ==============================================================================
+  # Job 2: Build docker-compose Stack
+  # ==============================================================================
+  docker-compose-test:
+    name: Test Docker Compose Stack
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      # Build del stack completo
+      - name: Build docker-compose stack
+        run: |
+          echo "Building docker-compose stack..."
+          docker-compose build --parallel
+      
+      # Verificar que los servicios arranquen correctamente
+      - name: Start docker-compose stack
+        run: |
+          echo "Starting docker-compose stack..."
+          docker-compose up -d
+          sleep 10  # Wait for services to be ready
+      
+      # Health check de servicios
+      - name: Health check services
+        run: |
+          echo "Checking service health..."
+          
+          # Check API service
+          curl -f http://localhost:8000/health || exit 1
+          
+          # Check Prometheus (si está configurado)
+          # curl -f http://localhost:9090/-/healthy || exit 1
+          
+          echo "✅ All services healthy"
+      
+      # Logs si falla
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          echo "Showing docker-compose logs..."
+          docker-compose logs
+      
+      # Cleanup
+      - name: Cleanup
+        if: always()
+        run: |
+          docker-compose down -v

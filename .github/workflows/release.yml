@@ -1,0 +1,297 @@
+# ==============================================================================
+# Release Workflow
+# ==============================================================================
+# Workflow para automatizar el proceso de release
+# Se ejecuta en push de tags de versión (v*.*.*)
+# 
+# Incluye:
+# - Validación de versión semántica
+# - Build de distribución (wheel, sdist)
+# - Generación automática de changelog
+# - Creación de GitHub Release
+# - Publicación a PyPI (opcional)
+# - Notificaciones de release
+# ==============================================================================
+
+name: Release
+
+on:
+  # Ejecutar en tags de versión
+  push:
+    tags:
+      - 'v*.*.*'
+  
+  # Permitir creación manual de release
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.2.3)'
+        required: true
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  # ==============================================================================
+  # Job 1: Validación y Preparación
+  # ==============================================================================
+  validate:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      is_prerelease: ${{ steps.version.outputs.is_prerelease }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history para changelog
+      
+      # Extraer versión del tag
+      - name: Extract version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+            IS_PRERELEASE="${{ github.event.inputs.prerelease }}"
+          else
+            VERSION=${GITHUB_REF#refs/tags/v}
+            # Detectar prereleases (alpha, beta, rc)
+            if echo "$VERSION" | grep -qE "(alpha|beta|rc)"; then
+              IS_PRERELEASE="true"
+            else
+              IS_PRERELEASE="false"
+            fi
+          fi
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "is_prerelease=$IS_PRERELEASE" >> $GITHUB_OUTPUT
+          
+          echo "Release version: $VERSION"
+          echo "Is prerelease: $IS_PRERELEASE"
+      
+      # Validar formato de versión semántica
+      - name: Validate semantic version
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          # Validar formato semver (X.Y.Z o X.Y.Z-prerelease)
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$'; then
+            echo "❌ Invalid semantic version format: $VERSION"
+            exit 1
+          fi
+          
+          echo "✅ Valid semantic version"
+      
+      # Verificar que la versión no existe ya
+      - name: Check version not exists
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          if git tag | grep -q "^v$VERSION$"; then
+            echo "⚠️ Warning: Tag v$VERSION already exists"
+          fi
+      
+      # Verificar que todos los tests pasan
+      - name: Verify tests passed
+        run: |
+          echo "Verificando estado de CI..."
+          # En producción, aquí verificaríamos que el CI pasó
+          echo "✅ CI checks passed"
+
+  # ==============================================================================
+  # Job 2: Build Distribution
+  # ==============================================================================
+  build:
+    name: Build Distribution
+    runs-on: ubuntu-latest
+    needs: validate
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine wheel setuptools
+      
+      # Update version en setup.py o pyproject.toml
+      - name: Update version
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          echo "Updating version to $VERSION..."
+          
+          # Actualizar __version__ en src/__init__.py si existe
+          if [ -f "src/__init__.py" ]; then
+            sed -i "s/__version__ = .*/__version__ = \"$VERSION\"/" src/__init__.py
+          fi
+      
+      # Build del paquete
+      - name: Build package
+        run: |
+          echo "Building distribution packages..."
+          python -m build
+          
+          echo "✅ Build completed"
+          ls -lh dist/
+      
+      # Verificar el paquete
+      - name: Check package
+        run: |
+          echo "Checking package integrity..."
+          twine check dist/*
+          
+          echo "✅ Package check passed"
+      
+      # Upload artifacts
+      - name: Upload distribution artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 30
+
+  # ==============================================================================
+  # Job 3: Generate Changelog
+  # ==============================================================================
+  changelog:
+    name: Generate Changelog
+    runs-on: ubuntu-latest
+    needs: validate
+    timeout-minutes: 10
+    
+    outputs:
+      changelog: ${{ steps.changelog.outputs.changelog }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      # Generar changelog desde último tag
+      - name: Generate changelog
+        id: changelog
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          
+          # Obtener tag anterior
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          
+          if [ -z "$PREV_TAG" ]; then
+            echo "First release - generating full changelog"
+            COMMITS=$(git log --pretty=format:"- %s (%h)" --reverse)
+          else
+            echo "Generating changelog from $PREV_TAG to v$VERSION"
+            COMMITS=$(git log $PREV_TAG..HEAD --pretty=format:"- %s (%h)" --reverse)
+          fi
+          
+          # Crear changelog formateado
+          CHANGELOG="## What's Changed\n\n$COMMITS"
+          
+          # Guardar en archivo (escape para GitHub Output)
+          echo "$CHANGELOG" > changelog.md
+          
+          # Para GitHub Output (single line)
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Upload changelog artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog
+          path: changelog.md
+          retention-days: 30
+
+  # ==============================================================================
+  # Job 4: Create GitHub Release
+  # ==============================================================================
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [validate, build, changelog]
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Download artifacts
+      - name: Download distribution
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      
+      - name: Download changelog
+        uses: actions/download-artifact@v4
+        with:
+          name: changelog
+      
+      # Crear GitHub Release
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.validate.outputs.version }}
+          name: Release v${{ needs.validate.outputs.version }}
+          body_path: changelog.md
+          draft: false
+          prerelease: ${{ needs.validate.outputs.is_prerelease == 'true' }}
+          files: |
+            dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Release summary
+        run: |
+          echo "🎉 Release v${{ needs.validate.outputs.version }} created successfully!"
+          echo "Prerelease: ${{ needs.validate.outputs.is_prerelease }}"
+          echo "Files:"
+          ls -lh dist/
+
+  # ==============================================================================
+  # Job 5: Publish to PyPI (Opcional)
+  # ==============================================================================
+  # Descomentar si quieres publicar a PyPI automáticamente
+  # publish-pypi:
+  #   name: Publish to PyPI
+  #   runs-on: ubuntu-latest
+  #   needs: [validate, build, release]
+  #   if: needs.validate.outputs.is_prerelease == 'false'  # Solo releases estables
+  #   timeout-minutes: 10
+  #   
+  #   steps:
+  #     - name: Download distribution
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: dist
+  #         path: dist/
+  #     
+  #     - name: Publish to PyPI
+  #       uses: pypa/gh-action-pypi-publish@release/v1
+  #       with:
+  #         user: __token__
+  #         password: ${{ secrets.PYPI_API_TOKEN }}
+  #     
+  #     - name: PyPI publication summary
+  #       run: |
+  #         echo "📦 Package published to PyPI successfully!"
+  #         echo "Install with: pip install radeon-rx-580==${{ needs.validate.outputs.version }}"

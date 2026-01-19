@@ -1,0 +1,59 @@
+# ==============================================================================
+# Flake8 Configuration
+# ==============================================================================
+# Configuración para linting de código Python (PEP8 compliance)
+# ==============================================================================
+
+[flake8]
+# Maximum line length
+max-line-length = 100
+
+# Maximum McCabe complexity
+max-complexity = 12
+
+# Exclude directories
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    build,
+    dist,
+    *.egg-info,
+    .tox,
+    .pytest_cache,
+    .mypy_cache,
+    migrations
+
+# Ignore specific errors/warnings
+ignore =
+    E203,  # whitespace before ':' (conflicts with black)
+    E266,  # too many leading '#' for block comment
+    E501,  # line too long (handled by black)
+    W503,  # line break before binary operator (conflicts with black)
+    W504,  # line break after binary operator
+    E402,  # module level import not at top of file
+    E731,  # do not assign a lambda expression
+
+# Select specific checks to run
+select =
+    E,    # pycodestyle errors
+    W,    # pycodestyle warnings
+    F,    # pyflakes
+    C,    # mccabe complexity
+    B,    # flake8-bugbear
+    I,    # isort
+
+# Per-file ignores
+per-file-ignores =
+    __init__.py:F401,F403
+    tests/*:S101,F401,F811
+
+# Show source code for each error
+show-source = True
+
+# Show statistics
+statistics = True
+
+# Count errors
+count = True

@@ -1,0 +1,101 @@
+# ==============================================================================
+# Dependabot Configuration
+# ==============================================================================
+# Configuración para actualizaciones automáticas de dependencias
+# 
+# Dependabot creará PRs automáticamente para:
+# - Python dependencies (pip)
+# - GitHub Actions workflows
+# - Docker base images
+# ==============================================================================
+
+version: 2
+
+updates:
+  # ==============================================================================
+  # Python Dependencies (pip)
+  # ==============================================================================
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    
+    # Agrupar updates menores y patches
+    groups:
+      development-dependencies:
+        patterns:
+          - "pytest*"
+          - "black*"
+          - "isort*"
+          - "flake8*"
+          - "mypy*"
+      
+      production-dependencies:
+        patterns:
+          - "numpy*"
+          - "torch*"
+          - "onnx*"
+    
+    # Reviewers automáticos
+    reviewers:
+      - "jonatanciencias"  # Actualizar con tu username
+    
+    # Labels para los PRs
+    labels:
+      - "dependencies"
+      - "python"
+    
+    # Commit message prefix
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+    
+    # Ignorar algunas versiones específicas si es necesario
+    # ignore:
+    #   - dependency-name: "numpy"
+    #     versions: ["1.24.x"]
+
+  # ==============================================================================
+  # GitHub Actions Dependencies
+  # ==============================================================================
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    
+    reviewers:
+      - "jonatanciencias"
+    
+    labels:
+      - "dependencies"
+      - "github-actions"
+    
+    commit-message:
+      prefix: "ci"
+
+  # ==============================================================================
+  # Docker Dependencies
+  # ==============================================================================
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    
+    reviewers:
+      - "jonatanciencias"
+    
+    labels:
+      - "dependencies"
+      - "docker"
+    
+    commit-message:
+      prefix: "docker"

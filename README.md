@@ -7,9 +7,10 @@
 [![Version: 0.6.0-dev](https://img.shields.io/badge/version-0.6.0--dev-orange.svg)](https://github.com/yourusername/legacy-gpu-ai)
 [![Tests: 369/369](https://img.shields.io/badge/tests-369%2F369%20passing-brightgreen.svg)](tests/)
 [![CAPA 3: 90%](https://img.shields.io/badge/CAPA%203-90%25%20COMPLETE-success.svg)](SESSION_17_REST_API_COMPLETE.md)
-[![Session 17: ✅](https://img.shields.io/badge/Session%2017-Complete-success.svg)](SESSION_17_REST_API_COMPLETE.md)
+[![Session 18: In Progress](https://img.shields.io/badge/Session%2018-In%20Progress-yellow.svg)](START_HERE_SESSION_18.md)
 [![Integration: 9.8/10](https://img.shields.io/badge/integration-9.8%2F10-success.svg)](SESSION_17_REST_API_COMPLETE.md)
 [![Docker: Ready](https://img.shields.io/badge/Docker-Ready-blue.svg)](docker-compose.yml)
+[![CI/CD: Automated](https://img.shields.io/badge/CI%2FCD-Automated-success.svg)](.github/workflows/)
 
 > 🔄 **Project Reorientation (Jan 2026):** This project has evolved from a single-GPU demo framework to a comprehensive platform for AI development on legacy AMD GPUs. See [REORIENTATION_MANIFEST.md](REORIENTATION_MANIFEST.md) for details.
 
