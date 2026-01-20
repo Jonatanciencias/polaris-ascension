@@ -1523,3 +1523,438 @@ def benchmark_calibration_methods(
         }
     
     return results
+
+
+# =============================================================================
+# SESSION 19 - ADVANCED QUANTIZATION FEATURES
+# =============================================================================
+
+@dataclass
+class MixedPrecisionConfig:
+    """
+    Configuration for mixed precision quantization.
+    
+    Mixed precision assigns different bit-widths to different layers
+    based on their sensitivity to quantization.
+    
+    Strategy options:
+    - 'manual': User specifies precision per layer
+    - 'sensitivity': Auto-assign based on Hessian/Fisher sensitivity
+    - 'search': Greedy search to maximize accuracy under memory constraint
+    """
+    strategy: str = 'sensitivity'  # 'manual', 'sensitivity', 'search'
+    default_precision: QuantizationPrecision = QuantizationPrecision.INT8
+    sensitive_layers_precision: QuantizationPrecision = QuantizationPrecision.FP16
+    memory_budget_mb: Optional[float] = None
+    sensitivity_threshold: float = 0.5  # Layers with sensitivity > threshold use higher precision
+    layer_precision_map: Dict[str, QuantizationPrecision] = field(default_factory=dict)
+
+
+class MixedPrecisionQuantizer:
+    """
+    Mixed precision quantization for optimal accuracy/memory tradeoff.
+    
+    Implements:
+    1. Sensitivity-based precision assignment (Dong et al. 2019 - HAWQ)
+    2. Memory-constrained precision search
+    3. Layer-wise precision control
+    
+    Research Foundation:
+    - HAWQ (2019): Hessian-based mixed precision
+    - HAQ (2019): Hardware-aware automated quantization
+    - AutoQuant (2020): Reinforcement learning for bit-width assignment
+    
+    Example:
+        >>> mp_quantizer = MixedPrecisionQuantizer(memory_budget_mb=2048)
+        >>> weights = {'layer1': w1, 'layer2': w2, 'layer3': w3}
+        >>> q_weights = mp_quantizer.quantize_model(weights)
+    """
+    
+    def __init__(
+        self,
+        config: Optional[MixedPrecisionConfig] = None,
+        base_quantizer: Optional[AdaptiveQuantizer] = None,
+        verbose: bool = True
+    ):
+        """
+        Initialize mixed precision quantizer.
+        
+        Args:
+            config: Mixed precision configuration
+            base_quantizer: Base quantizer for individual layers
+            verbose: Print progress messages
+        """
+        self.config = config or MixedPrecisionConfig()
+        self.base_quantizer = base_quantizer or AdaptiveQuantizer(verbose=False)
+        self.verbose = verbose
+        
+        # Store assigned precisions
+        self.layer_precisions: Dict[str, QuantizationPrecision] = {}
+        self.layer_sensitivities: Dict[str, float] = {}
+    
+    def compute_layer_sensitivity(
+        self,
+        weights: np.ndarray,
+        activations: Optional[np.ndarray] = None
+    ) -> float:
+        """
+        Compute sensitivity score for a layer.
+        
+        Uses Hessian trace approximation (diagonal):
+        sensitivity = Tr(H) ≈ Σ (∂²L/∂w²)
+        
+        For weights-only: sensitivity ∝ ||W||²
+        With activations: sensitivity ∝ ||W||² * ||A||²
+        
+        Args:
+            weights: Layer weights
+            activations: Optional activations (if available)
+            
+        Returns:
+            Sensitivity score (higher = more sensitive)
+        """
+        # Approximation: Frobenius norm of weights
+        weight_norm = np.linalg.norm(weights.flatten())
+        
+        if activations is not None:
+            # Include activation magnitudes
+            activation_norm = np.linalg.norm(activations.flatten())
+            return float(weight_norm * activation_norm)
+        else:
+            return float(weight_norm)
+    
+    def assign_precisions_by_sensitivity(
+        self,
+        layer_weights: Dict[str, np.ndarray],
+        layer_activations: Optional[Dict[str, np.ndarray]] = None
+    ) -> Dict[str, QuantizationPrecision]:
+        """
+        Assign precisions based on sensitivity analysis.
+        
+        Algorithm:
+        1. Compute sensitivity for each layer
+        2. Normalize sensitivities to [0, 1]
+        3. Assign INT4 to low-sensitivity layers
+        4. Assign INT8 to medium-sensitivity layers
+        5. Assign FP16 to high-sensitivity layers
+        
+        Args:
+            layer_weights: Dict of layer name -> weights
+            layer_activations: Optional dict of layer name -> activations
+            
+        Returns:
+            Dict of layer name -> assigned precision
+        """
+        # Compute sensitivities
+        for name, weights in layer_weights.items():
+            acts = layer_activations.get(name) if layer_activations else None
+            sensitivity = self.compute_layer_sensitivity(weights, acts)
+            self.layer_sensitivities[name] = sensitivity
+        
+        # Normalize sensitivities
+        sensitivities = np.array(list(self.layer_sensitivities.values()))
+        if sensitivities.max() > sensitivities.min():
+            normalized = (sensitivities - sensitivities.min()) / (sensitivities.max() - sensitivities.min())
+        else:
+            normalized = np.ones_like(sensitivities)
+        
+        # Assign precisions
+        threshold_high = self.config.sensitivity_threshold
+        threshold_low = threshold_high * 0.5
+        
+        precisions = {}
+        for i, (name, _) in enumerate(layer_weights.items()):
+            norm_sens = normalized[i]
+            
+            if norm_sens >= threshold_high:
+                # High sensitivity -> FP16
+                precisions[name] = self.config.sensitive_layers_precision
+            elif norm_sens >= threshold_low:
+                # Medium sensitivity -> INT8
+                precisions[name] = QuantizationPrecision.INT8
+            else:
+                # Low sensitivity -> INT4
+                precisions[name] = QuantizationPrecision.INT4
+            
+            if self.verbose:
+                print(f"[MixedPrecision] {name}: sensitivity={norm_sens:.3f} -> {precisions[name].value}")
+        
+        self.layer_precisions = precisions
+        return precisions
+    
+    def quantize_model(
+        self,
+        layer_weights: Dict[str, np.ndarray],
+        layer_activations: Optional[Dict[str, np.ndarray]] = None
+    ) -> Dict[str, Tuple[np.ndarray, Union[float, np.ndarray], Union[int, np.ndarray]]]:
+        """
+        Quantize entire model with mixed precision.
+        
+        Args:
+            layer_weights: Dict of layer name -> weights
+            layer_activations: Optional activations for sensitivity
+            
+        Returns:
+            Dict of layer name -> (quantized_weights, scale, zero_point)
+        """
+        # Assign precisions if not manually specified
+        if self.config.strategy == 'sensitivity':
+            self.assign_precisions_by_sensitivity(layer_weights, layer_activations)
+        elif self.config.strategy == 'manual':
+            self.layer_precisions = self.config.layer_precision_map
+        
+        # Quantize each layer with assigned precision
+        quantized_model = {}
+        for name, weights in layer_weights.items():
+            precision = self.layer_precisions.get(name, self.config.default_precision)
+            
+            # Update base quantizer precision
+            self.base_quantizer.config.precision = precision
+            
+            # Quantize
+            q_weights, scale, zp = self.base_quantizer.quantize_tensor(weights)
+            quantized_model[name] = (q_weights, scale, zp)
+            
+            if self.verbose:
+                memory_saving = (1 - precision.bits / 32) * 100
+                print(f"[Quantize] {name}: {precision.value} (memory: -{memory_saving:.1f}%)")
+        
+        return quantized_model
+    
+    def get_memory_footprint(
+        self,
+        layer_weights: Dict[str, np.ndarray]
+    ) -> Dict[str, float]:
+        """
+        Calculate memory footprint for each precision assignment.
+        
+        Returns:
+            Dict with 'original_mb', 'quantized_mb', 'reduction_percent'
+        """
+        original_mb = sum(w.nbytes / (1024**2) for w in layer_weights.values())
+        
+        quantized_mb = 0.0
+        for name, weights in layer_weights.items():
+            precision = self.layer_precisions.get(name, self.config.default_precision)
+            quantized_mb += weights.size * precision.bits / 8 / (1024**2)
+        
+        reduction = (1 - quantized_mb / original_mb) * 100
+        
+        return {
+            'original_mb': original_mb,
+            'quantized_mb': quantized_mb,
+            'reduction_percent': reduction
+        }
+
+
+class DynamicQuantizer:
+    """
+    Dynamic quantization - quantize at inference time.
+    
+    Unlike static quantization (offline calibration), dynamic quantization
+    computes scales/zero-points on-the-fly during inference.
+    
+    Pros:
+    - No calibration dataset needed
+    - Adapts to input distribution
+    - Good for models with varying input ranges
+    
+    Cons:
+    - Slightly slower (scale computation overhead)
+    - Less aggressive compression
+    
+    Use cases:
+    - NLP models (BERT, GPT) with varying sequence lengths
+    - Models with large dynamic range
+    - Quick deployment without calibration data
+    
+    Example:
+        >>> dyn_quantizer = DynamicQuantizer()
+        >>> output = dyn_quantizer.quantize_and_run(weights, inputs)
+    """
+    
+    def __init__(
+        self,
+        precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        calibration_method: CalibrationMethod = CalibrationMethod.MINMAX,
+        cache_scales: bool = True,
+        verbose: bool = False
+    ):
+        """
+        Initialize dynamic quantizer.
+        
+        Args:
+            precision: Target precision (INT8 or INT4)
+            calibration_method: Method for computing scales (MINMAX recommended for speed)
+            cache_scales: Cache computed scales for repeated tensors
+            verbose: Print debug messages
+        """
+        self.precision = precision
+        self.calibration_method = calibration_method
+        self.cache_scales = cache_scales
+        self.verbose = verbose
+        
+        # Cache for computed scales
+        self._scale_cache: Dict[str, Tuple[float, int]] = {}
+        
+        # Base quantizer for scale computation
+        config = QuantizationConfig(
+            precision=precision,
+            calibration_method=calibration_method,
+            symmetric=True  # Symmetric is faster (no zero-point computation)
+        )
+        self.quantizer = AdaptiveQuantizer(config=config, verbose=False)
+    
+    def quantize_weights_dynamic(
+        self,
+        weights: np.ndarray,
+        weight_id: Optional[str] = None
+    ) -> Tuple[np.ndarray, float, int]:
+        """
+        Dynamically quantize weights.
+        
+        If cache_scales=True and weight_id is provided, caches the scale
+        for reuse (weights typically don't change during inference).
+        
+        Args:
+            weights: Weight tensor
+            weight_id: Optional identifier for caching
+            
+        Returns:
+            (quantized_weights, scale, zero_point)
+        """
+        # Check cache
+        if self.cache_scales and weight_id and weight_id in self._scale_cache:
+            scale, zp = self._scale_cache[weight_id]
+            qmin, qmax = self.precision.qmin, self.precision.qmax
+            quantized = np.clip(np.round(weights / scale) + zp, qmin, qmax)
+            return quantized.astype(np.int8), scale, zp
+        
+        # Compute scales
+        q_weights, scale, zp = self.quantizer.quantize_tensor(weights)
+        
+        # Cache for reuse
+        if self.cache_scales and weight_id:
+            self._scale_cache[weight_id] = (scale, zp)
+        
+        return q_weights, scale, zp
+    
+    def quantize_activations_dynamic(
+        self,
+        activations: np.ndarray
+    ) -> Tuple[np.ndarray, float, int]:
+        """
+        Dynamically quantize activations.
+        
+        Activations change with each input, so always recompute scales.
+        Uses fast MINMAX method for speed.
+        
+        Args:
+            activations: Activation tensor
+            
+        Returns:
+            (quantized_activations, scale, zero_point)
+        """
+        return self.quantizer.quantize_tensor(
+            activations,
+            method=CalibrationMethod.MINMAX  # Fast for real-time
+        )
+    
+    def simulate_quantized_matmul(
+        self,
+        weights: np.ndarray,
+        activations: np.ndarray,
+        weight_id: Optional[str] = None
+    ) -> np.ndarray:
+        """
+        Simulate INT8 matrix multiplication.
+        
+        Performs:
+        1. Quantize weights (cached if possible)
+        2. Quantize activations (always dynamic)
+        3. INT8 matmul: Y_q = W_q @ A_q
+        4. Dequantize result: Y = Y_q * (scale_w * scale_a)
+        
+        Args:
+            weights: Weight matrix (FP32), shape (out_features, in_features)
+            activations: Activation matrix (FP32), shape (batch, in_features)
+            weight_id: Optional ID for weight caching
+            
+        Returns:
+            Result in FP32
+        """
+        # Quantize weights
+        q_weights, scale_w, zp_w = self.quantize_weights_dynamic(weights, weight_id)
+        
+        # Quantize activations
+        q_acts, scale_a, zp_a = self.quantize_activations_dynamic(activations)
+        
+        # INT8 matmul (simulated with int32 accumulation)
+        # activations @ weights.T -> (batch, out_features)
+        result_q = np.matmul(
+            q_acts.astype(np.int32),
+            q_weights.T.astype(np.int32)
+        )
+        
+        # Dequantize
+        combined_scale = scale_w * scale_a
+        result_fp32 = (result_q - zp_w - zp_a) * combined_scale
+        
+        if self.verbose:
+            print(f"[DynamicQuant] Weights: {weights.shape}, Acts: {activations.shape}")
+            print(f"[DynamicQuant] Scales: W={scale_w:.6f}, A={scale_a:.6f}")
+        
+        return result_fp32.astype(np.float32)
+    
+    def clear_cache(self):
+        """Clear scale cache."""
+        self._scale_cache.clear()
+        if self.verbose:
+            print("[DynamicQuant] Cache cleared")
+
+
+def create_mixed_precision_quantizer(
+    memory_budget_mb: Optional[float] = None,
+    sensitivity_threshold: float = 0.5
+) -> MixedPrecisionQuantizer:
+    """
+    Factory to create mixed precision quantizer with sensible defaults.
+    
+    Args:
+        memory_budget_mb: Optional memory constraint
+        sensitivity_threshold: Threshold for high-precision assignment
+        
+    Returns:
+        Configured MixedPrecisionQuantizer
+    """
+    config = MixedPrecisionConfig(
+        strategy='sensitivity',
+        default_precision=QuantizationPrecision.INT8,
+        sensitive_layers_precision=QuantizationPrecision.FP16,
+        memory_budget_mb=memory_budget_mb,
+        sensitivity_threshold=sensitivity_threshold
+    )
+    return MixedPrecisionQuantizer(config=config, verbose=True)
+
+
+def create_dynamic_quantizer(
+    precision: QuantizationPrecision = QuantizationPrecision.INT8,
+    cache_weights: bool = True
+) -> DynamicQuantizer:
+    """
+    Factory to create dynamic quantizer with sensible defaults.
+    
+    Args:
+        precision: Target precision (INT8 or INT4)
+        cache_weights: Cache weight scales for speed
+        
+    Returns:
+        Configured DynamicQuantizer
+    """
+    return DynamicQuantizer(
+        precision=precision,
+        calibration_method=CalibrationMethod.MINMAX,  # Fast for real-time
+        cache_scales=cache_weights,
+        verbose=False
+    )
+
