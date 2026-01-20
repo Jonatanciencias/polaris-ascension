@@ -28,9 +28,35 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, status, Response
+from fastapi import FastAPI, HTTPException, status, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
+# Importar security modules (Session 18 - Phase 4)
+SECURITY_AVAILABLE = False
+require_api_key = None
+require_admin = None
+require_user = None
+require_readonly = None
+
+try:
+    from .security import require_api_key, require_admin, require_user, require_readonly, security_config
+    from .rate_limit import create_limiter, add_rate_limiting_middleware
+    from .security_headers import add_security_middleware
+    SECURITY_AVAILABLE = True
+    logger.info("Security modules loaded successfully")
+except ImportError as e:
+    SECURITY_AVAILABLE = False
+    logger.warning(f"Security modules not available: {e}")
+    
+    # Define dummy dependencies para cuando security no está disponible
+    def dummy_dependency():
+        return None
+    
+    require_api_key = dummy_dependency
+    require_admin = lambda: dummy_dependency
+    require_user = lambda: dummy_dependency
+    require_readonly = lambda: dummy_dependency
 
 # Importar inference engine (Session 15 & 16)
 try:
@@ -186,7 +212,17 @@ async def lifespan(app: FastAPI):
     logger.info("=" * 80)
     logger.info("Starting Radeon RX 580 AI API Server")
     logger.info("Session 17: REST API + Docker Deployment")
+    logger.info("Session 18: Security Hardening")
     logger.info("=" * 80)
+    
+    # Inicializar security middleware
+    if SECURITY_AVAILABLE:
+        logger.info("Initializing security middleware...")
+        add_security_middleware(app)
+        add_rate_limiting_middleware(app)
+        logger.info("✅ Security enabled: Authentication, Rate Limiting, Headers")
+    else:
+        logger.warning("⚠️  Security modules not available - running without protection")
     
     # Inicializar engine
     server_state.initialize_engine()
@@ -324,11 +360,26 @@ async def root():
     return {
         "service": "Radeon RX 580 AI API",
         "version": "0.6.0-dev",
-        "session": "17 - REST API + Docker",
+        "session": "18 - Production Hardening",
         "status": "running",
-        "docs": "/docs",
-        "health": "/health",
-        "metrics": "/metrics"
+        "security": {
+            "enabled": SECURITY_AVAILABLE,
+            "features": [
+                "API Key Authentication (RBAC)",
+                "Rate Limiting (Adaptive)",
+                "Security Headers (CSP, HSTS, etc.)",
+                "Input Validation"
+            ] if SECURITY_AVAILABLE else ["None - Running without security"],
+            "auth_methods": ["Header (X-API-Key)", "Query (?api_key=)", "Bearer Token"] if SECURITY_AVAILABLE else []
+        },
+        "endpoints": {
+            "docs": "/docs",
+            "health": "/health (public)",
+            "metrics": "/metrics (readonly+)",
+            "models": "/models (user+)",
+            "inference": "/predict (user+)",
+            "admin": "/models/load, /models/{id} (admin only)"
+        }
     }
 
 
@@ -392,7 +443,10 @@ async def metrics():
     status_code=status.HTTP_201_CREATED,
     tags=["Models"]
 )
-async def load_model(request: LoadModelRequest):
+async def load_model(
+    request: LoadModelRequest,
+    api_key: dict = Depends(require_admin())
+):
     """
     Carga un modelo en el servidor.
     
@@ -496,8 +550,14 @@ async def load_model(request: LoadModelRequest):
         )
 
 
-@app.delete("/models/{model_name}", tags=["Models"])
-async def unload_model(model_name: str):
+@app.delete(
+    "/models/{model_name}",
+    tags=["Models"]
+)
+async def unload_model(
+    model_name: str,
+    api_key: dict = Depends(require_admin())
+):
     """
     Descarga un modelo del servidor.
     
@@ -552,8 +612,14 @@ async def unload_model(model_name: str):
         )
 
 
-@app.get("/models", response_model=ModelsListResponse, tags=["Models"])
-async def list_models():
+@app.get(
+    "/models",
+    response_model=ModelsListResponse,
+    tags=["Models"]
+)
+async def list_models(
+    api_key: dict = Depends(require_user())
+):
     """
     Lista todos los modelos cargados.
     
@@ -627,8 +693,15 @@ async def get_model_info(model_name: str):
 # ENDPOINTS - Inference
 # ============================================================================
 
-@app.post("/predict", response_model=PredictResponse, tags=["Inference"])
-async def predict(request: PredictRequest):
+@app.post(
+    "/predict",
+    response_model=PredictResponse,
+    tags=["Inference"]
+)
+async def predict(
+    request: PredictRequest,
+    api_key: dict = Depends(require_user())
+):
     """
     Ejecuta inferencia en un modelo.
     
