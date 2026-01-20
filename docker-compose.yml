@@ -203,6 +203,50 @@ services:
     # Optional: comentar para deshabilitar
     profiles:
       - monitoring
+  
+  # ----------------------------------------------------------------------------
+  # Locust - Load Testing (Optional - Session 18 Phase 3)
+  # ----------------------------------------------------------------------------
+  locust:
+    image: locustio/locust:latest
+    container_name: rx580-locust
+    
+    # Ports
+    ports:
+      - "8089:8089"  # Locust Web UI
+    
+    # Volumes
+    volumes:
+      - ./tests/load:/mnt/locust:ro  # Locust files (read-only)
+      - ./results/load_tests:/mnt/results:rw  # Results (writable)
+    
+    # Command
+    command: >
+      -f /mnt/locust/locustfile.py
+      --host http://api:8000
+      --web-host 0.0.0.0
+      --web-port 8089
+    
+    # Environment
+    environment:
+      - LOCUST_LOCUSTFILE=/mnt/locust/locustfile.py
+      - LOCUST_HOST=http://api:8000
+    
+    # Networks
+    networks:
+      - rx580-network
+    
+    # Depends on API
+    depends_on:
+      api:
+        condition: service_healthy
+    
+    # Optional: comentar para deshabilitar
+    profiles:
+      - loadtest
+    
+    # Restart policy
+    restart: "no"  # Don't restart automatically
 
 # ==============================================================================
 # NETWORKS
@@ -235,6 +279,9 @@ volumes:
 # Start with monitoring:
 #   docker-compose --profile monitoring up -d
 #
+# Start with load testing UI:
+#   docker-compose --profile loadtest up -d
+#
 # Stop all:
 #   docker-compose down
 #
@@ -253,5 +300,6 @@ volumes:
 #   Prometheus:    http://localhost:9090 (with --profile monitoring)
 #   Grafana:       http://localhost:3000 (with --profile monitoring, admin/admin)
 #   Alertmanager:  http://localhost:9093 (with --profile monitoring)
+#   Locust UI:     http://localhost:8089 (with --profile loadtest)
 #
 # ==============================================================================
