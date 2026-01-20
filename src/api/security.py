@@ -384,9 +384,17 @@ async def require_role(required_role: str = "user"):
 
 
 # Convenience dependencies for common roles
-require_admin = lambda: require_role("admin")
-require_user = lambda: require_role("user")
-require_readonly = lambda: require_role("readonly")
+def require_admin():
+    """Require admin role."""
+    return require_role("admin")
+
+def require_user():
+    """Require user role or higher."""
+    return require_role("user")
+
+def require_readonly():
+    """Require readonly role or higher."""
+    return require_role("readonly")
 
 
 # ============================================================================

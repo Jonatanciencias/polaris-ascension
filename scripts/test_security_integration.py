@@ -345,7 +345,11 @@ def main():
         print(f"   ✅ Server running at {BASE_URL}")
         server_info = response.json()
         print(f"   Version: {server_info.get('version', 'unknown')}")
-        print(f"   Security: {server_info.get('security', {}).get('enabled', False)}")
+        security_info = server_info.get('security', {})
+        if isinstance(security_info, dict):
+            print(f"   Security: {security_info.get('enabled', False)}")
+        else:
+            print(f"   Security: {security_info}")
         print()
     except requests.exceptions.ConnectionError:
         print(f"   ❌ Server not running at {BASE_URL}")

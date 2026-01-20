@@ -44,10 +44,10 @@ try:
     from .rate_limit import create_limiter, add_rate_limiting_middleware
     from .security_headers import add_security_middleware
     SECURITY_AVAILABLE = True
-    logger.info("Security modules loaded successfully")
+    print("✅ Security modules loaded successfully")
 except ImportError as e:
     SECURITY_AVAILABLE = False
-    logger.warning(f"Security modules not available: {e}")
+    print(f"⚠️ Security modules not available: {e}")
     
     # Define dummy dependencies para cuando security no está disponible
     def dummy_dependency():
