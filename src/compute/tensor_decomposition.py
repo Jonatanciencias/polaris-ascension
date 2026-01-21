@@ -405,6 +405,60 @@ class CPDecomposer:
         
         return nn.Sequential(layer1, layer2, layer3, layer4)
     
+    def decompose_linear(
+        self,
+        layer: nn.Linear,
+        rank: Optional[int] = None
+    ) -> nn.Sequential:
+        """
+        Decompose Linear layer using CP-like decomposition.
+        
+        For linear layers, CP decomposition is equivalent to low-rank
+        matrix factorization: W ≈ U @ V^T where U is [out, rank] and V is [in, rank].
+        
+        Args:
+            layer: Linear layer to decompose
+            rank: Decomposition rank. If None, use self.rank
+            
+        Returns:
+            Sequential module with decomposed layers
+        """
+        if rank is None:
+            rank = self.rank
+        
+        weight = layer.weight.data  # [out_features, in_features]
+        bias = layer.bias
+        
+        out_features, in_features = weight.shape
+        
+        # Clamp rank to valid range
+        rank = min(rank, out_features, in_features)
+        
+        # Use SVD for linear layer decomposition (more stable than ALS for 2D)
+        U, S, Vt = torch.linalg.svd(weight, full_matrices=False)
+        
+        # Keep top-rank components
+        U_r = U[:, :rank]  # [out_features, rank]
+        S_r = S[:rank]
+        Vt_r = Vt[:rank, :]  # [rank, in_features]
+        
+        # W ≈ U_r @ diag(S_r) @ Vt_r
+        # Split singular values between U and V for balanced decomposition
+        sqrt_S = torch.sqrt(S_r)
+        
+        # Layer 1: in_features -> rank
+        layer1 = nn.Linear(in_features, rank, bias=False)
+        layer1.weight.data = torch.diag(sqrt_S) @ Vt_r
+        
+        # Layer 2: rank -> out_features
+        layer2 = nn.Linear(rank, out_features, bias=bias is not None)
+        layer2.weight.data = U_r @ torch.diag(sqrt_S)
+        
+        if bias is not None:
+            layer2.bias.data = bias.data
+        
+        return nn.Sequential(layer1, layer2)
+    
     def _cp_als(
         self,
         tensor: torch.Tensor,

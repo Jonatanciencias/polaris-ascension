@@ -445,7 +445,7 @@ async def metrics():
 )
 async def load_model(
     request: LoadModelRequest,
-    api_key: dict = Depends(require_admin())
+    api_key: dict = Depends(require_admin)
 ):
     """
     Carga un modelo en el servidor.
@@ -556,7 +556,7 @@ async def load_model(
 )
 async def unload_model(
     model_name: str,
-    api_key: dict = Depends(require_admin())
+    api_key: dict = Depends(require_admin)
 ):
     """
     Descarga un modelo del servidor.
@@ -618,7 +618,7 @@ async def unload_model(
     tags=["Models"]
 )
 async def list_models(
-    api_key: dict = Depends(require_user())
+    api_key: dict = Depends(require_user)
 ):
     """
     Lista todos los modelos cargados.
@@ -700,7 +700,7 @@ async def get_model_info(model_name: str):
 )
 async def predict(
     request: PredictRequest,
-    api_key: dict = Depends(require_user())
+    api_key: dict = Depends(require_user)
 ):
     """
     Ejecuta inferencia en un modelo.

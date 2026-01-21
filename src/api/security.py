@@ -364,13 +364,13 @@ async def require_api_key(
 
 async def require_role(required_role: str = "user"):
     """
-    Create a dependency that requires a specific role.
+    Dependency that requires a specific role.
     
     Args:
         required_role: Required role (admin, user, readonly)
         
     Returns:
-        Dependency function
+        Authenticated key info if role check passes
     """
     async def check_role(key_info: Dict = Security(require_api_key)) -> Dict:
         if not security_config.has_role(key_info, required_role):
@@ -384,17 +384,32 @@ async def require_role(required_role: str = "user"):
 
 
 # Convenience dependencies for common roles
-def require_admin():
+async def require_admin(key_info: Dict = Security(require_api_key)) -> Dict:
     """Require admin role."""
-    return require_role("admin")
+    if not security_config.has_role(key_info, "admin"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Insufficient permissions. Required role: admin",
+        )
+    return key_info
 
-def require_user():
+async def require_user(key_info: Dict = Security(require_api_key)) -> Dict:
     """Require user role or higher."""
-    return require_role("user")
+    if not security_config.has_role(key_info, "user"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Insufficient permissions. Required role: user",
+        )
+    return key_info
 
-def require_readonly():
+async def require_readonly(key_info: Dict = Security(require_api_key)) -> Dict:
     """Require readonly role or higher."""
-    return require_role("readonly")
+    if not security_config.has_role(key_info, "readonly"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Insufficient permissions. Required role: readonly",
+        )
+    return key_info
 
 
 # ============================================================================

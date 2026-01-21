@@ -271,7 +271,11 @@ class ModelCompressor:
             calibration_samples=self.config.calibration_samples
         )
         
-        self.quantizer = AdaptiveQuantizer(quant_config)
+        self.quantizer = AdaptiveQuantizer(
+            gpu_family="polaris",
+            config=quant_config,
+            verbose=False
+        )
         
         if calibration_data is not None:
             # Calibrate quantizer (simplified - would process actual model layers)
@@ -288,7 +292,7 @@ class ModelCompressor:
     def _apply_sparsity(self, model: Any) -> Any:
         """Apply sparsity to model"""
         sparse_config = SparseTensorConfig(
-            density=1.0 - self.config.target_sparsity  # Convert sparsity to density
+            target_sparsity=self.config.target_sparsity
         )
         
         self.sparse_model = MagnitudePruner()
