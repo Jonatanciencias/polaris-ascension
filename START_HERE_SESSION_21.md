@@ -61,20 +61,94 @@ pytest tests/test_research_integration.py -v
 - `PINNQuantizationAdapter`: PINNs ↔ Quantization
 - `SNNHybridAdapter`: SNNs ↔ Hybrid CPU/GPU
 
-### Opción B: Continuar CAPA 3
-Seguir con items pendientes del plan de investigación:
+### Opción B: Continuar CAPA 3 - Items Pendientes
 
-1. **Cuantización Mixta Avanzada**
-   - Implementar precision por capa adaptativa
-   - Basado en Wang et al. (2026)
+Según RESEARCH_INNOVATION_PLAN.md, faltan estos items del Nivel 1:
 
-2. **Neuromorphic Edge Deployment**
-   - Optimizar para Loihi/SpiNNaker
-   - Basado en Datta et al. (2026)
+#### ✅ Ya Implementado (Session 20)
+- ✅ Physics-Informed Neural Networks (PINNs) con SPIKE
+- ✅ Evolutionary Pruning bio-inspirado
+- ✅ Homeostatic SNNs con synaptic scaling
+- ✅ Domain examples (medical, agriculture)
+- ✅ Research adapters para interoperabilidad
 
-3. **Interpretabilidad**
-   - Añadir XAI a los módulos PINN
-   - Visualización de residuales físicos
+#### 🔄 Pendientes para completar NIVEL 1 (Sessions 21-23)
+
+**Session 21: Advanced Quantization + Neuromorphic Optimization**
+
+1. **Mixed-Precision Quantization Avanzada** (Alta Prioridad)
+   - Paper: Wang et al. (2026) - Layer-wise adaptive precision
+   - Implementar: `MixedPrecisionOptimizer` en quantization.py
+   - Features:
+     * Precision automática por capa basada en sensibilidad
+     * Cuantización consciente de física (para PINNs)
+     * Búsqueda evolutiva de configuraciones
+   - Archivos: `src/compute/mixed_precision.py`
+   - Tests: `tests/test_mixed_precision.py`
+
+2. **Neuromorphic Edge Deployment** (Media Prioridad)
+   - Papers: Datta et al. (2026) - Loihi runtime models
+   - Implementar: `NeuromorphicDeployment` adapter
+   - Features:
+     * Export SNNs a formato Loihi/SpiNNaker
+     * Optimizaciones específicas para neuromorphic chips
+     * Power profiling y estimación
+   - Archivos: `src/deployment/neuromorphic.py`
+   - Tests: `tests/test_neuromorphic_deployment.py`
+
+**Session 22: Interpretability + Graph Optimization**
+
+3. **Interpretabilidad para PINNs** (Media Prioridad)
+   - Implementar: `PINNExplainer` para XAI
+   - Features:
+     * Visualización de residuales físicos
+     * Attribution maps (¿qué parte influye más?)
+     * Physics violation detection
+   - Archivos: `src/compute/pinn_interpretability.py`
+   - Examples: `examples/interpretability/pinn_explainer.py`
+
+4. **Graph Neural Networks para Optimization** (Baja Prioridad)
+   - Paper: Tomada et al. (2026) - Latent Dynamics GCN
+   - Implementar: `OptimizationGNN` para computational graphs
+   - Features:
+     * GNN para optimizar execution graphs
+     * Reduced order models para PDEs
+     * Memory-efficient inference paths
+   - Archivos: `src/compute/optimization_gnn.py`
+
+**Session 23: Integration + Compression Final**
+
+5. **Tensor Decomposition Avanzada** (Baja Prioridad)
+   - Papers: Tucker, CP decomposition
+   - Implementar: `TensorDecomposer` para compresión
+   - Features:
+     * CP/Tucker decomposition
+     * Low-rank + sparse hybrid
+     * Integration con quantization
+   - Archivos: `src/compute/tensor_decomposition.py`
+
+6. **Unified Physics-Aware Pipeline** (Alta Prioridad)
+   - Integrar todos los enfoques en pipeline coherente
+   - Features:
+     * PINN + Quantization + Pruning unificado
+     * Automatic configuration search
+     * End-to-end optimization
+   - Archivos: `src/pipelines/physics_aware_pipeline.py`
+
+#### 📊 Progreso del Plan
+
+| Categoría | Implementado | Pendiente | Prioridad Session 21 |
+|-----------|--------------|-----------|----------------------|
+| PINNs | ✅ 100% | - | - |
+| SNNs | ✅ 100% | - | - |
+| Pruning | ✅ 100% | - | - |
+| Quantization | ⚠️ 60% | Mixed-precision | 🔥 Alta |
+| Neuromorphic | ❌ 0% | Deployment | 🟡 Media |
+| Interpretability | ❌ 0% | PINN XAI | 🟡 Media |
+| GNN Optimization | ❌ 0% | Optional | 🔵 Baja |
+| Tensor Decomposition | ❌ 0% | Optional | 🔵 Baja |
+
+**Recomendación**: Priorizar Mixed-Precision Quantization + Neuromorphic Deployment
 
 ### Opción C: Documentación
 Crear documentación de usuario para nuevos módulos:
