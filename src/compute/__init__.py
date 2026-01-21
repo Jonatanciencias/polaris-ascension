@@ -37,7 +37,7 @@ Version: 0.5.0-dev
 License: MIT
 """
 
-__version__ = "0.6.0-dev"
+__version__ = "0.7.0-dev"
 __all__ = [
     "AdaptiveQuantizer",
     "QuantizationPrecision",
@@ -84,6 +84,29 @@ __all__ = [
     "ResourceProfiler",
     "AdaptivePartitioner",
     "LoadBalancer",
+    # Physics-Informed Neural Networks (Session 20)
+    "PINNNetwork",
+    "PhysicsConfig",
+    "HeatEquation",
+    "WaveEquation",
+    "BurgersEquation",
+    "SPIKERegularizer",
+    "PINNTrainer",
+    "create_heat_pinn",
+    "create_burgers_pinn",
+    # Evolutionary Pruning (Session 20)
+    "EvolutionaryPruner",
+    "EvolutionaryConfig",
+    "FitnessEvaluator",
+    "GeneticOperators",
+    "AdaptiveEvolutionaryPruner",
+    # SNN Homeostasis (Session 20)
+    "HomeostasisConfig",
+    "HomeostaticSpikingLayer",
+    "SynapticScaling",
+    "IntrinsicPlasticity",
+    "SleepConsolidation",
+    "HomeostaticSTDP",
     # Planned for future versions:
     "NeuralArchitectureSearch",
 ]
@@ -178,6 +201,51 @@ except ImportError as e:
     import warnings
     warnings.warn(f"Failed to import hybrid module: {e}")
     HybridScheduler = None
+
+# Session 20: Research Integration Modules
+try:
+    from .physics_utils import (
+        PINNNetwork,
+        PhysicsConfig,
+        HeatEquation,
+        WaveEquation,
+        BurgersEquation,
+        SPIKERegularizer,
+        PINNTrainer,
+        create_heat_pinn,
+        create_burgers_pinn,
+    )
+except ImportError as e:
+    import warnings
+    warnings.warn(f"Failed to import physics_utils module: {e}")
+    PINNNetwork = None
+
+try:
+    from .evolutionary_pruning import (
+        EvolutionaryPruner,
+        EvolutionaryConfig,
+        FitnessEvaluator,
+        GeneticOperators,
+        AdaptiveEvolutionaryPruner,
+    )
+except ImportError as e:
+    import warnings
+    warnings.warn(f"Failed to import evolutionary_pruning module: {e}")
+    EvolutionaryPruner = None
+
+try:
+    from .snn_homeostasis import (
+        HomeostasisConfig,
+        HomeostaticSpikingLayer,
+        SynapticScaling,
+        IntrinsicPlasticity,
+        SleepConsolidation,
+        HomeostaticSTDP,
+    )
+except ImportError as e:
+    import warnings
+    warnings.warn(f"Failed to import snn_homeostasis module: {e}")
+    HomeostaticSpikingLayer = None
 
 # Placeholder imports for future modules
 # from .nas import NeuralArchitectureSearch
