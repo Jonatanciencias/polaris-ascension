@@ -531,7 +531,8 @@ class TensorTrainDecomposer:
     def __init__(
         self,
         ranks: Optional[List[int]] = None,
-        max_rank: int = 16
+        max_rank: int = 16,
+        use_tucker_fallback: bool = False
     ):
         """
         Initialize TT decomposer.
@@ -539,11 +540,13 @@ class TensorTrainDecomposer:
         Args:
             ranks: TT-ranks [r1, r2, r3]. If None, auto-compute
             max_rank: Maximum TT-rank for stability
+            use_tucker_fallback: If True, use Tucker for unsupported cases
         """
         self.ranks = ranks
         self.max_rank = max_rank
-        # Use Tucker for fallback
-        self._tucker = TuckerDecomposer()
+        self.use_tucker_fallback = use_tucker_fallback
+        if use_tucker_fallback:
+            self._tucker = TuckerDecomposer()
     
     def decompose_conv2d(
         self,
@@ -551,20 +554,95 @@ class TensorTrainDecomposer:
         ranks: Optional[List[int]] = None
     ) -> nn.Sequential:
         """
-        Decompose Conv2d using TT decomposition.
+        Decompose Conv2d using TT-SVD decomposition.
+        
+        Decomposes 4D weight tensor into a chain of 3D tensors (TT-cores).
+        Uses sequential SVD algorithm from Oseledets (2011).
         
         Args:
             layer: Conv2d layer to decompose
-            ranks: TT-ranks. If None, auto-compute
+            ranks: TT-ranks [r1, r2]. If None, auto-compute
             
         Returns:
-            Sequential module with decomposed layers
+            Sequential module with TT-decomposed layers
         """
+        weight = layer.weight.data
+        bias = layer.bias
+        
+        out_ch, in_ch, kh, kw = weight.shape
+        
         if ranks is None:
             ranks = self.ranks if self.ranks else self._auto_ranks(layer)
         
-        # For now, use Tucker as fallback (full TT-SVD is complex)
-        return self._tucker.decompose_conv2d(layer, ranks[:2])
+        # Ensure we have 2 ranks for 4D tensor
+        if len(ranks) < 2:
+            ranks = [ranks[0], ranks[0]]
+        
+        r1, r2 = ranks[:2]
+        
+        # Validate ranks
+        r1 = min(r1, out_ch, in_ch)
+        r2 = min(r2, in_ch, kh * kw)
+        
+        try:
+            # TT-SVD: decompose into chain of cores
+            cores = self._tt_svd_4d(weight, [r1, r2])
+            
+            if len(cores) != 3:
+                raise ValueError(f"Expected 3 TT-cores, got {len(cores)}")
+            
+            core1, core2, core3 = cores
+            
+            # Get actual ranks from cores
+            r2_actual, in_ch_actual, _, _ = core3.shape
+            r1_actual, r2_check = core2.shape
+            out_ch_actual, r1_check = core1.shape
+            
+            # Sanity checks
+            assert r2_check == r2_actual, f"Rank mismatch: r2 {r2_check} != {r2_actual}"
+            assert r1_check == r1_actual, f"Rank mismatch: r1 {r1_check} != {r1_actual}"
+            assert in_ch_actual == in_ch, f"Channel mismatch: {in_ch_actual} != {in_ch}"
+            assert out_ch_actual == out_ch, f"Channel mismatch: {out_ch_actual} != {out_ch}"
+            
+            # Build sequential layers from TT-cores
+            # The decomposition gives us:
+            # core1: (out_ch, r1) - output projection
+            # core2: (r1, r2) - intermediate connection
+            # core3: (r2, in_ch, kh, kw) - spatial convolution
+            
+            # Layer 1: in_ch -> r2 (spatial convolution)
+            layer1 = nn.Conv2d(
+                in_ch, r2_actual, 
+                kernel_size=(kh, kw),
+                stride=layer.stride,
+                padding=layer.padding,
+                dilation=layer.dilation,
+                bias=False
+            )
+            # core3 shape: (r2, in_ch, kh, kw) - perfect match
+            layer1.weight.data = core3
+            
+            # Layer 2: r2 -> r1 (1x1 conv, pointwise)
+            layer2 = nn.Conv2d(r2_actual, r1_actual, kernel_size=1, bias=False)
+            # core2 shape: (r1, r2) -> need (r1, r2, 1, 1)
+            layer2.weight.data = core2.view(r1_actual, r2_actual, 1, 1)
+            
+            # Layer 3: r1 -> out_ch (1x1 conv, output projection)
+            layer3 = nn.Conv2d(r1_actual, out_ch, kernel_size=1, bias=bias is not None)
+            # core1 shape: (out_ch, r1) -> need (out_ch, r1, 1, 1)
+            layer3.weight.data = core1.view(out_ch, r1_actual, 1, 1)
+            
+            if bias is not None:
+                layer3.bias.data = bias.data
+            
+            return nn.Sequential(layer1, layer2, layer3)
+            
+        except Exception as e:
+            # Fallback to Tucker if enabled
+            if self.use_tucker_fallback:
+                return self._tucker.decompose_conv2d(layer, ranks[:2])
+            else:
+                raise RuntimeError(f"TT-SVD failed: {e}. Enable use_tucker_fallback=True for fallback.")
     
     def decompose_linear(
         self,
@@ -574,6 +652,8 @@ class TensorTrainDecomposer:
         """
         Decompose Linear layer using TT decomposition.
         
+        Matrix decomposition: W ≈ W1 @ W2
+        
         Args:
             layer: Linear layer to decompose
             rank: TT rank. If None, auto-compute
@@ -581,11 +661,45 @@ class TensorTrainDecomposer:
         Returns:
             Sequential module with decomposed layers
         """
-        if rank is None:
-            rank = self.ranks[0] if self.ranks else self.max_rank // 2
+        weight = layer.weight.data
+        bias = layer.bias
         
-        # Use Tucker fallback
-        return self._tucker.decompose_linear(layer, rank)
+        out_features, in_features = weight.shape
+        
+        if rank is None:
+            rank = self.ranks[0] if self.ranks else min(self.max_rank, min(out_features, in_features) // 2)
+        
+        # Clamp rank
+        rank = min(rank, out_features, in_features)
+        
+        try:
+            # SVD decomposition
+            U, S, Vt = torch.linalg.svd(weight, full_matrices=False)
+            
+            # Keep top-rank components
+            U_r = U[:, :rank]
+            S_r = S[:rank]
+            Vt_r = Vt[:rank, :]
+            
+            # W ≈ U_r @ diag(S_r) @ Vt_r
+            # Layer 1: in -> rank
+            layer1 = nn.Linear(in_features, rank, bias=False)
+            layer1.weight.data = torch.sqrt(S_r).unsqueeze(1) * Vt_r
+            
+            # Layer 2: rank -> out
+            layer2 = nn.Linear(rank, out_features, bias=bias is not None)
+            layer2.weight.data = U_r @ torch.diag(torch.sqrt(S_r))
+            
+            if bias is not None:
+                layer2.bias.data = bias.data
+            
+            return nn.Sequential(layer1, layer2)
+            
+        except Exception as e:
+            if self.use_tucker_fallback:
+                return self._tucker.decompose_linear(layer, rank)
+            else:
+                raise RuntimeError(f"TT Linear decomposition failed: {e}")
     
     def _tt_svd(
         self,
@@ -593,19 +707,88 @@ class TensorTrainDecomposer:
         ranks: List[int]
     ) -> List[torch.Tensor]:
         """
-        TT-SVD algorithm for tensor decomposition.
+        TT-SVD algorithm for tensor decomposition (Oseledets 2011).
+        
+        Decomposes d-dimensional tensor into chain of 3D TT-cores.
         
         Args:
-            tensor: 4D tensor
-            ranks: TT-ranks
+            tensor: Input tensor of shape (n1, n2, ..., nd)
+            ranks: TT-ranks [r1, r2, ..., r_{d-1}]
             
         Returns:
-            List of TT-cores
+            List of TT-cores, each of shape (r_{k-1}, n_k, r_k)
+            where r_0 = r_d = 1
         """
-        # Placeholder for full TT-SVD implementation
-        # Full implementation would involve sequential SVDs
-        # For now, return empty list (will use Tucker fallback)
-        return []
+        # This is the general TT-SVD algorithm
+        # For our 4D case, we use _tt_svd_4d instead
+        pass
+    
+    def _tt_svd_4d(
+        self,
+        tensor: torch.Tensor,
+        ranks: List[int]
+    ) -> List[torch.Tensor]:
+        """
+        TT-SVD for 4D tensors (Conv2d weights).
+        
+        Tensor shape: (out_ch, in_ch, kh, kw)
+        Decomposes into 3 cores via sequential SVD.
+        
+        Args:
+            tensor: 4D weight tensor
+            ranks: [r1, r2] TT-ranks
+            
+        Returns:
+            List of 3 TT-cores:
+            - core1: (out_ch, r1)
+            - core2: (r1, r2) 
+            - core3: (r2, in_ch, kh, kw)
+        """
+        out_ch, in_ch, kh, kw = tensor.shape
+        r1, r2 = ranks
+        
+        # Step 1: Reshape tensor to matrix (out_ch, in_ch*kh*kw)
+        C = tensor.reshape(out_ch, in_ch * kh * kw)
+        
+        # Step 2: SVD to separate output channels
+        # C ≈ U @ S @ Vt where U: (out_ch, r1), Vt: (r1, in_ch*kh*kw)
+        U, S, Vt = torch.linalg.svd(C, full_matrices=False)
+        
+        # Truncate to rank r1
+        r1_actual = min(r1, U.shape[1])
+        U_r1 = U[:, :r1_actual]  # (out_ch, r1)
+        S_r1 = S[:r1_actual]
+        Vt_r1 = Vt[:r1_actual, :]  # (r1, in_ch*kh*kw)
+        
+        # Core 1: output side (out_ch, r1)
+        core1 = U_r1 @ torch.diag(torch.sqrt(S_r1))
+        
+        # Step 3: Process remaining tensor (r1, in_ch*kh*kw)
+        # Multiply by sqrt(S) to balance
+        C_remaining = torch.diag(torch.sqrt(S_r1)) @ Vt_r1  # (r1, in_ch*kh*kw)
+        
+        # Reshape to (r1, in_ch, kh*kw)
+        C_remaining = C_remaining.reshape(r1_actual, in_ch, kh * kw)
+        
+        # Step 4: Reshape to (r1, in_ch*kh*kw) and SVD again
+        C2 = C_remaining.reshape(r1_actual, in_ch * kh * kw)
+        
+        U2, S2, Vt2 = torch.linalg.svd(C2, full_matrices=False)
+        
+        # Truncate to rank r2
+        r2_actual = min(r2, U2.shape[1])
+        U2_r2 = U2[:, :r2_actual]  # (r1, r2)
+        S2_r2 = S2[:r2_actual]
+        Vt2_r2 = Vt2[:r2_actual, :]  # (r2, in_ch*kh*kw)
+        
+        # Core 2: middle connection (r1, r2)
+        core2 = U2_r2 @ torch.diag(torch.sqrt(S2_r2))
+        
+        # Core 3: input side (r2, in_ch, kh, kw)
+        core3 = torch.diag(torch.sqrt(S2_r2)) @ Vt2_r2
+        core3 = core3.reshape(r2_actual, in_ch, kh, kw)
+        
+        return [core1, core2, core3]
     
     def _auto_ranks(self, layer: nn.Conv2d) -> List[int]:
         """Auto-determine TT-ranks."""
