@@ -859,6 +859,69 @@ class EvolutionaryPruner:
         """
         self.apply_best_mask()
         return self.model
+    
+    def save_checkpoint(self, filepath: str):
+        """
+        Save evolution state to checkpoint file.
+        
+        Saves:
+        - Population of masks
+        - Fitness scores
+        - Best individual
+        - History
+        - Configuration
+        
+        Args:
+            filepath: Path to save checkpoint
+        """
+        checkpoint = {
+            'config': self.config,
+            'population': [{k: v.cpu() for k, v in ind.items()} for ind in self.population],
+            'fitness_scores': self.fitness_scores,
+            'best_individual': {k: v.cpu() for k, v in self.best_individual.items()} if self.best_individual else None,
+            'best_fitness': self.best_fitness,
+            'generation_count': self.generation_count,
+            'history': self.history
+        }
+        torch.save(checkpoint, filepath)
+    
+    def load_checkpoint(self, filepath: str):
+        """
+        Load evolution state from checkpoint file.
+        
+        Args:
+            filepath: Path to checkpoint file
+        """
+        checkpoint = torch.load(filepath, map_location=self.device)
+        
+        self.config = checkpoint['config']
+        self.population = [{k: v.to(self.device) for k, v in ind.items()} 
+                           for ind in checkpoint['population']]
+        self.fitness_scores = checkpoint['fitness_scores']
+        self.best_individual = ({k: v.to(self.device) for k, v in checkpoint['best_individual'].items()}
+                                 if checkpoint['best_individual'] else None)
+        self.best_fitness = checkpoint['best_fitness']
+        self.generation_count = checkpoint['generation_count']
+        self.history = checkpoint['history']
+    
+    def has_converged(self, patience: int = 10, min_improvement: float = 0.001) -> bool:
+        """
+        Check if evolution has converged (early stopping).
+        
+        Args:
+            patience: Number of generations to wait for improvement
+            min_improvement: Minimum fitness improvement to consider
+        
+        Returns:
+            True if converged
+        """
+        if len(self.history['best_fitness']) < patience:
+            return False
+        
+        recent = self.history['best_fitness'][-patience:]
+        improvement = max(recent) - min(recent)
+        
+        return improvement < min_improvement
 
 
 class AdaptiveEvolutionaryPruner(EvolutionaryPruner):

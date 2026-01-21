@@ -700,7 +700,8 @@ class HomeostaticSTDP(nn.Module):
         weights: torch.Tensor,
         pre_spikes: torch.Tensor,
         post_spikes: torch.Tensor,
-        learning_rate: float = 1.0
+        learning_rate: float = 1.0,
+        learning_rate_scale: float = 1.0
     ) -> torch.Tensor:
         """
         Apply STDP update to weights.
@@ -709,14 +710,16 @@ class HomeostaticSTDP(nn.Module):
             weights: Current weight matrix
             pre_spikes: Presynaptic spikes
             post_spikes: Postsynaptic spikes
-            learning_rate: Scaling factor for update
+            learning_rate: Base scaling factor for update
+            learning_rate_scale: Additional scale (e.g., for sleep replay)
         
         Returns:
             Updated weight matrix
         """
         dw = self.compute_stdp_update(weights, pre_spikes, post_spikes)
         
-        updated_weights = weights + learning_rate * dw
+        effective_lr = learning_rate * learning_rate_scale
+        updated_weights = weights + effective_lr * dw
         
         # Clamp to bounds
         updated_weights = torch.clamp(
@@ -849,6 +852,7 @@ class HomeostaticSpikingLayer(nn.Module):
         # Statistics
         self.timestep = 0
         self.total_spikes = 0
+        self.last_did_sleep = False  # Track sleep phase for debugging
     
     def reset_state(self, batch_size: int):
         """Reset membrane potential for new sequence."""
@@ -918,13 +922,31 @@ class HomeostaticSpikingLayer(nn.Module):
         if self.intrinsic_plasticity is not None:
             self.intrinsic_plasticity.update_thresholds(spikes)
         
-        # Sleep consolidation
+        # Sleep consolidation with pattern replay
+        did_sleep = False
         if self.sleep_consolidation is not None:
             importance_mask = self.stdp.get_importance_mask()
+            
+            # Store important patterns for replay during sleep
+            if spikes.sum() > 0:
+                self.sleep_consolidation.store_pattern(spikes.detach())
+            
             with torch.no_grad():
                 self.weight.data, did_sleep = self.sleep_consolidation.step(
                     self.weight.data, importance_mask
                 )
+            
+            # Pattern replay during sleep phase
+            if did_sleep:
+                replay_patterns = self.sleep_consolidation.replay_patterns(n_patterns=5)
+                for pattern in replay_patterns:
+                    # Mini STDP on replayed patterns (consolidation)
+                    self.weight.data = self.stdp.apply_stdp(
+                        self.weight.data,
+                        torch.zeros_like(input_spikes),  # No input during replay
+                        pattern.unsqueeze(0) if pattern.dim() == 1 else pattern,
+                        learning_rate_scale=0.1  # Gentle consolidation
+                    )
         
         # STDP learning
         if apply_stdp:
@@ -936,6 +958,7 @@ class HomeostaticSpikingLayer(nn.Module):
         # Update statistics
         self.timestep += 1
         self.total_spikes += spikes.sum().item()
+        self.last_did_sleep = did_sleep
         
         return spikes
     

@@ -632,7 +632,8 @@ class SPIKERegularizer(nn.Module):
         self,
         u_t: torch.Tensor,
         u_t_next: torch.Tensor,
-        dt: float = 1.0
+        dt: float = 1.0,
+        use_complex: bool = True
     ) -> torch.Tensor:
         """
         Compute SPIKE regularization loss.
@@ -641,6 +642,7 @@ class SPIKERegularizer(nn.Module):
             u_t (torch.Tensor): Solution at time t, shape (batch, features)
             u_t_next (torch.Tensor): Solution at time t+dt
             dt (float): Time step
+            use_complex (bool): Use full complex eigenvalues for oscillatory dynamics
         
         Returns:
             torch.Tensor: SPIKE regularization loss
@@ -651,9 +653,28 @@ class SPIKERegularizer(nn.Module):
         g_t_next = F.linear(u_t_next, self.koopman_V)
         
         # Apply Koopman evolution: g(t+dt) = λ^dt · g(t)
-        # For discrete steps with dt=1: λ · g(t)
-        eigenval_power = self.eigenvalues_real ** dt  # Simplified (real part)
-        predicted_g = g_t * eigenval_power.unsqueeze(0)
+        if use_complex:
+            # Full complex eigenvalue support for oscillatory dynamics
+            # λ = r·e^{iθ}, λ^dt = r^dt · e^{i·θ·dt}
+            magnitude = torch.sqrt(self.eigenvalues_real ** 2 + self.eigenvalues_imag ** 2)
+            phase = torch.atan2(self.eigenvalues_imag, self.eigenvalues_real)
+            
+            # λ^dt in polar form
+            mag_power = magnitude ** dt
+            phase_power = phase * dt
+            
+            # Real and imaginary parts of λ^dt
+            eigenval_real = mag_power * torch.cos(phase_power)
+            eigenval_imag = mag_power * torch.sin(phase_power)
+            
+            # Apply complex multiplication: g_t * λ^dt
+            # (a + bi)(c + di) = (ac - bd) + (ad + bc)i
+            # Since g_t is real, we only get real part: g_t * eigenval_real
+            predicted_g = g_t * eigenval_real.unsqueeze(0)
+        else:
+            # Simplified: real eigenvalues only
+            eigenval_power = self.eigenvalues_real ** dt
+            predicted_g = g_t * eigenval_power.unsqueeze(0)
         
         # Koopman consistency loss
         koopman_loss = F.mse_loss(predicted_g, g_t_next)

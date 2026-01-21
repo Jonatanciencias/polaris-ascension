@@ -366,6 +366,121 @@ class CTReconstructionPINN(nn.Module):
             'data': loss_data,
             'physics': loss_physics
         }
+    
+    def train_step(
+        self,
+        optimizer: torch.optim.Optimizer,
+        xy_data: torch.Tensor,
+        mu_measured: torch.Tensor,
+        xy_physics: torch.Tensor,
+        lambda_physics: float = 1.0
+    ) -> Dict[str, float]:
+        """
+        Single training step for CT reconstruction.
+        
+        Args:
+            optimizer: PyTorch optimizer
+            xy_data: Coordinates with measurements
+            mu_measured: Measured/ground truth attenuation
+            xy_physics: Collocation points for physics
+            lambda_physics: Physics loss weight
+        
+        Returns:
+            Dict of loss values
+        """
+        optimizer.zero_grad()
+        
+        losses = self.compute_loss(xy_data, mu_measured, xy_physics, lambda_physics)
+        losses['total'].backward()
+        
+        optimizer.step()
+        
+        return {k: v.item() for k, v in losses.items()}
+    
+    def reconstruct_image(
+        self,
+        image_size: Tuple[int, int],
+        normalize: bool = True
+    ) -> torch.Tensor:
+        """
+        Reconstruct full attenuation image.
+        
+        Args:
+            image_size: (height, width) of output image
+            normalize: Whether to normalize to [0, 1]
+        
+        Returns:
+            Reconstructed attenuation image
+        """
+        H, W = image_size
+        
+        # Create coordinate grid
+        x = torch.linspace(0, 1, W, device=self.device)
+        y = torch.linspace(0, 1, H, device=self.device)
+        xx, yy = torch.meshgrid(x, y, indexing='xy')
+        
+        xy = torch.stack([xx.flatten(), yy.flatten()], dim=-1)
+        
+        # Predict attenuation
+        with torch.no_grad():
+            mu = self.forward(xy)
+        
+        image = mu.view(H, W)
+        
+        if normalize:
+            image = (image - image.min()) / (image.max() - image.min() + 1e-8)
+        
+        return image
+    
+    def compute_sinogram_loss(
+        self,
+        angles: torch.Tensor,
+        sinogram_measured: torch.Tensor,
+        n_rays: int = 100
+    ) -> torch.Tensor:
+        """
+        Compute loss using actual CT sinogram (for advanced training).
+        
+        Uses line integrals through the reconstruction.
+        
+        Args:
+            angles: Projection angles (n_angles,)
+            sinogram_measured: Measured sinogram (n_angles, n_rays)
+            n_rays: Number of rays per projection
+        
+        Returns:
+            Sinogram matching loss
+        """
+        n_angles = len(angles)
+        total_loss = 0.0
+        
+        for i, angle in enumerate(angles):
+            # Compute line integral at this angle
+            # Ray from -0.5 to 1.5 (with margin)
+            t = torch.linspace(0, 1, n_rays, device=self.device)
+            
+            cos_a, sin_a = torch.cos(angle), torch.sin(angle)
+            
+            # Simple parallel beam: rays perpendicular to angle
+            for j in range(n_rays):
+                offset = (j / n_rays - 0.5) * 1.414  # sqrt(2) for diagonal
+                
+                # Ray points
+                x_ray = 0.5 + cos_a * (t - 0.5) - sin_a * offset
+                y_ray = 0.5 + sin_a * (t - 0.5) + cos_a * offset
+                
+                xy_ray = torch.stack([x_ray, y_ray], dim=-1)
+                
+                # Clamp to domain
+                xy_ray = torch.clamp(xy_ray, 0, 1)
+                
+                # Line integral
+                mu_ray = self.forward(xy_ray)
+                integral = mu_ray.sum() / n_rays  # Approximate integral
+                
+                total_loss += (integral - sinogram_measured[i, j]) ** 2
+        
+        return total_loss / (n_angles * n_rays)
 
 
 class MRIDenoisingPINN(nn.Module):

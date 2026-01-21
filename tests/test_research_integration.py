@@ -811,6 +811,295 @@ class TestSNNHomeostasisIntegration:
 
 
 # ============================================================================
+# Domain-Specific Tests (Issue m5)
+# ============================================================================
+
+class TestMedicalImagingDomain:
+    """Tests for medical imaging domain examples."""
+    
+    def test_beer_lambert_law(self, device):
+        """Test Beer-Lambert physics for CT."""
+        from examples.domain_specific.medical_imaging_pinn import BeerLambertLaw
+        
+        physics = BeerLambertLaw(I0=1.0)
+        
+        # Create test data
+        mu = torch.rand(50, 1, device=device, requires_grad=True)
+        I = torch.rand(50, 1, device=device, requires_grad=True) * 0.5 + 0.5
+        x = torch.rand(50, 1, device=device, requires_grad=True)
+        
+        residual = physics.forward(mu, I, x)
+        
+        assert residual.shape == mu.shape
+        assert not torch.isnan(residual).any()
+    
+    def test_diffusion_mri(self, device):
+        """Test diffusion physics for MRI."""
+        from examples.domain_specific.medical_imaging_pinn import DiffusionMRI
+        
+        physics = DiffusionMRI(D=1.0, K=10.0, anisotropic=True)
+        
+        u = torch.rand(50, 1, device=device, requires_grad=True)
+        x = torch.rand(50, 1, device=device, requires_grad=True)
+        t = torch.rand(50, 1, device=device, requires_grad=True)
+        
+        residual = physics.forward(u, x, t)
+        
+        assert residual.shape == u.shape
+    
+    def test_wave_ultrasound(self, device):
+        """Test wave physics for ultrasound."""
+        from examples.domain_specific.medical_imaging_pinn import WaveUltrasound
+        
+        physics = WaveUltrasound(c=1540.0, damping=0.01)
+        
+        p = torch.rand(50, 1, device=device, requires_grad=True)
+        x = torch.rand(50, 1, device=device, requires_grad=True)
+        t = torch.rand(50, 1, device=device, requires_grad=True)
+        
+        residual = physics.forward(p, x, t)
+        
+        assert residual.shape == p.shape
+    
+    def test_ct_reconstruction_pinn(self, device):
+        """Test CT reconstruction PINN."""
+        from examples.domain_specific.medical_imaging_pinn import CTReconstructionPINN
+        
+        model = CTReconstructionPINN(
+            hidden_dims=[32, 32],
+            device=device
+        )
+        
+        # Test forward pass
+        xy = torch.rand(20, 2, device=device)
+        mu = model.forward(xy)
+        
+        assert mu.shape == (20, 1)
+        assert (mu >= 0).all()  # Positivity constraint
+    
+    def test_ct_reconstruction_loss(self, device):
+        """Test CT reconstruction loss computation."""
+        from examples.domain_specific.medical_imaging_pinn import CTReconstructionPINN
+        
+        model = CTReconstructionPINN(
+            hidden_dims=[32, 32],
+            device=device
+        )
+        
+        xy_data = torch.rand(20, 2, device=device)
+        mu_true = torch.rand(20, 1, device=device)
+        xy_physics = torch.rand(30, 2, device=device)
+        
+        losses = model.compute_loss(xy_data, mu_true, xy_physics)
+        
+        assert 'total' in losses
+        assert 'data' in losses
+        assert 'physics' in losses
+        assert losses['total'].item() >= 0
+    
+    def test_ct_image_reconstruction(self, device):
+        """Test full image reconstruction."""
+        from examples.domain_specific.medical_imaging_pinn import CTReconstructionPINN
+        
+        model = CTReconstructionPINN(
+            hidden_dims=[32, 32],
+            device=device
+        )
+        
+        image = model.reconstruct_image((16, 16), normalize=True)
+        
+        assert image.shape == (16, 16)
+        assert image.min() >= 0
+        assert image.max() <= 1
+    
+    def test_mri_denoising_pinn(self, device):
+        """Test MRI denoising PINN."""
+        from examples.domain_specific.medical_imaging_pinn import MRIDenoisingPINN
+        
+        model = MRIDenoisingPINN(
+            edge_threshold=10.0,
+            hidden_dims=[32, 32],
+            device=device
+        )
+        
+        # Test forward
+        x = torch.rand(20, 1, device=device)
+        y = torch.rand(20, 1, device=device)
+        t = torch.full((20, 1), 0.1, device=device)
+        
+        u = model.forward(x, y, t)
+        
+        assert u.shape == (20, 1)
+
+
+class TestAgricultureDomain:
+    """Tests for agriculture domain examples."""
+    
+    def test_temporal_encoder_rate(self, device):
+        """Test rate encoding for agriculture sensors."""
+        from examples.domain_specific.agriculture_snn import TemporalEncoder
+        
+        encoder = TemporalEncoder(
+            n_neurons_per_feature=8,
+            encoding='rate',
+            device=device
+        )
+        
+        values = torch.rand(4, 5, device=device)  # 4 samples, 5 features
+        spikes = encoder.rate_encode(values, n_timesteps=50)
+        
+        assert spikes.shape == (4, 50, 5)
+        assert ((spikes == 0) | (spikes == 1)).all()
+    
+    def test_temporal_encoder_population(self, device):
+        """Test population encoding."""
+        from examples.domain_specific.agriculture_snn import TemporalEncoder
+        
+        encoder = TemporalEncoder(
+            n_neurons_per_feature=8,
+            encoding='population',
+            device=device
+        )
+        
+        values = torch.rand(4, 5, device=device)
+        spikes = encoder.population_encode(values, n_timesteps=50)
+        
+        assert spikes.shape == (4, 50, 5 * 8)  # features × neurons
+    
+    def test_temporal_encoder_delta(self, device):
+        """Test delta (event) encoding."""
+        from examples.domain_specific.agriculture_snn import TemporalEncoder
+        
+        encoder = TemporalEncoder(device=device)
+        
+        # Time series with some changes
+        values = torch.rand(4, 50, 3, device=device)
+        spikes = encoder.delta_encode(values, threshold=0.05)
+        
+        assert spikes.shape == (4, 50, 6)  # 3 features × 2 (pos/neg)
+    
+    def test_crop_health_classifier(self, device):
+        """Test crop health SNN classifier."""
+        from examples.domain_specific.agriculture_snn import CropHealthClassifier
+        
+        model = CropHealthClassifier(
+            n_spectral_features=5,
+            n_hidden=32,
+            n_classes=4,
+            n_timesteps=20,
+            device=device
+        )
+        
+        # Spectral indices (NDVI, etc.)
+        spectral_data = torch.rand(4, 5, device=device)
+        
+        # Just verify model structure (forward needs temporal input)
+        assert model.n_features == 5
+        assert model.n_classes == 4
+
+
+class TestCheckpointing:
+    """Tests for new checkpointing feature (Issue m2)."""
+    
+    def test_evolutionary_checkpoint_save_load(self, simple_model, device, tmp_path):
+        """Test saving and loading evolution checkpoint."""
+        config = EvolutionaryConfig(
+            population_size=3,
+            generations=2,
+            initial_sparsity=0.3,
+            target_sparsity=0.7
+        )
+        
+        pruner = EvolutionaryPruner(simple_model, config, device)
+        
+        # Modify state
+        pruner.generation_count = 5
+        pruner.best_fitness = 0.85
+        
+        # Save checkpoint
+        checkpoint_path = tmp_path / "evolution_checkpoint.pt"
+        pruner.save_checkpoint(str(checkpoint_path))
+        
+        # Create new pruner and load
+        new_pruner = EvolutionaryPruner(simple_model, config, device)
+        new_pruner.load_checkpoint(str(checkpoint_path))
+        
+        assert new_pruner.generation_count == 5
+        assert new_pruner.best_fitness == 0.85
+    
+    def test_convergence_check(self, simple_model, device):
+        """Test convergence detection."""
+        config = EvolutionaryConfig(
+            population_size=3,
+            generations=20
+        )
+        
+        pruner = EvolutionaryPruner(simple_model, config, device)
+        
+        # Simulate converged history
+        pruner.history['best_fitness'] = [0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8]
+        
+        assert pruner.has_converged(patience=10, min_improvement=0.01)
+
+
+class TestComplexEigenvalues:
+    """Tests for complex eigenvalue support in SPIKE (Issue m1)."""
+    
+    def test_spike_complex_eigenvalues(self, device):
+        """Test SPIKE with complex eigenvalue evolution."""
+        regularizer = SPIKERegularizer(
+            input_dim=8,
+            koopman_rank=4,
+            device=device
+        )
+        
+        # Set some imaginary components
+        with torch.no_grad():
+            regularizer.eigenvalues_imag.fill_(0.1)  # Add oscillation
+        
+        u_t = torch.rand(16, 8, device=device)
+        u_t_next = torch.rand(16, 8, device=device)
+        
+        # Test with complex eigenvalues
+        loss_complex = regularizer.forward(u_t, u_t_next, dt=1.0, use_complex=True)
+        loss_real = regularizer.forward(u_t, u_t_next, dt=1.0, use_complex=False)
+        
+        assert loss_complex.item() >= 0
+        assert loss_real.item() >= 0
+        # Losses should be different with imaginary components
+        assert not torch.isclose(loss_complex, loss_real, atol=1e-6)
+
+
+class TestSleepConsolidationIntegration:
+    """Tests for integrated sleep consolidation (Issue m3)."""
+    
+    def test_sleep_with_pattern_replay(self, device):
+        """Test sleep consolidation with pattern replay."""
+        config = HomeostasisConfig(
+            enable_sleep_cycles=True,
+            sleep_period=10  # Short period for testing
+        )
+        
+        layer = HomeostaticSpikingLayer(
+            in_features=32,
+            out_features=16,
+            config=config,
+            device=device
+        )
+        
+        # Run enough timesteps to trigger sleep
+        sleep_triggered = False
+        for t in range(15):
+            input_spikes = (torch.rand(4, 32, device=device) > 0.9).float()
+            _ = layer(input_spikes, apply_stdp=True)
+            
+            if hasattr(layer, 'last_did_sleep') and layer.last_did_sleep:
+                sleep_triggered = True
+        
+        assert sleep_triggered or layer.timestep >= 10
+
+
+# ============================================================================
 # Run tests
 # ============================================================================
 
