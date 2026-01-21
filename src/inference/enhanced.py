@@ -319,7 +319,20 @@ class ModelCompressor:
         compressed_model: Any
     ) -> CompressionResult:
         """Compute compression results"""
-        compressed_size = self._estimate_model_size(compressed_model)
+        # Calculate compressed size based on applied optimizations
+        compressed_size = original_size
+        
+        # Quantization typically reduces size by 2x-4x
+        if self.quantizer is not None:
+            bits_ratio = 8.0 / self.config.quantization_bits  # e.g., 8/4 = 2x
+            compressed_size /= bits_ratio
+        
+        # Sparsity reduces storage by (1 - sparsity) for sparse formats
+        if self.sparse_model is not None:
+            # Sparse format overhead, but saves memory for high sparsity
+            effective_reduction = max(0.5, 1.0 - self.config.target_sparsity * 0.8)
+            compressed_size *= effective_reduction
+        
         compression_ratio = original_size / compressed_size if compressed_size > 0 else 1.0
         
         # Estimate speedup based on compression ratio and sparsity
