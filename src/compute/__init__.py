@@ -107,6 +107,13 @@ __all__ = [
     "IntrinsicPlasticity",
     "SleepConsolidation",
     "HomeostaticSTDP",
+    # Research Integration Adapters (Session 20)
+    "STDPAdapter",
+    "EvolutionaryPrunerAdapter",
+    "PINNQuantizationAdapter",
+    "SNNHybridAdapter",
+    "create_adapted_snn",
+    "create_adapted_pruner",
     # Planned for future versions:
     "NeuralArchitectureSearch",
 ]
@@ -246,6 +253,26 @@ except ImportError as e:
     import warnings
     warnings.warn(f"Failed to import snn_homeostasis module: {e}")
     HomeostaticSpikingLayer = None
+
+# Session 20: Research Integration Adapters
+try:
+    from .research_adapters import (
+        STDPAdapter,
+        EvolutionaryPrunerAdapter,
+        PINNQuantizationAdapter,
+        SNNHybridAdapter,
+        create_adapted_snn,
+        create_adapted_pruner,
+    )
+except ImportError as e:
+    import warnings
+    warnings.warn(f"Failed to import research_adapters module: {e}")
+    STDPAdapter = None
+    EvolutionaryPrunerAdapter = None
+    PINNQuantizationAdapter = None
+    SNNHybridAdapter = None
+    create_adapted_snn = None
+    create_adapted_pruner = None
 
 # Placeholder imports for future modules
 # from .nas import NeuralArchitectureSearch
