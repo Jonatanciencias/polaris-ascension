@@ -1,0 +1,38 @@
+======================================================================
+UNIFIED OPTIMIZATION PIPELINE REPORT
+======================================================================
+
+OVERALL RESULTS:
+  Status: ✅ SUCCESS
+  Compression: 44.82x
+  Speedup: 6.69x
+  Memory reduction: 97.8%
+  Total time: 0.20s
+
+ACCURACY:
+  Original: 0.0400
+  Final: 0.0000
+  Drop: 0.0400 (100.0%)
+
+STAGE RESULTS:
+  1. PRUNING ✅
+     Time: 0.05s
+     accuracy: 0.0400
+     model_size_mb: 1.6084
+
+  2. QUANTIZATION ✅
+     Time: 0.02s
+     accuracy: 0.0400
+     model_size_mb: 0.0718
+
+  3. MIXED_PRECISION ✅
+     Time: 0.05s
+     accuracy: 0.0000
+     model_size_mb: 0.0359
+
+  4. FINE_TUNING ✅
+     Time: 0.03s
+     accuracy: 0.0000
+     model_size_mb: 0.0359
+
+======================================================================
