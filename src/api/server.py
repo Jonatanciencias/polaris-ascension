@@ -296,6 +296,21 @@ app.add_middleware(
 
 
 # ============================================================================
+# ROUTERS - Session 33: Cluster Management
+# ============================================================================
+
+# Importar cluster endpoints (Session 33)
+CLUSTER_AVAILABLE = False
+try:
+    from .cluster_endpoints import router as cluster_router
+    app.include_router(cluster_router)
+    CLUSTER_AVAILABLE = True
+    logger.info("✅ Cluster management endpoints loaded")
+except ImportError as e:
+    logger.warning(f"⚠️ Cluster endpoints not available: {e}")
+
+
+# ============================================================================
 # EXCEPTION HANDLERS - Manejo global de errores
 # ============================================================================
 
