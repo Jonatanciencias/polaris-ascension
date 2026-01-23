@@ -10,16 +10,17 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "radeon-rx-580"
-description = "Deep Learning Inference Engine optimizado para AMD Radeon RX 580"
+version = "0.7.0"
+description = "Enterprise-Grade Distributed AI Inference Platform for AMD Legacy GPUs"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
     {name = "Jonathan", email = "jonatanciencias@example.com"}
 ]
-keywords = ["deep-learning", "inference", "amd", "opencl", "optimization"]
+keywords = ["deep-learning", "inference", "amd", "opencl", "optimization", "distributed", "cluster", "legacy-gpu"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
@@ -29,8 +30,8 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: System :: Distributed Computing",
 ]
-dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = [
