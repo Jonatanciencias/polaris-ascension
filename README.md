@@ -436,7 +436,21 @@ MIT License - Use freely, contribute back if you can.
 - **OS**: Ubuntu 20.04+ / Debian-based Linux
 - **RAM**: 16GB+ recommended
 - **Storage**: 20GB+ free space
-- **OpenCL**: Mesa OpenCL or ROCm
+- **Drivers**: Mesa AMDGPU + OpenCL (see [Driver Setup Guide](docs/guides/DRIVER_SETUP_RX580.md))
+
+### Driver Recommendations ⚡
+
+**Recommended Stack (Tested & Supported):**
+- ✅ **Kernel Driver**: AMDGPU (Mesa, in-tree)
+- ✅ **OpenCL**: Mesa Clover/RustiCL (OpenCL 1.2+)
+- ✅ **Vulkan**: Mesa RADV (Vulkan 1.3)
+- ⚠️ **ROCm**: Optional (limited Polaris support)
+
+**Not Recommended:**
+- ❌ AMD AMDGPU-PRO (deprecated for Polaris)
+- ❌ ROCm 6.x (no Polaris support)
+
+👉 **For detailed driver installation and troubleshooting, see [Driver Setup Guide](docs/guides/DRIVER_SETUP_RX580.md)**
 
 ## 🔧 Quick Start
 
@@ -468,19 +482,30 @@ python scripts/download_models.py --model efficientnet
 python scripts/download_models.py --model yolov5 --size s
 ```
 
-### 3. Verify Hardware
+### 3. Verify Installation
 
 ```bash
-# Check GPU detection and OpenCL
+# Check drivers (AMDGPU, Mesa, OpenCL, Vulkan)
+python scripts/verify_drivers.py
+
+# Check GPU detection and capabilities
 python scripts/verify_hardware.py
+
+# Full system diagnostics
+python scripts/diagnostics.py
 ```
 
 Expected output:
 ```
-✅ GPU: AMD/ATI Radeon RX 580
-✅ OpenCL: Available
-✅ System is ready for AI workloads!
+✅ DRIVERS ARE OPTIMAL FOR INFERENCE
+   Your RX 580 is ready for AI workloads!
+
+✅ GPU Detected: AMD Radeon RX 580
+✅ OpenCL: Available (Mesa Clover)
+✅ Vulkan: Available (Mesa RADV)
 ```
+
+**If drivers are not properly configured**, see the [Driver Setup Guide](docs/guides/DRIVER_SETUP_RX580.md) for troubleshooting.
 
 ### 4. Choose Your Interface
 

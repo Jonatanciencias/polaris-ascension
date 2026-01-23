@@ -42,6 +42,7 @@ docs/
 | Document | Location | Description |
 |----------|----------|-------------|
 | **Quick Start** | [docs/guides/QUICKSTART.md](docs/guides/QUICKSTART.md) | 5-minute setup guide |
+| **Driver Setup** | [docs/guides/DRIVER_SETUP_RX580.md](docs/guides/DRIVER_SETUP_RX580.md) | ⭐ **Complete driver installation & troubleshooting** |
 | **User Guide** | [docs/guides/USER_GUIDE.md](docs/guides/USER_GUIDE.md) | Complete usage guide |
 | **Developer Guide** | [docs/guides/DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) | SDK and API reference |
 

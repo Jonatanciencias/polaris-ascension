@@ -69,15 +69,31 @@ echo -e "\n${GREEN}=============================================="
 echo "Setup Complete!"
 echo "==============================================${NC}"
 
-echo -e "\nNext steps:"
+echo -e "\n${GREEN}Running driver verification...${NC}"
+python scripts/verify_drivers.py
+
+if [ $? -eq 0 ]; then
+    echo -e "\n${GREEN}✅ All drivers are properly configured!${NC}"
+else
+    echo -e "\n${YELLOW}⚠️  Some driver issues detected. See recommendations above.${NC}"
+    echo -e "${YELLOW}For detailed setup instructions, see: docs/guides/DRIVER_SETUP_RX580.md${NC}"
+fi
+
+echo -e "\n${GREEN}=============================================="
+echo "Next Steps"
+echo "==============================================${NC}"
 echo "  1. Activate the environment: source venv/bin/activate"
 echo "  2. Verify hardware: python scripts/verify_hardware.py"
 echo "  3. Run diagnostics: python scripts/diagnostics.py"
+echo "  4. Download models: python scripts/download_models.py --all"
+echo "  5. Test inference: python examples/demo_real_simple.py"
+
+echo -e "\n${GREEN}📚 Documentation:${NC}"
+echo "  - Quick Start: docs/guides/QUICKSTART.md"
+echo "  - Driver Setup: docs/guides/DRIVER_SETUP_RX580.md"
+echo "  - User Guide: docs/guides/USER_GUIDE.md"
 
 echo -e "\n${YELLOW}Note: If you need ROCm (optional), visit:${NC}"
 echo "  https://rocmdocs.amd.com/en/latest/deploy/linux/quick_start.html"
-
-echo -e "\n${GREEN}Testing OpenCL installation...${NC}"
-clinfo --list || echo -e "${YELLOW}OpenCL devices not detected. You may need to reboot.${NC}"
 
 echo -e "\n${GREEN}Setup script finished successfully!${NC}"
