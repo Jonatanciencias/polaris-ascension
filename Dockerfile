@@ -9,7 +9,7 @@
 # ------------------------------------------------------------------------------
 # STAGE 1: Builder - Instala dependencias y compila código
 # ------------------------------------------------------------------------------
-FROM ubuntu:22.04 as builder
+FROM ubuntu:24.04 as builder
 
 # Evitar prompts durante instalación
 ENV DEBIAN_FRONTEND=noninteractive
@@ -54,7 +54,7 @@ RUN pip3 install --no-cache-dir \
 # ------------------------------------------------------------------------------
 # STAGE 2: Runtime - Imagen final optimizada
 # ------------------------------------------------------------------------------
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # Evitar prompts
 ENV DEBIAN_FRONTEND=noninteractive
