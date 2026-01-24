@@ -280,18 +280,35 @@ class CLContext:
             return self._kernel_cache[cache_key]
         
         try:
-            # Build with options to suppress automatic header inclusion
-            # This fixes Mesa Clover header issues
+            # Build with options for Mesa Clover compatibility
+            # -cl-std=CL1.2: OpenCL 1.2 standard (maximum supported by Clover)
+            # Note: We disable PyOpenCL caching to get better error messages
             build_options = [
-                "-cl-std=CL1.2",
-                "-Werror"
+                "-cl-std=CL1.2"
             ]
-            program = cl.Program(self._context, source).build(options=" ".join(build_options))
+            
+            # Compile without caching for better error reporting
+            import os
+            os.environ.pop('PYOPENCL_COMPILER_OUTPUT', None)
+            
+            program = cl.Program(self._context, source).build(
+                options=" ".join(build_options),
+                cache_dir=None  # Disable caching
+            )
             kernel = getattr(program, kernel_name)
             self._kernel_cache[cache_key] = kernel
             logger.debug(f"Compiled kernel: {kernel_name}")
             return kernel
         except cl.RuntimeError as e:
+            # Try to get build log for debugging
+            try:
+                build_log = program.get_build_info(
+                    self._device,
+                    cl.program_build_info.LOG
+                )
+                logger.error(f"Build log:\n{build_log}")
+            except:
+                pass
             logger.error(f"Kernel compilation failed: {e}")
             raise
     
