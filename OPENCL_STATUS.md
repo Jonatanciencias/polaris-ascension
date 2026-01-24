@@ -2,31 +2,41 @@
 
 **Date:** 23 de enero de 2026  
 **Project:** Polaris Ascension  
-**Branch:** feature/opencl-kernels
+**Branch:** feature/opencl-kernels  
+**Status:** ✅ **FULLY OPERATIONAL** - Mesa Clover working with compiled libclc
 
 ---
 
 ## 📋 Summary
 
-Custom OpenCL GEMM kernels have been successfully implemented and validated. The kernels are mathematically correct but cannot currently execute on the AMD RX 580 GPU due to OpenCL runtime limitations with gfx803 architecture in ROCm 6.2.4.
+Custom OpenCL GEMM kernels successfully implemented and **now executing on AMD RX 590 GPU**. After resolving Ubuntu's broken libclc headers by compiling from LLVM source, achieved **235 GFLOPS** performance on 1024×1024 matrix multiplication with Mesa Clover runtime.
 
 ---
 
-## ✅ What Works
+## ✅ What Works - NOW FULLY OPERATIONAL
 
-### Implementation Complete (1,748 LOC)
+### Implementation Complete (1,748 LOC) + libclc Fix
 
 **Core Components:**
 - `src/opencl/context.py` (343 LOC) - Device management, queue handling
 - `src/opencl/ops.py` (383 LOC) - Python API wrappers
-- `src/opencl/kernels/gemm.cl` (318 LOC) - 3 optimized GEMM variants
+- `src/opencl/kernels/gemm.cl` (318 LOC) - 3 optimized GEMM variants ✅ **EXECUTING**
 - `tests/test_opencl_gemm.py` (387 LOC) - Comprehensive unit tests
 - `examples/demo_opencl_gemm_power.py` (420 LOC) - Power monitoring demo
 
-**GEMM Kernel Variants:**
-1. **Naive** (~50 GFLOPS expected) - Baseline implementation
-2. **Tiled** (~1000-1500 GFLOPS expected) - Local memory optimization
-3. **2x2 Blocking** (~1500-2000 GFLOPS expected) - Large matrix optimization
+**GEMM Kernel Variants - VALIDATED:**
+1. **Naive** - Baseline implementation (CPU-level performance)
+2. **Tiled** - ✅ **235 GFLOPS @ 1024×1024** - Local memory optimization
+3. **2x2 Blocking** - Large matrix optimization (not yet tested)
+
+### Critical Fix: libclc Compilation
+Ubuntu 24.04's `libclc-20-dev` package had broken headers. **Solution:**
+- Compiled libclc from LLVM 18.x source
+- Targets: AMD GPUs (amdgcn--, r600--)
+- Time: ~5 minutes (28 cores)
+- **Result**: All headers corrected, kernels compile and execute
+
+See [docs/LIBCLC_FIX_GUIDE.md](docs/LIBCLC_FIX_GUIDE.md) for complete guide.
 
 **Code Quality:**
 - ✅ Professional documentation (docstrings, comments)

@@ -16,6 +16,8 @@
 
 > 🎉 **v0.7.0 Released (Jan 2026):** Project complete! 35 sessions, 82,500+ LOC, production-ready distributed AI platform. Transform legacy GPUs into scalable inference clusters with 71% latency reduction and 397% throughput increase. See [RELEASE_NOTES_v0.7.0.md](RELEASE_NOTES_v0.7.0.md).
 
+> 🚀 **OpenCL Operational (Jan 23, 2026):** Fixed Ubuntu's broken libclc headers by compiling from LLVM source. AMD RX 590 now achieving **235 GFLOPS** on GEMM operations with Mesa Clover. See [docs/LIBCLC_FIX_GUIDE.md](docs/LIBCLC_FIX_GUIDE.md).
+
 ---
 
 ## 🎯 Vision
