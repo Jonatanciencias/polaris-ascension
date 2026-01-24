@@ -1,6 +1,6 @@
-# Legacy GPU AI Platform
+# Polaris Ascension ⭐
 
-**Enterprise-Grade Distributed AI Inference on AMD Legacy GPUs**
+**Ascending Beyond Planned Obsolescence: Power-Efficient ML on AMD Polaris GPUs**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)

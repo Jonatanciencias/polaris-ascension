@@ -7,13 +7,13 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
     requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
 
 setup(
-    name="legacy-gpu-ai",
-    version="0.6.0-dev",
-    author="Legacy GPU AI Platform Contributors",
-    description="Open-source AI platform for AMD legacy GPUs - Democratizing AI through accessible hardware",
+    name="polaris-ascension",
+    version="0.7.0",
+    author="Polaris Ascension Contributors",
+    description="Ascending beyond planned obsolescence: Power-efficient ML inference on AMD Polaris GPUs with distributed computing",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/legacy-gpu-ai",
+    url="https://github.com/jonatanciencias/polaris-ascension",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     classifiers=[
