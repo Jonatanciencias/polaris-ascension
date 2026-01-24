@@ -1,0 +1,152 @@
+{
+  "hardware": {
+    "architecture": "GCN 4.0 (Polaris 10)",
+    "lds_banks": 32,
+    "bank_width_bytes": 4,
+    "bank_stride_bytes": 128
+  },
+  "configurations_analyzed": [
+    {
+      "padding_floats": 0,
+      "row_bytes": 64,
+      "bank_conflicts": 48,
+      "conflict_percent": 75.0,
+      "performance_impact_percent": 13.043478260869565
+    },
+    {
+      "padding_floats": 1,
+      "row_bytes": 68,
+      "bank_conflicts": 48,
+      "conflict_percent": 75.0,
+      "performance_impact_percent": 13.043478260869565
+    },
+    {
+      "padding_floats": 2,
+      "row_bytes": 72,
+      "bank_conflicts": 48,
+      "conflict_percent": 75.0,
+      "performance_impact_percent": 13.043478260869565
+    },
+    {
+      "padding_floats": 3,
+      "row_bytes": 76,
+      "bank_conflicts": 48,
+      "conflict_percent": 75.0,
+      "performance_impact_percent": 13.043478260869565
+    }
+  ],
+  "optimal_padding": 0,
+  "recommendation": "Recommended: 0 floats (64 bytes)\n  Reason: Minimal bank conflicts (75.0%)\n  Expected performance impact: -13.0%\n  LDS usage: 1.00 KB",
+  "thread_patterns": {
+    "tile_size": 16,
+    "padding_floats": 2,
+    "row_bytes": 72,
+    "bank_count": 32,
+    "thread_count": 64,
+    "bank_distribution": {
+      "0": [
+        0,
+        16,
+        32,
+        48
+      ],
+      "1": [
+        1,
+        17,
+        33,
+        49
+      ],
+      "2": [
+        2,
+        18,
+        34,
+        50
+      ],
+      "3": [
+        3,
+        19,
+        35,
+        51
+      ],
+      "4": [
+        4,
+        20,
+        36,
+        52
+      ],
+      "5": [
+        5,
+        21,
+        37,
+        53
+      ],
+      "6": [
+        6,
+        22,
+        38,
+        54
+      ],
+      "7": [
+        7,
+        23,
+        39,
+        55
+      ],
+      "8": [
+        8,
+        24,
+        40,
+        56
+      ],
+      "9": [
+        9,
+        25,
+        41,
+        57
+      ],
+      "10": [
+        10,
+        26,
+        42,
+        58
+      ],
+      "11": [
+        11,
+        27,
+        43,
+        59
+      ],
+      "12": [
+        12,
+        28,
+        44,
+        60
+      ],
+      "13": [
+        13,
+        29,
+        45,
+        61
+      ],
+      "14": [
+        14,
+        30,
+        46,
+        62
+      ],
+      "15": [
+        15,
+        31,
+        47,
+        63
+      ]
+    },
+    "conflict_summary": {
+      "banks_with_conflicts": 16,
+      "total_conflicts": 48,
+      "max_threads_per_bank": 4,
+      "min_threads_per_bank": 4,
+      "avg_threads_per_bank": 4.0
+    }
+  }
+}

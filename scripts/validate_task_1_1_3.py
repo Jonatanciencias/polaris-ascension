@@ -409,14 +409,14 @@ class Task113Validator:
         self.validate_documentation("TASK_1_1_3_PLAN.md")
         
         # Summary
-        passed = self.passed_count
-        total = self.total_count
+        passed = sum(1 for c in self.checks if c.status == CheckStatus.PASSED)
+        total = len(self.checks)
         
         summary = {
             'checks_passed': passed,
             'checks_total': total,
             'pass_percentage': (passed / total * 100) if total else 0,
-            'overall_status': self.overall_status.value,
+            'overall_status': CheckStatus.PASSED if passed == total else CheckStatus.WARNING if passed >= total - 1 else CheckStatus.FAILED,
             'baseline_gflops': self.BASELINE_GFLOPS,
             'target_gflops': f"{self.TARGET_GFLOPS}-{self.MAX_GFLOPS}",
             'minimum_improvement': f"{self.MIN_IMPROVEMENT*100:.0f}%"
