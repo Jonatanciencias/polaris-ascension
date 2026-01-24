@@ -379,7 +379,128 @@ CLDevice(
 
 ---
 
-**Status:** ⏳ Awaiting ROCm 5.4.x installation for GPU validation  
-**Kernel Correctness:** ✅ Validated (POCL CPU)  
-**GPU Execution:** ⏳ Pending compatible OpenCL runtime  
-**Next Action:** Install ROCm 5.4.x with gfx803 support
+## 🔍 UPDATE: ROCm 5.4.3 Installation Results
+
+**Date:** 23 de enero de 2026, 20:30
+
+### Installation Summary
+
+**What was installed:**
+- ROCm 5.4.3 OpenCL runtime (rocm-opencl-runtime)
+- ROCm CLang OpenCL compiler (rocm-clang-ocl)
+- ROCm OpenCL development files (rocm-opencl-dev)
+- Location: `/opt/rocm-5.4.3/`
+
+**What was tested:**
+```bash
+# clinfo with ROCm 5.4.3
+$ /opt/rocm-5.4.3/bin/clinfo
+ERROR: clGetPlatformIDs(-1001)  # CL_PLATFORM_NOT_FOUND_KHR
+
+# PyOpenCL device detection
+AMD Radeon RX 590 GME (Mesa Clover only, no ROCm device)
+```
+
+### Critical Finding
+
+**ROCm 5.4.3 OpenCL ALSO does not support gfx803 (Polaris)**
+
+Despite ROCm 5.4.3 being marketed as the "last version supporting Polaris," the OpenCL runtime still fails to detect the RX 580 GPU. Error `-1001` indicates no OpenCL platform found, meaning the driver does not recognize gfx803 architecture.
+
+**Tested configurations:**
+- ✅ Driver loaded: `amdgpu` kernel module active
+- ✅ Libraries present: `/opt/rocm-5.4.3/lib/libamdocl64.so`
+- ✅ ICD configured: `/etc/OpenCL/vendors/amdocl64_50403_121.icd`
+- ❌ Platform detection: FAILED (clGetPlatformIDs returns -1001)
+
+### Conclusion
+
+**AMD has discontinued Polaris (gfx803) support across ALL compute APIs:**
+- ❌ ROCm 6.2.4 HIP: Segfault on initialization
+- ❌ ROCm 6.2.4 OpenCL: Segfault on platform query  
+- ❌ ROCm 5.4.3 OpenCL: Platform not found (-1001)
+- ✅ Mesa Clover: Detects GPU but header compilation issues
+- ✅ POCL: Works on CPU only
+
+This confirms the project's core philosophy: **Hardware vendors abandon "legacy" devices that are still perfectly capable.** The RX 580 has 6.17 TFLOPS theoretical performance but is artificially obsolete due to driver support decisions.
+
+---
+
+## 🚀 Path Forward: Alternative Solutions
+
+### Option 1: Mesa Clover + Manual Fixes (Recommended)
+
+Mesa Clover successfully detects the RX 580 GPU and can compile kernels, but has header path issues.
+
+**Advantages:**
+- ✅ GPU detected and accessible
+- ✅ Open source, community maintained
+- ✅ No vendor lock-in
+- ✅ Aligns with project philosophy
+
+**Implementation:**
+```bash
+# Fix header paths
+sudo apt install -y libclc-20-dev mesa-opencl-icd
+
+# Create symbolic links for missing headers
+sudo ln -s /usr/lib/clc /usr/include/clc/clcfunc.h
+
+# Or compile Mesa from source with proper libclc integration
+```
+
+### Option 2: Vulkan Compute Shaders
+
+Use Vulkan compute shaders instead of OpenCL. Vulkan has excellent Polaris support via Mesa RADV driver.
+
+**Advantages:**
+- ✅ Excellent AMD support via Mesa RADV
+- ✅ Modern API with active development
+- ✅ Better performance than OpenCL on AMD
+- ✅ Supports same SPIR-V intermediate representation
+
+**Implementation:**
+- Replace OpenCL kernels with Vulkan compute shaders
+- Use PyVulkan or vulkan bindings for Python
+- Port GEMM kernel to GLSL compute shader
+- Expected similar or better performance
+
+### Option 3: LLVM IR / AMD IL Direct
+
+Bypass OpenCL/HIP entirely and generate AMD Intermediate Language directly.
+
+**Advantages:**
+- ✅ Complete control over code generation
+- ✅ No runtime dependency on ROCm
+- ✅ Educational value (understand GPU at low level)
+
+**Disadvantages:**
+- ❌ Very complex implementation
+- ❌ Architecture-specific (not portable)
+- ❌ Significant development time
+
+### Option 4: Continue with POCL CPU
+
+Use current POCL implementation for development and testing.
+
+**Advantages:**
+- ✅ Already working
+- ✅ Validates kernel correctness
+- ✅ Useful for CI/CD pipelines
+
+**Disadvantages:**
+- ❌ No GPU acceleration
+- ❌ 1500x slower than expected
+- ❌ Doesn't demonstrate project goals
+
+---
+
+## 📊 Current Status
+
+**Status:** 🔴 ROCm OpenCL not functional on gfx803  
+**Kernel Correctness:** ✅ Validated (POCL CPU, error < 3e-6)  
+**GPU Execution:** ❌ Blocked by driver limitations  
+**ROCm 5.4.3:** ⚠️ Installed but non-functional for gfx803  
+**Next Action:** Evaluate Vulkan Compute or fix Mesa Clover headers  
+
+**Recommendation:** Pursue **Vulkan Compute** path for best results. Modern API, excellent AMD support, aligns with independence philosophy.
