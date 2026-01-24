@@ -95,10 +95,7 @@ def run_power_benchmark(
     
     # Initialize power monitor
     print(f"⚡ Starting power monitoring...")
-    power_monitor = GPUPowerMonitor(
-        sampling_rate=10.0,  # 10 Hz
-        buffer_size=duration * 10 + 100
-    )
+    power_monitor = GPUPowerMonitor(verbose=False)
     
     # Warmup
     print(f"🔥 Warming up GPU (3 iterations)...")
@@ -106,25 +103,34 @@ def run_power_benchmark(
         _ = gemm(ctx, A, B)
     ctx.finish()
     
-    # Start monitoring
-    power_monitor.start()
-    time.sleep(1.0)  # Let power stabilize
-    
-    # Benchmark
+    # Benchmark with power monitoring
     print(f"🚀 Running benchmark ({duration}s)...")
+    
+    readings = []
     start_time = time.time()
     iterations = 0
+    last_sample = time.time()
+    sample_interval = 0.1  # 10 Hz
     
+    # Run GEMM while monitoring
     while (time.time() - start_time) < duration:
+        # Sample power at interval
+        if time.time() - last_sample >= sample_interval:
+            readings.append(power_monitor.read_full())
+            last_sample = time.time()
+        
+        # Execute GEMM
         _ = gemm(ctx, A, B, use_tiled=True)
         iterations += 1
     
     ctx.finish()
+    
+    # Final reading
+    readings.append(power_monitor.read_full())
     elapsed = time.time() - start_time
     
-    # Stop monitoring
-    time.sleep(0.5)  # Capture power decay
-    power_stats = power_monitor.stop()
+    # Calculate statistics
+    power_stats = power_monitor.calculate_statistics(readings)
     
     # Calculate performance
     flops = 2.0 * size * size * size  # Operations per GEMM
@@ -132,8 +138,8 @@ def run_power_benchmark(
     gflops = (total_flops / elapsed) / 1e9
     time_per_gemm = (elapsed / iterations) * 1000  # ms
     
-    # Energy calculation
-    energy_j = power_stats.mean * elapsed
+    # Energy from statistics
+    energy_j = power_stats.total_energy_joules
     
     # Results
     result = BenchmarkResult(
@@ -141,11 +147,11 @@ def run_power_benchmark(
         size=size,
         gflops=gflops,
         time_ms=time_per_gemm,
-        avg_power_w=power_stats.mean,
-        min_power_w=power_stats.min,
-        max_power_w=power_stats.max,
+        avg_power_w=power_stats.mean_power,
+        min_power_w=power_stats.min_power,
+        max_power_w=power_stats.max_power,
         energy_j=energy_j,
-        temperature_c=power_monitor.get_temperature() or 0.0
+        temperature_c=power_stats.avg_temperature or 0.0
     )
     
     # Print results
@@ -193,53 +199,60 @@ def run_cpu_baseline(size: int, duration: int = 10) -> BenchmarkResult:
     
     # Initialize power monitor
     print(f"⚡ Starting power monitoring...")
-    power_monitor = GPUPowerMonitor(sampling_rate=10.0)
+    power_monitor = GPUPowerMonitor(verbose=False)
     
     # Warmup
     print(f"🔥 Warming up CPU...")
     for _ in range(3):
         _ = A @ B
     
-    # Start monitoring
-    power_monitor.start()
-    time.sleep(1.0)
-    
-    # Benchmark
+    # Benchmark with monitoring
     print(f"🚀 Running CPU benchmark ({duration}s)...")
+    
+    readings = []
     start_time = time.time()
     iterations = 0
+    last_sample = time.time()
+    sample_interval = 0.1
     
     while (time.time() - start_time) < duration:
+        # Sample power
+        if time.time() - last_sample >= sample_interval:
+            readings.append(power_monitor.read_full())
+            last_sample = time.time()
+        
+        # CPU GEMM
         _ = A @ B
         iterations += 1
     
+    # Final reading
+    readings.append(power_monitor.read_full())
     elapsed = time.time() - start_time
     
-    # Stop monitoring
-    time.sleep(0.5)
-    power_stats = power_monitor.stop()
+    # Calculate statistics
+    power_stats = power_monitor.calculate_statistics(readings)
     
     # Calculate metrics
     flops = 2.0 * size * size * size
     total_flops = flops * iterations
     gflops = (total_flops / elapsed) / 1e9
     time_per_gemm = (elapsed / iterations) * 1000
-    energy_j = power_stats.mean * elapsed
+    energy_j = power_stats.total_energy_joules
     
     result = BenchmarkResult(
         name="CPU (NumPy)",
         size=size,
         gflops=gflops,
         time_ms=time_per_gemm,
-        avg_power_w=power_stats.mean,
-        min_power_w=power_stats.min,
-        max_power_w=power_stats.max,
+        avg_power_w=power_stats.mean_power,
+        min_power_w=power_stats.min_power,
+        max_power_w=power_stats.max_power,
         energy_j=energy_j,
-        temperature_c=power_monitor.get_temperature() or 0.0
+        temperature_c=power_stats.avg_temperature or 0.0
     )
     
     print(f"\n📊 CPU Performance: {gflops:.2f} GFLOPS")
-    print(f"⚡ GPU Power (idle): {power_stats.mean:.2f} W")
+    print(f"⚡ GPU Power (idle): {power_stats.mean_power:.2f} W")
     print(f"   (GPU not used for compute)")
     
     return result

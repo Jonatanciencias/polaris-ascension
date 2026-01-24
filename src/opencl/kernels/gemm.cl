@@ -185,7 +185,7 @@ __kernel void gemm_tiled(
  * 
  * Work-group size: 16x16 (256 threads)
  * Each thread computes: 2x2 block of C
- * Local memory usage: 2 × TILE_SIZE² × sizeof(float) = 2 KB
+ * Local memory usage: 2 × 32² × sizeof(float) = 8 KB
  * 
  * Performance: ~1500-2000 GFLOPS (RX 580) for large matrices
  * 
@@ -201,7 +201,7 @@ __kernel void gemm_tiled_2x2(
     __global const float* B,
     __global float* C
 ) {
-    // Local indices within work-group
+    // Local indices within work-group (16x16)
     const int local_row = get_local_id(0);
     const int local_col = get_local_id(1);
     
@@ -209,23 +209,25 @@ __kernel void gemm_tiled_2x2(
     const int global_row = get_global_id(0) * 2;
     const int global_col = get_global_id(1) * 2;
     
-    // Shared memory tiles
-    __local float A_tile[TILE_SIZE][TILE_SIZE];
-    __local float B_tile[TILE_SIZE][TILE_SIZE];
+    // Shared memory tiles (32x32 to handle 2x2 blocking)
+    __local float A_tile[32][TILE_SIZE];
+    __local float B_tile[TILE_SIZE][32];
     
     // Accumulators for 2x2 output block
     float sum00 = 0.0f, sum01 = 0.0f;
     float sum10 = 0.0f, sum11 = 0.0f;
     
-    // Number of tiles
+    // Number of tiles along K dimension
     const int num_tiles = (K + TILE_SIZE - 1) / TILE_SIZE;
     
     // Tile loop
     for (int t = 0; t < num_tiles; t++) {
-        // Load A_tile (stride of 2 in row dimension)
-        const int a_col = t * TILE_SIZE + local_col;
+        const int tile_k_start = t * TILE_SIZE;
+        
+        // Load A_tile: 2 rows per thread (strided by 2)
         const int a_row0 = global_row;
         const int a_row1 = global_row + 1;
+        const int a_col = tile_k_start + local_col;
         
         if (a_row0 < M && a_col < K) {
             A_tile[local_row * 2][local_col] = A[a_row0 * K + a_col];
@@ -239,8 +241,8 @@ __kernel void gemm_tiled_2x2(
             A_tile[local_row * 2 + 1][local_col] = 0.0f;
         }
         
-        // Load B_tile (stride of 2 in column dimension)
-        const int b_row = t * TILE_SIZE + local_row;
+        // Load B_tile: 2 columns per thread (strided by 2)
+        const int b_row = tile_k_start + local_row;
         const int b_col0 = global_col;
         const int b_col1 = global_col + 1;
         
@@ -256,26 +258,32 @@ __kernel void gemm_tiled_2x2(
             B_tile[local_row][local_col * 2 + 1] = 0.0f;
         }
         
+        // Synchronize before computation
         barrier(CLK_LOCAL_MEM_FENCE);
         
-        // Compute 2x2 block
+        // Compute 2x2 block: accumulate partial dot products
         #pragma unroll
         for (int k = 0; k < TILE_SIZE; k++) {
-            // Row 0
+            // Load A values for this thread's 2 rows
             const float a0 = A_tile[local_row * 2][k];
-            sum00 += a0 * B_tile[k][local_col * 2];
-            sum01 += a0 * B_tile[k][local_col * 2 + 1];
-            
-            // Row 1
             const float a1 = A_tile[local_row * 2 + 1][k];
-            sum10 += a1 * B_tile[k][local_col * 2];
-            sum11 += a1 * B_tile[k][local_col * 2 + 1];
+            
+            // Load B values for this thread's 2 columns
+            const float b0 = B_tile[k][local_col * 2];
+            const float b1 = B_tile[k][local_col * 2 + 1];
+            
+            // Accumulate all 4 combinations
+            sum00 += a0 * b0;
+            sum01 += a0 * b1;
+            sum10 += a1 * b0;
+            sum11 += a1 * b1;
         }
         
+        // Synchronize before loading next tile
         barrier(CLK_LOCAL_MEM_FENCE);
     }
     
-    // Write 2x2 block to global memory
+    // Write 2x2 block to global memory with alpha/beta scaling
     if (global_row < M && global_col < N) {
         const int idx00 = global_row * N + global_col;
         C[idx00] = alpha * sum00 + beta * C[idx00];
