@@ -118,53 +118,50 @@ class CLContext:
         if not platforms:
             raise RuntimeError("No OpenCL platforms found")
         
-        # Find all GPU devices
-        gpu_devices = []
+        # Find all devices (GPU and CPU) from all platforms
+        all_devices = []
         for platform in platforms:
             try:
+                # Try GPU first
                 devices = platform.get_devices(device_type=cl.device_type.GPU)
-                gpu_devices.extend(devices)
+                all_devices.extend(devices)
             except cl.RuntimeError:
-                continue
+                pass
+            
+            try:
+                # Then CPU
+                devices = platform.get_devices(device_type=cl.device_type.CPU)
+                all_devices.extend(devices)
+            except cl.RuntimeError:
+                pass
         
-        if not gpu_devices:
-            # Fallback to CPU if no GPU available
-            logger.warning("No GPU devices found, falling back to CPU")
-            for platform in platforms:
-                try:
-                    devices = platform.get_devices(device_type=cl.device_type.CPU)
-                    gpu_devices.extend(devices)
-                    break
-                except cl.RuntimeError:
-                    continue
-        
-        if not gpu_devices:
+        if not all_devices:
             raise RuntimeError("No OpenCL devices found")
         
         # Select device
         if device_id is not None:
-            if device_id >= len(gpu_devices):
+            if device_id >= len(all_devices):
                 raise ValueError(
                     f"Device ID {device_id} out of range. "
-                    f"Available devices: {len(gpu_devices)}"
+                    f"Available devices: {len(all_devices)}"
                 )
-            device = gpu_devices[device_id]
+            device = all_devices[device_id]
         else:
-            # Select first AMD GPU if available, otherwise first device
-            device = None
-            for dev in gpu_devices:
-                vendor = dev.vendor.lower()
-                if 'amd' in vendor or 'advanced micro devices' in vendor:
+            # Select first GPU, or first device if no GPU
+            device = all_devices[0]
+            for dev in all_devices:
+                if dev.type & cl.device_type.GPU:
                     device = dev
                     break
-            if device is None:
-                device = gpu_devices[0]
         
         # Create context and queue
         self._context = cl.Context([device])
         
-        queue_properties = cl.command_queue_properties.PROFILING_ENABLE if self.enable_profiling else None
-        self._queue = cl.CommandQueue(self._context, properties=queue_properties)
+        if self.enable_profiling:
+            queue_properties = cl.command_queue_properties.PROFILING_ENABLE
+            self._queue = cl.CommandQueue(self._context, properties=queue_properties)
+        else:
+            self._queue = cl.CommandQueue(self._context)
         
         # Store device info
         self._device_info = CLDevice(
@@ -283,7 +280,13 @@ class CLContext:
             return self._kernel_cache[cache_key]
         
         try:
-            program = cl.Program(self._context, source).build()
+            # Build with options to suppress automatic header inclusion
+            # This fixes Mesa Clover header issues
+            build_options = [
+                "-cl-std=CL1.2",
+                "-Werror"
+            ]
+            program = cl.Program(self._context, source).build(options=" ".join(build_options))
             kernel = getattr(program, kernel_name)
             self._kernel_cache[cache_key] = kernel
             logger.debug(f"Compiled kernel: {kernel_name}")
