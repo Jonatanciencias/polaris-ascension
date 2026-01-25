@@ -43,18 +43,6 @@ __kernel void gemm_reference(
 #define TS 32
 #endif
 
-#ifndef BS
-#define BS 4
-#endif
-
-#ifndef LDS_PAD
-#define LDS_PAD 4
-#endif
-
-#ifndef WG_SIZE
-#define WG_SIZE 64
-#endif
-
 
 // BLOCK RECURSIVE GEMM - Phase 2, Technique 1 (v5 - OPTIMIZED)
 // Only the optimized kernel is retained below.
@@ -66,41 +54,82 @@ __kernel void gemm_recursive_optimized(
     int M, int N, int K,
     float alpha, float beta)
 {
-    // Kernel tiled: cada hilo solo carga y usa los datos estrictamente necesarios
+    // Register blocking: cada hilo procesa 2x2 elementos para aumentar la intensidad aritmética
+    const int BS = 2;  // Block size per thread (2×2)
     int local_x = get_local_id(0);
     int local_y = get_local_id(1);
-    int row = get_group_id(0) * TS + local_y;
-    int col = get_group_id(1) * TS + local_x;
-    float acc = 0.0f;
+    
+    // Cada workgroup procesa un tile TS×TS, pero cada hilo procesa BS×BS elementos
+    int wg_row = get_group_id(0) * TS;
+    int wg_col = get_group_id(1) * TS;
+    
+    // Posición del hilo dentro del tile
+    int tile_row = local_y;
+    int tile_col = local_x;
+    
+    // Acumuladores para los BS×BS elementos que procesa este hilo
+    float acc[BS][BS];
+    for (int i = 0; i < BS; i++) {
+        for (int j = 0; j < BS; j++) {
+            acc[i][j] = 0.0f;
+        }
+    }
+    
     __local float A_tile[TS][TS];
     __local float B_tile[TS][TS];
+    
     for (int t = 0; t < (K + TS - 1) / TS; t++) {
         int tiled_k = t * TS;
-        // Carga cooperativa: todos los hilos cargan, pero solo los válidos acceden a memoria global
+        
+        // Carga cooperativa: todos los hilos colaboran para cargar los tiles completos
         for (int k = 0; k < TS; k++) {
             int global_k = tiled_k + k;
-            A_tile[local_y][k] = (row < M && global_k < K) ? A[row * K + global_k] : 0.0f;
-            B_tile[k][local_x] = (global_k < K && col < N) ? B[global_k * N + col] : 0.0f;
+            
+            // Carga de A_tile: cada hilo carga su fila
+            int global_row = wg_row + local_y;
+            if (global_k < K && global_row < M) {
+                A_tile[local_y][k] = A[global_row * K + global_k];
+            } else {
+                A_tile[local_y][k] = 0.0f;
+            }
+            
+            // Carga de B_tile: cada hilo carga su columna
+            int global_col = wg_col + local_x;
+            if (global_k < K && global_col < N) {
+                B_tile[k][local_x] = B[global_k * N + global_col];
+            } else {
+                B_tile[k][local_x] = 0.0f;
+            }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
 
-        // Acumulación: solo hilos válidos (row < M && col < N) y global_k < K
-        if (row < M && col < N) {
-            for (int k = 0; k < TS; k++) {
-                int global_k = tiled_k + k;
-                if (global_k < K) {
-                    acc += A_tile[local_y][k] * B_tile[k][local_x];
+        // Acumulación con register blocking: cada hilo procesa BS×BS elementos
+        for (int i = 0; i < BS; i++) {
+            for (int j = 0; j < BS; j++) {
+                int row = wg_row + tile_row * BS + i;
+                int col = wg_col + tile_col * BS + j;
+                if (row < M && col < N) {
+                    for (int k = 0; k < TS; k++) {
+                        acc[i][j] += A_tile[tile_row * BS + i][k] * B_tile[k][tile_col * BS + j];
+                    }
                 }
             }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
     }
-    if (row < M && col < N) {
+    
+    // Escribir resultados: cada hilo escribe sus BS×BS elementos
+    for (int i = 0; i < BS; i++) {
+        for (int j = 0; j < BS; j++) {
+            int row = wg_row + tile_row * BS + i;
+            int col = wg_col + tile_col * BS + j;
+            if (row < M && col < N) {
 #ifdef DUMP_ACC
-        // Dump: escribir el acumulador sin escalar, para depuración
-        C[row * N + col] = acc;
+                C[row * N + col] = acc[i][j];
 #else
-        C[row * N + col] = (beta == 0.0f) ? alpha * acc : fma(alpha, acc, beta * C[row * N + col]);
+                C[row * N + col] = (beta == 0.0f) ? alpha * acc[i][j] : fma(alpha, acc[i][j], beta * C[row * N + col]);
 #endif
+            }
+        }
     }
 }

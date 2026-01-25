@@ -38,11 +38,11 @@ class RecursiveConfig:
     """Configuration for recursive GEMM kernels."""
     
     # Block sizes (cache-optimized)
-    block_size_large: int = 8   # Tamaño de tile global (TS)
-    block_size_small: int = 8   # Tamaño de sub-tile (igual a TS para tiling simple)
+    block_size_large: int = 32   # Tamaño de tile global (TS) - ahora cada hilo procesa 2x2 elementos
+    block_size_small: int = 16   # Tamaño de sub-tile (igual a TS para tiling simple)
     
     # Workgroup configuration
-    workgroup_size: Tuple[int, int] = (8, 8)
+    workgroup_size: Tuple[int, int] = (16, 16)  # 256 threads total (16*16=256) - máximo para Polaris
     
     # Memory padding for bank conflict avoidance
     lds_padding: int = 4  # floats
@@ -51,7 +51,7 @@ class RecursiveConfig:
     kernel_variant: str = "optimized"  # "basic", "two_level", "optimized"
     
     # Compiler options
-    compile_options: str = "-cl-mad-enable -cl-unsafe-math-optimizations -cl-fast-relaxed-math -DTS=8 -DBS=8"
+    compile_options: str = "-cl-mad-enable -cl-unsafe-math-optimizations -cl-fast-relaxed-math -DTS=32"
     dump_acc: bool = False  # Si True, agrega -DDUMP_ACC
     
     def __post_init__(self):
@@ -272,7 +272,7 @@ class RecursiveGEMMExecutor:
         # Calculate work sizes based on kernel variant
         global_size = self.config.get_global_size(M, N)
         TS = self.config.block_size_large
-        local_size = (TS, TS)
+        local_size = self.config.workgroup_size
 
         logger.debug(f"Launching {self.config.kernel_variant} kernel: global={global_size}, local={local_size}")
         
