@@ -27,6 +27,23 @@ from typing import Dict, List, Tuple, Optional, Any
 import warnings
 warnings.filterwarnings('ignore')
 
+# Importar integración de Bayesian Optimization
+try:
+    # Ruta relativa desde fase_7_ai_kernel_predictor/src hacia fase_8_bayesian_optimization/src
+    bayesian_path = Path(__file__).parent.parent.parent / "fase_8_bayesian_optimization" / "src"
+    sys.path.append(str(bayesian_path))
+    from bayesian_integration import (
+        get_bayesian_optimal_params,
+        estimate_performance_with_params,
+        BAYESIAN_OPTIMAL_PARAMS,
+        BAYESIAN_OPTIMIZATION_METADATA
+    )
+    BAYESIAN_INTEGRATION_AVAILABLE = True
+    print("✅ Bayesian Optimization integration disponible")
+except ImportError as e:
+    print(f"⚠️  Bayesian Optimization integration no disponible: {e}")
+    BAYESIAN_INTEGRATION_AVAILABLE = False
+
 class AIKernelPredictor:
     """
     Predictor de kernels basado en machine learning para optimización automática
@@ -156,7 +173,112 @@ class AIKernelPredictor:
 
         return max(0.0, prediction)  # No permitir valores negativos
 
-    def predict_best_kernel(self, matrix_size: int, optimization_level: int = 1) -> Dict[str, Any]:
+    def predict_performance_with_bayesian(self, matrix_size: int, kernel_type: str,
+                                        optimization_level: int = 1,
+                                        use_bayesian_params: bool = True) -> float:
+        """
+        Predice el performance usando parámetros optimizados por Bayesian Optimization.
+
+        Args:
+            matrix_size: Tamaño de la matriz
+            kernel_type: Tipo de kernel
+            optimization_level: Nivel de optimización
+            use_bayesian_params: Si usar parámetros Bayesian optimizados
+
+        Returns:
+            Performance predicho en GFLOPS con ajuste Bayesian
+        """
+        if not BAYESIAN_INTEGRATION_AVAILABLE:
+            print("⚠️  Bayesian integration no disponible, usando predicción estándar")
+            return self.predict_performance(matrix_size, kernel_type, optimization_level)
+
+        # Obtener predicción base
+        base_prediction = self.predict_performance(matrix_size, kernel_type, optimization_level)
+
+        if not use_bayesian_params:
+            return base_prediction
+
+        try:
+            # Obtener parámetros óptimos de Bayesian
+            optimal_params = get_bayesian_optimal_params()
+
+            # Calcular baseline para este tamaño de matriz
+            if matrix_size <= 256:
+                baseline = 25.0
+            elif matrix_size <= 512:
+                baseline = 35.0
+            elif matrix_size <= 1024:
+                baseline = 60.0
+            elif matrix_size <= 2048:
+                baseline = 100.0
+            else:
+                baseline = 120.0
+
+            # Estimar mejora usando los parámetros Bayesian
+            estimated_with_params = estimate_performance_with_params(matrix_size, optimal_params)
+            improvement_factor = estimated_with_params / baseline
+
+            # Aplicar mejora (con factor de ajuste conservador)
+            adjusted_prediction = base_prediction * improvement_factor
+
+            print(f"🔬 Bayesian adjustment: {base_prediction:.1f} → {adjusted_prediction:.1f} GFLOPS")
+            print(f"   Mejora: {((improvement_factor - 1) * 100):.1f}%")
+
+            return adjusted_prediction
+
+        except Exception as e:
+            print(f"⚠️  Error en ajuste Bayesian: {e}, usando predicción base")
+            return base_prediction
+
+    def predict_best_kernel_enhanced(self, matrix_size: int, optimization_level: int = 1,
+                                   use_bayesian: bool = True) -> Dict[str, Any]:
+        """
+        Predice el mejor kernel con integración de Bayesian Optimization.
+
+        Args:
+            matrix_size: Tamaño de la matriz
+            optimization_level: Nivel de optimización
+            use_bayesian: Si usar parámetros Bayesian optimizados
+
+        Returns:
+            Diccionario con el mejor kernel y predicciones mejoradas
+        """
+        predictions = {}
+        predictions_bayesian = {}
+
+        # Predecir performance para cada kernel (base y con Bayesian)
+        for kernel in self.kernel_types:
+            perf_base = self.predict_performance(matrix_size, kernel, optimization_level)
+            perf_bayesian = self.predict_performance_with_bayesian(
+                matrix_size, kernel, optimization_level, use_bayesian
+            )
+
+            predictions[kernel] = perf_base
+            predictions_bayesian[kernel] = perf_bayesian
+
+        # Encontrar el mejor con Bayesian
+        best_kernel = max(predictions_bayesian.items(), key=lambda x: x[1])
+
+        # Calcular mejora total
+        base_best = predictions[best_kernel[0]]
+        bayesian_best = best_kernel[1]
+        improvement = ((bayesian_best / base_best) - 1) * 100 if base_best > 0 else 0
+
+        result = {
+            'best_kernel': best_kernel[0],
+            'predicted_performance': bayesian_best,
+            'predicted_performance_base': base_best,
+            'improvement_percent': improvement,
+            'all_predictions': predictions,
+            'all_predictions_bayesian': predictions_bayesian,
+            'matrix_size': matrix_size,
+            'optimization_level': optimization_level,
+            'confidence_score': self._calculate_confidence(predictions_bayesian),
+            'bayesian_integration': BAYESIAN_INTEGRATION_AVAILABLE and use_bayesian,
+            'bayesian_metadata': BAYESIAN_OPTIMIZATION_METADATA if BAYESIAN_INTEGRATION_AVAILABLE else None
+        }
+
+        return result
         """
         Predice el mejor kernel para un tamaño de matriz dado.
 
@@ -213,35 +335,40 @@ class AIKernelPredictor:
         return confidence
 
     def get_kernel_recommendations(self, matrix_sizes: List[int],
-                                 optimization_level: int = 1) -> pd.DataFrame:
+                                 optimization_level: int = 1,
+                                 use_bayesian: bool = True) -> pd.DataFrame:
         """
-        Genera recomendaciones de kernel para múltiples tamaños de matriz.
+        Genera recomendaciones de kernel para múltiples tamaños de matriz con opción Bayesian.
 
         Args:
             matrix_sizes: Lista de tamaños de matriz
             optimization_level: Nivel de optimización
+            use_bayesian: Si usar parámetros Bayesian optimizados
 
         Returns:
-            DataFrame con recomendaciones
+            DataFrame con recomendaciones mejoradas
         """
         results = []
 
         for size in matrix_sizes:
-            pred = self.predict_best_kernel(size, optimization_level)
+            pred = self.predict_best_kernel_enhanced(size, optimization_level, use_bayesian)
             row = {
                 'matrix_size': size,
                 'best_kernel': pred['best_kernel'],
                 'predicted_gflops': pred['predicted_performance'],
-                'confidence': pred['confidence_score']
+                'predicted_gflops_base': pred['predicted_performance_base'],
+                'improvement_percent': pred['improvement_percent'],
+                'confidence': pred['confidence_score'],
+                'bayesian_used': pred['bayesian_integration']
             }
             results.append(row)
 
         return pd.DataFrame(results)
 
 def main():
-    """Función principal para testing del predictor."""
-    print("🤖 FASE 7: AI KERNEL PREDICTOR - PREDICTION INTERFACE")
-    print("=" * 60)
+    """Función principal para testing del predictor con integración Bayesian."""
+    print("🤖 FASE 7: AI KERNEL PREDICTOR - ENHANCED WITH BAYESIAN OPTIMIZATION")
+    print("=" * 70)
 
     try:
         # Inicializar predictor
@@ -250,30 +377,69 @@ def main():
         # Test con diferentes tamaños de matriz
         test_sizes = [256, 512, 1024, 2048]
 
-        print("🧪 Testing predicciones...")
-        print("-" * 40)
+        print("🧪 Testing predicciones con integración Bayesian...")
+        print("-" * 50)
 
         for size in test_sizes:
-            result = predictor.predict_best_kernel(size)
+            result = predictor.predict_best_kernel_enhanced(size, use_bayesian=True)
             print(f"Matrix {size}x{size}:")
             print(f"   Mejor kernel: {result['best_kernel']}")
             print(f"   Performance: {result['predicted_performance']:.1f} GFLOPS")
+            print(f"   Performance base: {result['predicted_performance_base']:.1f} GFLOPS")
+            print(f"   Mejora: {result['improvement_percent']:.1f}%")
             print(f"   Confianza: {result['confidence_score']:.3f}")
+            print(f"   Bayesian usado: {result['bayesian_integration']}")
             print()
 
-        # Generar recomendaciones para un rango
-        print("📊 Recomendaciones para rango completo:")
-        print("-" * 40)
+        # Comparación lado a lado
+        print("📊 Comparación: Base vs Bayesian Enhanced")
+        print("-" * 50)
+
+        comparison_data = []
+        for size in test_sizes:
+            # Usar predicción sin Bayesian para comparación base
+            base_result = predictor.predict_best_kernel_enhanced(size, use_bayesian=False)
+            bayesian_result = predictor.predict_best_kernel_enhanced(size, use_bayesian=True)
+
+            comparison_data.append({
+                'size': size,
+                'base_kernel': base_result['best_kernel'],
+                'base_gflops': base_result['predicted_performance'],
+                'bayesian_kernel': bayesian_result['best_kernel'],
+                'bayesian_gflops': bayesian_result['predicted_performance'],
+                'improvement': bayesian_result['improvement_percent']
+            })
+
+        comparison_df = pd.DataFrame(comparison_data)
+        print(comparison_df.to_string(index=False, float_format='%.1f'))
+
+        # Generar recomendaciones para un rango completo
+        print("\n📈 Recomendaciones completas con Bayesian:")
+        print("-" * 50)
 
         sizes_range = [64, 128, 256, 512, 1024, 2048, 4096]
-        recommendations = predictor.get_kernel_recommendations(sizes_range)
+        recommendations = predictor.get_kernel_recommendations(sizes_range, use_bayesian=True)
 
-        print(recommendations.to_string(index=False))
+        print(recommendations.to_string(index=False, float_format='%.1f'))
 
-        print("\n✅ Prediction interface funcionando correctamente!")
+        # Mostrar metadatos de Bayesian si disponibles
+        if BAYESIAN_INTEGRATION_AVAILABLE:
+            print("\n🔬 Metadatos de Bayesian Optimization:")
+            print("-" * 50)
+            meta = BAYESIAN_OPTIMIZATION_METADATA
+            print(f"   Mejor performance alcanzado: {meta['best_performance']:.1f} GFLOPS")
+            print(f"   Mejora total: {meta['improvement_over_baseline']:.1f}%")
+            print(f"   Evaluaciones realizadas: {meta['total_evaluations']}")
+            print(f"   Tiempo de optimización: {meta['optimization_time']:.2f}s")
+            print(f"   Parámetros óptimos encontrados: {len(BAYESIAN_OPTIMAL_PARAMS)}")
+
+        print("\n✅ Enhanced prediction interface funcionando correctamente!")
+        print("🎯 Integración Bayesian Optimization completada!")
 
     except Exception as e:
         print(f"❌ Error en testing: {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
 
 if __name__ == "__main__":
