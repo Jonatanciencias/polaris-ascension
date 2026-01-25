@@ -174,6 +174,9 @@ class HybridTechniquesValidator:
             self.logger.info(f"⚙️  Probando ejecución para: {config['name']}")
 
             try:
+                # Calcular resultado de referencia (multiplicación tradicional)
+                reference = config['matrix_a'] @ config['matrix_b']
+                
                 # Seleccionar técnica
                 selection = self.selector.select_technique(
                     config['matrix_a'], config['matrix_b']

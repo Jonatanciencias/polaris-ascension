@@ -96,6 +96,7 @@ class PerformanceMetrics:
 
 
 @dataclass
+@dataclass
 class HybridResult:
     """Resultado de optimización híbrida."""
     final_result: np.ndarray

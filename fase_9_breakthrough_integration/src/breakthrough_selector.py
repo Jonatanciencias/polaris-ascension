@@ -77,6 +77,7 @@ class BreakthroughTechnique(Enum):
 
 
 @dataclass
+@dataclass
 class TechniqueSelection:
     """Resultado de selección de técnica."""
     technique: BreakthroughTechnique
@@ -292,6 +293,21 @@ class BreakthroughTechniqueSelector:
         Returns:
             Tupla de (resultado, métricas de ejecución)
         """
+        # Debug: verificar tipo de selection
+        self.logger.info(f"execute_selected_technique - selection type: {type(selection)}")
+        self.logger.info(f"execute_selected_technique - selection value: {selection}")
+        if hasattr(selection, 'technique'):
+            self.logger.info(f"execute_selected_technique - technique: {selection.technique}")
+        else:
+            self.logger.error(f"execute_selected_technique - selection no tiene atributo 'technique': {type(selection)}")
+            # Intentar imprimir los argumentos para debug
+            import inspect
+            frame = inspect.currentframe()
+            args, _, _, values = inspect.getargvalues(frame)
+            for arg in args:
+                self.logger.error(f"  {arg} = {type(values[arg])}: {values[arg]}")
+            raise ValueError(f"Selection object does not have 'technique' attribute: {selection}")
+
         self.logger.info(f"🚀 Ejecutando técnica: {selection.technique.value}")
 
         try:
@@ -853,79 +869,6 @@ class BreakthroughTechniqueSelector:
         }
 
         return stats
-
-    def execute_selected_technique(self,
-                                 selection: TechniqueSelection,
-                                 matrix_a: np.ndarray,
-                                 matrix_b: np.ndarray,
-                                 additional_params: Optional[Dict[str, Any]] = None) -> Tuple[np.ndarray, Dict[str, Any]]:
-        """
-        Ejecuta la técnica seleccionada con las matrices dadas.
-
-        Args:
-            selection: Técnica seleccionada
-            matrix_a, matrix_b: Matrices de entrada
-            additional_params: Parámetros adicionales opcionales
-
-        Returns:
-            Resultado y métricas de ejecución
-        """
-        if selection.technique == BreakthroughTechnique.TRADITIONAL:
-            # Usar multiplicación NumPy estándar
-            import time
-            start_time = time.time()
-            result = matrix_a @ matrix_b
-            execution_time = time.time() - start_time
-
-            operations = 2 * matrix_a.shape[0] * matrix_a.shape[1] * matrix_b.shape[1]
-            gflops = (operations / execution_time) / 1e9
-
-            return result, {
-                'technique': 'traditional_numpy',
-                'gflops_achieved': gflops,
-                'execution_time': execution_time,
-                'error_relative': 0.0  # NumPy es exacto
-            }
-
-        elif selection.technique in self.technique_implementations:
-            implementation = self.technique_implementations[selection.technique]
-
-            try:
-                if selection.technique == BreakthroughTechnique.LOW_RANK:
-                    # Usar parámetros adicionales si están disponibles
-                    params = {}
-                    if additional_params:
-                        params.update(additional_params)
-                    result, metrics = implementation.optimized_gemm_gpu(matrix_a, matrix_b, **params)
-
-                elif selection.technique == BreakthroughTechnique.COPPERSMITH_WINOGRAD:
-                    result, metrics = implementation.cw_matrix_multiply_gpu(matrix_a, matrix_b)
-
-                elif selection.technique == BreakthroughTechnique.QUANTUM_ANNEALING:
-                    # Usar parámetros de selection y adicionales
-                    num_sweeps = selection.parameters.get('num_sweeps', 30)  # Reducido por defecto
-                    if additional_params and 'num_sweeps' in additional_params:
-                        num_sweeps = additional_params['num_sweeps']
-                    result, metrics = implementation.quantum_annealing_optimization(
-                        matrix_a, matrix_b, num_sweeps=num_sweeps)
-
-                return result, metrics
-
-            except Exception as e:
-                self.logger.error(f"Error ejecutando {selection.technique.value}: {e}")
-                # Fallback a tradicional
-                return self.execute_selected_technique(
-                    TechniqueSelection(BreakthroughTechnique.TRADITIONAL, 0.5, 441.88, {}, "Fallback"),
-                    matrix_a, matrix_b
-                )
-
-        else:
-            # Técnica no disponible, usar fallback
-            self.logger.warning(f"Técnica {selection.technique.value} no disponible, usando fallback")
-            return self.execute_selected_technique(
-                TechniqueSelection(BreakthroughTechnique.TRADITIONAL, 0.5, 441.88, {}, "Fallback"),
-                matrix_a, matrix_b
-            )
 
     def _load_finetuned_model(self):
         """Carga el modelo ML fine-tuned."""
