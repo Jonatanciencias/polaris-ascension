@@ -80,11 +80,15 @@ try:
     sys.path.insert(0, str(tensor_core_path))
     from tensor_core_emulator import TensorCoreEmulator
 
+    # Intelligent Technique Selector
+    from intelligent_technique_selector import IntelligentTechniqueSelector, select_optimal_technique
+
     TECHNIQUES_AVAILABLE = True
     AI_TECHNIQUES_AVAILABLE = True
     NEUROMORPHIC_AVAILABLE = True
     HYBRID_QUANTUM_CLASSICAL_AVAILABLE = True
     TENSOR_CORE_AVAILABLE = True
+    INTELLIGENT_SELECTION_AVAILABLE = True
 
 except ImportError as e:
     print(f"⚠️  Algunas técnicas de breakthrough no disponibles: {e}")
@@ -92,6 +96,7 @@ except ImportError as e:
     AI_TECHNIQUES_AVAILABLE = False
     NEUROMORPHIC_AVAILABLE = False
     TENSOR_CORE_AVAILABLE = False
+    INTELLIGENT_SELECTION_AVAILABLE = False
 
 
 class HybridStrategy(Enum):
@@ -101,6 +106,7 @@ class HybridStrategy(Enum):
     ADAPTIVE = "adaptive"          # Adaptar basado en resultados intermedios
     CASCADE = "cascade"            # Aplicar una técnica sobre el resultado de otra
     PIPELINE = "pipeline"          # Pipeline optimizado con preprocesamiento
+    AUTO = "auto"                  # Selección automática inteligente
 
 
 @dataclass
@@ -998,6 +1004,9 @@ class HybridOptimizer:
         elif config.strategy == HybridStrategy.PIPELINE:
             result = self._optimize_pipeline(matrix_a, matrix_b, config)
 
+        elif config.strategy == HybridStrategy.AUTO:
+            result = self._optimize_auto(matrix_a, matrix_b, config)
+
         else:
             raise ValueError(f"Estrategia no soportada: {config.strategy}")
 
@@ -1029,16 +1038,18 @@ class HybridOptimizer:
         if matrix_a.shape[1] != matrix_b.shape[0]:
             raise ValueError(f"Dimensiones incompatibles: A{matrix_a.shape} x B{matrix_b.shape}")
 
-        if not config.techniques:
+        # Para estrategia AUTO, techniques puede estar vacío (selección automática)
+        if not config.techniques and config.strategy != HybridStrategy.AUTO:
             raise ValueError("Debe especificar al menos una técnica")
 
-        # Verificar que las técnicas solicitadas estén disponibles
-        available_techniques = set(self.hybrid_techniques.keys()) | set(self.individual_techniques.keys())
-        requested_techniques = set(config.techniques)
-        unavailable = requested_techniques - available_techniques
+        # Verificar que las técnicas solicitadas estén disponibles (solo si no está vacío)
+        if config.techniques:
+            available_techniques = set(self.hybrid_techniques.keys()) | set(self.individual_techniques.keys())
+            requested_techniques = set(config.techniques)
+            unavailable = requested_techniques - available_techniques
 
-        if unavailable:
-            self.logger.warning(f"Técnicas no disponibles: {unavailable}")
+            if unavailable:
+                self.logger.warning(f"Técnicas no disponibles: {unavailable}")
             config.techniques = [t for t in config.techniques if t in available_techniques]
 
             if not config.techniques:
@@ -1407,6 +1418,82 @@ class HybridOptimizer:
         """
         # Implementación simplificada: usar secuencial con etapas definidas
         return self._optimize_sequential(matrix_a, matrix_b, config)
+
+    def _optimize_auto(self,
+                      matrix_a: np.ndarray,
+                      matrix_b: np.ndarray,
+                      config: HybridConfiguration) -> HybridResult:
+        """
+        Optimización automática inteligente usando selección basada en ML.
+
+        Usa el Intelligent Technique Selector para elegir la mejor técnica
+        basada en características de las matrices y aprendizaje continuo.
+        """
+        self.logger.info("🎯 Iniciando optimización automática inteligente")
+
+        # Verificar que la selección inteligente esté disponible
+        if not INTELLIGENT_SELECTION_AVAILABLE:
+            self.logger.warning("⚠️  Selección inteligente no disponible, usando sequential")
+            return self._optimize_sequential(matrix_a, matrix_b, config)
+
+        try:
+            # Usar el selector inteligente
+            selector = IntelligentTechniqueSelector()
+            selection_result = selector.select_technique(matrix_a, matrix_b)
+
+            self.logger.info(f"✅ Técnica seleccionada automáticamente: {selection_result.recommended_technique.value}")
+            self.logger.info(f"   Confianza: {selection_result.selection_confidence:.2%}")
+            self.logger.info(f"   Performance esperado: {selection_result.expected_performance:.1f} GFLOPS")
+
+            # Mostrar reasoning
+            for reason in selection_result.reasoning[:2]:
+                self.logger.info(f"   💡 {reason}")
+
+            # Crear configuración automática basada en la selección
+            auto_config = HybridConfiguration(
+                strategy=HybridStrategy.SEQUENTIAL,  # Usar sequential con la técnica seleccionada
+                techniques=[selection_result.recommended_technique.value],
+                validation_enabled=config.validation_enabled
+            )
+
+            # Ejecutar con la técnica seleccionada
+            result = self._optimize_sequential(matrix_a, matrix_b, auto_config)
+
+            # Agregar información de selección inteligente al resultado
+            result.intelligent_selection = {
+                'selected_technique': selection_result.recommended_technique.value,
+                'selection_confidence': selection_result.selection_confidence,
+                'expected_performance': selection_result.expected_performance,
+                'reasoning': selection_result.reasoning,
+                'alternative_options': [opt.value for opt in selection_result.alternative_options],
+                'matrix_features': {
+                    'size': max(selection_result.matrix_features.size_a),
+                    'sparsity': (selection_result.matrix_features.sparsity_a +
+                               selection_result.matrix_features.sparsity_b) / 2,
+                    'structure_type': selection_result.matrix_features.structure_type
+                }
+            }
+
+            # Registrar feedback para aprendizaje futuro
+            if result.final_result is not None and result.combined_performance > 0:
+                selector.record_performance_feedback(
+                    selection_result.recommended_technique,
+                    result.combined_performance,
+                    selection_result.matrix_features,
+                    success=result.validation_passed if hasattr(result, 'validation_passed') else True
+                )
+
+            return result
+
+        except Exception as e:
+            self.logger.error(f"❌ Error en selección automática: {e}, usando fallback sequential")
+            # Fallback a sequential con todas las técnicas disponibles
+            fallback_config = HybridConfiguration(
+                strategy=HybridStrategy.SEQUENTIAL,
+                techniques=list(self.individual_techniques.keys())[:3],  # Usar primeras 3 técnicas
+                validation_enabled=config.validation_enabled
+            )
+            return self._optimize_sequential(matrix_a, matrix_b, fallback_config)
 
     def _combine_results_weighted(self,
                                 technique_results: Dict[str, Tuple[np.ndarray, Any]],
