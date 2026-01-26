@@ -117,109 +117,73 @@ __kernel void tensor_core_matmul_fma(
     const int local_x = get_local_id(0);
     const int local_y = get_local_id(1);
 
-    // Global position
-    const int global_x = wg_x * TILE_SIZE + local_x;
-    const int global_y = wg_y * TILE_SIZE + local_y;
+    // Global position in output matrix
+    const int global_row = wg_y * TILE_SIZE + local_y;
+    const int global_col = wg_x * TILE_SIZE + local_x;
 
-    // Shared memory for tensor tiles (emulating tensor core memory)
-    __local float4 A_tile[TILE_SIZE][TILE_SIZE/VECTOR_SIZE];
-    __local float4 B_tile[TILE_SIZE][TILE_SIZE/VECTOR_SIZE];
+    // Bounds checking
+    if (global_row >= M || global_col >= N) return;
 
-    // Tensor core accumulator (emulating tensor core registers)
-    float4 accumulator = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
+    // Local memory for tiles (must be declared at function scope)
+    __local float A_tile[TILE_SIZE][TILE_SIZE];
+    __local float B_tile[TILE_SIZE][TILE_SIZE];
 
-    // Load tensor tiles with coalesced reads
-    for (int t = 0; t < K; t += TILE_SIZE) {
-        // Load A tile (matrix A is M x K)
-        if (global_y < M && (t + local_x * VECTOR_SIZE) < K) {
-            float4 a_val = vload4(0, A + global_y * K + t + local_x * VECTOR_SIZE);
-            A_tile[local_y][local_x] = a_val;
+    // Accumulator for this output element
+    float sum = 0.0f;
+
+    // Loop over tiles of K dimension
+    for (int tile_k = 0; tile_k < K; tile_k += TILE_SIZE) {
+
+        // Load A tile (coalesced read)
+        if (local_x < TILE_SIZE && tile_k + local_y < K) {
+            A_tile[local_y][local_x] = A[(global_row) * K + tile_k + local_x];
         } else {
-            A_tile[local_y][local_x] = (float4)(0.0f);
+            A_tile[local_y][local_x] = 0.0f;
         }
 
-        // Load B tile (matrix B is K x N)
-        if ((t + local_y) < K && global_x * VECTOR_SIZE < N) {
-            float4 b_val = vload4(0, B + (t + local_y) * N + global_x * VECTOR_SIZE);
-            B_tile[local_y][local_x] = b_val;
+        // Load B tile (coalesced read)
+        if (local_y < TILE_SIZE && tile_k + local_x < K) {
+            B_tile[local_x][local_y] = B[(tile_k + local_y) * N + global_col];
         } else {
-            B_tile[local_y][local_x] = (float4)(0.0f);
+            B_tile[local_x][local_y] = 0.0f;
         }
 
         barrier(CLK_LOCAL_MEM_FENCE);
 
-        // Tensor core FMA operations (emulated)
-        // This simulates: accumulator = accumulator + A * B
-        #pragma unroll 8
+        // Compute partial sum for this tile
+        #pragma unroll
         for (int k = 0; k < TILE_SIZE; k++) {
-            float4 a_val = A_tile[local_y][k];
-            float4 b_val = B_tile[k][local_x];
-
-            // FMA: fused multiply-add (tensor core operation)
-            accumulator += a_val.x * (float4)(b_val.x, b_val.x, b_val.x, b_val.x);
-            accumulator += a_val.y * (float4)(b_val.y, b_val.y, b_val.y, b_val.y);
-            accumulator += a_val.z * (float4)(b_val.z, b_val.z, b_val.z, b_val.z);
-            accumulator += a_val.w * (float4)(b_val.w, b_val.w, b_val.w, b_val.w);
+            if (tile_k + k < K) {
+                sum += A_tile[local_y][k] * B_tile[k][local_x];
+            }
         }
 
         barrier(CLK_LOCAL_MEM_FENCE);
     }
 
-    // Final FMA with C matrix: D = alpha * accumulator + beta * C
-    if (global_y < M && global_x * VECTOR_SIZE < N) {
-        float4 c_val = (float4)(0.0f);
-        if (beta != 0.0f) {
-            c_val = vload4(0, C + global_y * N + global_x * VECTOR_SIZE);
-        }
-
-        float4 result = alpha * accumulator + beta * c_val;
-        vstore4(result, 0, D + global_y * N + global_x * VECTOR_SIZE);
-    }
+    // Final result: D = alpha * sum + beta * C
+    float c_val = (beta != 0.0f) ? C[global_row * N + global_col] : 0.0f;
+    D[global_row * N + global_col] = alpha * sum + beta * c_val;
 }
 
-// Advanced tensor core simulation with mixed precision hints
-__kernel void tensor_core_mixed_precision(
+// Simplified tensor core kernel for validation
+__kernel void tensor_core_simple(
     const int M, const int N, const int K,
     __global const float* A,
     __global const float* B,
     __global float* D)
 {
-    // Simplified tensor core operation: D = A * B
-    // Optimized for maximum throughput on GCN 4.0
+    const int row = get_global_id(0);
+    const int col = get_global_id(1);
 
-    const int local_x = get_local_id(0);
-    const int local_y = get_local_id(1);
-    const int global_x = get_global_id(0);
-    const int global_y = get_global_id(1);
+    if (row >= M || col >= N) return;
 
-    if (global_x >= N || global_y >= M) return;
-
-    // Tensor core style accumulation
     float sum = 0.0f;
-
-    // Process in chunks optimized for tensor operations
-    int k = 0;
-    for (; k <= K - 8; k += 8) {
-        // Load 8 elements at once (simulating tensor width)
-        float8 a_vec = vload8(0, A + global_y * K + k);
-        float8 b_vec = (float8)(
-            B[(k+0) * N + global_x], B[(k+1) * N + global_x],
-            B[(k+2) * N + global_x], B[(k+3) * N + global_x],
-            B[(k+4) * N + global_x], B[(k+5) * N + global_x],
-            B[(k+6) * N + global_x], B[(k+7) * N + global_x]
-        );
-
-        // Manual dot product for float8 (OpenCL doesn't have dot for float8)
-        sum += a_vec.s0 * b_vec.s0 + a_vec.s1 * b_vec.s1 + a_vec.s2 * b_vec.s2 + a_vec.s3 * b_vec.s3;
-        sum += a_vec.s4 * b_vec.s4 + a_vec.s5 * b_vec.s5 + a_vec.s6 * b_vec.s6 + a_vec.s7 * b_vec.s7;
+    for (int k = 0; k < K; k++) {
+        sum += A[row * K + k] * B[k * N + col];
     }
 
-    // Handle remaining elements
-    for (; k < K; k++) {
-        sum += A[global_y * K + k] * B[k * N + global_x];
-    }
-
-    D[global_y * N + global_x] = sum;
+    D[row * N + col] = sum;
 }
 """
 
@@ -230,8 +194,7 @@ __kernel void tensor_core_mixed_precision(
                 '-cl-unsafe-math-optimizations',
                 '-cl-finite-math-only',
                 '-cl-fast-relaxed-math',
-                f'-DTILE_SIZE={self.config.tile_size}',
-                f'-DVECTOR_SIZE={self.config.vector_size}'
+                f'-DTILE_SIZE={self.config.tile_size}'
             ]
 
             self.program = cl.Program(self.context, tensor_kernel_source).build(options=build_options)
@@ -272,21 +235,13 @@ __kernel void tensor_core_mixed_precision(
         D_buf = cl.Buffer(self.context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=D.nbytes)
 
         # Work group configuration optimized for tensor operations
-        global_work_size = (
-            (N + self.config.tile_size - 1) // self.config.tile_size * self.config.tile_size,
-            (M + self.config.tile_size - 1) // self.config.tile_size * self.config.tile_size
-        )
-        local_work_size = self.config.work_group_size
+        global_work_size = (M, N)  # Simple 2D work size for element-wise kernel
+        local_work_size = None  # Let OpenCL decide
 
-        # Select kernel based on configuration
-        if self.config.use_vectorization and N % self.config.vector_size == 0:
-            kernel = self.program.tensor_core_matmul_fma
-            kernel_args = (np.int32(M), np.int32(N), np.int32(K), A_buf, B_buf, C_buf, D_buf, np.float32(alpha), np.float32(beta))
-            logger.info("Using tensor core FMA kernel")
-        else:
-            kernel = self.program.tensor_core_mixed_precision
-            kernel_args = (np.int32(M), np.int32(N), np.int32(K), A_buf, B_buf, D_buf)
-            logger.info("Using tensor core mixed precision kernel")
+        # Use the corrected tensor core kernel
+        kernel = self.program.tensor_core_matmul_fma
+        kernel_args = (np.int32(M), np.int32(N), np.int32(K), A_buf, B_buf, C_buf, D_buf, np.float32(alpha), np.float32(beta))
+        logger.info("Using corrected tensor core FMA kernel")
 
         # Set kernel arguments
         kernel.set_args(*kernel_args)

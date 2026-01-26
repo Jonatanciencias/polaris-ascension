@@ -22,7 +22,11 @@ Date: 2026-01-25
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
+try:
+    import seaborn as sns
+    SEABORN_AVAILABLE = True
+except ImportError:
+    SEABORN_AVAILABLE = False
 from pathlib import Path
 import json
 import time
@@ -230,7 +234,8 @@ class UncertaintyQuantification:
 
         self.prediction_uncertainty = uncertainty_metrics
         logger.info("✅ Prediction uncertainty quantified")
-        logger.info(".2f"        logger.info(".2f"
+        logger.info(f"🎯 Mean prediction error: {np.mean(prediction_errors):.2f}")
+        logger.info(f"📊 Uncertainty range: {uncertainty_metrics['confidence_interval'][0]:.2f} - {uncertainty_metrics['confidence_interval'][1]:.2f}")
         return uncertainty_metrics
 
     def _analyze_prediction_calibration(self, confidence_scores: np.ndarray,
@@ -386,7 +391,8 @@ class UncertaintyQuantification:
 
         self.optimization_uncertainty = uncertainty_metrics
         logger.info("✅ Optimization uncertainty quantified")
-        logger.info(".2f"        logger.info(".2f"
+        logger.info(f"📊 Optimization runs: {len(optimization_results)}")
+        logger.info(f"🎯 Mean performance: {np.mean([r['performance'] for r in optimization_results]):.2f} GFLOPS")
         return uncertainty_metrics
 
     def _analyze_optimization_robustness(self, performances: np.ndarray) -> Dict[str, Any]:
@@ -630,7 +636,8 @@ class UncertaintyQuantification:
 
         self.risk_assessment = risk_assessment
         logger.info("✅ Risk assessment completed")
-        logger.info(".2f"        logger.info(f"⚠️ Risk level: {risk_assessment['risk_level']}")
+        logger.info(f"⚠️ Overall risk score: {overall_risk_score:.2f}")
+        logger.info(f"⚠️ Risk level: {risk_assessment['risk_level']}")
 
         return risk_assessment
 
@@ -814,10 +821,10 @@ def main():
 
         summary = results['summary']
         print(f"📊 Overall confidence: {summary['overall_confidence_level'].upper()}")
-        print("🔍 Key findings:"
+        print("🔍 Key findings:")
         for finding in summary['key_findings']:
             print(f"   • {finding}")
-        print("💡 Recommendations:"
+        print("💡 Recommendations:")
         for rec in summary['recommendations']:
             print(f"   • {rec}")
         print("="*60)

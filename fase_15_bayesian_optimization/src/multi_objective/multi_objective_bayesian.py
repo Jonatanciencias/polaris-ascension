@@ -20,7 +20,11 @@ Date: 2026-01-25
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
+try:
+    import seaborn as sns
+    SEABORN_AVAILABLE = True
+except ImportError:
+    SEABORN_AVAILABLE = False
 from pathlib import Path
 import json
 import time
@@ -44,6 +48,20 @@ try:
 except ImportError:
     PYMOO_AVAILABLE = False
     print("PyMOO not available - multi-objective optimization limited")
+
+    # Fallback classes when PyMOO is not available
+    class ElementwiseProblem:
+        """Fallback base class for optimization problems"""
+        def __init__(self, n_var, n_obj, n_constr=0, xl=None, xu=None):
+            self.n_var = n_var
+            self.n_obj = n_obj
+            self.n_constr = n_constr
+            self.xl = xl
+            self.xu = xu
+
+    class Problem(ElementwiseProblem):
+        """Fallback problem class"""
+        pass
 
 try:
     import plotly.graph_objects as go

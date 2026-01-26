@@ -449,7 +449,7 @@ class BayesianOptimizationMaster:
             elif isinstance(obj, (list, tuple)):
                 return [convert_to_serializable(item) for item in obj]
             elif isinstance(obj, dict):
-                return {k: convert_to_serializable(v) for k, v in obj}
+                return {k: convert_to_serializable(v) for k, v in obj.items()}
             else:
                 return str(obj)
 

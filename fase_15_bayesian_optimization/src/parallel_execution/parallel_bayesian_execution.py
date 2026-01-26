@@ -304,7 +304,7 @@ class ParallelBayesianExecution:
         }
 
         logger.info("✅ Parallel optimization execution completed")
-        logger.info(".1f"        logger.info(f"📊 Completed: {self.completed_tasks}, Failed: {self.failed_tasks}")
+        logger.info(f"📊 Completed: {self.completed_tasks}, Failed: {self.failed_tasks}")
 
         return {
             'execution_stats': execution_stats,
@@ -525,8 +525,9 @@ class ParallelBayesianExecution:
 
                 # Alert on high resource usage
                 if limits['cpu_percent'] > self.config['monitoring']['alert_threshold_percent']:
-                    logger.warning(".1f"                if limits['memory_percent'] > self.config['monitoring']['alert_threshold_percent']:
-                    logger.warning(".1f"
+                    logger.warning(f"⚠️ High CPU usage: {limits['cpu_percent']:.1f}%")
+                if limits['memory_percent'] > self.config['monitoring']['alert_threshold_percent']:
+                    logger.warning(f"⚠️ High memory usage: {limits['memory_percent']:.1f}%")
             time.sleep(self.config['monitoring']['log_interval_seconds'])
 
     def adaptive_load_balancing(self, current_stats: Dict[str, Any]) -> None:
@@ -652,7 +653,10 @@ def main():
         print(f"📊 Total tasks: {stats['total_tasks']}")
         print(f"✅ Completed: {stats['completed_tasks']}")
         print(f"❌ Failed: {stats['failed_tasks']}")
-        print(".1f"        print(".1f"        print(".1f"        print("="*60)
+        print(f"⏱️ Average time: {stats['average_task_time']:.2f}s")
+        print(f"📈 Success rate: {stats['success_rate']:.1f}%")
+        print(f"🔧 Resource utilization: {stats['resource_utilization']:.1f}%")
+        print("="*60)
 
     except Exception as e:
         logger.error(f"Parallel execution failed: {e}")
