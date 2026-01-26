@@ -82,7 +82,10 @@ def test_technique_integration():
                 failed_techniques.append(technique)
 
         except Exception as e:
+            import traceback
             print(f"  ❌ {technique}: Error - {e}")
+            print(f"  Full traceback:")
+            traceback.print_exc()
             failed_techniques.append(technique)
 
     # Resultados finales

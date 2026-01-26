@@ -122,6 +122,38 @@ class PerformanceMetrics:
     computational_efficiency: float
 
 
+def dict_to_performance_metrics(metrics_dict: Dict[str, Any]) -> PerformanceMetrics:
+    """
+    Convierte un diccionario de métricas en un objeto PerformanceMetrics.
+
+    Args:
+        metrics_dict: Diccionario con métricas
+
+    Returns:
+        Objeto PerformanceMetrics
+    """
+    # Extraer valores del diccionario, con valores por defecto
+    gflops = metrics_dict.get('gflops_achieved', metrics_dict.get('quality_metrics', {}).get('gflops_achieved', 0))
+    exec_time = metrics_dict.get('computation_time', metrics_dict.get('execution_time', 0))
+    memory_mb = metrics_dict.get('memory_usage_mb', 0)
+    error_rel = metrics_dict.get('relative_error', metrics_dict.get('quality_metrics', {}).get('relative_error', 0))
+    speedup = metrics_dict.get('actual_speedup', metrics_dict.get('speedup_factor', 1.0))
+    quality = metrics_dict.get('quality_score', 0.8)
+    convergence = metrics_dict.get('convergence_rate', 1.0)
+    efficiency = metrics_dict.get('computational_efficiency', gflops)
+
+    return PerformanceMetrics(
+        gflops_achieved=float(gflops),
+        execution_time=float(exec_time),
+        memory_usage_mb=float(memory_mb),
+        error_relative=float(error_rel) if error_rel is not None else 0.0,
+        speedup_factor=float(speedup),
+        quality_score=float(quality),
+        convergence_rate=float(convergence),
+        computational_efficiency=float(efficiency)
+    )
+
+
 @dataclass
 @dataclass
 class HybridResult:
@@ -1071,9 +1103,11 @@ class HybridOptimizer:
                         params_copy = params.copy()
                         if 'rank_target' in params_copy:
                             params_copy['target_rank'] = params_copy.pop('rank_target')
-                        result, metrics = technique.optimized_gemm_gpu(current_a, current_b, **params_copy)
+                        result, raw_metrics = technique.optimized_gemm_gpu(current_a, current_b, **params_copy)
+                        metrics = dict_to_performance_metrics(raw_metrics)
                     elif technique_name == 'cw':
-                        result, metrics = technique.cw_matrix_multiply_gpu(current_a, current_b)
+                        result, raw_metrics = technique.cw_matrix_multiply_gpu(current_a, current_b)
+                        metrics = dict_to_performance_metrics(raw_metrics)
                     elif technique_name == 'quantum':
                         result, metrics = technique.quantum_annealing_optimization(
                             current_a, current_b, **params)
@@ -1173,9 +1207,11 @@ class HybridOptimizer:
                         params_copy = params.copy()
                         if 'rank_target' in params_copy:
                             params_copy['target_rank'] = params_copy.pop('rank_target')
-                        result, metrics = technique.optimized_gemm_gpu(matrix_a, matrix_b, **params_copy)
+                        result, raw_metrics = technique.optimized_gemm_gpu(matrix_a, matrix_b, **params_copy)
+                        metrics = dict_to_performance_metrics(raw_metrics)
                     elif technique_name == 'cw':
-                        result, metrics = technique.cw_matrix_multiply_gpu(matrix_a, matrix_b)
+                        result, raw_metrics = technique.cw_matrix_multiply_gpu(matrix_a, matrix_b)
+                        metrics = dict_to_performance_metrics(raw_metrics)
                     elif technique_name == 'quantum':
                         result, metrics = technique.quantum_annealing_optimization(
                             matrix_a, matrix_b, **params)
@@ -1753,7 +1789,7 @@ class HybridOptimizer:
 
         return combined if combined is not None else np.zeros_like(list(technique_results.values())[0][0])
 
-    def _calculate_combined_performance(self, result: HybridResult) -> float:
+    def _calculate_combined_performance_from_result(self, result: HybridResult) -> float:
         """Calcula performance combinada de todas las técnicas."""
         if not result.technique_results:
             return 0.0
@@ -1772,7 +1808,7 @@ class HybridOptimizer:
 
         return total_performance / total_weight if total_weight > 0 else 0.0
 
-    def _calculate_quality_metrics(self, result: HybridResult,
+    def _calculate_quality_metrics_from_result(self, result: HybridResult,
                                  original_a: np.ndarray,
                                  original_b: np.ndarray) -> Dict[str, Any]:
         """Calcula métricas de calidad para el resultado híbrido."""
