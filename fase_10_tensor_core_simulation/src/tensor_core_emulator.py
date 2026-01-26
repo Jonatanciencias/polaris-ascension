@@ -108,62 +108,21 @@ __kernel void tensor_core_matmul_fma(
     __global float* D,
     const float alpha, const float beta)
 {
-    // Tensor core simulation: D = alpha * (A * B) + beta * C
-    // Optimized for Radeon RX 580 GCN 4.0 architecture
+    // Simplified tensor core simulation: D = alpha * (A * B) + beta * C
+    const int row = get_global_id(0);
+    const int col = get_global_id(1);
 
-    // Work-group and local IDs
-    const int wg_x = get_group_id(0);
-    const int wg_y = get_group_id(1);
-    const int local_x = get_local_id(0);
-    const int local_y = get_local_id(1);
+    if (row >= M || col >= N) return;
 
-    // Global position in output matrix
-    const int global_row = wg_y * TILE_SIZE + local_y;
-    const int global_col = wg_x * TILE_SIZE + local_x;
-
-    // Bounds checking
-    if (global_row >= M || global_col >= N) return;
-
-    // Local memory for tiles (must be declared at function scope)
-    __local float A_tile[TILE_SIZE][TILE_SIZE];
-    __local float B_tile[TILE_SIZE][TILE_SIZE];
-
-    // Accumulator for this output element
     float sum = 0.0f;
 
-    // Loop over tiles of K dimension
-    for (int tile_k = 0; tile_k < K; tile_k += TILE_SIZE) {
-
-        // Load A tile (coalesced read)
-        if (local_x < TILE_SIZE && tile_k + local_x < K) {
-            A_tile[local_y][local_x] = A[(global_row) * K + tile_k + local_x];
-        } else {
-            A_tile[local_y][local_x] = 0.0f;
-        }
-
-        // Load B tile (coalesced read)
-        if (local_y < TILE_SIZE && tile_k + local_y < K) {
-            B_tile[local_x][local_y] = B[(tile_k + local_y) * N + global_col];
-        } else {
-            B_tile[local_x][local_y] = 0.0f;
-        }
-
-        barrier(CLK_LOCAL_MEM_FENCE);
-
-        // Compute partial sum for this tile
-        #pragma unroll
-        for (int k = 0; k < TILE_SIZE; k++) {
-            if (tile_k + k < K) {
-                sum += A_tile[local_y][k] * B_tile[k][local_x];
-            }
-        }
-
-        barrier(CLK_LOCAL_MEM_FENCE);
+    // Matrix multiplication
+    for (int k = 0; k < K; k++) {
+        sum += A[row * K + k] * B[k * N + col];
     }
 
-    // Final result: D = alpha * sum + beta * C
-    float c_val = (beta != 0.0f) ? C[global_row * N + global_col] : 0.0f;
-    D[global_row * N + global_col] = alpha * sum + beta * c_val;
+    // FMA operation: alpha * sum + beta * C[row*N + col]
+    D[row * N + col] = alpha * sum + beta * C[row * N + col];
 }
 
 // Optimized simple kernel with work-group tiling for better performance
@@ -237,17 +196,25 @@ __kernel void tensor_core_optimized_simple(
         C_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=C.astype(np.float32))
         D_buf = cl.Buffer(self.context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=D.nbytes)
 
-        # Work group configuration for optimized simple kernel
-        local_work_size = (16, 16)  # Use larger work groups for better occupancy
+        # Work group configuration - adjust based on matrix size
+        preferred_local_size = 16
+        local_work_size = (
+            min(preferred_local_size, M),
+            min(preferred_local_size, N)
+        )
+
+        # Ensure local work size divides global work size evenly
         global_work_size = (
             ((M + local_work_size[0] - 1) // local_work_size[0]) * local_work_size[0],
             ((N + local_work_size[1] - 1) // local_work_size[1]) * local_work_size[1]
         )
 
-        # Use optimized simple kernel for accuracy and performance
-        kernel = self.program.tensor_core_optimized_simple
+        logger.info(f"Matrix size: {M}x{N}, Local work size: {local_work_size}, Global work size: {global_work_size}")
+
+        # Use simplified but correct tensor core kernel
+        kernel = self.program.tensor_core_matmul_fma
         kernel_args = (np.int32(M), np.int32(N), np.int32(K), A_buf, B_buf, C_buf, D_buf, np.float32(alpha), np.float32(beta))
-        logger.info("Using optimized simple tensor core kernel")
+        logger.info("Using simplified tensor core kernel with correct FMA operations")
 
         # Set kernel arguments
         kernel.set_args(*kernel_args)
