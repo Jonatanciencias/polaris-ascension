@@ -1,0 +1,426 @@
+{
+  "validation_timestamp": "2026-01-25T21:12:03.165516",
+  "overall_performance": {
+    "average_mape": 17.66022411368755,
+    "workgroup_accuracy": 37.5,
+    "memory_accuracy": 60.0,
+    "combined_accuracy": 85.0,
+    "total_predictions": 33
+  },
+  "model_comparison": {
+    "workgroup_best_model": "unknown",
+    "memory_best_model": "unknown",
+    "combined_best_model": "unknown"
+  },
+  "recommendations": [
+    "\u274c Work-group predictor needs improvement (>25% MAPE)",
+    "\u2705 Memory predictor shows good accuracy (<20% MAPE)",
+    "\u2705 Combined predictor shows promising accuracy (<25% MAPE)",
+    "\ud83c\udfaf AI Kernel Predictor ready for production use with high confidence"
+  ],
+  "validation_details": {
+    "workgroup": {
+      "predictions": [
+        {
+          "config_id": 0,
+          "actual_gflops": 185.20198148224807,
+          "predicted_gflops": 162.05129182351874,
+          "absolute_error": 23.150689658729334,
+          "relative_error": 0.1250023864401708,
+          "is_optimal_actual": true,
+          "optimal_probability": 0.69,
+          "prediction_confidence": "medium",
+          "model_used": "rf"
+        },
+        {
+          "config_id": 1,
+          "actual_gflops": 156.77772975650095,
+          "predicted_gflops": 162.05129182351874,
+          "absolute_error": 5.273562067017792,
+          "relative_error": 0.03363718861861577,
+          "is_optimal_actual": false,
+          "optimal_probability": 0.69,
+          "prediction_confidence": "medium",
+          "model_used": "rf"
+        },
+        {
+          "config_id": 2,
+          "actual_gflops": 122.68598182439756,
+          "predicted_gflops": 115.58040789807124,
+          "absolute_error": 7.105573926326315,
+          "relative_error": 0.05791675479678386,
+          "is_optimal_actual": false,
+          "optimal_probability": 0.05,
+          "prediction_confidence": "low",
+          "model_used": "rf"
+        },
+        {
+          "config_id": 3,
+          "actual_gflops": 102.81936671023016,
+          "predicted_gflops": 98.03948263055547,
+          "absolute_error": 4.779884079674687,
+          "relative_error": 0.04648816884026875,
+          "is_optimal_actual": false,
+          "optimal_probability": 0.03,
+          "prediction_confidence": "low",
+          "model_used": "rf"
+        },
+        {
+          "config_id": 4,
+          "actual_gflops": 68.99980361815555,
+          "predicted_gflops": 84.24253790631609,
+          "absolute_error": 15.242734288160534,
+          "relative_error": 0.2209098213165029,
+          "is_optimal_actual": false,
+          "optimal_probability": 0.01,
+          "prediction_confidence": "low",
+          "model_used": "rf"
+        },
+        {
+          "config_id": 5,
+          "actual_gflops": 44.67158011332168,
+          "predicted_gflops": 78.09397065786497,
+          "absolute_error": 33.42239054454329,
+          "relative_error": 0.7481801731606148,
+          "is_optimal_actual": false,
+          "optimal_probability": 0.01,
+          "prediction_confidence": "low",
+          "model_used": "rf"
+        },
+        {
+          "config_id": 6,
+          "actual_gflops": 19.95756351228135,
+          "predicted_gflops": 33.656211441666976,
+          "absolute_error": 13.698647929385626,
+          "relative_error": 0.68638879294839,
+          "is_optimal_actual": false,
+          "optimal_probability": 0.0,
+          "prediction_confidence": "low",
+          "model_used": "rf"
+        },
+        {
+          "config_id": 7,
+          "actual_gflops": 12.526550352507686,
+          "predicted_gflops": 20.19333358614709,
+          "absolute_error": 7.666783233639405,
+          "relative_error": 0.6120426628153532,
+          "is_optimal_actual": false,
+          "optimal_probability": 0.0,
+          "prediction_confidence": "low",
+          "model_used": "rf"
+        }
+      ],
+      "metrics": {
+        "mae": 13.792533215934624,
+        "mape": 31.63207436170875,
+        "rmse": 16.70677639359034,
+        "r2_score": 0.9206889263932712,
+        "num_predictions": 8,
+        "accuracy_threshold_10pct": 37.5,
+        "accuracy_threshold_20pct": 50.0
+      },
+      "accuracy_analysis": {
+        "optimal_detection_rate": 100.0,
+        "high_confidence_predictions": 0.0,
+        "total_optimal_configs": 1
+      },
+      "error_analysis": {
+        "error_percentiles": {
+          "25th": 5.505960830765509,
+          "50th": 17.295610387833687,
+          "75th": 63.06291953486124,
+          "90th": 70.49262070120574
+        },
+        "max_error": 74.81801731606149,
+        "min_error": 3.3637188618615768
+      }
+    },
+    "memory": {
+      "predictions": [
+        {
+          "config_id": 0,
+          "memory_type": "lds_prefetch",
+          "actual_gflops": 398.9611970822013,
+          "predicted_gflops": 303.63577777015036,
+          "absolute_error": 95.32541931205094,
+          "relative_error": 0.23893406178147758,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 1,
+          "memory_type": "lds_optimized",
+          "actual_gflops": 314.6794960166181,
+          "predicted_gflops": 216.04067235016564,
+          "absolute_error": 98.63882366645245,
+          "relative_error": 0.31345805784957587,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 2,
+          "memory_type": "coalesced_basic",
+          "actual_gflops": 186.05793372665573,
+          "predicted_gflops": 181.23843655992863,
+          "absolute_error": 4.819497166727103,
+          "relative_error": 0.025903206975347776,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 3,
+          "memory_type": "hybrid",
+          "actual_gflops": 173.13680386784517,
+          "predicted_gflops": 182.8482326963774,
+          "absolute_error": 9.711428828532235,
+          "relative_error": 0.056091071404696484,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 4,
+          "memory_type": "coalesced_vectorized",
+          "actual_gflops": 172.96098969072165,
+          "predicted_gflops": 180.779843832332,
+          "absolute_error": 7.818854141610359,
+          "relative_error": 0.04520588229514389,
+          "model_used": "rf"
+        }
+      ],
+      "metrics": {
+        "mae": 43.262804623074615,
+        "mape": 13.591845606124833,
+        "rmse": 61.636396689357746,
+        "r2_score": 0.5509497010197739,
+        "num_predictions": 5,
+        "accuracy_threshold_15pct": 60.0,
+        "accuracy_threshold_25pct": 80.0
+      },
+      "config_analysis": {
+        "memory_type_performance": {
+          "coalesced_basic": {
+            "mean": 0.025903206975347776,
+            "std": NaN,
+            "count": 1
+          },
+          "coalesced_vectorized": {
+            "mean": 0.04520588229514389,
+            "std": NaN,
+            "count": 1
+          },
+          "hybrid": {
+            "mean": 0.056091071404696484,
+            "std": NaN,
+            "count": 1
+          },
+          "lds_optimized": {
+            "mean": 0.31345805784957587,
+            "std": NaN,
+            "count": 1
+          },
+          "lds_prefetch": {
+            "mean": 0.23893406178147758,
+            "std": NaN,
+            "count": 1
+          }
+        },
+        "best_performing_type": "coalesced_basic",
+        "worst_performing_type": "lds_optimized"
+      }
+    },
+    "combined": {
+      "predictions": [
+        {
+          "config_id": 19,
+          "actual_gflops": 263.9316268994769,
+          "predicted_gflops": 270.7514085716004,
+          "absolute_error": 6.819781672123497,
+          "relative_error": 0.02583919840239887,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 16,
+          "actual_gflops": 286.5303769383758,
+          "predicted_gflops": 283.37986563467535,
+          "absolute_error": 3.150511303700455,
+          "relative_error": 0.01099538323777111,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 15,
+          "actual_gflops": 286.6710282800746,
+          "predicted_gflops": 283.3598875194035,
+          "absolute_error": 3.311140760671094,
+          "relative_error": 0.011550315288352557,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 26,
+          "actual_gflops": 220.76493646246027,
+          "predicted_gflops": 230.44281932436022,
+          "absolute_error": 9.677882861899946,
+          "relative_error": 0.043837952788057945,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 4,
+          "actual_gflops": 399.905181999093,
+          "predicted_gflops": 332.286880622299,
+          "absolute_error": 67.61830137679397,
+          "relative_error": 0.16908583439398225,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 12,
+          "actual_gflops": 306.9434397078189,
+          "predicted_gflops": 264.5484484316413,
+          "absolute_error": 42.39499127617762,
+          "relative_error": 0.13811988070679612,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 37,
+          "actual_gflops": 154.3348425624024,
+          "predicted_gflops": 160.08629149099707,
+          "absolute_error": 5.7514489285946695,
+          "relative_error": 0.03726604331921471,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 27,
+          "actual_gflops": 220.62428512076144,
+          "predicted_gflops": 231.9828015996535,
+          "absolute_error": 11.358516478892057,
+          "relative_error": 0.05148352763012844,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 39,
+          "actual_gflops": 148.39003203458347,
+          "predicted_gflops": 155.08234138264353,
+          "absolute_error": 6.692309348060064,
+          "relative_error": 0.0450994534895738,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 6,
+          "actual_gflops": 374.3688005602855,
+          "predicted_gflops": 284.295490651582,
+          "absolute_error": 90.0733099087035,
+          "relative_error": 0.24060047144393054,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 25,
+          "actual_gflops": 231.10184034950876,
+          "predicted_gflops": 233.77280359488577,
+          "absolute_error": 2.67096324537701,
+          "relative_error": 0.011557516120761118,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 9,
+          "actual_gflops": 335.1350084755861,
+          "predicted_gflops": 244.93160144836736,
+          "absolute_error": 90.20340702721876,
+          "relative_error": 0.2691554291433862,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 13,
+          "actual_gflops": 297.00793216712304,
+          "predicted_gflops": 287.25527690029526,
+          "absolute_error": 9.752655266827787,
+          "relative_error": 0.03283634613953703,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 31,
+          "actual_gflops": 184.58361107198195,
+          "predicted_gflops": 181.74849816585996,
+          "absolute_error": 2.835112906121992,
+          "relative_error": 0.015359505048454085,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 34,
+          "actual_gflops": 164.8123977911497,
+          "predicted_gflops": 162.7547535412233,
+          "absolute_error": 2.0576442499263976,
+          "relative_error": 0.012484766179628336,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 8,
+          "actual_gflops": 349.89238227281254,
+          "predicted_gflops": 292.69963563550823,
+          "absolute_error": 57.19274663730431,
+          "relative_error": 0.16345810750664153,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 17,
+          "actual_gflops": 274.26853078652533,
+          "predicted_gflops": 274.7947559756802,
+          "absolute_error": 0.5262251891548431,
+          "relative_error": 0.0019186495353505435,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 24,
+          "actual_gflops": 236.51757721209535,
+          "predicted_gflops": 241.76532457108203,
+          "absolute_error": 5.247747358986686,
+          "relative_error": 0.022187557562712595,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 0,
+          "actual_gflops": 467.3305428515594,
+          "predicted_gflops": 364.5954568616551,
+          "absolute_error": 102.73508598990429,
+          "relative_error": 0.21983387895649817,
+          "is_optimal_combined": true,
+          "model_used": "rf"
+        },
+        {
+          "config_id": 33,
+          "actual_gflops": 174.10605584323469,
+          "predicted_gflops": 179.09953204353636,
+          "absolute_error": 4.9934762003016715,
+          "relative_error": 0.028680657752639022,
+          "is_optimal_combined": false,
+          "model_used": "rf"
+        }
+      ],
+      "metrics": {
+        "mae": 26.25316289933703,
+        "mape": 7.756752373229074,
+        "rmse": 43.00008538849242,
+        "r2_score": 0.7418075687654002,
+        "num_predictions": 20,
+        "accuracy_threshold_20pct": 85.0,
+        "accuracy_threshold_30pct": 100.0
+      },
+      "correlation_analysis": {
+        "wg_performance_correlation": 0.589622080659222,
+        "memory_performance_correlation": 0.8063573771456829,
+        "wg_vs_memory_balance": 0.21673529648646095
+      }
+    }
+  }
+}

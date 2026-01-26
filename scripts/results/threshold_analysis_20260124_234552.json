@@ -1,0 +1,166 @@
+{
+  "analysis_info": {
+    "phase": "Phase 5 - Block Recursive Threshold Analysis",
+    "timestamp": "2026-01-24T23:45:52.515021",
+    "description": "Analysis of optimal thresholds for hybrid GCN4 + Recursive GEMM"
+  },
+  "detailed_results": {
+    "256x256": [
+      {
+        "matrix_size": 256,
+        "threshold": 128,
+        "gcn4_time_ms": 0.13850666666666667,
+        "recursive_time_ms": 1.185019810994466,
+        "hybrid_time_ms": 1.2442708015441895,
+        "gcn4_gflops": 242.25860608394302,
+        "recursive_gflops": 28.315502988799146,
+        "hybrid_gflops": 26.899727839359187,
+        "improvement_percent": -88.8962756476695
+      }
+    ],
+    "512x512": [
+      {
+        "matrix_size": 512,
+        "threshold": 128,
+        "gcn4_time_ms": 0.4060266666666667,
+        "recursive_time_ms": 3.011941909790039,
+        "hybrid_time_ms": 3.162539005279541,
+        "gcn4_gflops": 661.1276500722447,
+        "recursive_gflops": 89.12371620696779,
+        "hybrid_gflops": 84.6675303966194,
+        "improvement_percent": -87.19346704265547
+      },
+      {
+        "matrix_size": 512,
+        "threshold": 256,
+        "gcn4_time_ms": 0.3875199999999999,
+        "recursive_time_ms": 2.804835637410482,
+        "hybrid_time_ms": 2.9450774192810063,
+        "gcn4_gflops": 692.7009083402148,
+        "recursive_gflops": 95.70452272484265,
+        "hybrid_gflops": 90.91929658860052,
+        "improvement_percent": -86.87466762437876
+      }
+    ],
+    "1024x1024": [
+      {
+        "matrix_size": 1024,
+        "threshold": 128,
+        "gcn4_time_ms": 3.5968,
+        "recursive_time_ms": 16.473929087320965,
+        "hybrid_time_ms": 17.297625541687015,
+        "gcn4_gflops": 597.0539501779359,
+        "recursive_gflops": 130.356494593193,
+        "hybrid_gflops": 123.83866986353334,
+        "improvement_percent": -79.25837860604949
+      },
+      {
+        "matrix_size": 1024,
+        "threshold": 256,
+        "gcn4_time_ms": 3.5792533333333334,
+        "recursive_time_ms": 16.239484151204426,
+        "hybrid_time_ms": 17.05145835876465,
+        "gcn4_gflops": 599.9809032796412,
+        "recursive_gflops": 132.2384152110354,
+        "hybrid_gflops": 125.62649445048362,
+        "improvement_percent": -79.06158449981012
+      },
+      {
+        "matrix_size": 1024,
+        "threshold": 512,
+        "gcn4_time_ms": 3.5912,
+        "recursive_time_ms": 16.382535298665363,
+        "hybrid_time_ms": 17.201662063598633,
+        "gcn4_gflops": 597.9849766094899,
+        "recursive_gflops": 131.08371865830495,
+        "hybrid_gflops": 124.52953272538969,
+        "improvement_percent": -79.17514024658969
+      }
+    ],
+    "2048x2048": [
+      {
+        "matrix_size": 2048,
+        "threshold": 128,
+        "gcn4_time_ms": 22.581226666666666,
+        "recursive_time_ms": 106.94575309753418,
+        "hybrid_time_ms": 112.29304075241089,
+        "gcn4_gflops": 760.8031856551047,
+        "recursive_gflops": 160.64096690526847,
+        "hybrid_gflops": 152.60891856000504,
+        "improvement_percent": -79.94107787172341
+      },
+      {
+        "matrix_size": 2048,
+        "threshold": 256,
+        "gcn4_time_ms": 22.465546666666665,
+        "recursive_time_ms": 107.17320442199707,
+        "hybrid_time_ms": 112.53186464309692,
+        "gcn4_gflops": 764.7207272053919,
+        "recursive_gflops": 160.30004212950328,
+        "hybrid_gflops": 152.2850400230281,
+        "improvement_percent": -80.08618903536969
+      },
+      {
+        "matrix_size": 2048,
+        "threshold": 512,
+        "gcn4_time_ms": 22.54656,
+        "recursive_time_ms": 107.85571734110515,
+        "hybrid_time_ms": 113.24850320816041,
+        "gcn4_gflops": 761.9729654545971,
+        "recursive_gflops": 159.28566057992865,
+        "hybrid_gflops": 151.3213775509322,
+        "improvement_percent": -80.14084693140614
+      },
+      {
+        "matrix_size": 2048,
+        "threshold": 1024,
+        "gcn4_time_ms": 22.547893333333334,
+        "recursive_time_ms": 107.7565352121989,
+        "hybrid_time_ms": 113.14436197280885,
+        "gcn4_gflops": 761.9279074113058,
+        "recursive_gflops": 159.4322715570675,
+        "hybrid_gflops": 151.46065797921412,
+        "improvement_percent": -80.12139252205493
+      }
+    ]
+  },
+  "optimal_thresholds": {
+    "256x256": {
+      "optimal_threshold": 128,
+      "gcn4_gflops": 242.25860608394302,
+      "recursive_gflops": 28.315502988799146,
+      "hybrid_gflops": 26.899727839359187,
+      "improvement_percent": -88.8962756476695,
+      "threshold_ratio": 0.5
+    },
+    "512x512": {
+      "optimal_threshold": 256,
+      "gcn4_gflops": 692.7009083402148,
+      "recursive_gflops": 95.70452272484265,
+      "hybrid_gflops": 90.91929658860052,
+      "improvement_percent": -86.87466762437876,
+      "threshold_ratio": 0.5
+    },
+    "1024x1024": {
+      "optimal_threshold": 256,
+      "gcn4_gflops": 599.9809032796412,
+      "recursive_gflops": 132.2384152110354,
+      "hybrid_gflops": 125.62649445048362,
+      "improvement_percent": -79.06158449981012,
+      "threshold_ratio": 0.25
+    },
+    "2048x2048": {
+      "optimal_threshold": 128,
+      "gcn4_gflops": 760.8031856551047,
+      "recursive_gflops": 160.64096690526847,
+      "hybrid_gflops": 152.60891856000504,
+      "improvement_percent": -79.94107787172341,
+      "threshold_ratio": 0.0625
+    }
+  },
+  "summary": {
+    "best_overall_threshold_ratio": 0.25,
+    "average_improvement_percent": -83.69340141089545,
+    "conclusion": "Threshold analysis complete - ready for hybrid implementation"
+  }
+}

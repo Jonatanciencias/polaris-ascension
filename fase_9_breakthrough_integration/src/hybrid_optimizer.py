@@ -1493,7 +1493,23 @@ class HybridOptimizer:
                 techniques=list(self.individual_techniques.keys())[:3],  # Usar primeras 3 técnicas
                 validation_enabled=config.validation_enabled
             )
-            return self._optimize_sequential(matrix_a, matrix_b, fallback_config)
+            result = self._optimize_sequential(matrix_a, matrix_b, fallback_config)
+            
+            # Agregar información de selección inteligente al resultado (fallback)
+            result.intelligent_selection = {
+                'selected_technique': 'fallback_sequential',
+                'selection_confidence': 0.0,
+                'expected_performance': 0.0,
+                'reasoning': [f'Error en selección automática: {e}, usando fallback'],
+                'alternative_options': [],
+                'matrix_features': {
+                    'size': max(matrix_a.shape),
+                    'sparsity': 0.0,
+                    'structure_type': 'unknown'
+                }
+            }
+            
+            return result
 
     def _combine_results_weighted(self,
                                 technique_results: Dict[str, Tuple[np.ndarray, Any]],

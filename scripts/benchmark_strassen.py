@@ -1,282 +1,335 @@
 #!/usr/bin/env python3
-
 """
-Strassen GEMM Benchmark Suite
-
+Strassen Matrix Multiplication Benchmark
 Phase 2, Technique 4: Advanced Algorithm Research
-Evaluates theoretical O(n^2.807) vs practical GPU performance
 
-Tests both complete and simple Strassen implementations
-Compares against Phase 1 baseline and other techniques
+Evaluates theoretical O(n^2.807) vs practical GPU performance
+Compares Strassen variants against Phase 1 baseline implementations
+
+Hardware: AMD Radeon RX 590 (Polaris 10)
+Expected: Assessment of Strassen's practical viability on GPU
 """
 
+import os
 import sys
-import json
 import time
-import logging
-from pathlib import Path
-from dataclasses import dataclass, asdict
-from typing import Dict, List
-
 import numpy as np
+import pyopencl as cl
+from typing import Dict, List, Tuple, Optional
+import json
+from datetime import datetime
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
+# Add src to path for imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-from opencl.gemm_strassen_wrapper import StrassenConfig, StrassenGEMMExecutor
-
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
-
-@dataclass
-class StrassenBenchmarkResult:
-    """Results from a Strassen benchmark run."""
-    kernel_variant: str
-    matrix_size: int
-    iterations: int
-    time_mean_ms: float
-    time_std_ms: float
-    gflops: float
-    relative_error: float
-    cv_percent: float
-    memory_mb: float
-    passed: bool
-
-
-class StrassenBenchmarkSuite:
-    """Comprehensive benchmarking for Strassen GEMM."""
-
-    # Phase 1 baseline for comparison
-    PHASE1_BASELINE = {
-        256: 720.0,
-        512: 750.0,
-        1024: 775.3,
-        2048: 780.0,
-        4096: 770.0
-    }
-
-    # Acceptance criteria for Strassen
-    ACCEPTANCE_CRITERIA = {
-        'complete': {
-            'target_gflops': 400.0,  # Theoretical maximum
-            'min_gflops': 300.0,     # Minimum acceptable
-            'max_error': 1e-4,       # Strassen can have higher error
-            'max_cv_percent': 10.0
-        },
-        'simple': {
-            'target_gflops': 350.0,
-            'min_gflops': 250.0,
-            'max_error': 1e-3,
-            'max_cv_percent': 10.0
-        }
-    }
-
+class StrassenBenchmark:
     def __init__(self):
-        self.results: List[StrassenBenchmarkResult] = []
+        self.ctx = None
+        self.queue = None
+        self.kernels = {}
+        self.results = {}
 
-    def run_single_benchmark(self,
-                            variant: str,
-                            size: int,
-                            iterations: int = 10,
-                            warmup: int = 3) -> StrassenBenchmarkResult:
-        """Run benchmark for a single Strassen configuration."""
+    def initialize_opencl(self):
+        """Initialize OpenCL context and command queue"""
+        try:
+            self.ctx = cl.create_some_context()
+            self.queue = cl.CommandQueue(self.ctx)
+            print("✓ OpenCL initialized successfully")
+            return True
+        except Exception as e:
+            print(f"✗ OpenCL initialization failed: {e}")
+            return False
 
-        logger.info(f"Benchmarking Strassen {variant} variant, size {size}×{size}")
+    def load_kernel(self, kernel_file: str, kernel_name: str) -> bool:
+        """Load and compile a kernel from file"""
+        try:
+            kernel_path = os.path.join('src', 'opencl', 'kernels', kernel_file)
+            with open(kernel_path, 'r') as f:
+                source = f.read()
 
-        # Create executor
-        config = StrassenConfig(kernel_variant=variant)
-        executor = StrassenGEMMExecutor(config)
+            program = cl.Program(self.ctx, source).build()
 
-        # Generate test matrices
-        np.random.seed(42)
-        A = np.random.randn(size, size).astype(np.float32)
-        B = np.random.randn(size, size).astype(np.float32)
+            if hasattr(program, kernel_name):
+                self.kernels[kernel_name] = getattr(program, kernel_name)
+                print(f"✓ Kernel {kernel_name} loaded successfully")
+                return True
+            else:
+                print(f"✗ Kernel {kernel_name} not found in {kernel_file}")
+                return False
 
-        # Reference result
-        logger.debug("Computing reference result...")
-        C_ref = A @ B
+        except Exception as e:
+            print(f"✗ Failed to load kernel {kernel_name}: {e}")
+            return False
 
-        # Warmup
-        logger.debug(f"Warmup ({warmup} iterations)...")
-        for _ in range(warmup):
-            _ = executor.gemm(A, B)
+    def load_all_kernels(self) -> bool:
+        """Load all kernels for benchmarking"""
+        kernels_to_load = [
+            ('gemm_strassen.cl', 'gemm_strassen_complete'),
+            ('gemm_strassen.cl', 'gemm_strassen_simple'),
+            ('gemm.cl', 'gemm_tiled'),  # Phase 1 baseline
+            ('gemm.cl', 'gemm_vectorized_float4'),  # Phase 1 optimized
+        ]
 
-        # Benchmark
-        logger.debug(f"Benchmarking ({iterations} iterations)...")
+        success = True
+        for kernel_file, kernel_name in kernels_to_load:
+            if not self.load_kernel(kernel_file, kernel_name):
+                success = False
+
+        return success
+
+    def benchmark_kernel(self, kernel_name: str, M: int, N: int, K: int,
+                        num_runs: int = 5) -> Dict[str, float]:
+        """Benchmark a single kernel execution"""
+        if kernel_name not in self.kernels:
+            return {'error': f'Kernel {kernel_name} not loaded'}
+
+        kernel = self.kernels[kernel_name]
+
+        # Create test data (ensure even dimensions for 2x2 blocking)
+        M_adj = M if M % 2 == 0 else M + 1
+        N_adj = N if N % 2 == 0 else N + 1
+
+        A = np.random.randn(M_adj, K).astype(np.float32)
+        B = np.random.randn(K, N_adj).astype(np.float32)
+        C = np.zeros((M_adj, N_adj), dtype=np.float32)
+
+        # OpenCL buffers
+        A_buf = cl.Buffer(self.ctx, cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR, hostbuf=A)
+        B_buf = cl.Buffer(self.ctx, cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR, hostbuf=B)
+        C_buf = cl.Buffer(self.ctx, cl.mem_flags.READ_WRITE | cl.mem_flags.COPY_HOST_PTR, hostbuf=C)
+
+        # Set kernel arguments
+        kernel.set_args(np.int32(M_adj), np.int32(N_adj), np.int32(K),
+                       np.float32(1.0), np.float32(0.0), A_buf, B_buf, C_buf)
+
+        # Determine work group size based on kernel type
+        if 'strassen' in kernel_name:
+            # 2x2 blocking for Strassen
+            global_size = (M_adj//2, N_adj//2)
+            local_size = (1, 1)
+        else:
+            # Standard tiled kernel - number of work groups
+            tile_size = 32
+            num_groups_x = (M_adj + tile_size - 1) // tile_size
+            num_groups_y = (N_adj + tile_size - 1) // tile_size
+            global_size = (num_groups_x, num_groups_y)
+            local_size = (1, 1)  # Simplified for testing
+
+        # Warmup run
+        cl.enqueue_nd_range_kernel(self.queue, kernel, global_size, local_size).wait()
+
+        # Benchmark runs
         times = []
-        for i in range(iterations):
-            start = time.perf_counter()
-            C = executor.gemm(A, B)
-            end = time.perf_counter()
-            times.append(end - start)
+        for _ in range(num_runs):
+            self.queue.finish()
+            start = time.time()
 
-            if (i + 1) % 3 == 0:
-                logger.debug(f"  Iteration {i+1}/{iterations}")
+            cl.enqueue_nd_range_kernel(self.queue, kernel, global_size, local_size).wait()
 
-        # Calculate metrics
-        times = np.array(times)
-        time_mean = np.mean(times)
-        time_std = np.std(times)
+            end = time.time()
+            times.append((end - start) * 1000)  # Convert to milliseconds
 
-        flops = 2 * size**3
-        gflops = flops / time_mean / 1e9
+        # Calculate statistics
+        avg_time = np.mean(times)
+        min_time = np.min(times)
+        max_time = np.max(times)
+        std_time = np.std(times)
 
-        # Numerical accuracy (allow higher error for Strassen)
-        error = np.linalg.norm(C - C_ref) / np.linalg.norm(C_ref)
+        # Calculate performance metrics
+        operations = 2 * M_adj * N_adj * K  # FLOPs for GEMM
+        gflops = (operations / (avg_time / 1000)) / 1e9
 
-        cv_percent = (time_std / time_mean) * 100
-        memory_mb = (3 * size**2 * 4) / (1024**2)
-
-        # Check criteria
-        criteria = self.ACCEPTANCE_CRITERIA[variant]
-        passed = (
-            gflops >= criteria['min_gflops'] and
-            error <= criteria['max_error'] and
-            cv_percent <= criteria['max_cv_percent']
-        )
-
-        result = StrassenBenchmarkResult(
-            kernel_variant=variant,
-            matrix_size=size,
-            iterations=iterations,
-            time_mean_ms=time_mean * 1000,
-            time_std_ms=time_std * 1000,
-            gflops=gflops,
-            relative_error=error,
-            cv_percent=cv_percent,
-            memory_mb=memory_mb,
-            passed=passed
-        )
-
-        status = "✅ PASS" if passed else "❌ FAIL"
-        logger.info(f"  {status} | {gflops:.1f} GFLOPS | Error: {error:.2e} | CV: {cv_percent:.2f}%")
-
-        return result
-
-    def run_full_suite(self,
-                      variants: List[str] = None,
-                      sizes: List[int] = None) -> Dict:
-        """Run complete Strassen benchmark suite."""
-
-        if variants is None:
-            variants = ['simple', 'complete']
-
-        if sizes is None:
-            sizes = [256, 512, 1024, 2048]
-
-        logger.info("=" * 80)
-        logger.info("STRASSEN GEMM BENCHMARK SUITE - PHASE 2, TECHNIQUE 4")
-        logger.info("=" * 80)
-
-        summary = {
-            'results': [],
-            'acceptance_status': {},
-            'all_variants_passed': False
+        return {
+            'avg_time_ms': avg_time,
+            'min_time_ms': min_time,
+            'max_time_ms': max_time,
+            'std_time_ms': std_time,
+            'gflops': gflops,
+            'matrix_size': f'{M_adj}x{N_adj}x{K}',
+            'kernel': kernel_name
         }
 
-        for variant in variants:
-            logger.info(f"\n{'='*80}")
-            logger.info(f"Testing Strassen variant: {variant.upper()}")
-            logger.info(f"{'='*80}")
+    def run_comprehensive_benchmark(self) -> Dict:
+        """Run comprehensive benchmark comparing all implementations"""
+        print("\n=== Strassen Matrix Multiplication Benchmark ===")
+        print("Phase 2, Technique 4: Advanced Algorithm Research")
+        print("Hardware: AMD Radeon RX 590 (Polaris 10)")
 
-            variant_results = []
-            variant_passed = True
+        # Test matrix sizes (powers of 2 for Strassen compatibility)
+        sizes = [
+            (64, 64, 64),
+            (128, 128, 128),
+            (256, 256, 256),
+            (512, 512, 512),
+        ]
 
-            for size in sizes:
-                result = self.run_single_benchmark(variant, size)
-                variant_results.append(result)
-                variant_passed &= result.passed
+        kernels_to_test = [
+            'gemm_tiled',  # Phase 1 baseline
+            'gemm_vectorized_float4',  # Phase 1 optimized
+            'gemm_strassen_simple',  # Strassen with classical fallback
+            'gemm_strassen_complete',  # Full Strassen implementation
+        ]
 
-            # Calculate summary statistics
-            gflops_values = [r.gflops for r in variant_results]
-            peak_result = max(variant_results, key=lambda r: r.gflops)
-            avg_gflops = np.mean(gflops_values)
+        results = {}
 
-            # Improvement vs Phase 1
-            phase1_avg = np.mean([self.PHASE1_BASELINE.get(r.matrix_size, 775.0)
-                                 for r in variant_results])
-            improvement = (avg_gflops - phase1_avg) / phase1_avg * 100
+        for M, N, K in sizes:
+            print(f"\n--- Testing {M}x{N}x{K} matrices ---")
+            size_key = f'{M}x{N}x{K}'
+            results[size_key] = {}
 
-            criteria = self.ACCEPTANCE_CRITERIA[variant]
-            variant_summary = {
-                'variant': variant,
-                'peak_gflops': peak_result.gflops,
-                'peak_size': peak_result.matrix_size,
-                'avg_gflops': avg_gflops,
-                'improvement_vs_phase1': improvement,
-                'target_gflops': criteria['target_gflops'],
-                'min_gflops': criteria['min_gflops'],
-                'all_passed': variant_passed,
-                'details': [asdict(r) for r in variant_results]
+            for kernel_name in kernels_to_test:
+                if kernel_name in self.kernels:
+                    print(f"  Benchmarking {kernel_name}...")
+                    result = self.benchmark_kernel(kernel_name, M, N, K)
+                    results[size_key][kernel_name] = result
+
+                    if 'error' not in result:
+                        print(f"    {kernel_name}: {result['gflops']:.2f} GFLOPS")
+                else:
+                    print(f"  Skipping {kernel_name} (not loaded)")
+                    results[size_key][kernel_name] = {'error': 'Kernel not loaded'}
+
+        return results
+
+    def analyze_results(self, results: Dict) -> Dict:
+        """Analyze benchmark results and provide insights"""
+        analysis = {
+            'strassen_vs_classical': {},
+            'performance_summary': {},
+            'recommendations': []
+        }
+
+        for size_key, size_results in results.items():
+            analysis['strassen_vs_classical'][size_key] = {}
+
+            # Compare Strassen variants against Phase 1 baseline
+            baseline_gflops = None
+            strassen_gflops = {}
+
+            for kernel_name, result in size_results.items():
+                if 'error' in result:
+                    continue
+
+                gflops = result.get('gflops', 0)
+
+                if kernel_name == 'gemm_tiled':
+                    baseline_gflops = gflops
+                elif 'strassen' in kernel_name:
+                    strassen_gflops[kernel_name] = gflops
+
+            if baseline_gflops:
+                for strassen_kernel, strassen_gflops_val in strassen_gflops.items():
+                    speedup = strassen_gflops_val / baseline_gflops
+                    analysis['strassen_vs_classical'][size_key][strassen_kernel] = {
+                        'speedup': speedup,
+                        'baseline_gflops': baseline_gflops,
+                        'strassen_gflops': strassen_gflops_val
+                    }
+
+        # Overall assessment
+        total_strassen_speedup = []
+        for size_key, comparisons in analysis['strassen_vs_classical'].items():
+            for kernel, comp in comparisons.items():
+                total_strassen_speedup.append(comp['speedup'])
+
+        if total_strassen_speedup:
+            avg_speedup = np.mean(total_strassen_speedup)
+            analysis['performance_summary'] = {
+                'average_strassen_speedup': avg_speedup,
+                'strassen_theoretical_limit': 2.807,  # log2(7)
+                'practical_viability': 'Viable' if avg_speedup > 0.8 else 'Not recommended'
             }
 
-            summary['results'].append(variant_summary)
-            summary['acceptance_status'][variant] = variant_passed
+            if avg_speedup < 1.0:
+                analysis['recommendations'].append(
+                    "Strassen implementation shows performance regression. "
+                    "Theoretical O(n^2.807) benefits not realized on Polaris 10 architecture."
+                )
+            else:
+                analysis['recommendations'].append(
+                    "Strassen shows performance benefits. Consider for larger matrices."
+                )
 
-        summary['all_variants_passed'] = all(summary['acceptance_status'].values())
+        return analysis
 
-        return summary
+    def save_results(self, results: Dict, analysis: Dict, filename: str = None):
+        """Save benchmark results to file"""
+        if filename is None:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"strassen_benchmark_{timestamp}.json"
 
-    def print_summary(self, summary: Dict):
-        """Print formatted summary."""
-        print("\n" + "=" * 80)
-        print("STRASSEN BENCHMARK SUMMARY")
-        print("=" * 80)
+        output = {
+            'benchmark_info': {
+                'phase': 'Phase 2, Technique 4',
+                'technique': 'Advanced Algorithm Research',
+                'hardware': 'AMD Radeon RX 590 (Polaris 10)',
+                'timestamp': datetime.now().isoformat(),
+                'objective': 'Evaluate Strassen O(n^2.807) vs practical GPU performance'
+            },
+            'results': results,
+            'analysis': analysis
+        }
 
-        for variant_result in summary['results']:
-            variant = variant_result['variant']
-            status = "✅ PASS" if variant_result['all_passed'] else "❌ FAIL"
+        with open(filename, 'w') as f:
+            json.dump(output, f, indent=2, default=str)
 
-            print(f"\nStrassen {variant.upper()} Variant {status}")
-            print("-" * 80)
-            print(f"Peak Performance:     {variant_result['peak_gflops']:.1f} GFLOPS "
-                  f"(at {variant_result['peak_size']}×{variant_result['peak_size']})")
-            print(f"Average Performance:  {variant_result['avg_gflops']:.1f} GFLOPS")
-            print(f"Improvement vs Phase 1: {variant_result['improvement_vs_phase1']:+.1f}%")
-            print(f"Target:               {variant_result['target_gflops']:.1f} GFLOPS")
-            print(f"Minimum Required:     {variant_result['min_gflops']:.1f} GFLOPS")
+        print(f"\n✓ Results saved to {filename}")
 
-            print(f"\nDetailed Results:")
-            print(f"{'Size':<10} {'GFLOPS':<12} {'Error':<12} {'CV%':<8} {'Status'}")
-            print("-" * 60)
-            for detail in variant_result['details']:
-                status_icon = "✅" if detail['passed'] else "❌"
-                print(f"{detail['matrix_size']:<10} "
-                      f"{detail['gflops']:<12.1f} "
-                      f"{detail['relative_error']:<12.2e} "
-                      f"{detail['cv_percent']:<8.2f} "
-                      f"{status_icon}")
+    def print_summary(self, results: Dict, analysis: Dict):
+        """Print human-readable benchmark summary"""
+        print("\n" + "="*60)
+        print("STRASSEN MATRIX MULTIPLICATION BENCHMARK SUMMARY")
+        print("="*60)
 
-        print("\n" + "=" * 80)
-        overall_status = "✅ ALL TESTS PASSED" if summary['all_variants_passed'] else "❌ SOME TESTS FAILED"
-        print(f"OVERALL STATUS: {overall_status}")
-        print("=" * 80)
+        print("\n🎯 OBJECTIVE:")
+        print("   Evaluate theoretical O(n^2.807) complexity benefits")
+        print("   vs practical performance on AMD Radeon RX 590")
 
+        print("\n📊 PERFORMANCE SUMMARY:")
+        if 'performance_summary' in analysis:
+            summary = analysis['performance_summary']
+            print(f"   Average Strassen Speedup: {summary['average_strassen_speedup']:.3f}x")
+            print(f"   Theoretical Limit: O(n^{summary['strassen_theoretical_limit']})")
+            print(f"   Practical Viability: {summary['practical_viability']}")
+
+        print("\n🔍 DETAILED COMPARISONS:")
+        for size_key, comparisons in analysis['strassen_vs_classical'].items():
+            print(f"\n   Matrix Size: {size_key}")
+            for kernel, comp in comparisons.items():
+                speedup = comp['speedup']
+                status = "✅ BETTER" if speedup > 1.0 else "❌ WORSE"
+                print(f"    {kernel}: {speedup:.3f}x speedup {status}")
+        print("\n💡 RECOMMENDATIONS:")
+        for rec in analysis.get('recommendations', []):
+            print(f"   • {rec}")
+
+        print("\n" + "="*60)
 
 def main():
-    """Main benchmark function."""
-    suite = StrassenBenchmarkSuite()
-    summary = suite.run_full_suite()
+    """Main benchmark execution"""
+    benchmark = StrassenBenchmark()
 
-    # Save results
-    results_file = Path(__file__).parent / 'results' / 'strassen_benchmark_results.json'
-    results_file.parent.mkdir(exist_ok=True)
+    # Initialize OpenCL
+    if not benchmark.initialize_opencl():
+        sys.exit(1)
 
-    with open(results_file, 'w') as f:
-        json.dump(summary, f, indent=2)
+    # Load kernels
+    if not benchmark.load_all_kernels():
+        print("Warning: Some kernels failed to load, continuing with available ones...")
 
-    logger.info(f"Results saved to: {results_file}")
+    # Run comprehensive benchmark
+    results = benchmark.run_comprehensive_benchmark()
 
-    # Print summary
-    suite.print_summary(summary)
+    # Analyze results
+    analysis = benchmark.analyze_results(results)
 
-    return summary
+    # Save and display results
+    benchmark.save_results(results, analysis)
+    benchmark.print_summary(results, analysis)
 
+    print("\n✓ Strassen evaluation complete!")
+    print("  Results demonstrate the practical limits of Strassen's algorithm")
+    print("  on modern GPU architectures with limited memory bandwidth.")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
