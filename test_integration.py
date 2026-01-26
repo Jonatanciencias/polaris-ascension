@@ -70,8 +70,11 @@ def test_technique_integration():
             )
 
             result = optimizer.optimize_hybrid(A, B, config)
+            
+            print(f"  Debug: result type = {type(result)}")
+            print(f"  Debug: result attributes = {dir(result) if hasattr(result, '__dict__') else 'no __dict__'}")
 
-            if result.final_result is not None:
+            if hasattr(result, 'final_result') and result.final_result is not None:
                 print(f"  ✅ {technique}: Éxito")
                 successful_techniques.append(technique)
             else:
