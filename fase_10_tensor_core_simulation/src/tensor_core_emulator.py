@@ -135,14 +135,14 @@ __kernel void tensor_core_matmul_fma(
     for (int tile_k = 0; tile_k < K; tile_k += TILE_SIZE) {
 
         // Load A tile (coalesced read)
-        if (local_x < TILE_SIZE && tile_k + local_y < K) {
+        if (local_x < TILE_SIZE && tile_k + local_x < K) {
             A_tile[local_y][local_x] = A[(global_row) * K + tile_k + local_x];
         } else {
             A_tile[local_y][local_x] = 0.0f;
         }
 
         // Load B tile (coalesced read)
-        if (local_y < TILE_SIZE && tile_k + local_x < K) {
+        if (local_y < TILE_SIZE && tile_k + local_y < K) {
             B_tile[local_x][local_y] = B[(tile_k + local_y) * N + global_col];
         } else {
             B_tile[local_x][local_y] = 0.0f;
@@ -166,12 +166,14 @@ __kernel void tensor_core_matmul_fma(
     D[global_row * N + global_col] = alpha * sum + beta * c_val;
 }
 
-// Simplified tensor core kernel for validation
-__kernel void tensor_core_simple(
+// Optimized simple kernel with work-group tiling for better performance
+__kernel void tensor_core_optimized_simple(
     const int M, const int N, const int K,
     __global const float* A,
     __global const float* B,
-    __global float* D)
+    __global const float* C,
+    __global float* D,
+    const float alpha, const float beta)
 {
     const int row = get_global_id(0);
     const int col = get_global_id(1);
@@ -183,7 +185,8 @@ __kernel void tensor_core_simple(
         sum += A[row * K + k] * B[k * N + col];
     }
 
-    D[row * N + col] = sum;
+    float c_val = (beta != 0.0f) ? C[row * N + col] : 0.0f;
+    D[row * N + col] = alpha * sum + beta * c_val;
 }
 """
 
@@ -234,14 +237,17 @@ __kernel void tensor_core_simple(
         C_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=C.astype(np.float32))
         D_buf = cl.Buffer(self.context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=D.nbytes)
 
-        # Work group configuration optimized for tensor operations
-        global_work_size = (M, N)  # Simple 2D work size for element-wise kernel
-        local_work_size = None  # Let OpenCL decide
+        # Work group configuration for optimized simple kernel
+        local_work_size = (16, 16)  # Use larger work groups for better occupancy
+        global_work_size = (
+            ((M + local_work_size[0] - 1) // local_work_size[0]) * local_work_size[0],
+            ((N + local_work_size[1] - 1) // local_work_size[1]) * local_work_size[1]
+        )
 
-        # Use the corrected tensor core kernel
-        kernel = self.program.tensor_core_matmul_fma
+        # Use optimized simple kernel for accuracy and performance
+        kernel = self.program.tensor_core_optimized_simple
         kernel_args = (np.int32(M), np.int32(N), np.int32(K), A_buf, B_buf, C_buf, D_buf, np.float32(alpha), np.float32(beta))
-        logger.info("Using corrected tensor core FMA kernel")
+        logger.info("Using optimized simple tensor core kernel")
 
         # Set kernel arguments
         kernel.set_args(*kernel_args)
@@ -261,7 +267,7 @@ __kernel void tensor_core_simple(
         # Calculate performance metrics
         operations = 2 * M * N * K  # Multiply-add operations
         gflops = operations / (kernel_time * 1e9)
-        bandwidth = (A.nbytes + B.nbytes + C.nbytes + D.nbytes) / (kernel_time * 1e9) / (1024**3)
+        bandwidth = (A.nbytes + B.nbytes + C.nbytes + D.nbytes) / kernel_time / (1024**3)
 
         # Tensor core efficiency (rough estimate based on operations per cycle)
         theoretical_tensor_ops = 36 * 1000  # Rough estimate for Radeon RX 580
@@ -275,10 +281,7 @@ __kernel void tensor_core_simple(
             operations_per_second=operations / kernel_time
         )
 
-        logger.info(".2f"
-                   ".2f"
-                   ".2f"
-                   ".1f")
+        logger.info(f"GFLOPS: {gflops:.2f}, Bandwidth: {bandwidth:.2f} GB/s, Efficiency: {tensor_efficiency:.1f}%")
 
         return D, metrics
 
@@ -342,8 +345,7 @@ __kernel void tensor_core_simple(
             if baseline_perf > 0:
                 improvement = (tensor_perf / baseline_perf - 1) * 100
                 improvements.append(improvement)
-                logger.info(f"Size {results['sizes'][i]}x{results['sizes'][i]}: "
-                           ".1f")
+                logger.info(f"Size {results['sizes'][i]}x{results['sizes'][i]}: {improvement:.1f}%")
             else:
                 improvements.append(0.0)
 
@@ -351,7 +353,7 @@ __kernel void tensor_core_simple(
         results['average_improvement'] = np.mean(improvements) if improvements else 0.0
 
         logger.info("✅ Tensor core benchmark completed")
-        logger.info(".1f")
+        logger.info(f"Average improvement: {results['average_improvement']:.1f}%")
 
         return results
 

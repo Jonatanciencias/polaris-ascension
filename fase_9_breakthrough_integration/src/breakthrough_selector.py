@@ -54,10 +54,16 @@ try:
     from quantum_annealing_optimizer import QuantumAnnealingMatrixOptimizer
     from hybrid_optimizer import HybridOptimizer, HybridConfiguration, HybridStrategy
 
+    # Importar Tensor Core Emulator
+    tensor_core_path = Path(__file__).parent.parent.parent / "fase_10_tensor_core_simulation" / "src"
+    sys.path.insert(0, str(tensor_core_path))
+    from tensor_core_emulator import TensorCoreEmulator
+
     LOW_RANK_AVAILABLE = True
     CW_AVAILABLE = True
     QUANTUM_AVAILABLE = True
     HYBRID_AVAILABLE = True
+    TENSOR_CORE_AVAILABLE = True
 except ImportError as e:
     print(f"⚠️  Algunas técnicas de breakthrough no disponibles: {e}")
     LOW_RANK_AVAILABLE = False
@@ -72,6 +78,7 @@ class BreakthroughTechnique(Enum):
     LOW_RANK = "low_rank"        # Aproximaciones de bajo rango
     COPPERSMITH_WINOGRAD = "cw"  # Algoritmo Coppersmith-Winograd
     QUANTUM_ANNEALING = "quantum"  # Simulación de annealing cuántico
+    TENSOR_CORE_SIMULATION = "tensor_core"  # Simulación de tensor cores
     HYBRID_LOW_RANK_CW = "hybrid_lr_cw"  # Híbrido low-rank + CW
     HYBRID_QUANTUM_LOW_RANK = "hybrid_q_lr"  # Híbrido quantum + low-rank
 
@@ -190,6 +197,13 @@ class BreakthroughTechniqueSelector:
                 self.logger.info("✅ Quantum Annealing cargado")
             except Exception as e:
                 self.logger.warning(f"⚠️  Error cargando Quantum: {e}")
+
+        if TENSOR_CORE_AVAILABLE:
+            try:
+                implementations['tensor_core'] = TensorCoreEmulator()
+                self.logger.info("✅ Tensor Core Emulator cargado")
+            except Exception as e:
+                self.logger.warning(f"⚠️  Error cargando Tensor Core: {e}")
 
         self.technique_implementations = implementations
 
@@ -340,6 +354,25 @@ class BreakthroughTechniqueSelector:
                     )
                 except Exception as e:
                     self.logger.error(f"Error en Quantum: {e}")
+                    result, metrics = self._execute_traditional(matrix_a, matrix_b)
+
+            elif selection.technique == BreakthroughTechnique.TENSOR_CORE_SIMULATION:
+                try:
+                    # Tensor Core usa matmul con parámetros específicos
+                    result, tensor_metrics = self.technique_implementations['tensor_core'].matmul(
+                        matrix_a, matrix_b, alpha=1.0, beta=0.0
+                    )
+                    # Convertir métricas al formato esperado
+                    metrics = {
+                        'gflops_achieved': tensor_metrics.gflops,
+                        'execution_time': tensor_metrics.kernel_time_ms / 1000,
+                        'technique': 'tensor_core',
+                        'bandwidth_gb_s': tensor_metrics.bandwidth_gb_s,
+                        'tensor_efficiency': tensor_metrics.tensor_efficiency,
+                        'success': True
+                    }
+                except Exception as e:
+                    self.logger.error(f"Error en Tensor Core: {e}")
                     result, metrics = self._execute_traditional(matrix_a, matrix_b)
 
             elif selection.technique in [BreakthroughTechnique.HYBRID_LOW_RANK_CW,
@@ -507,9 +540,17 @@ class BreakthroughTechniqueSelector:
                     confidence = 0.7
                     expected_perf = 76.61  # Traditional baseline observado
 
-            # 2. Matrices medianas (256-512): CW es bueno para densas
+            # 2. Matrices medianas (256-512): Tensor Core para cuadradas densas, CW para otras
             elif matrix_size <= 512:
-                if sparsity < 0.1:  # Matriz densa
+                # Verificar si es buena candidata para Tensor Core (cuadrada y densa)
+                is_square = (characteristics.size_a[0] == characteristics.size_a[1] and
+                           characteristics.size_b[0] == characteristics.size_b[1] and
+                           characteristics.size_a[1] == characteristics.size_b[0])
+                if is_square and sparsity < 0.1 and 'tensor_core' in self.technique_implementations:
+                    technique = BreakthroughTechnique.TENSOR_CORE_SIMULATION
+                    confidence = 0.85
+                    expected_perf = 69.0  # Performance promedio observada de Tensor Core
+                elif sparsity < 0.1:  # Matriz densa
                     technique = BreakthroughTechnique.COPPERSMITH_WINOGRAD
                     confidence = 0.9
                     expected_perf = 4.8  # Promedio CW observado para 256x256
@@ -522,9 +563,17 @@ class BreakthroughTechniqueSelector:
                     confidence = 0.6
                     expected_perf = 200.0  # Traditional baseline observado
 
-            # 3. Matrices grandes (>= 512): CW domina
+            # 3. Matrices grandes (>= 512): Tensor Core prioritario para cuadradas
             else:  # matrix_size >= 512
-                if sparsity < 0.1:  # Matriz densa grande
+                # Verificar si es buena candidata para Tensor Core
+                is_square = (characteristics.size_a[0] == characteristics.size_a[1] and
+                           characteristics.size_b[0] == characteristics.size_b[1] and
+                           characteristics.size_a[1] == characteristics.size_b[0])
+                if is_square and sparsity < 0.1 and 'tensor_core' in self.technique_implementations:
+                    technique = BreakthroughTechnique.TENSOR_CORE_SIMULATION
+                    confidence = 0.9
+                    expected_perf = 430.0  # Performance máxima observada de Tensor Core
+                elif sparsity < 0.1:  # Matriz densa grande
                     technique = BreakthroughTechnique.COPPERSMITH_WINOGRAD
                     confidence = 0.95
                     expected_perf = 7.2  # Promedio CW observado para 512x512
