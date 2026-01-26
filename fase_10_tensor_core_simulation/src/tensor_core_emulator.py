@@ -1,0 +1,445 @@
+#!/usr/bin/env python3
+"""
+🚀 TENSOR CORE SIMULATION FOR RADEON RX 580
+============================================
+
+Emulación de operaciones tensor core optimizadas para multiplicación matricial
+en GPUs AMD sin hardware tensor core dedicado.
+
+Los tensor cores aceleran operaciones del tipo: D = A * B + C
+donde A, B, C, D son matrices de dimensiones específicas.
+
+Para Radeon RX 580 (GCN 4.0), simulamos esta funcionalidad mediante:
+- Operaciones vectorizadas float4/float8
+- Shared memory tiling optimizado
+- Accumulación eficiente en registros
+- Memory coalescing avanzado
+
+Author: AI Assistant
+Date: 2026-01-25
+"""
+
+import numpy as np
+import pyopencl as cl
+import time
+from dataclasses import dataclass
+from typing import Tuple, Optional, Dict, Any
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+@dataclass
+class TensorCoreConfig:
+    """Configuración para emulación de tensor cores"""
+    tile_size: int = 16  # Tensor cores típicos usan 16x16 tiles
+    vector_size: int = 4  # float4 operations
+    work_group_size: Tuple[int, int] = (16, 16)
+    use_shared_memory: bool = True
+    use_vectorization: bool = True
+
+@dataclass
+class TensorMetrics:
+    """Métricas de performance para tensor core operations"""
+    gflops: float
+    bandwidth_gb_s: float
+    kernel_time_ms: float
+    tensor_efficiency: float  # Eficiencia de emulación tensor core
+    operations_per_second: float
+
+class TensorCoreEmulator:
+    """
+    Emulador de tensor cores para Radeon RX 580
+
+    Simula operaciones tensor core mediante kernels OpenCL optimizados
+    que aprovechan al máximo la arquitectura GCN 4.0.
+    """
+
+    def __init__(self, config: Optional[TensorCoreConfig] = None):
+        self.config = config or TensorCoreConfig()
+
+        # Initialize OpenCL
+        self.platform = None
+        self.device = None
+        self.context = None
+        self.queue = None
+        self.program = None
+
+        # Initialize OpenCL environment
+        self._initialize_opencl()
+
+        # Load tensor core kernels
+        self._load_tensor_kernels()
+
+        logger.info("🚀 Tensor Core Emulator initialized for Radeon RX 580")
+
+    def _initialize_opencl(self):
+        """Initialize OpenCL environment with optimal settings for tensor operations"""
+        try:
+            platforms = cl.get_platforms()
+            amd_platforms = [p for p in platforms if 'AMD' in p.name or 'Advanced Micro Devices' in p.name]
+            self.platform = amd_platforms[0] if amd_platforms else platforms[0]
+
+            devices = self.platform.get_devices(device_type=cl.device_type.GPU)
+            radeon_devices = [d for d in devices if 'Radeon RX 580' in d.name or '580' in d.name]
+            self.device = radeon_devices[0] if radeon_devices else devices[0]
+
+            logger.info(f"Selected device: {self.device.name}")
+
+            self.context = cl.Context([self.device])
+            self.queue = cl.CommandQueue(
+                self.context,
+                self.device,
+                properties=cl.command_queue_properties.PROFILING_ENABLE
+            )
+
+        except Exception as e:
+            logger.error(f"Failed to initialize OpenCL: {e}")
+            raise
+
+    def _load_tensor_kernels(self):
+        """Load optimized tensor core simulation kernels"""
+        tensor_kernel_source = """
+__kernel void tensor_core_matmul_fma(
+    const int M, const int N, const int K,
+    __global const float* A,
+    __global const float* B,
+    __global const float* C,
+    __global float* D,
+    const float alpha, const float beta)
+{
+    // Tensor core simulation: D = alpha * (A * B) + beta * C
+    // Optimized for Radeon RX 580 GCN 4.0 architecture
+
+    // Work-group and local IDs
+    const int wg_x = get_group_id(0);
+    const int wg_y = get_group_id(1);
+    const int local_x = get_local_id(0);
+    const int local_y = get_local_id(1);
+
+    // Global position
+    const int global_x = wg_x * TILE_SIZE + local_x;
+    const int global_y = wg_y * TILE_SIZE + local_y;
+
+    // Shared memory for tensor tiles (emulating tensor core memory)
+    __local float4 A_tile[TILE_SIZE][TILE_SIZE/VECTOR_SIZE];
+    __local float4 B_tile[TILE_SIZE][TILE_SIZE/VECTOR_SIZE];
+
+    // Tensor core accumulator (emulating tensor core registers)
+    float4 accumulator = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
+
+    // Load tensor tiles with coalesced reads
+    for (int t = 0; t < K; t += TILE_SIZE) {
+        // Load A tile (matrix A is M x K)
+        if (global_y < M && (t + local_x * VECTOR_SIZE) < K) {
+            float4 a_val = vload4(0, A + global_y * K + t + local_x * VECTOR_SIZE);
+            A_tile[local_y][local_x] = a_val;
+        } else {
+            A_tile[local_y][local_x] = (float4)(0.0f);
+        }
+
+        // Load B tile (matrix B is K x N)
+        if ((t + local_y) < K && global_x * VECTOR_SIZE < N) {
+            float4 b_val = vload4(0, B + (t + local_y) * N + global_x * VECTOR_SIZE);
+            B_tile[local_y][local_x] = b_val;
+        } else {
+            B_tile[local_y][local_x] = (float4)(0.0f);
+        }
+
+        barrier(CLK_LOCAL_MEM_FENCE);
+
+        // Tensor core FMA operations (emulated)
+        // This simulates: accumulator = accumulator + A * B
+        #pragma unroll 8
+        for (int k = 0; k < TILE_SIZE; k++) {
+            float4 a_val = A_tile[local_y][k];
+            float4 b_val = B_tile[k][local_x];
+
+            // FMA: fused multiply-add (tensor core operation)
+            accumulator += a_val.x * (float4)(b_val.x, b_val.x, b_val.x, b_val.x);
+            accumulator += a_val.y * (float4)(b_val.y, b_val.y, b_val.y, b_val.y);
+            accumulator += a_val.z * (float4)(b_val.z, b_val.z, b_val.z, b_val.z);
+            accumulator += a_val.w * (float4)(b_val.w, b_val.w, b_val.w, b_val.w);
+        }
+
+        barrier(CLK_LOCAL_MEM_FENCE);
+    }
+
+    // Final FMA with C matrix: D = alpha * accumulator + beta * C
+    if (global_y < M && global_x * VECTOR_SIZE < N) {
+        float4 c_val = (float4)(0.0f);
+        if (beta != 0.0f) {
+            c_val = vload4(0, C + global_y * N + global_x * VECTOR_SIZE);
+        }
+
+        float4 result = alpha * accumulator + beta * c_val;
+        vstore4(result, 0, D + global_y * N + global_x * VECTOR_SIZE);
+    }
+}
+
+// Advanced tensor core simulation with mixed precision hints
+__kernel void tensor_core_mixed_precision(
+    const int M, const int N, const int K,
+    __global const float* A,
+    __global const float* B,
+    __global float* D)
+{
+    // Simplified tensor core operation: D = A * B
+    // Optimized for maximum throughput on GCN 4.0
+
+    const int local_x = get_local_id(0);
+    const int local_y = get_local_id(1);
+    const int global_x = get_global_id(0);
+    const int global_y = get_global_id(1);
+
+    if (global_x >= N || global_y >= M) return;
+
+    // Tensor core style accumulation
+    float sum = 0.0f;
+
+    // Process in chunks optimized for tensor operations
+    int k = 0;
+    for (; k <= K - 8; k += 8) {
+        // Load 8 elements at once (simulating tensor width)
+        float8 a_vec = vload8(0, A + global_y * K + k);
+        float8 b_vec = (float8)(
+            B[(k+0) * N + global_x], B[(k+1) * N + global_x],
+            B[(k+2) * N + global_x], B[(k+3) * N + global_x],
+            B[(k+4) * N + global_x], B[(k+5) * N + global_x],
+            B[(k+6) * N + global_x], B[(k+7) * N + global_x]
+        );
+
+        // Manual dot product for float8 (OpenCL doesn't have dot for float8)
+        sum += a_vec.s0 * b_vec.s0 + a_vec.s1 * b_vec.s1 + a_vec.s2 * b_vec.s2 + a_vec.s3 * b_vec.s3;
+        sum += a_vec.s4 * b_vec.s4 + a_vec.s5 * b_vec.s5 + a_vec.s6 * b_vec.s6 + a_vec.s7 * b_vec.s7;
+    }
+
+    // Handle remaining elements
+    for (; k < K; k++) {
+        sum += A[global_y * K + k] * B[k * N + global_x];
+    }
+
+    D[global_y * N + global_x] = sum;
+}
+"""
+
+        try:
+            build_options = [
+                '-cl-mad-enable',
+                '-cl-no-signed-zeros',
+                '-cl-unsafe-math-optimizations',
+                '-cl-finite-math-only',
+                '-cl-fast-relaxed-math',
+                f'-DTILE_SIZE={self.config.tile_size}',
+                f'-DVECTOR_SIZE={self.config.vector_size}'
+            ]
+
+            self.program = cl.Program(self.context, tensor_kernel_source).build(options=build_options)
+            logger.info("✅ Tensor core kernels loaded successfully")
+
+        except Exception as e:
+            logger.error(f"Failed to load tensor kernels: {e}")
+            raise
+
+    def matmul(self, A: np.ndarray, B: np.ndarray, C: Optional[np.ndarray] = None,
+               alpha: float = 1.0, beta: float = 0.0) -> Tuple[np.ndarray, TensorMetrics]:
+        """
+        Perform tensor core simulated matrix multiplication: D = alpha * (A * B) + beta * C
+
+        Args:
+            A: Input matrix A (M x K)
+            B: Input matrix B (K x N)
+            C: Optional input matrix C (M x N)
+            alpha: Scaling factor for A*B
+            beta: Scaling factor for C
+
+        Returns:
+            Result matrix D and performance metrics
+        """
+        M, K = A.shape
+        K2, N = B.shape
+        assert K == K2, "Matrix dimensions don't match"
+
+        D = np.zeros((M, N), dtype=np.float32)
+        if C is None:
+            C = np.zeros((M, N), dtype=np.float32)
+
+        # Create OpenCL buffers
+        mf = cl.mem_flags
+        A_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32))
+        B_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32))
+        C_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=C.astype(np.float32))
+        D_buf = cl.Buffer(self.context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=D.nbytes)
+
+        # Work group configuration optimized for tensor operations
+        global_work_size = (
+            (N + self.config.tile_size - 1) // self.config.tile_size * self.config.tile_size,
+            (M + self.config.tile_size - 1) // self.config.tile_size * self.config.tile_size
+        )
+        local_work_size = self.config.work_group_size
+
+        # Select kernel based on configuration
+        if self.config.use_vectorization and N % self.config.vector_size == 0:
+            kernel = self.program.tensor_core_matmul_fma
+            kernel_args = (np.int32(M), np.int32(N), np.int32(K), A_buf, B_buf, C_buf, D_buf, np.float32(alpha), np.float32(beta))
+            logger.info("Using tensor core FMA kernel")
+        else:
+            kernel = self.program.tensor_core_mixed_precision
+            kernel_args = (np.int32(M), np.int32(N), np.int32(K), A_buf, B_buf, D_buf)
+            logger.info("Using tensor core mixed precision kernel")
+
+        # Set kernel arguments
+        kernel.set_args(*kernel_args)
+
+        # Execute kernel with timing
+        start_time = time.time()
+        event = cl.enqueue_nd_range_kernel(
+            self.queue, kernel, global_work_size, local_work_size
+        )
+        event.wait()
+        kernel_time = (event.profile.end - event.profile.start) * 1e-9
+
+        # Read result
+        cl.enqueue_copy(self.queue, D, D_buf)
+        total_time = time.time() - start_time
+
+        # Calculate performance metrics
+        operations = 2 * M * N * K  # Multiply-add operations
+        gflops = operations / (kernel_time * 1e9)
+        bandwidth = (A.nbytes + B.nbytes + C.nbytes + D.nbytes) / (kernel_time * 1e9) / (1024**3)
+
+        # Tensor core efficiency (rough estimate based on operations per cycle)
+        theoretical_tensor_ops = 36 * 1000  # Rough estimate for Radeon RX 580
+        tensor_efficiency = min(gflops / theoretical_tensor_ops, 1.0) * 100
+
+        metrics = TensorMetrics(
+            gflops=gflops,
+            bandwidth_gb_s=bandwidth,
+            kernel_time_ms=kernel_time * 1000,
+            tensor_efficiency=tensor_efficiency,
+            operations_per_second=operations / kernel_time
+        )
+
+        logger.info(".2f"
+                   ".2f"
+                   ".2f"
+                   ".1f")
+
+        return D, metrics
+
+    def benchmark_tensor_performance(self, sizes: list = None) -> Dict[str, Any]:
+        """
+        Comprehensive benchmark of tensor core simulation performance
+
+        Args:
+            sizes: List of matrix sizes to test
+
+        Returns:
+            Benchmark results dictionary
+        """
+        if sizes is None:
+            sizes = [512, 1024, 2048]
+
+        results = {
+            'sizes': sizes,
+            'tensor_core_performance': [],
+            'baseline_comparison': []
+        }
+
+        logger.info("🚀 Starting Tensor Core Simulation Benchmark")
+
+        for size in sizes:
+            logger.info(f"Benchmarking {size}x{size} tensor core operations")
+
+            # Generate test matrices
+            A = np.random.randn(size, size).astype(np.float32)
+            B = np.random.randn(size, size).astype(np.float32)
+            C = np.random.randn(size, size).astype(np.float32)
+
+            # Benchmark tensor core operation
+            try:
+                D_tensor, metrics = self.matmul(A, B, C, alpha=1.0, beta=1.0)
+                results['tensor_core_performance'].append(metrics.gflops)
+
+                # Compare with NumPy baseline
+                start_time = time.time()
+                D_numpy = A @ B + C
+                numpy_time = time.time() - start_time
+                numpy_gflops = 2 * size * size * size / (numpy_time * 1e9)
+                results['baseline_comparison'].append(numpy_gflops)
+
+                # Verify correctness
+                max_error = np.max(np.abs(D_tensor - D_numpy))
+                logger.info(f"Max error vs NumPy: {max_error:.2e}")
+
+                if max_error > 1e-2:
+                    logger.warning("High error detected - possible kernel issue")
+
+            except Exception as e:
+                logger.error(f"Tensor core benchmark failed for size {size}: {e}")
+                results['tensor_core_performance'].append(0.0)
+                results['baseline_comparison'].append(0.0)
+
+        # Calculate improvement metrics
+        improvements = []
+        for i, (tensor_perf, baseline_perf) in enumerate(zip(
+            results['tensor_core_performance'], results['baseline_comparison'])):
+            if baseline_perf > 0:
+                improvement = (tensor_perf / baseline_perf - 1) * 100
+                improvements.append(improvement)
+                logger.info(f"Size {results['sizes'][i]}x{results['sizes'][i]}: "
+                           ".1f")
+            else:
+                improvements.append(0.0)
+
+        results['improvements_percent'] = improvements
+        results['average_improvement'] = np.mean(improvements) if improvements else 0.0
+
+        logger.info("✅ Tensor core benchmark completed")
+        logger.info(".1f")
+
+        return results
+
+def main():
+    """Main function for testing tensor core emulator"""
+    logger.info("🚀 Starting Tensor Core Simulation Test")
+
+    # Initialize tensor core emulator
+    emulator = TensorCoreEmulator()
+
+    # Test with different sizes
+    test_sizes = [512, 1024]
+
+    for size in test_sizes:
+        logger.info(f"Testing {size}x{size} tensor core matrix multiplication")
+
+        # Generate test matrices
+        A = np.random.randn(size, size).astype(np.float32)
+        B = np.random.randn(size, size).astype(np.float32)
+        C = np.random.randn(size, size).astype(np.float32)
+
+        # Test tensor core operation
+        D, metrics = emulator.matmul(A, B, C)
+
+        # Verify correctness with NumPy
+        D_numpy = A @ B + C
+        max_error = np.max(np.abs(D - D_numpy))
+        logger.info(f"Max error vs NumPy: {max_error:.2e}")
+
+    # Run comprehensive benchmark
+    logger.info("Running comprehensive tensor core benchmark...")
+    benchmark_results = emulator.benchmark_tensor_performance()
+
+    # Print summary
+    logger.info("📊 Tensor Core Performance Summary:")
+    for i, size in enumerate(benchmark_results['sizes']):
+        tensor_perf = benchmark_results['tensor_core_performance'][i]
+        improvement = benchmark_results['improvements_percent'][i]
+        logger.info(f"Size {size}x{size}: {tensor_perf:.2f} GFLOPS "
+                   ".1f")
+
+    logger.info(".1f")
+    logger.info("✅ Tensor core simulation test completed")
+
+if __name__ == "__main__":
+    main()
