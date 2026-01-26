@@ -260,7 +260,7 @@ class HybridNeuralQuantum:
         """
         # Inicializar pesos neuronales si no existen
         if self.neural_weights is None:
-            input_size = matrix_a.shape[0] * matrix_b.shape[1]
+            input_size = matrix_a.size + matrix_b.size  # Tamaño correcto de entrada
             hidden_size = max(64, input_size // 4)
             self.neural_weights = np.random.randn(hidden_size, input_size) * 0.1
 

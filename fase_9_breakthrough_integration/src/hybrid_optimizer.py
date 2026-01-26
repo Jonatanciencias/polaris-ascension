@@ -70,6 +70,11 @@ try:
     sys.path.insert(0, str(neuro_path))
     from neuromorphic_optimizer import NeuromorphicOptimizer
 
+    # Hybrid Quantum-Classical
+    hybrid_path = project_root / "fase_18_hybrid_quantum_classical" / "src"
+    sys.path.insert(0, str(hybrid_path))
+    from hybrid_quantum_classical_optimizer import HybridQuantumClassicalOptimizer, HybridConfig
+
     # Tensor Core (ya incluido en breakthrough_selector.py)
     tensor_core_path = project_root / "fase_10_tensor_core_simulation" / "src"
     sys.path.insert(0, str(tensor_core_path))
@@ -78,6 +83,7 @@ try:
     TECHNIQUES_AVAILABLE = True
     AI_TECHNIQUES_AVAILABLE = True
     NEUROMORPHIC_AVAILABLE = True
+    HYBRID_QUANTUM_CLASSICAL_AVAILABLE = True
     TENSOR_CORE_AVAILABLE = True
 
 except ImportError as e:
@@ -945,6 +951,14 @@ class HybridOptimizer:
             except Exception as e:
                 self.logger.warning(f"Error cargando Tensor Core: {e}")
 
+        # Cargar Hybrid Quantum-Classical
+        if HYBRID_QUANTUM_CLASSICAL_AVAILABLE:
+            try:
+                self.individual_techniques['hybrid_quantum_classical'] = HybridQuantumClassicalOptimizer()
+                self.logger.info("✅ Hybrid Quantum-Classical Optimizer cargado")
+            except Exception as e:
+                self.logger.warning(f"Error cargando Hybrid Quantum-Classical: {e}")
+
     def optimize_hybrid(self,
                        matrix_a: np.ndarray,
                        matrix_b: np.ndarray,
@@ -1148,6 +1162,9 @@ class HybridOptimizer:
                     elif technique_name == 'tensor_core':
                         # Tensor Core Simulation
                         result, metrics = technique.matmul(current_a, current_b)
+                    elif technique_name == 'hybrid_quantum_classical':
+                        # Hybrid Quantum-Classical Optimization
+                        result, metrics = technique.optimize(current_a, current_b)
                     else:
                         raise ValueError(f"Técnica individual no soportada: {technique_name}")
                 else:
