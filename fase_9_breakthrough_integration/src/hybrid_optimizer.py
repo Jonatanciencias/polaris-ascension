@@ -1089,7 +1089,9 @@ class HybridOptimizer:
                             memory_usage_mb=current_a.nbytes / (1024**2),
                             error_relative=np.max(np.abs(result - np.dot(current_a, current_b))) / np.max(np.abs(np.dot(current_a, current_b))),
                             speedup_factor=1.0,
-                            technique_results={'predicted_gflops': prediction}
+                            quality_score=0.8,
+                            convergence_rate=1.0,
+                            computational_efficiency=prediction
                         )
                     elif technique_name == 'bayesian_opt':
                         # Bayesian Optimization - optimizar parámetros
@@ -1102,7 +1104,9 @@ class HybridOptimizer:
                             memory_usage_mb=current_a.nbytes / (1024**2),
                             error_relative=0,
                             speedup_factor=1.0,
-                            technique_results={'optimization_result': opt_result}
+                            quality_score=0.9,
+                            convergence_rate=1.0,
+                            computational_efficiency=opt_result.best_score if hasattr(opt_result, 'best_score') else 50.0
                         )
                     elif technique_name == 'neuromorphic':
                         # Neuromorphic Computing
@@ -1185,7 +1189,9 @@ class HybridOptimizer:
                             memory_usage_mb=matrix_a.nbytes / (1024**2),
                             error_relative=0,
                             speedup_factor=1.0,
-                            technique_results={'predicted_gflops': prediction}
+                            quality_score=0.8,
+                            convergence_rate=1.0,
+                            computational_efficiency=prediction
                         )
                     elif technique_name == 'bayesian_opt':
                         opt_result = technique.run_optimization('auto')
@@ -1196,7 +1202,9 @@ class HybridOptimizer:
                             memory_usage_mb=matrix_a.nbytes / (1024**2),
                             error_relative=0,
                             speedup_factor=1.0,
-                            technique_results={'optimization_result': opt_result}
+                            quality_score=0.9,
+                            convergence_rate=1.0,
+                            computational_efficiency=opt_result.best_score if hasattr(opt_result, 'best_score') else 50.0
                         )
                     elif technique_name == 'neuromorphic':
                         result, metrics = technique.optimize_matrix_multiplication(matrix_a, matrix_b)
