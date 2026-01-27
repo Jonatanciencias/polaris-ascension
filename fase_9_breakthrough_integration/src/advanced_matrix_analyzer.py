@@ -410,22 +410,52 @@ class AdvancedMatrixAnalyzer:
         if matrix.size < 100:
             return "uniform"
 
-        # Convertir a sparse para análisis
-        sparse_matrix = sp.csr_matrix(matrix)
+        # Para matrices rectangulares, análisis simplificado
+        if matrix.shape[0] != matrix.shape[1]:
+            # Análisis basado en distribución de valores no cero
+            flat_matrix = matrix.flatten()
+            nonzero_indices = np.nonzero(flat_matrix)[0]
 
-        # Análisis de conectividad
-        n_components, labels = sp.csgraph.connected_components(sparse_matrix)
+            if len(nonzero_indices) == 0:
+                return "empty"
 
-        if n_components == 1:
-            return "connected"
-        elif n_components < matrix.shape[0] // 10:
-            return "block_diagonal"
-        else:
-            return "scattered"
+            # Calcular clustering simple basado en posiciones
+            positions = nonzero_indices / len(flat_matrix)
+            if np.std(positions) < 0.1:
+                return "clustered"
+            elif np.std(positions) > 0.3:
+                return "scattered"
+            else:
+                return "semi_uniform"
+
+        # Para matrices cuadradas, análisis completo
+        try:
+            # Convertir a sparse para análisis
+            sparse_matrix = sp.csr_matrix(matrix)
+
+            # Análisis de conectividad
+            n_components, labels = sp.csgraph.connected_components(sparse_matrix)
+
+            if n_components == 1:
+                return "connected"
+            elif n_components < matrix.shape[0] // 10:
+                return "block_diagonal"
+            else:
+                return "scattered"
+        except Exception:
+            # Fallback para casos donde falla el análisis
+            return "uniform"
 
     def _calculate_clustering_coefficient(self, matrix: np.ndarray) -> float:
         """Calcula clustering coefficient para matrices sparse"""
         try:
+            # Para matrices rectangulares, usar análisis simplificado
+            if matrix.shape[0] != matrix.shape[1]:
+                # Análisis basado en distribución local de valores no cero
+                sparsity = 1.0 - (np.count_nonzero(matrix) / matrix.size)
+                # Clustering coefficient aproximado basado en sparsidad local
+                return max(0.0, 1.0 - sparsity * 2)
+
             sparse_matrix = sp.csr_matrix(matrix)
             # Implementación simplificada del clustering coefficient
             n = sparse_matrix.shape[0]
