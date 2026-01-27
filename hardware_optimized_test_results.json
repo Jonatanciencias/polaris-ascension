@@ -1,0 +1,73 @@
+{
+  "timestamp": 1769477115.1168928,
+  "hardware": "Radeon RX580",
+  "optimization_engines_available": true,
+  "calibrated_weights_loaded": true,
+  "analysis": {
+    "total_tests": 4,
+    "successful_tests": 0,
+    "success_rate": 0.0,
+    "total_gflops": 0,
+    "avg_gflops": 0,
+    "technique_stats": {},
+    "avg_performance_per_technique": {}
+  },
+  "results": [
+    {
+      "matrix_name": "Matriz densa 512x512",
+      "matrix_shape": [
+        512,
+        512
+      ],
+      "recommended_technique": "unknown",
+      "predicted_gflops": 0.0,
+      "confidence": 0.0,
+      "actual_gflops": null,
+      "execution_time": null,
+      "error": "Engine not available",
+      "features": "AdvancedMatrixFeatures(size_a=(512, 512), size_b=(512, 512), dtype='float32', sparsity_a=np.float64(0.0), sparsity_b=np.float64(0.0), memory_footprint_mb=2.0, compute_intensity=85.33333333333333, spectral_a=SpectralProperties(eigenvalues=None, condition_number=np.float32(14759.326), spectral_radius=np.float32(45.112278), numerical_rank=512, singular_values=None, trace=np.float32(30.489307), determinant=None), spectral_b=SpectralProperties(eigenvalues=None, condition_number=np.float32(1199.837), spectral_radius=np.float32(44.76791), numerical_rank=512, singular_values=None, trace=np.float32(25.81564), determinant=None), structure_a=StructuralProperties(structure_type=<MatrixStructure.BLOCK: 'block'>, symmetry_type=<MatrixSymmetry.GENERAL: 'general'>, bandwidth=None, block_size=(2, 2), density_pattern='connected', clustering_coefficient=0.0), structure_b=StructuralProperties(structure_type=<MatrixStructure.BLOCK: 'block'>, symmetry_type=<MatrixSymmetry.GENERAL: 'general'>, bandwidth=None, block_size=(2, 2), density_pattern='connected', clustering_coefficient=0.0), computational=ComputationalProperties(memory_access_pattern='regular', cache_locality=0.125, arithmetic_intensity=85.33333333333333, load_balance_factor=1.0, communication_to_computation_ratio=0.01171875), ml_features={'size_ratio': 1.0, 'sparsity_ratio': np.float32(0.081293486), 'memory_ratio': 1.0, 'condition_ratio': np.float32(0.081293486), 'spectral_balance': np.float32(0.99236643), 'structure_compatibility': 1.0, 'compute_to_memory_ratio': 64.0})"
+    },
+    {
+      "matrix_name": "Matriz sparse 512x512",
+      "matrix_shape": [
+        512,
+        512
+      ],
+      "recommended_technique": "unknown",
+      "predicted_gflops": 0.0,
+      "confidence": 0.0,
+      "actual_gflops": null,
+      "execution_time": null,
+      "error": "Engine not available",
+      "features": "AdvancedMatrixFeatures(size_a=(512, 512), size_b=(512, 512), dtype='float32', sparsity_a=np.float64(0.6302413940429688), sparsity_b=np.float64(0.0), memory_footprint_mb=2.0, compute_intensity=85.33333333333333, spectral_a=SpectralProperties(eigenvalues=None, condition_number=np.float32(1314.7916), spectral_radius=np.float32(41.554306), numerical_rank=512, singular_values=None, trace=np.float32(49.20465), determinant=None), spectral_b=SpectralProperties(eigenvalues=None, condition_number=np.float32(2093.3142), spectral_radius=np.float32(45.35818), numerical_rank=512, singular_values=None, trace=np.float32(24.743202), determinant=None), structure_a=StructuralProperties(structure_type=<MatrixStructure.BLOCK: 'block'>, symmetry_type=<MatrixSymmetry.GENERAL: 'general'>, bandwidth=None, block_size=(2, 2), density_pattern='connected', clustering_coefficient=0.0), structure_b=StructuralProperties(structure_type=<MatrixStructure.BLOCK: 'block'>, symmetry_type=<MatrixSymmetry.GENERAL: 'general'>, bandwidth=None, block_size=(2, 2), density_pattern='connected', clustering_coefficient=0.0), computational=ComputationalProperties(memory_access_pattern='regular', cache_locality=0.125, arithmetic_intensity=85.33333333333333, load_balance_factor=1.0, communication_to_computation_ratio=0.01171875), ml_features={'size_ratio': 1.0, 'sparsity_ratio': np.float32(1.5921263), 'memory_ratio': 1.0, 'condition_ratio': np.float32(1.5921263), 'spectral_balance': np.float32(0.916137), 'structure_compatibility': 1.0, 'compute_to_memory_ratio': 64.0})"
+    },
+    {
+      "matrix_name": "Matriz diagonal 512x512",
+      "matrix_shape": [
+        512,
+        512
+      ],
+      "recommended_technique": "unknown",
+      "predicted_gflops": 0.0,
+      "confidence": 0.0,
+      "actual_gflops": null,
+      "execution_time": null,
+      "error": "Engine not available",
+      "features": "AdvancedMatrixFeatures(size_a=(512, 512), size_b=(512, 512), dtype='float32', sparsity_a=np.float64(0.998046875), sparsity_b=np.float64(0.0), memory_footprint_mb=2.0, compute_intensity=85.33333333333333, spectral_a=SpectralProperties(eigenvalues=None, condition_number=np.float32(1354.0824), spectral_radius=np.float32(4.0651507), numerical_rank=512, singular_values=None, trace=np.float32(-10.947653), determinant=None), spectral_b=SpectralProperties(eigenvalues=None, condition_number=np.float32(22342.795), spectral_radius=np.float32(44.95483), numerical_rank=512, singular_values=None, trace=np.float32(-13.752512), determinant=None), structure_a=StructuralProperties(structure_type=<MatrixStructure.SPARSE: 'sparse'>, symmetry_type=<MatrixSymmetry.SYMMETRIC: 'symmetric'>, bandwidth=None, block_size=(2, 2), density_pattern='scattered', clustering_coefficient=0.0), structure_b=StructuralProperties(structure_type=<MatrixStructure.BLOCK: 'block'>, symmetry_type=<MatrixSymmetry.GENERAL: 'general'>, bandwidth=None, block_size=(2, 2), density_pattern='connected', clustering_coefficient=0.0), computational=ComputationalProperties(memory_access_pattern='regular', cache_locality=0.125, arithmetic_intensity=85.33333333333333, load_balance_factor=1.0, communication_to_computation_ratio=0.01171875), ml_features={'size_ratio': 1.0, 'sparsity_ratio': np.float32(16.500322), 'memory_ratio': 1.0, 'condition_ratio': np.float32(16.500322), 'spectral_balance': np.float32(0.09042745), 'structure_compatibility': 1.0, 'compute_to_memory_ratio': 64.0})"
+    },
+    {
+      "matrix_name": "Matriz rectangular 1024x512",
+      "matrix_shape": [
+        1024,
+        1024
+      ],
+      "recommended_technique": "unknown",
+      "predicted_gflops": 0.0,
+      "confidence": 0.0,
+      "actual_gflops": null,
+      "execution_time": null,
+      "error": "Engine not available",
+      "features": "AdvancedMatrixFeatures(size_a=(1024, 512), size_b=(512, 1024), dtype='float32', sparsity_a=np.float64(0.0), sparsity_b=np.float64(0.0), memory_footprint_mb=4.0, compute_intensity=128.0, spectral_a=SpectralProperties(eigenvalues=None, condition_number=np.float32(5.7719393), spectral_radius=np.float32(54.181404), numerical_rank=512, singular_values=None, trace=0.0, determinant=None), spectral_b=SpectralProperties(eigenvalues=None, condition_number=np.float32(5.691496), spectral_radius=np.float32(54.271812), numerical_rank=512, singular_values=None, trace=0.0, determinant=None), structure_a=StructuralProperties(structure_type=<MatrixStructure.BLOCK: 'block'>, symmetry_type=<MatrixSymmetry.GENERAL: 'general'>, bandwidth=None, block_size=(2, 2), density_pattern='semi_uniform', clustering_coefficient=0.0), structure_b=StructuralProperties(structure_type=<MatrixStructure.BLOCK: 'block'>, symmetry_type=<MatrixSymmetry.GENERAL: 'general'>, bandwidth=None, block_size=(2, 2), density_pattern='semi_uniform', clustering_coefficient=0.0), computational=ComputationalProperties(memory_access_pattern='regular', cache_locality=0.0625, arithmetic_intensity=128.0, load_balance_factor=1.0, communication_to_computation_ratio=0.0078125), ml_features={'size_ratio': 2.0, 'sparsity_ratio': np.float32(0.986063), 'memory_ratio': 1.0, 'condition_ratio': np.float32(0.986063), 'spectral_balance': np.float32(0.99833417), 'structure_compatibility': 1.0, 'compute_to_memory_ratio': 128.0})"
+    }
+  ]
+}

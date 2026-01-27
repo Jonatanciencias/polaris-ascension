@@ -1,0 +1,57 @@
+{
+  "timestamp": 1769477309.8964677,
+  "hardware": "Radeon RX580",
+  "analysis": {
+    "total_tests": 3,
+    "successful_benchmarks": 3,
+    "success_rate": 1.0,
+    "total_predicted_gflops": 286.9177815652524,
+    "total_actual_gflops": 179.30964187610186,
+    "avg_predicted_gflops": 95.63926052175081,
+    "avg_actual_gflops": 59.769880625367286
+  },
+  "results": [
+    {
+      "matrix_name": "Matriz densa 256x256",
+      "recommendation": "OptimizationRecommendation(technique='quantum', expected_gflops=np.float64(95.63926052175081), confidence=0.8407981963551722, reasoning='Quantum annealing es la t\u00e9cnica m\u00e1s r\u00e1pida para matrices de tama\u00f1o 256x256 con dense structure')",
+      "benchmark": {
+        "avg_time": 0.0006128152211507162,
+        "std_time": 0.00013089800030356325,
+        "gflops": 54.75456686110543,
+        "operations": 33554432,
+        "result_shape": [
+          256,
+          256
+        ]
+      }
+    },
+    {
+      "matrix_name": "Matriz sparse 256x256",
+      "recommendation": "OptimizationRecommendation(technique='quantum', expected_gflops=np.float64(95.63926052175081), confidence=0.6326112223580895, reasoning='Quantum annealing es la t\u00e9cnica m\u00e1s r\u00e1pida para matrices de tama\u00f1o 256x256 con sparse structure')",
+      "benchmark": {
+        "avg_time": 0.0004271666208902995,
+        "std_time": 1.2589363909856236e-05,
+        "gflops": 78.55115629134586,
+        "operations": 33554432,
+        "result_shape": [
+          256,
+          256
+        ]
+      }
+    },
+    {
+      "matrix_name": "Matriz rectangular 512x256",
+      "recommendation": "OptimizationRecommendation(technique='quantum', expected_gflops=np.float64(95.63926052175081), confidence=0.8775370741193632, reasoning='Quantum annealing es la t\u00e9cnica m\u00e1s r\u00e1pida para matrices de tama\u00f1o 512x512 con dense structure')",
+      "benchmark": {
+        "avg_time": 0.0029175281524658203,
+        "std_time": 0.0001905310057957185,
+        "gflops": 46.00391872365057,
+        "operations": 134217728,
+        "result_shape": [
+          512,
+          512
+        ]
+      }
+    }
+  ]
+}
