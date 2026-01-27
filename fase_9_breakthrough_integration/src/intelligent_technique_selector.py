@@ -40,6 +40,15 @@ except ImportError as e:
     print(f"⚠️  AI Kernel Predictor no disponible: {e}")
     AI_PREDICTOR_AVAILABLE = False
 
+# Importar Advanced Matrix Analyzer
+try:
+    from advanced_matrix_analyzer import AdvancedMatrixAnalyzer, AdvancedMatrixFeatures
+    ADVANCED_ANALYZER_AVAILABLE = True
+    print("✅ Advanced Matrix Analyzer disponible")
+except ImportError as e:
+    print(f"⚠️  Advanced Matrix Analyzer no disponible: {e}")
+    ADVANCED_ANALYZER_AVAILABLE = False
+
 class TechniqueType(Enum):
     """Tipos de técnicas disponibles en el sistema híbrido"""
     LOW_RANK = "low_rank"
@@ -53,7 +62,8 @@ class TechniqueType(Enum):
 
 @dataclass
 class MatrixFeatures:
-    """Características extraídas de las matrices de entrada"""
+    """Características extraídas de las matrices de entrada (versión mejorada)"""
+    # Características básicas (compatibilidad hacia atrás)
     size_a: Tuple[int, int]
     size_b: Tuple[int, int]
     dtype: str
@@ -67,6 +77,15 @@ class MatrixFeatures:
     symmetry_a: bool
     symmetry_b: bool
     matrix_type: str  # 'square', 'rectangular', 'vector'
+
+    # Características avanzadas (nuevo)
+    advanced_features: Optional[AdvancedMatrixFeatures] = None
+    spectral_properties_a: Optional[Dict[str, float]] = None
+    spectral_properties_b: Optional[Dict[str, float]] = None
+    structural_properties_a: Optional[Dict[str, Any]] = None
+    structural_properties_b: Optional[Dict[str, Any]] = None
+    computational_properties: Optional[Dict[str, float]] = None
+    ml_features: Optional[Dict[str, float]] = None
 
 @dataclass
 class TechniqueScore:
@@ -97,6 +116,16 @@ class MatrixFeatureExtractor:
 
     def __init__(self):
         self.cache = {}  # Cache para evitar recálculos
+        self.advanced_analyzer = None
+
+        # Inicializar analizador avanzado si está disponible
+        if ADVANCED_ANALYZER_AVAILABLE:
+            try:
+                self.advanced_analyzer = AdvancedMatrixAnalyzer(enable_full_spectral=False)
+                print("✅ Advanced Matrix Analyzer inicializado en MatrixFeatureExtractor")
+            except Exception as e:
+                print(f"⚠️  Error inicializando Advanced Matrix Analyzer: {e}")
+                self.advanced_analyzer = None
 
     def extract_features(self, matrix_a: np.ndarray, matrix_b: np.ndarray) -> MatrixFeatures:
         """
@@ -164,6 +193,60 @@ class MatrixFeatureExtractor:
         else:
             matrix_type = 'rectangular'
 
+        # Análisis avanzado si está disponible
+        advanced_features = None
+        spectral_props_a = None
+        spectral_props_b = None
+        structural_props_a = None
+        structural_props_b = None
+        computational_props = None
+        ml_features_dict = None
+
+        if self.advanced_analyzer is not None:
+            try:
+                advanced_features = self.advanced_analyzer.analyze_matrices(matrix_a, matrix_b)
+
+                # Extraer propiedades para fácil acceso
+                spectral_props_a = {
+                    'condition_number': advanced_features.spectral_a.condition_number,
+                    'spectral_radius': advanced_features.spectral_a.spectral_radius,
+                    'numerical_rank': advanced_features.spectral_a.numerical_rank,
+                    'trace': advanced_features.spectral_a.trace or 0.0
+                }
+
+                spectral_props_b = {
+                    'condition_number': advanced_features.spectral_b.condition_number,
+                    'spectral_radius': advanced_features.spectral_b.spectral_radius,
+                    'numerical_rank': advanced_features.spectral_b.numerical_rank,
+                    'trace': advanced_features.spectral_b.trace or 0.0
+                }
+
+                structural_props_a = {
+                    'structure_type': advanced_features.structure_a.structure_type.value,
+                    'symmetry_type': advanced_features.structure_a.symmetry_type.value,
+                    'bandwidth': advanced_features.structure_a.bandwidth,
+                    'density_pattern': advanced_features.structure_a.density_pattern
+                }
+
+                structural_props_b = {
+                    'structure_type': advanced_features.structure_b.structure_type.value,
+                    'symmetry_type': advanced_features.structure_b.symmetry_type.value,
+                    'bandwidth': advanced_features.structure_b.bandwidth,
+                    'density_pattern': advanced_features.structure_b.density_pattern
+                }
+
+                computational_props = {
+                    'arithmetic_intensity': advanced_features.computational.arithmetic_intensity,
+                    'cache_locality': advanced_features.computational.cache_locality,
+                    'load_balance_factor': advanced_features.computational.load_balance_factor,
+                    'memory_access_pattern': advanced_features.computational.memory_access_pattern
+                }
+
+                ml_features_dict = advanced_features.ml_features.copy()
+
+            except Exception as e:
+                print(f"⚠️  Error en análisis avanzado: {e}")
+
         features = MatrixFeatures(
             size_a=size_a,
             size_b=size_b,
@@ -177,7 +260,14 @@ class MatrixFeatureExtractor:
             structure_type=structure_type,
             symmetry_a=symmetry_a,
             symmetry_b=symmetry_b,
-            matrix_type=matrix_type
+            matrix_type=matrix_type,
+            advanced_features=advanced_features,
+            spectral_properties_a=spectral_props_a,
+            spectral_properties_b=spectral_props_b,
+            structural_properties_a=structural_props_a,
+            structural_properties_b=structural_props_b,
+            computational_properties=computational_props,
+            ml_features=ml_features_dict
         )
 
         # Cachear resultado
