@@ -1,0 +1,103 @@
+\section{Methodology}
+\label{sec:methodology}
+
+\subsection{Hardware Platform}
+
+Our experimental platform consists of a consumer-grade AMD Radeon RX 580 GPU with Polaris architecture. The key specifications are summarized in Table \ref{tab:hardware_specs}.
+
+\begin{table}[H]
+\centering
+\caption{AMD Radeon RX 580 Hardware Specifications}
+\label{tab:hardware_specs}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Component & Specification \\
+\midrule
+GPU Architecture & AMD Polaris 20 \\
+Compute Units & 36 \\
+Stream Processors & 2304 \\
+Base Clock & 1257 MHz \\
+Boost Clock & 1340 MHz \\
+Memory & 8 GB GDDR5 \\
+Memory Bus & 256-bit \\
+Memory Bandwidth & 224 GB/s \\
+TDP & 185 W \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The system runs Ubuntu 22.04 LTS with AMDGPU drivers version 23.40.2. The experimental setup ensures reproducible conditions through controlled thermal management and power supply stability.
+
+\subsection{Software Stack}
+
+Our implementation utilizes a comprehensive software stack optimized for legacy GPU architectures:
+
+\begin{enumerate}
+    \item \textbf{Python 3.12:} Primary development environment with scientific computing libraries
+    \item \textbf{NumPy 1.26:} High-performance numerical computing
+    \item \textbf{SciPy 1.11:} Scientific computing and optimization algorithms
+    \item \textbf{Pandas 2.1:} Data manipulation and analysis
+    \item \textbf{Scikit-learn 1.3:} Machine learning algorithms for technique selection
+    \item \textbf{MATplotlib 3.7:} Data visualization and plotting
+    \item \textbf{ROCm 5.7:} AMD's open-source GPU computing platform
+\end{enumerate}
+
+\subsection{Benchmark Dataset}
+
+We developed a comprehensive benchmark dataset covering diverse matrix multiplication scenarios:
+
+\begin{enumerate}
+    \item \textbf{Dense Matrices:} Square matrices of sizes 128×128, 256×256, 512×512, and 1024×1024
+    \item \textbf{Sparse Matrices:} 90\% sparsity with varying patterns
+    \item \textbf{Diagonal Matrices:} Specialized diagonal-dominant matrices
+    \item \textbf{Well-conditioned Matrices:} Numerically stable matrices
+    \item \textbf{Ill-conditioned Matrices:} Challenging numerical scenarios
+    \item \textbf{Rectangular Matrices:} Non-square matrix operations
+\end{enumerate}
+
+\subsection{Performance Metrics}
+
+We employ multiple performance metrics to provide comprehensive evaluation:
+
+\begin{enumerate}
+    \item \textbf{GFLOPS:} Billions of floating-point operations per second
+    \item \textbf{Energy Efficiency:} Performance per watt (GFLOPS/W)
+    \item \textbf{Execution Time:} Wall-clock time for operations
+    \item \textbf{Memory Utilization:} GPU memory consumption patterns
+    \item \textbf{Algorithmic Accuracy:} Numerical precision of results
+\end{enumerate}
+
+\subsection{Experimental Protocol}
+
+Each experiment follows a rigorous protocol:
+
+\begin{enumerate}
+    \item \textbf{Warm-up Phase:} 10 iterations to stabilize GPU state
+    \item \textbf{Measurement Phase:} 50 iterations with statistical analysis
+    \item \textbf{Cooling Phase:} 5-minute intervals between experiments
+    \item \textbf{Replication:} Three independent runs for statistical validation
+\end{enumerate}
+
+\subsection{Power Measurement Methodology}
+
+Power consumption is measured through multiple channels:
+
+\begin{enumerate}
+    \item \textbf{GPU Power Sensors:} Direct measurement via AMDGPU driver interfaces
+    \item \textbf{System Power Meters:} External power monitoring for total system consumption
+    \item \textbf{Thermal Monitoring:} Temperature correlation with power consumption
+    \item \textbf{Software Instrumentation:} Application-level power profiling
+\end{enumerate}
+
+\subsection{Statistical Analysis}
+
+Results are analyzed using statistical methods:
+
+\begin{enumerate}
+    \item \textbf{Descriptive Statistics:} Mean, standard deviation, confidence intervals
+    \item \textbf{Comparative Analysis:} ANOVA and t-tests for significance testing
+    \item \textbf{Regression Analysis:} Performance prediction models
+    \item \textbf{Correlation Analysis:} Relationships between variables
+\end{enumerate}
+
+This comprehensive methodology ensures reliable, reproducible results that accurately characterize the performance and energy efficiency of our optimization framework on legacy AMD Polaris hardware.

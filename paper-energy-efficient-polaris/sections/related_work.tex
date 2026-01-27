@@ -1,0 +1,42 @@
+\section{Related Work}
+\label{sec:related_work}
+
+\subsection{Energy-Efficient GPU Computing}
+
+The field of energy-efficient GPU computing has evolved significantly in recent years. Zhang et al. \cite{zhang_energy_2014} proposed DVFS-based power management for GPUs, demonstrating up to 20\% energy savings through dynamic voltage and frequency scaling. More recently, Chen et al. \cite{chen_power_2020} developed power-aware scheduling algorithms for heterogeneous computing systems, achieving optimal performance per watt ratios.
+
+\subsection{Matrix Multiplication Optimization}
+
+Matrix multiplication represents a cornerstone of deep learning computations. The Coppersmith-Winograd algorithm \cite{coppersmith_winograd_1990} provides theoretical improvements over traditional approaches, though practical implementations remain challenging. Low-rank approximation techniques have been extensively studied for dimensionality reduction in neural networks \cite{sainath_low_rank_2013}.
+
+Recent work by Dongarra et al. \cite{dongarra_algorithms_2018} provides comprehensive analysis of high-performance matrix multiplication algorithms across different architectures. Their work demonstrates that algorithm selection significantly impacts performance, particularly on GPUs with different memory hierarchies.
+
+\subsection{Legacy Hardware Optimization}
+
+The optimization of legacy hardware for modern workloads has gained attention as sustainability becomes a key concern. Wang et al. \cite{wang_legacy_2019} demonstrated that legacy GPUs can achieve competitive performance through software optimization, extending hardware lifespan and reducing electronic waste.
+
+\subsection{Power Profiling Frameworks}
+
+Power profiling for GPUs has evolved from basic monitoring to sophisticated frameworks. The NVIDIA Management Library (NVML) \cite{nvidia_nvml} provides comprehensive power monitoring for modern NVIDIA GPUs. However, equivalent tools for AMD hardware, particularly legacy architectures, remain limited.
+
+Recent work by Luo et al. \cite{luo_power_2021} developed cross-platform power monitoring frameworks, though their focus on modern hardware limits applicability to legacy systems. Our work extends these efforts by providing detailed power profiling specifically for AMD Polaris architecture.
+
+\subsection{Machine Learning for Algorithm Selection}
+
+The application of machine learning for algorithm selection has shown promising results. Wang et al. \cite{wang_ml_selection_2022} used reinforcement learning to select optimal algorithms for different computational patterns. Our approach builds upon this work by incorporating hardware-specific characteristics and real-time performance feedback.
+
+\subsection{Gap Analysis}
+
+While significant progress has been made in GPU power management and algorithm optimization, several gaps remain:
+
+\begin{enumerate}
+    \item \textbf{Legacy Hardware Focus:} Most power profiling frameworks target modern GPUs, leaving legacy hardware underserved.
+
+    \item \textbf{AMD Architecture Coverage:} Limited research focuses specifically on AMD GPU architectures, particularly consumer-grade hardware.
+
+    \item \textbf{Real-time Adaptation:} Existing systems often rely on offline profiling, limiting their ability to adapt to dynamic workloads.
+
+    \item \textbf{End-to-End Integration:} Few systems provide complete integration from algorithm selection to power-aware execution.
+\end{enumerate}
+
+Our work addresses these gaps by providing a comprehensive framework specifically designed for legacy AMD GPUs, incorporating real-time monitoring and adaptive optimization.

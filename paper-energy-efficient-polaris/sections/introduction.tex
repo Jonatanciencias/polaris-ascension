@@ -1,0 +1,37 @@
+\section{Introduction}
+
+The rapid advancement of deep learning technologies has created an unprecedented demand for computational resources. Modern data centers and edge computing systems increasingly rely on GPU acceleration to meet the computational requirements of neural network inference and training. However, this surge in computational demand has led to significant energy consumption challenges, with GPUs accounting for substantial portions of data center power budgets \cite{gpu_power_consumption}.
+
+While cutting-edge GPUs offer superior performance and energy efficiency, legacy hardware remains prevalent in many computing environments. The AMD Radeon RX 580, based on the Polaris architecture, represents a significant portion of deployed GPU infrastructure worldwide. These GPUs, originally designed for gaming and general-purpose computing, are now being repurposed for machine learning workloads due to their widespread availability and cost-effectiveness.
+
+\subsection{Problem Statement}
+
+Legacy GPUs face several challenges when deployed for modern deep learning workloads:
+
+\begin{enumerate}
+    \item \textbf{Limited Tensor Core Support:} Unlike modern GPUs, Polaris architecture lacks dedicated tensor processing units, requiring software-based matrix multiplication optimizations.
+
+    \item \textbf{Power and Thermal Constraints:} Consumer-grade GPUs like the RX 580 have different power profiles compared to data center GPUs, requiring careful power management.
+
+    \item \textbf{Algorithm Selection Complexity:} The optimal matrix multiplication algorithm varies significantly based on matrix characteristics, making static optimization approaches ineffective.
+
+    \item \textbf{Lack of Real-time Monitoring:} Existing profiling tools are often designed for modern hardware and provide limited insights into legacy GPU behavior.
+\end{enumerate}
+
+\subsection{Contributions}
+
+This paper makes the following key contributions:
+
+\begin{enumerate}
+    \item \textbf{Hardware-Based Power Profiling Framework:} A comprehensive monitoring system specifically designed for AMD Polaris architecture, providing real-time power consumption and performance metrics.
+
+    \item \textbf{Multi-Algorithm Optimization System:} Implementation and evaluation of four distinct matrix multiplication algorithms optimized for different computational patterns.
+
+    \item \textbf{Intelligent Technique Selection:} A machine learning-based selector that adapts algorithm choice based on matrix characteristics and hardware constraints.
+
+    \item \textbf{Empirical Validation:} Extensive benchmarking on consumer-grade hardware, demonstrating competitive performance with modern GPUs through intelligent optimization.
+\end{enumerate}
+
+\subsection{Paper Organization}
+
+The remainder of this paper is organized as follows: Section \ref{sec:related_work} reviews related work in energy-efficient computing and GPU optimization. Section \ref{sec:methodology} describes our experimental methodology and hardware setup. Section \ref{sec:system_architecture} presents the overall system architecture. Section \ref{sec:power_profiling} details the power profiling framework. Section \ref{sec:optimization_algorithms} analyzes the implemented optimization algorithms. Section \ref{sec:experimental_results} presents our experimental results. Section \ref{sec:performance_analysis} provides detailed performance analysis. Section \ref{sec:energy_efficiency} evaluates energy efficiency aspects. Finally, Section \ref{sec:conclusions} concludes the paper and outlines future work.

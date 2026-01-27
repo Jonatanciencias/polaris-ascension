@@ -1,0 +1,302 @@
+\relax 
+\providecommand\babel@aux[2]{}
+\@nameuse{bbl@beforestart}
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{gpu_power_consumption}
+\babel@aux{english}{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\citation{zhang_energy_2014}
+\citation{chen_power_2020}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Problem Statement}{2}{subsection.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Contributions}{2}{subsection.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Paper Organization}{2}{subsection.1.3}\protected@file@percent }
+\citation{coppersmith_winograd_1990}
+\citation{sainath_low_rank_2013}
+\citation{dongarra_algorithms_2018}
+\citation{wang_legacy_2019}
+\citation{nvidia_nvml}
+\citation{luo_power_2021}
+\citation{wang_ml_selection_2022}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{3}{section.2}\protected@file@percent }
+\newlabel{sec:related_work}{{2}{3}{Related Work}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Energy-Efficient GPU Computing}{3}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Matrix Multiplication Optimization}{3}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Legacy Hardware Optimization}{3}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Power Profiling Frameworks}{3}{subsection.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Machine Learning for Algorithm Selection}{3}{subsection.2.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Gap Analysis}{3}{subsection.2.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Methodology}{4}{section.3}\protected@file@percent }
+\newlabel{sec:methodology}{{3}{4}{Methodology}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Hardware Platform}{4}{subsection.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces AMD Radeon RX 580 Hardware Specifications}}{4}{table.caption.2}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{tab:hardware_specs}{{1}{4}{AMD Radeon RX 580 Hardware Specifications}{table.caption.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Software Stack}{4}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Benchmark Dataset}{5}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Performance Metrics}{5}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Experimental Protocol}{5}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Power Measurement Methodology}{5}{subsection.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Statistical Analysis}{6}{subsection.3.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}System Architecture}{6}{section.4}\protected@file@percent }
+\newlabel{sec:system_architecture}{{4}{6}{System Architecture}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Overall System Design}{6}{subsection.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Overall System Architecture}}{7}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:system_architecture}{{1}{7}{Overall System Architecture}{figure.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Application Layer}{7}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Optimization Layer}{7}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1}Algorithm Implementations}{8}{subsubsection.4.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.2}Intelligent Technique Selector}{8}{subsubsection.4.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Hardware Abstraction Layer}{8}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Power Profiling Framework}{8}{subsection.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.5.1}Power Sensors}{9}{subsubsection.4.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.5.2}Performance Counters}{9}{subsubsection.4.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.5.3}Thermal Monitoring}{9}{subsubsection.4.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Data Management Layer}{9}{subsection.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}System Integration}{9}{subsection.4.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Power Profiling Framework}{10}{section.5}\protected@file@percent }
+\newlabel{sec:power_profiling}{{5}{10}{Power Profiling Framework}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Framework Overview}{10}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Power Measurement Architecture}{10}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}GPU Power Sensors}{10}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.1}AMDGPU Driver Interface}{10}{subsubsection.5.3.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}{\ignorespaces GPU Power Sensor Access}}{10}{lstlisting.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2}Sensor Calibration}{10}{subsubsection.5.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Real-Time Power Monitoring}{11}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.1}Sampling Strategy}{11}{subsubsection.5.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.2}Power Trace Collection}{11}{subsubsection.5.4.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}{\ignorespaces Power Trace Collection}}{11}{lstlisting.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Energy Consumption Analysis}{11}{subsection.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.5.1}Power Integration}{11}{subsubsection.5.5.1}\protected@file@percent }
+\newlabel{eq:energy_integration}{{1}{11}{Power Integration}{equation.5.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.5.2}Discrete Integration Methods}{12}{subsubsection.5.5.2}\protected@file@percent }
+\newlabel{eq:trapezoidal_integration}{{2}{12}{Discrete Integration Methods}{equation.5.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Performance-Energy Correlation}{12}{subsection.5.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.1}Metrics Definition}{12}{subsubsection.5.6.1}\protected@file@percent }
+\newlabel{eq:energy_efficiency}{{3}{12}{Metrics Definition}{equation.5.3}{}}
+\newlabel{eq:edp}{{4}{12}{Metrics Definition}{equation.5.4}{}}
+\newlabel{eq:power_utilization}{{5}{12}{Metrics Definition}{equation.5.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Thermal-Power Interaction}{12}{subsection.5.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.7.1}Temperature Effects}{12}{subsubsection.5.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.7.2}Thermal Modeling}{12}{subsubsection.5.7.2}\protected@file@percent }
+\newlabel{eq:thermal_power_model}{{6}{12}{Thermal Modeling}{equation.5.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.8}Power-Aware Optimization}{12}{subsection.5.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.8.1}Dynamic Voltage Scaling}{12}{subsubsection.5.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.8.2}Predictive Power Management}{13}{subsubsection.5.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.9}Framework Validation}{13}{subsection.5.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.1}Cross-Platform Verification}{13}{subsubsection.5.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.2}Accuracy Assessment}{13}{subsubsection.5.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Optimization Algorithms}{13}{section.6}\protected@file@percent }
+\newlabel{sec:optimization_algorithms}{{6}{13}{Optimization Algorithms}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Algorithm Overview}{13}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Low-Rank Matrix Approximation (LRMA)}{13}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.1}Algorithm Description}{13}{subsubsection.6.2.1}\protected@file@percent }
+\newlabel{eq:svd_approximation}{{7}{13}{Algorithm Description}{equation.6.7}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.2}Adaptive Rank Selection}{14}{subsubsection.6.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.3}Hardware Optimization}{14}{subsubsection.6.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Coppersmith-Winograd Algorithm (CW)}{14}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.1}Theoretical Foundation}{14}{subsubsection.6.3.1}\protected@file@percent }
+\newlabel{eq:cw_complexity}{{8}{14}{Theoretical Foundation}{equation.6.8}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.2}Practical Implementation}{14}{subsubsection.6.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.3}GPU Kernel Optimization}{14}{subsubsection.6.3.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}{\ignorespaces CW Block Multiplication Kernel}}{14}{lstlisting.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Quantum Annealing Simulator (QAS)}{15}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.4.1}Algorithm Motivation}{15}{subsubsection.6.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.4.2}Simulated Annealing Implementation}{15}{subsubsection.6.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.4.3}Parallel Optimization}{15}{subsubsection.6.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Tensor Core Emulator (TCE)}{15}{subsection.6.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.1}Emulation Strategy}{15}{subsubsection.6.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.2}Tiled Matrix Multiplication}{15}{subsubsection.6.5.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}{\ignorespaces Tensor Core Emulation}}{15}{lstlisting.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.3}Memory Layout Optimization}{16}{subsubsection.6.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}Algorithm Selection Framework}{16}{subsection.6.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.6.1}Feature Extraction}{16}{subsubsection.6.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.6.2}Machine Learning Model}{16}{subsubsection.6.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.6.3}Adaptive Learning}{17}{subsubsection.6.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Experimental Results}{17}{section.7}\protected@file@percent }
+\newlabel{sec:experimental_results}{{7}{17}{Experimental Results}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Benchmark Setup}{17}{subsection.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Algorithm Performance Comparison}{17}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.1}Raw Performance Results}{17}{subsubsection.7.2.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Algorithm Performance Comparison (GFLOPS)}}{17}{table.caption.4}\protected@file@percent }
+\newlabel{tab:algorithm_performance}{{2}{17}{Algorithm Performance Comparison (GFLOPS)}{table.caption.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.2}Performance Analysis}{17}{subsubsection.7.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Matrix Type Performance}{18}{subsection.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.1}Dense vs. Sparse Matrices}{18}{subsubsection.7.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Performance Across Matrix Types}}{18}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:matrix_type_performance}{{2}{18}{Performance Across Matrix Types}{figure.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Power Consumption Analysis}{19}{subsection.7.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.1}Power Profiles}{19}{subsubsection.7.4.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Power Consumption Analysis (Watts)}}{19}{table.caption.6}\protected@file@percent }
+\newlabel{tab:power_consumption}{{3}{19}{Power Consumption Analysis (Watts)}{table.caption.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.2}Power Efficiency Metrics}{19}{subsubsection.7.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Energy Efficiency Comparison}}{20}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:power_efficiency}{{3}{20}{Energy Efficiency Comparison}{figure.caption.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Intelligent Selection Performance}{21}{subsection.7.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.1}Selection Accuracy}{21}{subsubsection.7.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Algorithm Selection Accuracy}}{21}{table.caption.8}\protected@file@percent }
+\newlabel{tab:selection_accuracy}{{4}{21}{Algorithm Selection Accuracy}{table.caption.8}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.2}Performance Improvement}{21}{subsubsection.7.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Memory Utilization}{21}{subsection.7.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.6.1}Memory Consumption Patterns}{21}{subsubsection.7.6.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Memory Utilization Patterns}}{22}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:memory_utilization}{{4}{22}{Memory Utilization Patterns}{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.7}Algorithm Stability}{23}{subsection.7.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.7.1}Numerical Accuracy}{23}{subsubsection.7.7.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Numerical Accuracy (Relative Error)}}{23}{table.caption.10}\protected@file@percent }
+\newlabel{tab:numerical_accuracy}{{5}{23}{Numerical Accuracy (Relative Error)}{table.caption.10}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.7.2}Execution Stability}{23}{subsubsection.7.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.8}Real-World Application Performance}{23}{subsection.7.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.8.1}Deep Learning Inference}{23}{subsubsection.7.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.9}Scalability Analysis}{23}{subsection.7.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.9.1}Large Matrix Performance}{23}{subsubsection.7.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.9.2}Multi-GPU Considerations}{23}{subsubsection.7.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Performance Analysis}{24}{section.8}\protected@file@percent }
+\newlabel{sec:performance_analysis}{{8}{24}{Performance Analysis}{section.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Algorithm Characteristics Analysis}{24}{subsection.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.1.1}Computational Complexity}{24}{subsubsection.8.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.1.2}Memory Access Patterns}{24}{subsubsection.8.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Hardware Utilization Analysis}{24}{subsection.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.2.1}GPU Resource Utilization}{24}{subsubsection.8.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.2.2}Instruction Mix Analysis}{24}{subsubsection.8.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Scalability Analysis}{25}{subsection.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.3.1}Strong Scaling}{25}{subsubsection.8.3.1}\protected@file@percent }
+\newlabel{eq:performance_scaling}{{9}{25}{Strong Scaling}{equation.8.9}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.3.2}Weak Scaling}{25}{subsubsection.8.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}Performance Bottleneck Analysis}{25}{subsection.8.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.4.1}Memory Bandwidth Limitations}{25}{subsubsection.8.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.4.2}Compute Limitations}{25}{subsubsection.8.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.5}Algorithm Selection Impact}{25}{subsection.8.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.5.1}Selection Accuracy vs. Performance}{25}{subsubsection.8.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.5.2}Feature Importance Analysis}{25}{subsubsection.8.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.6}Comparative Analysis}{26}{subsection.8.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.6.1}Modern GPU Comparison}{26}{subsubsection.8.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.6.2}CPU Baseline Comparison}{26}{subsubsection.8.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.7}Performance Prediction Models}{26}{subsection.8.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.7.1}Empirical Performance Models}{26}{subsubsection.8.7.1}\protected@file@percent }
+\newlabel{eq:performance_model}{{10}{26}{Empirical Performance Models}{equation.8.10}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.7.2}Model Accuracy}{26}{subsubsection.8.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.8}Real-World Performance}{26}{subsection.8.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.8.1}Deep Learning Workloads}{26}{subsubsection.8.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.8.2}Workload Characterization}{26}{subsubsection.8.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Energy Efficiency Analysis}{27}{section.9}\protected@file@percent }
+\newlabel{sec:energy_efficiency}{{9}{27}{Energy Efficiency Analysis}{section.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Energy Consumption Metrics}{27}{subsection.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.1.1}Power-Performance Product}{27}{subsubsection.9.1.1}\protected@file@percent }
+\newlabel{eq:energy_per_op}{{11}{27}{Power-Performance Product}{equation.9.11}{}}
+\newlabel{eq:performance_per_watt}{{12}{27}{Power-Performance Product}{equation.9.12}{}}
+\newlabel{eq:energy_delay_product}{{13}{27}{Power-Performance Product}{equation.9.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}Power Consumption Characterization}{27}{subsection.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.1}Algorithm-Specific Power Profiles}{27}{subsubsection.9.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.2}Dynamic Power Behavior}{27}{subsubsection.9.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Energy Efficiency Results}{28}{subsection.9.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.1}Comparative Energy Efficiency}{28}{subsubsection.9.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Energy Efficiency Metrics}}{28}{table.caption.11}\protected@file@percent }
+\newlabel{tab:energy_efficiency}{{6}{28}{Energy Efficiency Metrics}{table.caption.11}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.2}Key Findings}{28}{subsubsection.9.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.4}Thermal-Energy Interactions}{28}{subsection.9.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.4.1}Temperature Effects on Power}{28}{subsubsection.9.4.1}\protected@file@percent }
+\newlabel{eq:temperature_power}{{14}{28}{Temperature Effects on Power}{equation.9.14}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.4.2}Thermal Management Impact}{28}{subsubsection.9.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.5}Power-Aware Optimization Strategies}{28}{subsection.9.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.1}Dynamic Voltage and Frequency Scaling}{28}{subsubsection.9.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.2}Algorithm Selection for Power Constraints}{29}{subsubsection.9.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.6}Energy-Efficient Scheduling}{29}{subsection.9.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.1}Batch Processing Optimization}{29}{subsubsection.9.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.2}Workload Consolidation}{29}{subsubsection.9.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.7}Sustainability Impact}{29}{subsection.9.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.7.1}Carbon Footprint Reduction}{29}{subsubsection.9.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.7.2}Energy Cost Savings}{29}{subsubsection.9.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.8}Comparative Energy Analysis}{30}{subsection.9.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.8.1}Modern GPU Comparison}{30}{subsubsection.9.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.8.2}CPU vs. GPU Energy Efficiency}{30}{subsubsection.9.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.9}Energy-Aware Algorithm Design}{30}{subsection.9.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.9.1}Future Optimization Opportunities}{30}{subsubsection.9.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.9.2}Framework Extensions}{30}{subsubsection.9.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Conclusions}{30}{section.10}\protected@file@percent }
+\newlabel{sec:conclusions}{{10}{30}{Conclusions}{section.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.1}Key Contributions}{31}{subsection.10.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.1.1}Hardware-Based Power Profiling Framework}{31}{subsubsection.10.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.1.2}Multi-Algorithm Optimization System}{31}{subsubsection.10.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.1.3}Intelligent Technique Selection}{31}{subsubsection.10.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.2}Experimental Validation}{31}{subsection.10.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.3}Impact and Implications}{32}{subsection.10.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.3.1}Sustainability Benefits}{32}{subsubsection.10.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.3.2}Practical Applications}{32}{subsubsection.10.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.4}Limitations and Challenges}{32}{subsection.10.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.4.1}Architecture-Specific Constraints}{32}{subsubsection.10.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.4.2}Algorithm Limitations}{32}{subsubsection.10.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.5}Future Research Directions}{33}{subsection.10.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.5.1}Short-Term Extensions}{33}{subsubsection.10.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.5.2}Long-Term Research}{33}{subsubsection.10.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.6}Final Remarks}{33}{subsection.10.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {11}Future Work}{33}{section.11}\protected@file@percent }
+\newlabel{sec:future_work}{{11}{33}{Future Work}{section.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.1}Algorithm Enhancements}{33}{subsection.11.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.1.1}Novel Algorithm Development}{33}{subsubsection.11.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.1.2}Adaptive Precision}{34}{subsubsection.11.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.2}System-Level Optimizations}{34}{subsection.11.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.2.1}Multi-GPU and Heterogeneous Computing}{34}{subsubsection.11.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.2.2}Power and Thermal Management}{34}{subsubsection.11.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.3}Machine Learning Integration}{34}{subsection.11.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.3.1}Autonomous Optimization}{34}{subsubsection.11.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.3.2}Workload Characterization}{35}{subsubsection.11.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.4}Hardware and Software Co-Design}{35}{subsection.11.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.4.1}Hardware Extensions}{35}{subsubsection.11.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.4.2}Compiler Optimizations}{35}{subsubsection.11.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.5}Application-Specific Optimizations}{35}{subsection.11.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.5.1}Deep Learning Workloads}{35}{subsubsection.11.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.5.2}Broader Applications}{36}{subsubsection.11.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.6}Evaluation and Benchmarking}{36}{subsection.11.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.6.1}Standardized Benchmarks}{36}{subsubsection.11.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.6.2}Metrics and Measurement}{36}{subsubsection.11.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.7}Community and Ecosystem Development}{36}{subsection.11.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.7.1}Open-Source Ecosystem}{36}{subsubsection.11.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.7.2}Industry Collaboration}{36}{subsubsection.11.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.8}Challenges and Considerations}{37}{subsection.11.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.8.1}Technical Challenges}{37}{subsubsection.11.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.8.2}Adoption Challenges}{37}{subsubsection.11.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12}Acknowledgments}{37}{section.12}\protected@file@percent }
+\newlabel{sec:acknowledgments}{{12}{37}{Acknowledgments}{section.12}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.1}Institutional Support}{37}{subsection.12.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.2}Open-Source Community}{37}{subsection.12.2}\protected@file@percent }
+\bibstyle{IEEEtran}
+\bibdata{references/references}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.3}Technical Contributions}{38}{subsection.12.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.4}Collaborators and Reviewers}{38}{subsection.12.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.5}Hardware Donations}{38}{subsection.12.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.6}Funding Support}{38}{subsection.12.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A}Implementation Details}{38}{appendix.A}\protected@file@percent }
+\newlabel{app:implementation}{{A}{38}{Implementation Details}{appendix.A}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}OpenCL Kernel Implementations}{38}{subsection.A.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.1.1}Low-Rank Matrix Multiplication Kernel}{38}{subsubsection.A.1.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}{\ignorespaces Low-Rank Approximation Kernel}}{38}{lstlisting.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.1.2}Coppersmith-Winograd Algorithm Kernel}{39}{subsubsection.A.1.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}{\ignorespaces Coppersmith-Winograd Implementation}}{39}{lstlisting.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.1.3}Quantum Annealing Inspired Kernel}{39}{subsubsection.A.1.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}{\ignorespaces Quantum Annealing Matrix Multiplication}}{39}{lstlisting.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Power Profiling Implementation}{40}{subsection.A.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.2.1}AMDGPU Power Monitoring}{40}{subsubsection.A.2.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}{\ignorespaces Power Monitoring Class}}{40}{lstlisting.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.2.2}Machine Learning Algorithm Selector}{41}{subsubsection.A.2.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}{\ignorespaces ML-Based Algorithm Selection}}{41}{lstlisting.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Benchmark Configuration}{42}{subsection.A.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.3.1}Experimental Setup Parameters}{42}{subsubsection.A.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Benchmark Configuration Parameters}}{42}{table.caption.12}\protected@file@percent }
+\newlabel{tab:benchmark_config}{{7}{42}{Benchmark Configuration Parameters}{table.caption.12}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.3.2}Performance Metrics Calculation}{42}{subsubsection.A.3.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}{\ignorespaces Performance Metrics Computation}}{42}{lstlisting.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.4}Algorithm Selection Training Data}{43}{subsection.A.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.4.1}Feature Set Description}{43}{subsubsection.A.4.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Algorithm Selection Features}}{43}{table.caption.13}\protected@file@percent }
+\newlabel{tab:selection_features}{{8}{43}{Algorithm Selection Features}{table.caption.13}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.4.2}Training Dataset Statistics}{43}{subsubsection.A.4.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Training Dataset Characteristics}}{43}{table.caption.14}\protected@file@percent }
+\newlabel{tab:training_stats}{{9}{43}{Training Dataset Characteristics}{table.caption.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.5}Error Analysis and Validation}{43}{subsection.A.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.5.1}Numerical Accuracy Validation}{43}{subsubsection.A.5.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}{\ignorespaces Numerical Validation}}{43}{lstlisting.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.5.2}Statistical Analysis}{44}{subsubsection.A.5.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}{\ignorespaces Statistical Analysis}}{44}{lstlisting.12}\protected@file@percent }
+\gdef \@abspage@last{44}
