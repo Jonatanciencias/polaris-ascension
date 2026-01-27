@@ -9,28 +9,49 @@ requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "polaris-ascension"
-version = "0.7.0"
-description = "Ascending beyond planned obsolescence: Power-efficient ML inference on AMD Polaris GPUs"
+name = "polaris-energy-efficient-gpu"
+version = "1.0.0"
+description = "Energy-Efficient Deep Learning Inference Framework for AMD Polaris GPUs"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Jonathan", email = "jonatanciencias@example.com"}
+    {name = "Jonathan Ciencias", email = "jonathan.ciencias@email.com"}
 ]
-keywords = ["deep-learning", "inference", "amd", "polaris", "opencl", "power-monitoring", "distributed", "legacy-gpu", "democratization"]
+maintainers = [
+    {name = "Jonathan Ciencias", email = "jonathan.ciencias@email.com"}
+]
+keywords = [
+    "deep-learning",
+    "inference",
+    "amd",
+    "polaris",
+    "opencl",
+    "power-monitoring",
+    "energy-efficient",
+    "legacy-gpu",
+    "sustainable-computing",
+    "hardware-optimization"
+]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: POSIX :: Linux",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: System :: Distributed Computing",
+    "Topic :: System :: Hardware",
+    "Topic :: System :: Hardware :: Hardware Drivers",
+    "Framework :: AsyncIO",
+    "Environment :: GPU",
+    "Environment :: GPU :: AMD",
 ]
 
 [project.optional-dependencies]

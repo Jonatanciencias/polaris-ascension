@@ -1,0 +1,53 @@
+# MANIFEST.in for Radeon RX 580 Energy-Efficient Computing Framework
+
+# Include documentation
+include README.md
+include CONTRIBUTING.md
+include LICENSE
+recursive-include docs *.md
+recursive-include docs *.pdf
+recursive-include docs *.tex
+recursive-include docs *.bib
+
+# Include configuration files
+include requirements.txt
+include pyproject.toml
+include setup.cfg
+recursive-include config *.yaml
+recursive-include config *.yml
+recursive-include config *.json
+
+# Include scripts
+recursive-include scripts *.sh
+recursive-include scripts *.py
+
+# Include kernels
+recursive-include src/kernels *.cl
+
+# Include test data (if any)
+recursive-include tests *.py
+recursive-include tests *.json
+recursive-include tests *.yaml
+
+# Exclude development files
+exclude .gitignore
+exclude .gitattributes
+exclude .pre-commit-config.yaml
+exclude tox.ini
+exclude .coverage
+exclude coverage.xml
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude *.log
+global-exclude .DS_Store
+global-exclude Thumbs.db
+
+# Exclude large data files and results
+recursive-exclude results *
+recursive-exclude models *.pkl
+recursive-exclude models *.h5
+recursive-exclude models *.model
+global-exclude *.npz
+global-exclude *.csv
+global-exclude *.h5
+global-exclude *.hdf5

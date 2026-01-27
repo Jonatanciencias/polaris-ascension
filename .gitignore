@@ -327,33 +327,72 @@ environment.yaml
 *~
 
 # ==========================================
-# Project Specific
+# Project Specific - Radeon RX 580
 # ==========================================
-# Radeon RX 580 specific
-radeon_debug/
-gpu_logs/
-opencl_cache/
-kernel_cache/
+# Fase directories (development phases)
+fase_*/
+fase_*/**/*
 
-# Benchmark artifacts
-*_benchmark_*.json
-*_investigation_*.json
-*report.py
-*summary.txt
+# Results and outputs
+results/
+models/
+*.pkl
+*.pickle
 
-# ML datasets
-ml_dataset_*.csv
-ml_dataset_*.npz
-ml_training_*.csv
-ml_training_*.npz
+# OpenCL kernels (keep in src/kernels/)
+# *.cl (uncomment if you want to ignore all .cl files)
 
-# OpenCL debug
-debug_kernel.cl
-optimized_kernels.cl
+# Docker/Prometheus configs (keep in root for deployment)
+# alertmanager.yml
+# prometheus.yml
 
-# Docker/Prometheus
-alertmanager.yml
-prometheus.yml
+# Build artifacts
+build/
+pytorch_build/
+*.so
+*.o
+
+# IDE and editor files
+.vscode/settings.json
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Temporary and debug files
+debug_*.py
+test_*.py
+*_debug.py
+*_test.py
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+
+# Sphinx documentation
+docs/_build/
+docs/build/
+
+# Node modules (if any JS components)
+node_modules/
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Large data files
+*.npz
+*.csv
+*.json
+*.h5
+*.hdf5
 
 # ==========================================
 # Large Files (Git LFS candidates)
