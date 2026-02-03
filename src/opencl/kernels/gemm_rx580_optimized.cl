@@ -22,11 +22,27 @@
 // CONSTANTES OPTIMIZADAS PARA RX 580
 // ============================================================================
 
+// Permitir override desde línea de comandos (-D TILE_M=16 etc)
+#ifndef TILE_SIZE
 #define TILE_SIZE 32          // Óptimo para 64KB LDS
+#endif
+
+#ifndef TILE_M
 #define TILE_M 32
-#define TILE_N 32  
+#endif
+
+#ifndef TILE_N
+#define TILE_N 32
+#endif
+
+#ifndef TILE_K
 #define TILE_K 16             // Para double buffering
+#endif
+
+#ifndef VECTOR_SIZE
 #define VECTOR_SIZE 4         // float4 vectorization
+#endif
+
 #define WORK_PER_THREAD 8     // Work items process 8 elements
 #define UNROLL_FACTOR 8       // Loop unroll factor
 #define LDS_PADDING 1         // Bank conflict avoidance
