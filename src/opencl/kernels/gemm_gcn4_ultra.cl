@@ -599,6 +599,7 @@ void gemm_gcn4_highoccupancy(
  * 
  * Uses streaming access pattern to minimize cache thrashing.
  * Better for matrices that don't fit in L2 cache (>2MB).
+ * Uses same proven structure as ULTRA but optimized for large data.
  */
 __kernel __attribute__((reqd_work_group_size(8, 8, 1)))
 void gemm_gcn4_streaming(
@@ -609,21 +610,24 @@ void gemm_gcn4_streaming(
     const float beta,
     __global float* restrict C)
 {
-    const int tidm = get_local_id(0);
-    const int tidn = get_local_id(1);
-    const int tid = tidm * 8 + tidn;
+    // Thread and workgroup IDs
+    const int tidm = get_local_id(0);  // 0-7
+    const int tidn = get_local_id(1);  // 0-7
+    const int tid = tidm + tidn * 8;   // Linear thread ID: 0-63
     const int gidm = get_group_id(0);
     const int gidn = get_group_id(1);
     
-    // Base positions
+    // Base positions for this workgroup (64x64 output tile)
     const int base_m = gidm * 64;
     const int base_n = gidn * 64;
     
-    // Double-buffered LDS
-    __local float As[2][64][17];  // Extra for bank conflicts
-    __local float Bs[2][16][65];
+    // Double-buffered LDS - CORRECTED SIZES
+    // A: 64 rows x 16 cols (with padding to avoid bank conflicts)
+    // B: 16 rows x 64 cols (with padding)
+    __local float As[2][64][17];  // 17 for bank conflict avoidance
+    __local float Bs[2][16][65];  // 65 for bank conflict avoidance
     
-    // 8x8 accumulators per thread
+    // 8x8 accumulators per thread (64 accumulators total)
     float acc[8][8];
     #pragma unroll
     for (int i = 0; i < 8; i++) {
@@ -633,77 +637,119 @@ void gemm_gcn4_streaming(
         }
     }
     
+    // Register arrays for intermediate values
     float regA[8], regB[8];
     
     const int num_tiles = (K + 15) / 16;
     int buf = 0;
     
-    // Prologue: load first tile
-    #pragma unroll
-    for (int i = 0; i < 16; i++) {
-        int row = tid + i * 64 / 16;
-        int col = tid % 16;
-        if (row < 64 && base_m + row < M && col < K) {
-            As[0][row][col] = A[(base_m + row) * K + col];
-        } else if (row < 64) {
-            As[0][row][col] = 0.0f;
+    // ========================================================================
+    // PROLOGUE: Load first tile
+    // ========================================================================
+    {
+        const int k_base = 0;
+        
+        // Load A tile: Each thread loads 16 elements (1024 total / 64 threads)
+        #pragma unroll
+        for (int i = 0; i < 16; i++) {
+            const int idx = tid + i * 64;
+            if (idx < 64 * 16) {  // 1024 elements total
+                const int row = idx / 16;
+                const int col = idx % 16;
+                const int global_row = base_m + row;
+                const int global_col = k_base + col;
+                
+                if (global_row < M && global_col < K) {
+                    As[0][row][col] = A[global_row * K + global_col];
+                } else {
+                    As[0][row][col] = 0.0f;
+                }
+            }
         }
-    }
-    
-    #pragma unroll
-    for (int i = 0; i < 16; i++) {
-        int row = i;
-        int col = tid;
-        if (row < K && base_n + col < N && col < 64) {
-            Bs[0][row][col] = B[row * N + base_n + col];
-        } else if (col < 64) {
-            Bs[0][row][col] = 0.0f;
+        
+        // Load B tile: Each thread loads 16 elements (1024 total / 64 threads)
+        #pragma unroll
+        for (int i = 0; i < 16; i++) {
+            const int idx = tid + i * 64;
+            if (idx < 16 * 64) {  // 1024 elements total
+                const int row = idx / 64;
+                const int col = idx % 64;
+                const int global_row = k_base + row;
+                const int global_col = base_n + col;
+                
+                if (global_row < K && global_col < N) {
+                    Bs[0][row][col] = B[global_row * N + global_col];
+                } else {
+                    Bs[0][row][col] = 0.0f;
+                }
+            }
         }
     }
     
     barrier(CLK_LOCAL_MEM_FENCE);
     
-    // Main loop
+    // ========================================================================
+    // MAIN LOOP: Process tiles with double buffering
+    // ========================================================================
     for (int t = 0; t < num_tiles; t++) {
-        int next_buf = 1 - buf;
-        int k_next = (t + 1) * 16;
+        const int next_buf = 1 - buf;
+        const int k_base_next = (t + 1) * 16;
         
-        // Load next tile while computing
+        // Load next tile (if exists) while computing current
         if (t + 1 < num_tiles) {
+            // Load A tile for next iteration
             #pragma unroll
             for (int i = 0; i < 16; i++) {
-                int row = tid + i * 64 / 16;
-                int col = tid % 16;
-                if (row < 64 && base_m + row < M && k_next + col < K) {
-                    As[next_buf][row][col] = A[(base_m + row) * K + k_next + col];
-                } else if (row < 64) {
-                    As[next_buf][row][col] = 0.0f;
+                const int idx = tid + i * 64;
+                if (idx < 64 * 16) {
+                    const int row = idx / 16;
+                    const int col = idx % 16;
+                    const int global_row = base_m + row;
+                    const int global_col = k_base_next + col;
+                    
+                    if (global_row < M && global_col < K) {
+                        As[next_buf][row][col] = A[global_row * K + global_col];
+                    } else {
+                        As[next_buf][row][col] = 0.0f;
+                    }
                 }
             }
             
+            // Load B tile for next iteration
             #pragma unroll
             for (int i = 0; i < 16; i++) {
-                int row = i;
-                int col = tid;
-                if (k_next + row < K && base_n + col < N && col < 64) {
-                    Bs[next_buf][row][col] = B[(k_next + row) * N + base_n + col];
-                } else if (col < 64) {
-                    Bs[next_buf][row][col] = 0.0f;
+                const int idx = tid + i * 64;
+                if (idx < 16 * 64) {
+                    const int row = idx / 64;
+                    const int col = idx % 64;
+                    const int global_row = k_base_next + row;
+                    const int global_col = base_n + col;
+                    
+                    if (global_row < K && global_col < N) {
+                        Bs[next_buf][row][col] = B[global_row * N + global_col];
+                    } else {
+                        Bs[next_buf][row][col] = 0.0f;
+                    }
                 }
             }
         }
         
-        // Compute on current tile
+        // Compute: 8x8 output per thread using current tile
         #pragma unroll
         for (int k = 0; k < 16; k++) {
-            // Load A and B values
+            // Load 8 values from A (column k, rows tidm*8 to tidm*8+7)
             #pragma unroll
             for (int i = 0; i < 8; i++) {
                 regA[i] = As[buf][tidm * 8 + i][k];
-                regB[i] = Bs[buf][k][tidn * 8 + i];
             }
             
-            // 8x8 rank-1 update
+            // Load 8 values from B (row k, columns tidn*8 to tidn*8+7)
+            #pragma unroll
+            for (int j = 0; j < 8; j++) {
+                regB[j] = Bs[buf][k][tidn * 8 + j];
+            }
+            
+            // 8x8 outer product
             #pragma unroll
             for (int i = 0; i < 8; i++) {
                 #pragma unroll
@@ -717,19 +763,26 @@ void gemm_gcn4_streaming(
         barrier(CLK_LOCAL_MEM_FENCE);
     }
     
-    // Write results
+    // ========================================================================
+    // EPILOGUE: Write results with alpha/beta scaling
+    // ========================================================================
     #pragma unroll
     for (int i = 0; i < 8; i++) {
-        int out_row = base_m + tidm * 8 + i;
+        const int out_row = base_m + tidm * 8 + i;
         if (out_row < M) {
             #pragma unroll
             for (int j = 0; j < 8; j++) {
-                int out_col = base_n + tidn * 8 + j;
+                const int out_col = base_n + tidn * 8 + j;
                 if (out_col < N) {
-                    int idx = out_row * N + out_col;
-                    C[idx] = alpha * acc[i][j] + beta * C[idx];
+                    const int idx = out_row * N + out_col;
+                    if (beta == 0.0f) {
+                        C[idx] = alpha * acc[i][j];
+                    } else {
+                        C[idx] = alpha * acc[i][j] + beta * C[idx];
+                    }
                 }
             }
         }
     }
 }
+

@@ -19,6 +19,8 @@ from typing import Dict, List, Optional, Tuple, Any
 from pathlib import Path
 import time
 import logging
+import hashlib
+import pickle
 from enum import Enum, auto
 from contextlib import contextmanager
 
@@ -308,6 +310,9 @@ class OptimizedKernelEngine:
         self._init_opencl(device_index, enable_profiling)
         self._load_kernels(kernel_dir)
         
+        # Caché de kernels instanciados para evitar RepeatedKernelRetrieval
+        self._kernel_cache: Dict[str, cl.Kernel] = {}
+        
         self.enable_buffer_pool = enable_buffer_pool
         self.enable_advanced_memory = enable_advanced_memory and ADVANCED_MEMORY_AVAILABLE
         
@@ -366,6 +371,20 @@ class OptimizedKernelEngine:
         self.local_mem_size = self.device.local_mem_size
         self.enable_profiling = enable_profiling
     
+    def _get_kernel(self, kernel_name: str) -> cl.Kernel:
+        """
+        Obtener kernel del caché o instanciarlo si no existe.
+        Evita el warning de RepeatedKernelRetrieval.
+        """
+        if kernel_name not in self._kernel_cache:
+            try:
+                self._kernel_cache[kernel_name] = cl.Kernel(self.program, kernel_name)
+                logger.debug(f"Kernel '{kernel_name}' cargado y cacheado")
+            except Exception as e:
+                logger.error(f"Error cargando kernel '{kernel_name}': {e}")
+                raise
+        return self._kernel_cache[kernel_name]
+    
     def _load_kernels(self, kernel_dir: Optional[Path] = None):
         """Cargar y compilar kernels"""
         if kernel_dir is None:
@@ -414,10 +433,41 @@ class OptimizedKernelEngine:
         
         combined_source = "\n\n".join(kernel_sources)
         
+        # Implementar caché propio para evitar warning de PyOpenCL
+        # El bug está en pyopencl/cache.py que usa %b con str en vez de bytes
+        cache_dir = Path.home() / ".cache" / "radeon_rx580_kernels"
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Hash del código fuente + opciones de compilación
+        source_hash = hashlib.sha256(
+            (combined_source + build_options).encode('utf-8')
+        ).hexdigest()
+        
+        cache_file = cache_dir / f"kernel_{source_hash}.bin"
+        
         try:
-            self.program = cl.Program(self.context, combined_source).build(options=build_options)
-            logger.info("Kernels compilados exitosamente")
-        except cl.RuntimeError as e:
+            # Intentar cargar desde caché
+            if cache_file.exists():
+                with open(cache_file, 'rb') as f:
+                    binary = pickle.load(f)
+                self.program = cl.Program(self.context, [self.device], [binary]).build()
+                logger.info(f"✅ Kernels cargados desde caché (~0ms)")
+            else:
+                # Compilar y guardar en caché
+                import warnings
+                # Suprimir el warning de PyOpenCL cache que tiene un bug
+                with warnings.catch_warnings():
+                    warnings.filterwarnings("ignore", category=UserWarning, 
+                                          message=".*PyOpenCL compiler caching failed.*")
+                    self.program = cl.Program(self.context, combined_source).build(options=build_options)
+                
+                # Guardar binario compilado
+                binary = self.program.get_info(cl.program_info.BINARIES)[0]
+                with open(cache_file, 'wb') as f:
+                    pickle.dump(binary, f)
+                logger.info(f"⚡ Kernels compilados y guardados en caché (~2.8s)")
+                
+        except (cl.RuntimeError, Exception) as e:
             logger.error(f"Error compilando kernels: {e}")
             # Intentar con kernel de respaldo
             self.program = cl.Program(self.context, self._get_fallback_kernel()).build()
@@ -613,14 +663,14 @@ class OptimizedKernelEngine:
             # === Ejecutar Kernel ===
             global_size, local_size = self._get_optimal_work_size(kernel_type, M, N)
             
-            # Seleccionar kernel según el tipo
+            # Seleccionar kernel según el tipo usando caché
             kernel_name = config.name
             try:
-                kernel = getattr(self.program, kernel_name)
+                kernel = self._get_kernel(kernel_name)
             except AttributeError:
                 # Fallback a kernel básico si no existe
                 logger.warning(f"Kernel {kernel_name} no disponible, usando gemm_basic_tiled")
-                kernel = self.program.gemm_basic_tiled
+                kernel = self._get_kernel("gemm_basic_tiled")
                 config = self.KERNEL_CONFIGS[KernelType.GEMM_BASIC]
                 global_size, local_size = self._get_optimal_work_size(KernelType.GEMM_BASIC, M, N)
             
@@ -743,7 +793,7 @@ class OptimizedKernelEngine:
         cl.enqueue_copy(self.transfer_queue, bufs[current]['B'], B0)
         self.transfer_queue.finish()
         
-        kernel = self.program.gemm_basic_tiled
+        kernel = self._get_kernel("gemm_basic_tiled")
         config = self.KERNEL_CONFIGS[KernelType.GEMM_BASIC]
         global_size, local_size = self._get_optimal_work_size(KernelType.GEMM_BASIC, M, N)
         

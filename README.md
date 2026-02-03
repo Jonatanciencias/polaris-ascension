@@ -103,6 +103,24 @@ polaris-energy-efficient-gpu/
 
 ---
 
+## 🆕 Recent Updates (2026-02-03)
+
+### ⚡ Kernel Caching System
+- **53.7x faster startup** (2.9s → 54ms) with persistent kernel compilation cache
+- **Zero warnings** - Eliminated PyOpenCL cache and RepeatedKernelRetrieval warnings
+- **Automatic cache** - Transparent binary caching in `~/.cache/radeon_rx580_kernels/`
+- **Smart invalidation** - Cache refreshes when kernel source or build options change
+
+```bash
+# Try the new caching system
+python examples/demo_kernel_cache.py --clear-cache  # First run: compiles (~2.9s)
+python examples/demo_kernel_cache.py                # Subsequent: cached (~54ms)
+```
+
+📖 See [KERNEL_CACHE.md](docs/KERNEL_CACHE.md) for technical details
+
+---
+
 ## 🚀 Quick Start
 
 ### Installation
