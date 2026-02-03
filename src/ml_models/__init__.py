@@ -21,9 +21,26 @@ try:
 except ImportError:
     recalibrate_selector_with_hardware_data = None
 
+try:
+    from .calibrated_intelligent_selector import (
+        CalibratedIntelligentSelector,
+        OptimizationTechnique,
+        SelectionResult,
+        MatrixCharacteristics
+    )
+except ImportError:
+    CalibratedIntelligentSelector = None
+    OptimizationTechnique = None
+    SelectionResult = None
+    MatrixCharacteristics = None
+
 __all__ = [
     'AIKernelPredictorFineTuner',
     'AIKernelPredictorFineTunerCorrected',
     'MLDatasetCollector',
-    'recalibrate_selector_with_hardware_data'
+    'recalibrate_selector_with_hardware_data',
+    'CalibratedIntelligentSelector',
+    'OptimizationTechnique',
+    'SelectionResult',
+    'MatrixCharacteristics'
 ]
