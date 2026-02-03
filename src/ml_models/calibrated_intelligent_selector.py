@@ -107,14 +107,24 @@ class CalibratedIntelligentSelector:
             OptimizationTechnique.TENSOR_CORE: 0.30,    # Bajo: emulación lenta
         }
         
-        # Rendimiento esperado por técnica (GFLOPS)
+        # Rendimiento esperado por técnica (GFLOPS) - CALIBRADO CON HARDWARE REAL
+        # Valores basados en mediciones reales en AMD RX 590 GME (Feb 2026)
         self.expected_performance = {
-            OptimizationTechnique.QUANTUM: 175.0,       # Medido en benchmark
-            OptimizationTechnique.OPENCL_GEMM: 233.0,   # Peak medido
-            OptimizationTechnique.AI_PREDICTOR: 200.0,  # Estimado combinado
+            OptimizationTechnique.QUANTUM: 80.0,        # Medido: ~70-90 GFLOPS
+            OptimizationTechnique.OPENCL_GEMM: 180.0,   # Peak medido: 176.6 GFLOPS (2048x2048)
+            OptimizationTechnique.AI_PREDICTOR: 120.0,  # Promedio real: ~90-150 GFLOPS
             OptimizationTechnique.COPPERSMITH_WINOGRAD: 15.0,
             OptimizationTechnique.LOW_RANK: 15.0,
             OptimizationTechnique.TENSOR_CORE: 0.5,
+        }
+        
+        # Performance por tamaño de matriz (basado en mediciones reales)
+        # Clave: tamaño mínimo -> GFLOPS esperados
+        self.size_performance_map = {
+            256: 20.0,    # Medido: ~15-20 GFLOPS
+            512: 75.0,    # Medido: ~70-75 GFLOPS
+            1024: 145.0,  # Medido: ~140-150 GFLOPS
+            2048: 180.0,  # Medido: ~175-180 GFLOPS
         }
         
         # Estadísticas de selección
@@ -257,6 +267,56 @@ class CalibratedIntelligentSelector:
         # ya que son meta-optimizadores
         self.technique_weights[OptimizationTechnique.AI_PREDICTOR] = 0.92
         self.technique_weights[OptimizationTechnique.OPENCL_GEMM] = 0.90
+    
+    def _predict_gflops_by_size(self, 
+                                 size: int, 
+                                 technique: OptimizationTechnique) -> float:
+        """
+        Predice GFLOPS basándose en el tamaño de matriz y técnica.
+        Usa interpolación lineal entre puntos de calibración conocidos.
+        
+        Args:
+            size: Tamaño de la matriz (N para NxN)
+            technique: Técnica seleccionada
+            
+        Returns:
+            GFLOPS predichos
+        """
+        # Puntos de calibración ordenados
+        calibration_points = sorted(self.size_performance_map.items())
+        
+        # Encontrar puntos de interpolación
+        if size <= calibration_points[0][0]:
+            # Menor que el mínimo calibrado
+            return calibration_points[0][1]
+        elif size >= calibration_points[-1][0]:
+            # Mayor que el máximo calibrado
+            return calibration_points[-1][1]
+        else:
+            # Interpolación lineal
+            for i in range(len(calibration_points) - 1):
+                s1, p1 = calibration_points[i]
+                s2, p2 = calibration_points[i + 1]
+                
+                if s1 <= size <= s2:
+                    # Interpolación lineal
+                    t = (size - s1) / (s2 - s1)
+                    base_gflops = p1 + t * (p2 - p1)
+                    
+                    # Ajuste por técnica (algunas técnicas son más eficientes)
+                    technique_multiplier = {
+                        OptimizationTechnique.OPENCL_GEMM: 1.0,
+                        OptimizationTechnique.AI_PREDICTOR: 0.95,
+                        OptimizationTechnique.QUANTUM: 0.85,
+                        OptimizationTechnique.COPPERSMITH_WINOGRAD: 0.2,
+                        OptimizationTechnique.LOW_RANK: 0.2,
+                        OptimizationTechnique.TENSOR_CORE: 0.01,
+                    }.get(technique, 0.5)
+                    
+                    return base_gflops * technique_multiplier
+        
+        # Fallback
+        return self.expected_performance.get(technique, 50.0)
     
     def analyze_matrix(self, matrix: np.ndarray) -> MatrixCharacteristics:
         """
@@ -515,11 +575,10 @@ class CalibratedIntelligentSelector:
         sorted_techniques = sorted(scores.items(), key=lambda x: -x[1])
         alternatives = [(t, s) for t, s in sorted_techniques if t != best_technique][:3]
         
-        # Predecir GFLOPS
-        predicted_gflops = self.expected_performance.get(best_technique, 50.0)
-        # Ajustar por tamaño de matriz
-        size_factor = min(1.0, combined_chars.size / 1024)
-        predicted_gflops *= (0.5 + 0.5 * size_factor)
+        # Predecir GFLOPS usando tabla calibrada por tamaño
+        predicted_gflops = self._predict_gflops_by_size(
+            combined_chars.size, best_technique
+        )
         
         # Generar razonamiento
         reasoning = self._generate_reasoning(best_technique, combined_chars, 
