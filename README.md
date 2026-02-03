@@ -68,7 +68,6 @@
 ```
 polaris-energy-efficient-gpu/
 ├── src/                          # Main source code
-│   ├── __init__.py              # Package initialization
 │   ├── optimization_engines/    # Matrix optimization algorithms
 │   ├── benchmarking/            # Performance evaluation tools
 │   ├── ml_models/               # Machine learning predictors
@@ -77,20 +76,25 @@ polaris-energy-efficient-gpu/
 │   └── kernels/                 # OpenCL kernel files
 ├── docs/                        # Documentation
 │   ├── paper/                   # Academic paper (LaTeX)
+│   ├── guides/                  # User and developer guides
+│   ├── archive/                 # Historical documentation
 │   └── api_reference/           # API documentation
 ├── tests/                       # Test suites
 │   ├── unit/                    # Unit tests
 │   ├── integration/             # Integration tests
-│   └── benchmark/               # Benchmark tests
+│   ├── benchmark/               # Benchmark tests
+│   └── validation/              # Validation tests
 ├── scripts/                     # Utility scripts
-│   ├── deployment/              # Deployment scripts
-│   └── analysis/                # Analysis tools
+├── examples/                    # Example code and demos
 ├── results/                     # Experimental results
 │   ├── benchmarks/              # Benchmark data
-│   ├── ml_datasets/             # Training datasets
-│   └── analysis/                # Analysis outputs
+│   └── ml_datasets/             # Training datasets
+├── research/                    # Research phases
+│   └── phases/                  # Optimization phases (6-18)
+├── infrastructure/              # Docker, Prometheus, Grafana
 ├── models/                      # Trained ML models
-├── config/                      # Configuration files
+├── configs/                     # Configuration files
+├── benchmark_data/              # Hardware benchmark data
 ├── requirements.txt             # Python dependencies
 ├── setup.py                     # Package setup
 ├── pyproject.toml              # Project configuration
