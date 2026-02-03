@@ -357,8 +357,13 @@ class OptimizedKernelEngine:
             # Kernel mínimo de respaldo
             kernel_sources.append(self._get_fallback_kernel())
         
-        # Compilar con optimizaciones (sin -D WPT para evitar conflictos)
+        # Compilar con optimizaciones
+        # IMPORTANTE: Definir TILE_M/N/K explícitamente para evitar conflictos
+        # entre archivos .cl que usan diferentes valores
         build_options = (
+            "-D TILE_M=16 "
+            "-D TILE_N=16 "
+            "-D TILE_K=16 "
             "-cl-mad-enable "
             "-cl-fast-relaxed-math "
             "-cl-unsafe-math-optimizations "
