@@ -819,7 +819,7 @@ class OptimizedKernelEngine:
             'total_time_ms': np.sum(total_times)
         }
         
-        if self.enable_buffer_pool:
+        if self.enable_buffer_pool and not self.enable_advanced_memory:
             stats['buffer_pool_hit_rate'] = self.buffer_pool.hit_rate
         
         # Estadísticas de memoria avanzada
