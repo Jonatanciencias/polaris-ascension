@@ -4,6 +4,69 @@
 
 ---
 
+## [1.2.0] - 2026-02-02 ⚡ OPENCL KERNEL OPTIMIZATION
+
+### 🎉 Milestone: Optimización de Kernels OpenCL +578% Rendimiento
+
+**Rendimiento Validado:** 504.7 GFLOPS en matrices 1024x1024 (8.18% eficiencia)
+
+### ✨ Nuevas Características
+
+#### 🔧 Kernels GEMM Optimizados
+- **gemm_rx580_optimized.cl**: Nuevos kernels con múltiples niveles de optimización
+- **gemm_tiled**: LDS tiling 16x16 con bank conflict avoidance (+578% vs naive)
+- **gemm_register_tiled**: Register tiling con WPT=8 para máximo reuso de datos
+- **gemm_float4_optimized**: Vectorización SIMD con float4
+- **gemm_rx580_ultra**: Double buffering y prefetching
+
+#### 🔀 Kernel Fusion
+- **gemm_fused_transpose_b**: GEMM con B transpuesta sin transferencia extra
+- **gemm_fused_relu_bias**: GEMM + bias + ReLU en un solo kernel
+- **gemm_fused_softmax**: GEMM + softmax por filas
+
+#### 🚀 OptimizedKernelEngine
+- **Buffer Pooling**: Reutilización de buffers para reducir allocations
+- **Async Transfers**: Double buffering para batched GEMM
+- **Kernel Selection**: Selección automática basada en dimensiones
+- **Profiling**: Métricas detalladas de rendimiento
+
+### 📊 Resultados de Benchmark
+| Kernel | 256x256 | 512x512 | 1024x1024 |
+|--------|---------|---------|-----------|
+| Naive | 60.9 GFLOPS | 66.9 GFLOPS | 69.0 GFLOPS |
+| Tiled | 453.5 GFLOPS | 372.5 GFLOPS | 504.7 GFLOPS |
+| Mejora | +644% | +457% | +632% |
+
+### 📁 Archivos Creados
+- `src/opencl/kernels/gemm_rx580_optimized.cl`
+- `src/optimization_engines/optimized_kernel_engine.py`
+- `examples/demo_opencl_optimization.py`
+- `results/kernel_optimization_results.json`
+
+---
+
+## [1.1.0] - 2026-02-02 🎯 CALIBRATED INTELLIGENT SELECTOR
+
+### 🎉 Milestone: Selector Inteligente Calibrado con 100% Selección Óptima
+
+**Mejoras Validadas:** +29% tasa de selección, +48% confianza
+
+### ✨ Nuevas Características
+
+#### 🎯 CalibratedIntelligentSelector
+- **Pesos Hardware-Específicos**: Calibración para RX 580 (36 CUs, 64KB LDS)
+- **Fórmula de Confianza 5-Factores**: Basada en sparsity, size, rank, regularity, condition
+- **100% Tasa de Selección**: Todas las matrices seleccionan técnicas óptimas
+- **97.5% Confianza Promedio**: Alta certeza en las decisiones
+
+### 📊 Resultados de Calibración
+| Métrica | Sin Calibrar | Calibrado | Mejora |
+|---------|--------------|-----------|--------|
+| Selección High-Perf | 71.4% | 100% | +29% |
+| Confianza Promedio | 50% | 97.5% | +48% |
+
+---
+
 ## [1.0.0] - 2026-01-26 🚀 BREAKTHROUGH COMPLETE
 
 ### 🎉 Milestone: Sistema Completamente Automatizado Operativo
