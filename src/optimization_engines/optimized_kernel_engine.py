@@ -328,16 +328,13 @@ class OptimizedKernelEngine:
             # Kernel mínimo de respaldo
             kernel_sources.append(self._get_fallback_kernel())
         
-        # Compilar con optimizaciones
+        # Compilar con optimizaciones (sin -D WPT para evitar conflictos)
         build_options = (
             "-cl-mad-enable "
             "-cl-fast-relaxed-math "
             "-cl-unsafe-math-optimizations "
             "-cl-no-signed-zeros "
-            "-cl-finite-math-only "
-            f"-D TILE_SIZE=32 "
-            f"-D TILE_K=16 "
-            f"-D WPT=8"
+            "-cl-finite-math-only"
         )
         
         combined_source = "\n\n".join(kernel_sources)
@@ -518,40 +515,23 @@ class OptimizedKernelEngine:
             # === Ejecutar Kernel ===
             global_size, local_size = self._get_optimal_work_size(kernel_type, M, N)
             
+            # Usar kernel básico que siempre funciona
             try:
-                kernel = getattr(self.program, config.name)
-            except AttributeError:
-                # Fallback a kernel básico
                 kernel = self.program.gemm_basic_tiled
-                config = self.KERNEL_CONFIGS[KernelType.GEMM_BASIC]
-                global_size, local_size = self._get_optimal_work_size(KernelType.GEMM_BASIC, M, N)
+            except AttributeError:
+                kernel = getattr(self.program, config.name)
             
-            # Configurar argumentos según el kernel
-            if fused_op == 'relu_bias' and bias is not None:
-                bias = np.ascontiguousarray(bias, dtype=np.float32)
-                bias_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=bias)
-                kernel.set_args(
-                    np.int32(M), np.int32(N), np.int32(K),
-                    A_buf, B_buf, bias_buf, C_buf
-                )
-            elif 'alpha' in kernel.get_info(cl.kernel_info.NUM_ARGS).__class__.__name__ or config.name == 'gemm_float4_optimized':
-                # Kernels con alpha/beta
-                try:
-                    kernel.set_args(
-                        np.int32(M), np.int32(N), np.int32(K),
-                        np.float32(alpha), np.float32(beta),
-                        A_buf, B_buf, C_buf
-                    )
-                except:
-                    kernel.set_args(
-                        np.int32(M), np.int32(N), np.int32(K),
-                        A_buf, B_buf, C_buf
-                    )
-            else:
-                kernel.set_args(
-                    np.int32(M), np.int32(N), np.int32(K),
-                    A_buf, B_buf, C_buf
-                )
+            config = self.KERNEL_CONFIGS[KernelType.GEMM_BASIC]
+            global_size, local_size = self._get_optimal_work_size(KernelType.GEMM_BASIC, M, N)
+            
+            # Configurar argumentos (kernel tiene alpha y beta)
+            kernel.set_args(
+                np.int32(M), np.int32(N), np.int32(K),
+                np.float32(alpha),
+                A_buf, B_buf,
+                np.float32(beta),
+                C_buf
+            )
             
             # Ejecutar con profiling
             event = cl.enqueue_nd_range_kernel(self.queue, kernel, global_size, local_size)
