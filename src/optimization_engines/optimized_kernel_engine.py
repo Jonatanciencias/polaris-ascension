@@ -5,7 +5,7 @@ Implementa las siguientes optimizaciones:
 1. Transferencias asíncronas con double buffering
 2. Kernel selection inteligente basada en dimensiones
 3. Work-group sizing óptimo para Polaris
-4. Memory pooling para reducir allocations
+4. Memory pooling avanzado con tiling y prefetch
 5. Kernel fusion para operaciones comunes
 6. Profiling detallado
 
@@ -21,6 +21,13 @@ import time
 import logging
 from enum import Enum, auto
 from contextlib import contextmanager
+
+# Importar AdvancedMemoryManager
+try:
+    from .advanced_memory_manager import AdvancedMemoryManager, MemoryStats
+    ADVANCED_MEMORY_AVAILABLE = True
+except ImportError:
+    ADVANCED_MEMORY_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -245,6 +252,7 @@ class OptimizedKernelEngine:
         device_index: int = 0,
         enable_profiling: bool = True,
         enable_buffer_pool: bool = True,
+        enable_advanced_memory: bool = True,
         kernel_dir: Optional[Path] = None
     ):
         """
@@ -253,18 +261,39 @@ class OptimizedKernelEngine:
         Args:
             device_index: Índice del dispositivo GPU
             enable_profiling: Habilitar profiling de kernels
-            enable_buffer_pool: Usar pool de buffers
+            enable_buffer_pool: Usar pool de buffers básico
+            enable_advanced_memory: Usar AdvancedMemoryManager (tiling, prefetch)
             kernel_dir: Directorio con archivos .cl
         """
         self._init_opencl(device_index, enable_profiling)
         self._load_kernels(kernel_dir)
         
         self.enable_buffer_pool = enable_buffer_pool
-        if enable_buffer_pool:
+        self.enable_advanced_memory = enable_advanced_memory and ADVANCED_MEMORY_AVAILABLE
+        
+        # Sistema de memoria avanzado
+        if self.enable_advanced_memory:
+            self.memory_manager = AdvancedMemoryManager(
+                context=self.context,
+                queue=self.queue,
+                max_gpu_memory=self.device.global_mem_size,
+                enable_prefetch=True,
+                enable_tiling=True,
+                enable_compression=True
+            )
+            self.buffer_pool = self.memory_manager.buffer_pool
+            logger.info("🧠 AdvancedMemoryManager habilitado")
+        elif enable_buffer_pool:
             self.buffer_pool = BufferPool(self.context)
+            self.memory_manager = None
+        else:
+            self.buffer_pool = None
+            self.memory_manager = None
         
         self._operation_history: List[OperationResult] = []
         
+        print(f"🎮 Usando GPU: {self.device.name}")
+        print(f"   Memoria: {self.device.global_mem_size // (1024**3)} GB")
         logger.info(f"OptimizedKernelEngine inicializado en {self.device.name}")
     
     def _init_opencl(self, device_index: int, enable_profiling: bool):
@@ -498,7 +527,12 @@ class OptimizedKernelEngine:
             h2d_start = time.perf_counter()
             mf = cl.mem_flags
             
-            if self.enable_buffer_pool:
+            if self.enable_advanced_memory and self.memory_manager:
+                # Usar AdvancedMemoryManager con prefetch
+                A_buf = self.memory_manager.allocate(A, read_only=True, prefetch_next=B)
+                B_buf = self.memory_manager.allocate(B, read_only=True)
+                C_buf = self.memory_manager.buffer_pool.get_buffer(C.nbytes, read_only=False)
+            elif self.enable_buffer_pool:
                 A_buf = self.buffer_pool.get_read_buffer(A.nbytes, A)
                 B_buf = self.buffer_pool.get_read_buffer(B.nbytes, B)
                 C_buf = self.buffer_pool.get_write_buffer(C.nbytes)
@@ -551,7 +585,11 @@ class OptimizedKernelEngine:
             transfer_metrics.d2h_bytes = C.nbytes
             
             # Devolver buffers al pool
-            if self.enable_buffer_pool:
+            if self.enable_advanced_memory and self.memory_manager:
+                self.memory_manager.free(A_buf, read_only=True)
+                self.memory_manager.free(B_buf, read_only=True)
+                self.memory_manager.buffer_pool.return_buffer(C_buf, read_only=False)
+            elif self.enable_buffer_pool:
                 self.buffer_pool.return_buffer(A_buf, is_write=False)
                 self.buffer_pool.return_buffer(B_buf, is_write=False)
                 self.buffer_pool.return_buffer(C_buf, is_write=True)
@@ -784,11 +822,33 @@ class OptimizedKernelEngine:
         if self.enable_buffer_pool:
             stats['buffer_pool_hit_rate'] = self.buffer_pool.hit_rate
         
+        # Estadísticas de memoria avanzada
+        if self.enable_advanced_memory and self.memory_manager:
+            mem_stats = self.memory_manager.get_stats()
+            stats['memory'] = {
+                'peak_usage_mb': mem_stats.peak_usage / 1024**2,
+                'current_usage_mb': mem_stats.current_usage / 1024**2,
+                'pool_hit_rate': mem_stats.hit_rate,
+                'evictions': mem_stats.evictions,
+                'prefetch_hits': mem_stats.prefetch_hits,
+                'tiles_created': mem_stats.tiles_created,
+                'compression_savings_mb': mem_stats.compression_savings / 1024**2,
+                'efficiency': mem_stats.memory_efficiency
+            }
+        
         return stats
+    
+    def get_memory_stats(self) -> Optional[MemoryStats]:
+        """Obtener estadísticas detalladas de memoria"""
+        if self.enable_advanced_memory and self.memory_manager:
+            return self.memory_manager.get_stats()
+        return None
     
     def cleanup(self):
         """Liberar recursos"""
-        if self.enable_buffer_pool:
+        if self.enable_advanced_memory and self.memory_manager:
+            self.memory_manager.clear()
+        elif self.enable_buffer_pool:
             self.buffer_pool.clear()
         self._operation_history.clear()
 
