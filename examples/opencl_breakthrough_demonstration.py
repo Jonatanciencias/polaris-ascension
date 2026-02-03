@@ -126,7 +126,6 @@ def create_performance_report(results: dict) -> str:
 - **Efficiency**: {best_performance/theoretical_peak*100:.1f}% of theoretical peak
 - **Scaling**: Consistent performance across matrix sizes
 - **Optimization**: Advanced OpenCL kernel techniques successfully implemented
-"""
 
 ## Technical Implementation
 
@@ -188,7 +187,8 @@ def main():
         best_perf = max(results['shared_memory_gemm'])
         logger.info("")
         logger.info("🎉 BREAKTHROUGH ACHIEVED!")
-        logger.info(".2f"        logger.info("🚀 OpenCL optimization phase: SUCCESSFUL")
+        logger.info(f"📊 Peak Performance: {best_perf:.2f} GFLOPS")
+        logger.info("🚀 OpenCL optimization phase: SUCCESSFUL")
         logger.info("🎯 Next target: 1000+ GFLOPS within reach")
 
     except Exception as e:
