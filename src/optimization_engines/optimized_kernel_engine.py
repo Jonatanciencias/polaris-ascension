@@ -40,6 +40,11 @@ class KernelType(Enum):
     GEMM_FUSED_TRANSPOSE = auto()
     GEMM_FUSED_RELU_BIAS = auto()
     GEMM_RX580_ULTRA = auto()
+    # GCN4-Specific optimized kernels
+    GEMM_GCN4_ULTRA = auto()          # Maximum throughput (8x8 blocking)
+    GEMM_GCN4_VEC4 = auto()           # Vectorized float4
+    GEMM_GCN4_HIGH_OCCUPANCY = auto() # Maximum wavefronts
+    GEMM_GCN4_STREAMING = auto()      # Large matrix streaming
     TRANSPOSE = auto()
 
 
@@ -238,6 +243,41 @@ class OptimizedKernelEngine:
             min_size_threshold=512,
             max_work_group=64
         ),
+        # GCN4 Ultra-optimized kernels
+        KernelType.GEMM_GCN4_ULTRA: KernelConfig(
+            name="gemm_gcn4_ultra",
+            local_size=(8, 8),      # 64 threads = 1 wavefront
+            vector_size=1,
+            uses_lds=True,
+            lds_size=2 * 64 * 17 * 4 + 2 * 16 * 65 * 4,  # Double buffered A and B
+            min_size_threshold=512,
+            max_work_group=64
+        ),
+        KernelType.GEMM_GCN4_VEC4: KernelConfig(
+            name="gemm_gcn4_vec4",
+            local_size=(8, 8),
+            vector_size=4,
+            uses_lds=True,
+            lds_size=32 * 5 * 16 + 16 * 9 * 16,
+            min_size_threshold=256
+        ),
+        KernelType.GEMM_GCN4_HIGH_OCCUPANCY: KernelConfig(
+            name="gemm_gcn4_highoccupancy",
+            local_size=(16, 16),    # 256 threads
+            vector_size=1,
+            uses_lds=True,
+            lds_size=16 * 17 * 4 * 2,
+            min_size_threshold=64,
+            max_work_group=256
+        ),
+        KernelType.GEMM_GCN4_STREAMING: KernelConfig(
+            name="gemm_gcn4_streaming",
+            local_size=(8, 8),
+            vector_size=1,
+            uses_lds=True,
+            lds_size=2 * 64 * 17 * 4 + 2 * 16 * 65 * 4,
+            min_size_threshold=1024
+        ),
         KernelType.TRANSPOSE: KernelConfig(
             name="matrix_transpose_optimized",
             local_size=(32, 8),
@@ -337,6 +377,7 @@ class OptimizedKernelEngine:
         kernel_files = [
             "gemm_rx580_optimized.cl",
             "gemm_polaris_breakthrough.cl",
+            "gemm_gcn4_ultra.cl",      # NEW: GCN4-specific ultra-optimized kernels
             "optimized_kernels.cl"
         ]
         
@@ -422,24 +463,30 @@ class OptimizedKernelEngine:
         min_dim = min(M, N, K)
         max_dim = max(M, N, K)
         
-        # Matrices pequeñas: kernel básico
+        # Matrices pequeñas: high occupancy kernel para baja latencia
         if max_dim < 128:
-            return KernelType.GEMM_BASIC
+            return KernelType.GEMM_GCN4_HIGH_OCCUPANCY
         
-        # Matrices medianas: vectorizado
+        # Matrices medianas: GCN4 vectorizado o básico
         if max_dim < 512:
+            if M % 64 == 0 and N % 64 == 0 and K % 16 == 0:
+                return KernelType.GEMM_GCN4_ULTRA
             if M % 4 == 0 and N % 4 == 0:
-                return KernelType.GEMM_FLOAT4
-            return KernelType.GEMM_BASIC
+                return KernelType.GEMM_GCN4_VEC4
+            return KernelType.GEMM_GCN4_HIGH_OCCUPANCY
         
-        # Matrices grandes: register tiled
+        # Matrices grandes: GCN4 Ultra o streaming
         if max_dim >= 512:
-            # Ultra para matrices muy grandes y divisibles
-            if min_dim >= 512 and M % 32 == 0 and N % 32 == 0 and K % 16 == 0:
-                return KernelType.GEMM_RX580_ULTRA
+            # Muy grandes (>2048): streaming para evitar cache thrashing
+            if min_dim >= 2048:
+                return KernelType.GEMM_GCN4_STREAMING
+            # Grandes y bien alineadas: GCN4 Ultra
+            if M % 64 == 0 and N % 64 == 0 and K % 16 == 0:
+                return KernelType.GEMM_GCN4_ULTRA
+            # Fallback a register tiled
             if M % 32 == 0 and N % 32 == 0:
                 return KernelType.GEMM_REGISTER_TILED
-            return KernelType.GEMM_FLOAT4
+            return KernelType.GEMM_GCN4_HIGH_OCCUPANCY
         
         return KernelType.GEMM_BASIC
     
@@ -452,7 +499,19 @@ class OptimizedKernelEngine:
         while local_size[0] * local_size[1] > self.max_work_group_size:
             local_size = (local_size[0] // 2, local_size[1])
         
-        # Global size debe ser múltiplo de local size
+        # Para kernels GCN4 con tiles de 64x64, el global_size es por tile
+        if kernel_type in (KernelType.GEMM_GCN4_ULTRA, KernelType.GEMM_GCN4_STREAMING):
+            # Cada workgroup de 8x8 procesa un tile de 64x64
+            tile_m, tile_n = 64, 64
+            num_tiles_m = (M + tile_m - 1) // tile_m
+            num_tiles_n = (N + tile_n - 1) // tile_n
+            global_size = (
+                num_tiles_m * local_size[0],
+                num_tiles_n * local_size[1]
+            )
+            return global_size, local_size
+        
+        # Para otros kernels, global_size = dimensiones de salida
         def round_up(x: int, multiple: int) -> int:
             return ((x + multiple - 1) // multiple) * multiple
         
@@ -554,14 +613,16 @@ class OptimizedKernelEngine:
             # === Ejecutar Kernel ===
             global_size, local_size = self._get_optimal_work_size(kernel_type, M, N)
             
-            # Usar kernel básico que siempre funciona
+            # Seleccionar kernel según el tipo
+            kernel_name = config.name
             try:
-                kernel = self.program.gemm_basic_tiled
+                kernel = getattr(self.program, kernel_name)
             except AttributeError:
-                kernel = getattr(self.program, config.name)
-            
-            config = self.KERNEL_CONFIGS[KernelType.GEMM_BASIC]
-            global_size, local_size = self._get_optimal_work_size(KernelType.GEMM_BASIC, M, N)
+                # Fallback a kernel básico si no existe
+                logger.warning(f"Kernel {kernel_name} no disponible, usando gemm_basic_tiled")
+                kernel = self.program.gemm_basic_tiled
+                config = self.KERNEL_CONFIGS[KernelType.GEMM_BASIC]
+                global_size, local_size = self._get_optimal_work_size(KernelType.GEMM_BASIC, M, N)
             
             # Configurar argumentos (kernel tiene alpha y beta)
             kernel.set_args(
