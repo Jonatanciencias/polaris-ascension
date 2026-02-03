@@ -1,8 +1,15 @@
 # Utilities Package
 # Helper functions and analysis tools
 
-from .quick_analysis import *
-from .advanced_techniques_investigation import *
+try:
+    from .quick_analysis import QuickAnalysis
+except (ImportError, AttributeError):
+    QuickAnalysis = None
+
+try:
+    from .advanced_techniques_investigation import AdvancedTechniquesInvestigation
+except (ImportError, AttributeError):
+    AdvancedTechniquesInvestigation = None
 
 __all__ = [
     'QuickAnalysis',

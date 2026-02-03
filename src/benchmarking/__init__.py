@@ -1,18 +1,41 @@
 # Benchmarking Package
 # Performance evaluation and benchmarking tools
 
-from .comprehensive_performance_validation import *
-from .polaris_optimization_showcase import *
-from .fast_integrated_benchmark import *
-from .integrated_breakthrough_benchmark import *
-from .gemm_progress_report import *
-from .performance_summary import *
+try:
+    from .fast_integrated_benchmark import FastIntegratedBenchmark
+except ImportError:
+    FastIntegratedBenchmark = None
+
+try:
+    from .integrated_breakthrough_benchmark import IntegratedBreakthroughBenchmark
+except ImportError:
+    IntegratedBreakthroughBenchmark = None
+
+try:
+    from .gemm_progress_report import GEMMProgressReport
+except ImportError:
+    GEMMProgressReport = None
+
+try:
+    from .performance_summary import PerformanceSummary
+except ImportError:
+    PerformanceSummary = None
+
+try:
+    from .polaris_breakthrough_benchmark import PolarisBreakthroughBenchmark
+except ImportError:
+    PolarisBreakthroughBenchmark = None
+
+try:
+    from .comprehensive_breakthrough_benchmark import ComprehensiveBreakthroughBenchmark
+except ImportError:
+    ComprehensiveBreakthroughBenchmark = None
 
 __all__ = [
-    'ComprehensivePerformanceValidation',
-    'PolarisOptimizationShowcase',
     'FastIntegratedBenchmark',
     'IntegratedBreakthroughBenchmark',
     'GEMMProgressReport',
-    'PerformanceSummary'
+    'PerformanceSummary',
+    'PolarisBreakthroughBenchmark',
+    'ComprehensiveBreakthroughBenchmark'
 ]

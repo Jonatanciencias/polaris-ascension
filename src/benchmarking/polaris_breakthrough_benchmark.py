@@ -107,7 +107,8 @@ class PolarisOptimizationBenchmark:
                 times.append(elapsed)
                 results.append(result)
 
-                logger.info(".4f"
+                logger.info(f"  Run {i+1}: {elapsed:.4f}s")
+            
             # Calculate statistics
             avg_time = np.mean(times)
             std_time = np.std(times)
@@ -242,7 +243,10 @@ class PolarisOptimizationBenchmark:
             avg_bandwidth = engine_data['bandwidth_gbs'].mean()
 
             report.append(f"{engine}:")
-            report.append(".1f"            report.append(".1f"            report.append(".1f"            report.append("")
+            report.append(f"  Average: {avg_gflops:.1f} GFLOPS")
+            report.append(f"  Peak: {peak_gflops:.1f} GFLOPS")
+            report.append(f"  Bandwidth: {avg_bandwidth:.1f} GB/s")
+            report.append("")
 
         # Per-matrix breakdown
         report.append("📈 PER-MATRIX PERFORMANCE BREAKDOWN")
@@ -272,7 +276,9 @@ class PolarisOptimizationBenchmark:
                 peak_improvement = (engine_data['peak_gflops'].max() / baseline_data['peak_gflops'].max() - 1) * 100
 
                 report.append(f"{engine} vs {baseline_engine}:")
-                report.append(".1f"                report.append(".1f"
+                report.append(f"  Average improvement: {avg_improvement:.1f}%")
+                report.append(f"  Peak improvement: {peak_improvement:.1f}%")
+        
         # Polaris-specific metrics
         polaris_data = df[df['engine'].str.contains('Polaris')]
         if not polaris_data.empty and 'wavefront_occupancy' in polaris_data.columns:
@@ -282,7 +288,8 @@ class PolarisOptimizationBenchmark:
             avg_occupancy = polaris_data['wavefront_occupancy'].mean()
             zero_copy_used = polaris_data['zero_copy_used'].any()
 
-            report.append(".1f"            report.append(f"Zero-copy buffers: {'✅ Used' if zero_copy_used else '❌ Not used'}")
+            report.append(f"Wavefront occupancy: {avg_occupancy:.1f}%")
+            report.append(f"Zero-copy buffers: {'✅ Used' if zero_copy_used else '❌ Not used'}")
 
         return "\n".join(report)
 
@@ -404,8 +411,9 @@ def main():
 
             # Save detailed results
             results_df.to_csv('polaris_benchmark_detailed_results.csv', index=False)
-            print("
-📊 Detailed results saved to 'polaris_benchmark_detailed_results.csv'"            # Create visualizations
+            print("📊 Detailed results saved to 'polaris_benchmark_detailed_results.csv'")
+            
+            # Create visualizations
             benchmark.create_visualizations(results_df)
 
         else:
