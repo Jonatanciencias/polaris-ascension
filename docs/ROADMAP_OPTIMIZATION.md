@@ -84,37 +84,39 @@ Kernels Status:
   - **Archivos:** `optimized_kernel_engine.py` (modified)
   - **Tiempo real:** 3 horas
 
-- [ ] **Task 1.1.4:** Fix REGISTER_TILED para Clover
-  - Revisar uso de registros
-  - Verificar límites de local memory
-  - Ajustar WPT (work per thread) si necesario
-  - **Status:** ⏳ PENDING
-  - **Tiempo estimado:** 2 días
+- [x] **Task 1.1.5:** Fix REGISTER_TILED para Clover ✅
+  - ✅ Implemented gemm_register_tiled_clover kernel
+  - ✅ 97.85 GFLOPS @ 1024×1024
+  - ✅ 100% correctness validation
+  - ✅ Integrated into engine
+  - **Archivos:** `gemm_float4_clover.cl` (modified), `optimized_kernel_engine.py`
+  - **Tiempo real:** 1 hora
+  - **Nota:** Performance no competitiva vs FLOAT4 kernels, útil como fallback
 
 **Entregables:**
 - ✅ FLOAT4 funcionando en Clover (3 variants)
 - ✅ Integration with production engine
 - ✅ Adaptive kernel selection
-- ⏳ REG_TILED funcionando en Clover (pending)
+- ✅ REG_TILED funcionando en Clover (97 GFLOPS)
 - ✅ Documento de compatibilidad Clover ([PHASE1_INTEGRATION_REPORT.md](PHASE1_INTEGRATION_REPORT.md))
 - ✅ Tests passing para FLOAT4 kernels (100%)
 
 ---
 
 ### 1.2 Optimización GCN4_VEC4
-**Prioridad:** 🟡 MEDIA  
+**Prioridad:** � ALTA  
 **Esfuerzo:** Medio  
-**Status:** ⏳ **IN PROGRESS (Next Task)**
+**Status:** 🔄 **IN PROGRESS (Current Task)**
 
 **Problema:** Rendimiento degradado en matrices grandes (29 GFLOPS vs 400 baseline)
 
 **Tareas:**
-- [ ] **Task 1.2.1:** Profiling detallado de GCN4_VEC4
+- [x] **Task 1.2.1:** Profiling detallado de GCN4_VEC4 🔄 (EN PROGRESO)
   - Medir tiempo por sección del kernel
   - Identificar cuellos de botella
   - Analizar uso de memoria local
   - **Herramienta:** Timing manual + bandwidth analysis
-  - **Tiempo estimado:** 2 días
+  - **Status:** Iniciando diagnóstico
 
 - [ ] **Task 1.2.2:** Ajustar tamaños de bloque
   - Experimentar con diferentes tile sizes

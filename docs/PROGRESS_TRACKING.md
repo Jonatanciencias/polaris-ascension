@@ -34,7 +34,11 @@ TOTAL: [████░░░░░░] 42% (22/53 tasks completadas)
 
 ## 🔄 Tareas en Progreso
 
-**Ninguna** - Integration complete, ready for next phase
+**Task 1.2.1:** Optimización de GCN4_VEC4
+- 🔴 ALTA prioridad
+- Performance actual: 29 GFLOPS (muy bajo)
+- Objetivo: 150+ GFLOPS (5× improvement)
+- Iniciando diagnóstico y profiling
 
 ---
 
@@ -63,6 +67,12 @@ TOTAL: [████░░░░░░] 42% (22/53 tasks completadas)
    - 235.85 GFLOPS @ 1024×1024 (FLOAT4_CLOVER)
    - Status: **COMPLETE** ✅
 
+5. ✅ **Task B.5:** Fix REGISTER_TILED for Clover
+   - Implemented gemm_register_tiled_clover kernel
+   - 97.85 GFLOPS @ 1024×1024 (correct but not competitive)
+   - 100% correctness validation
+   - Status: **COMPLETE** ✅
+
 ### Phase 1 - Original Tasks
 1. ✅ **Task 1.1.1:** Diagnose FLOAT4 kernel issue
 2. ✅ **Task 1.1.2:** Create Clover-compatible FLOAT4 kernels
@@ -74,20 +84,21 @@ TOTAL: [████░░░░░░] 42% (22/53 tasks completadas)
 
 ## 📋 Próximos Pasos (Next 3 Tasks)
 
-1. **[ ] Task 1.2.1:** Fix REGISTER_TILED kernel for Clover
-   - Prioridad: 🟡 MEDIA
+1. **[🔄] Task 1.2.1:** Optimize GCN4_VEC4 kernel (EN PROGRESO)
+   - Prioridad: 🔴 ALTA
+   - Estimado: 2-3 días
+   - Objetivo: 150+ GFLOPS (from 29 GFLOPS)
+   - Status: Iniciando profiling
+   
+2. **[ ] Task 1.2.2:** Ajustar tamaños de bloque GCN4_VEC4
+   - Prioridad: 🔴 ALTA
    - Estimado: 2 días
-   - Objetivo: Add another kernel option for medium matrices
+   - Objetivo: Find optimal tile sizes
    
-2. **[ ] Task 1.2.2:** Optimize GCN4_VEC4 for large matrices
+3. **[ ] Task 1.3:** Test gemm_float4_vec variant
    - Prioridad: 🟡 MEDIA
-   - Estimado: 3 días
-   - Objetivo: Improve >1024 performance
-   
-3. **[ ] Task 1.2.3:** Test gemm_float4_vec variant
-   - Prioridad: 🟢 BAJA
    - Estimado: 1 día
-   - Objetivo: Validate vectorized approach
+   - Objetivo: Validate vectorized vload4/vstore4 approach
 
 ---
 
