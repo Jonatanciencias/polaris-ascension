@@ -51,6 +51,8 @@ class KernelType(Enum):
     GEMM_FLOAT4_CLOVER = auto()       # Main Clover FLOAT4 (16x16 tiles)
     GEMM_FLOAT4_SMALL = auto()        # High occupancy (8x8 tiles) - BEST for <512
     GEMM_FLOAT4_VEC = auto()          # Vectorized vload4/vstore4
+    # Phase 1 Extension: REGISTER_TILED Clover-compatible
+    GEMM_REGISTER_TILED_CLOVER = auto()  # Register tiling (4x4 work per thread)
     TRANSPOSE = auto()
 
 
@@ -309,6 +311,15 @@ class OptimizedKernelEngine:
             uses_lds=True,
             lds_size=16 * 16 * 4 * 2,
             min_size_threshold=256
+        ),
+        KernelType.GEMM_REGISTER_TILED_CLOVER: KernelConfig(
+            name="gemm_register_tiled_clover",
+            local_size=(8, 8),
+            vector_size=1,
+            uses_lds=True,
+            lds_size=32 * 17 * 4 + 16 * 33 * 4,  # A + B tiles with padding
+            min_size_threshold=512,
+            max_work_group=64
         ),
         KernelType.TRANSPOSE: KernelConfig(
             name="matrix_transpose_optimized",

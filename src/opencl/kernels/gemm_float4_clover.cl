@@ -313,3 +313,133 @@ __kernel void gemm_float4_small(
         }
     }
 }
+
+// ============================================================================
+// GEMM REGISTER TILED - Clover Compatible
+// ============================================================================
+
+/**
+ * gemm_register_tiled_clover - GEMM with register tiling for Clover
+ * 
+ * Each work-item computes 4x4 tile using register accumulators
+ * Compatible with OpenCL 1.1 (no restrict keyword)
+ * 
+ * Optimized for medium-large matrices (512-2048)
+ */
+#define REG_TILE_SIZE 32
+#define REG_TILE_K 16
+#define REG_WPT 4  // 4x4 work per thread
+#define REG_LDS_PAD 1
+
+__kernel void gemm_register_tiled_clover(
+    const int M,
+    const int N,
+    const int K,
+    const float alpha,
+    __global const float* A,
+    __global const float* B,
+    const float beta,
+    __global float* C
+) {
+    const int tidm = get_local_id(0);
+    const int tidn = get_local_id(1);
+    const int gidm = get_group_id(0);
+    const int gidn = get_group_id(1);
+    
+    // Local memory tiles
+    __local float As[REG_TILE_SIZE * (REG_TILE_K + REG_LDS_PAD)];
+    __local float Bs[REG_TILE_K * (REG_TILE_SIZE + REG_LDS_PAD)];
+    
+    // Register accumulators (4x4 = 16 values)
+    float acc[REG_WPT][REG_WPT];
+    for (int i = 0; i < REG_WPT; i++) {
+        for (int j = 0; j < REG_WPT; j++) {
+            acc[i][j] = 0.0f;
+        }
+    }
+    
+    float regA[REG_WPT];
+    float regB[REG_WPT];
+    
+    const int num_tiles = (K + REG_TILE_K - 1) / REG_TILE_K;
+    
+    for (int tile = 0; tile < num_tiles; tile++) {
+        const int k_base = tile * REG_TILE_K;
+        
+        // Cooperative tile loading (8x8 threads load 32x16 tile)
+        int linear_id = tidm * 8 + tidn;
+        
+        // Each thread loads 8 elements from A
+        for (int load = 0; load < 8; load++) {
+            int load_id = linear_id + load * 64;
+            if (load_id < REG_TILE_SIZE * REG_TILE_K) {
+                int a_row = load_id / REG_TILE_K;
+                int a_col = load_id % REG_TILE_K;
+                int global_a_row = gidm * REG_TILE_SIZE + a_row;
+                int global_a_col = k_base + a_col;
+                
+                if (global_a_row < M && global_a_col < K) {
+                    As[a_row * (REG_TILE_K + REG_LDS_PAD) + a_col] = A[global_a_row * K + global_a_col];
+                } else {
+                    As[a_row * (REG_TILE_K + REG_LDS_PAD) + a_col] = 0.0f;
+                }
+            }
+        }
+        
+        // Each thread loads 8 elements from B
+        for (int load = 0; load < 8; load++) {
+            int load_id = linear_id + load * 64;
+            if (load_id < REG_TILE_K * REG_TILE_SIZE) {
+                int b_row = load_id / REG_TILE_SIZE;
+                int b_col = load_id % REG_TILE_SIZE;
+                int global_b_row = k_base + b_row;
+                int global_b_col = gidn * REG_TILE_SIZE + b_col;
+                
+                if (global_b_row < K && global_b_col < N) {
+                    Bs[b_row * (REG_TILE_SIZE + REG_LDS_PAD) + b_col] = B[global_b_row * N + global_b_col];
+                } else {
+                    Bs[b_row * (REG_TILE_SIZE + REG_LDS_PAD) + b_col] = 0.0f;
+                }
+            }
+        }
+        
+        barrier(CLK_LOCAL_MEM_FENCE);
+        
+        // Compute on tile
+        for (int k = 0; k < REG_TILE_K; k++) {
+            // Load to registers
+            for (int w = 0; w < REG_WPT; w++) {
+                int row_idx = tidm * REG_WPT + w;
+                int col_idx = tidn * REG_WPT + w;
+                regA[w] = As[row_idx * (REG_TILE_K + REG_LDS_PAD) + k];
+                regB[w] = Bs[k * (REG_TILE_SIZE + REG_LDS_PAD) + col_idx];
+            }
+            
+            // MAD in registers
+            for (int wm = 0; wm < REG_WPT; wm++) {
+                for (int wn = 0; wn < REG_WPT; wn++) {
+                    acc[wm][wn] = mad(regA[wm], regB[wn], acc[wm][wn]);
+                }
+            }
+        }
+        
+        barrier(CLK_LOCAL_MEM_FENCE);
+    }
+    
+    // Write results with alpha/beta
+    const int base_m = gidm * REG_TILE_SIZE + tidm * REG_WPT;
+    const int base_n = gidn * REG_TILE_SIZE + tidn * REG_WPT;
+    
+    for (int wm = 0; wm < REG_WPT; wm++) {
+        for (int wn = 0; wn < REG_WPT; wn++) {
+            if (base_m + wm < M && base_n + wn < N) {
+                const int c_idx = (base_m + wm) * N + base_n + wn;
+                if (beta == 0.0f) {
+                    C[c_idx] = alpha * acc[wm][wn];
+                } else {
+                    C[c_idx] = alpha * acc[wm][wn] + beta * C[c_idx];
+                }
+            }
+        }
+    }
+}
