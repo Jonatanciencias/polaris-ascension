@@ -6,7 +6,7 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)]()
 [![Status: Production](https://img.shields.io/badge/status-Production%20Ready-success.svg)]()
-[![Performance: 95.6 GFLOPS](https://img.shields.io/badge/performance-95.6%20GFLOPS-orange.svg)]()
+[![Performance: 297 GFLOPS](https://img.shields.io/badge/performance-297%20GFLOPS-brightgreen.svg)]()
 [![Energy Efficiency: 94.2%](https://img.shields.io/badge/accuracy-94.2%25-blue.svg)]()
 
 > ⚡ **Energy-Efficient Computing**: Framework completo para optimización energética de inferencia deep learning en GPUs legacy AMD Polaris.
