@@ -859,6 +859,13 @@ results = cluster.map(inference_fn, images, strategy="round_robin")
 - ✅ **Sparse Matrix Formats** (CSR, CSC, Block-sparse) - Session 12
 - ✅ **Spiking Neural Networks** (LIF, STDP, temporal encoding) - Session 13
 - ✅ **Hybrid CPU/GPU Scheduler** (automatic task distribution) - Session 14
+- ✅ **Neural Architecture Search** (DARTS, bilevel optimization) - Session 29 ← NEW
+  - 8 primitive operations (conv, pool, skip connections)
+  - Continuous architecture relaxation
+  - Hardware-aware search on RX 580
+  - Complete API: `search_architecture()`
+  - 950+ lines of production code
+  - 24 comprehensive tests
 
 **Inference Layer** (Sessions 15-16):
 - ✅ **Model Compression Pipeline** (quantization + pruning + sparse) - Session 15
@@ -876,9 +883,9 @@ results = cluster.map(inference_fn, images, strategy="round_robin")
 - ✅ **Demo Client** (Python wrapper with 7 scenarios)
 
 **Testing**:
-- ✅ **369 tests passing (100%)**
+- ✅ **393 tests passing (100%)**
 - ✅ Core: 24 tests
-- ✅ Compute: 248 tests
+- ✅ Compute: 272 tests (includes 24 NAS tests) ← NEW
 - ✅ Inference: 50 tests (enhanced + loaders)
 - ✅ API: 26 tests
 - ✅ Others: 21 tests
