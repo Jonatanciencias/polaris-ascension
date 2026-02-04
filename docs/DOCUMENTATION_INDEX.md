@@ -64,8 +64,19 @@ docs/
 | [optimization.md](optimization.md) | Performance tuning guide |
 | [OPTIMIZATION_ROADMAP.md](OPTIMIZATION_ROADMAP.md) | Future optimization plans |
 | [MODEL_GUIDE.md](MODEL_GUIDE.md) | Model loading and usage |
+| [NAS_IMPLEMENTATION.md](NAS_IMPLEMENTATION.md) | Neural Architecture Search guide |
 | [use_cases.md](use_cases.md) | Real-world applications |
 | [CLUSTER_DEPLOYMENT_GUIDE.md](guides/CLUSTER_DEPLOYMENT_GUIDE.md) | Distributed deployment |
+
+### Hardware & Optimization
+
+| Document | Description |
+|----------|-------------|
+| [ROADMAP_README.md](ROADMAP_README.md) | 📋 Roadmap system guide |
+| [ROADMAP_OPTIMIZATION.md](ROADMAP_OPTIMIZATION.md) | 🎯 5-phase optimization plan |
+| [PROGRESS_TRACKING.md](PROGRESS_TRACKING.md) | 📊 Daily progress tracking |
+| [VALIDATION_REPORT_SESSION29.md](VALIDATION_REPORT_SESSION29.md) | ✅ Session 29 validation |
+| [../results/hardware_benchmark_rx590_gme.md](../results/hardware_benchmark_rx590_gme.md) | 🔥 RX 590 GME benchmark |
 
 ### Developer Documentation
 
