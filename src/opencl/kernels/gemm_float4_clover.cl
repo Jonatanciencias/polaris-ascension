@@ -13,13 +13,11 @@
 
 // Build options: -cl-mad-enable -cl-fast-relaxed-math -cl-std=CL1.1
 
-#ifndef TILE_SIZE
-#define TILE_SIZE 16        // 16x16 tile per workgroup
-#endif
+// IMPORTANT: Use unique names to avoid conflicts with engine build options
+// Each kernel uses hardcoded tile sizes for optimal performance
 
-#ifndef TILE_K
-#define TILE_K 16           // K-dimension tile
-#endif
+#define CLOVER_TILE_16 16   // For gemm_float4_clover (16x16 tiles)
+#define CLOVER_TILE_8  8    // For gemm_float4_small (8x8 tiles)
 
 // ============================================================================
 // GEMM FLOAT4 - Clover Compatible Version
@@ -51,8 +49,8 @@ __kernel void gemm_float4_clover(
     __global float* C
 ) {
     // Local memory tiles (16x16 elementos)
-    __local float As[TILE_SIZE * TILE_SIZE];
-    __local float Bs[TILE_SIZE * TILE_SIZE];
+    __local float As[CLOVER_TILE_16 * CLOVER_TILE_16];
+    __local float Bs[CLOVER_TILE_16 * CLOVER_TILE_16];
     
     // Work-item indices
     const int local_row = get_local_id(0);
@@ -66,28 +64,28 @@ __kernel void gemm_float4_clover(
     float sum = 0.0f;
     
     // Number of tiles needed for K dimension
-    const int num_tiles = (K + TILE_SIZE - 1) / TILE_SIZE;
+    const int num_tiles = (K + CLOVER_TILE_16 - 1) / CLOVER_TILE_16;
     
     // Loop over K in tiles
     for (int t = 0; t < num_tiles; t++) {
         // Load tile from A into local memory
-        const int a_row = group_row * TILE_SIZE + local_row;
-        const int a_col = t * TILE_SIZE + local_col;
+        const int a_row = group_row * CLOVER_TILE_16 + local_row;
+        const int a_col = t * CLOVER_TILE_16 + local_col;
         
         if (a_row < M && a_col < K) {
-            As[local_row * TILE_SIZE + local_col] = A[a_row * K + a_col];
+            As[local_row * CLOVER_TILE_16 + local_col] = A[a_row * K + a_col];
         } else {
-            As[local_row * TILE_SIZE + local_col] = 0.0f;
+            As[local_row * CLOVER_TILE_16 + local_col] = 0.0f;
         }
         
         // Load tile from B into local memory
-        const int b_row = t * TILE_SIZE + local_row;
-        const int b_col = group_col * TILE_SIZE + local_col;
+        const int b_row = t * CLOVER_TILE_16 + local_row;
+        const int b_col = group_col * CLOVER_TILE_16 + local_col;
         
         if (b_row < K && b_col < N) {
-            Bs[local_row * TILE_SIZE + local_col] = B[b_row * N + b_col];
+            Bs[local_row * CLOVER_TILE_16 + local_col] = B[b_row * N + b_col];
         } else {
-            Bs[local_row * TILE_SIZE + local_col] = 0.0f;
+            Bs[local_row * CLOVER_TILE_16 + local_col] = 0.0f;
         }
         
         // Synchronize to ensure tiles are loaded
@@ -96,9 +94,9 @@ __kernel void gemm_float4_clover(
         // Compute partial dot product for this tile
         // Unroll by 4 for better performance
         #pragma unroll 4
-        for (int k = 0; k < TILE_SIZE; k++) {
-            float a_val = As[local_row * TILE_SIZE + k];
-            float b_val = Bs[k * TILE_SIZE + local_col];
+        for (int k = 0; k < CLOVER_TILE_16; k++) {
+            float a_val = As[local_row * CLOVER_TILE_16 + k];
+            float b_val = Bs[k * CLOVER_TILE_16 + local_col];
             sum = mad(a_val, b_val, sum);
         }
         
@@ -143,8 +141,8 @@ __kernel void gemm_float4_vec(
     const int N_vec = N / 4;
     
     // Local memory tiles
-    __local float As[TILE_SIZE * TILE_SIZE];
-    __local float Bs[TILE_SIZE * TILE_SIZE];
+    __local float As[CLOVER_TILE_16 * CLOVER_TILE_16];
+    __local float Bs[CLOVER_TILE_16 * CLOVER_TILE_16];
     
     // Work-item indices
     const int local_row = get_local_id(0);
@@ -159,48 +157,48 @@ __kernel void gemm_float4_vec(
     float4 sum = (float4)(0.0f);
     
     // Number of tiles
-    const int num_tiles = (K + TILE_SIZE - 1) / TILE_SIZE;
+    const int num_tiles = (K + CLOVER_TILE_16 - 1) / CLOVER_TILE_16;
     
     // Loop over K in tiles
     for (int t = 0; t < num_tiles; t++) {
         // Load tile from A
-        const int a_row = group_row * TILE_SIZE + local_row;
-        const int a_col = t * TILE_SIZE + local_col;
+        const int a_row = group_row * CLOVER_TILE_16 + local_row;
+        const int a_col = t * CLOVER_TILE_16 + local_col;
         
         if (a_row < M && a_col < K) {
-            As[local_row * TILE_SIZE + local_col] = A[a_row * K + a_col];
+            As[local_row * CLOVER_TILE_16 + local_col] = A[a_row * K + a_col];
         } else {
-            As[local_row * TILE_SIZE + local_col] = 0.0f;
+            As[local_row * CLOVER_TILE_16 + local_col] = 0.0f;
         }
         
         // Load tile from B (vectorizado)
-        const int b_row = t * TILE_SIZE + local_row;
-        const int b_col_base = group_col_vec * TILE_SIZE * 4 + local_col * 4;
+        const int b_row = t * CLOVER_TILE_16 + local_row;
+        const int b_col_base = group_col_vec * CLOVER_TILE_16 * 4 + local_col * 4;
         
         if (b_row < K && b_col_base + 3 < N) {
             // Cargar 4 elementos consecutivos
             float4 b_vec = vload4(0, &B[b_row * N + b_col_base]);
-            Bs[local_row * TILE_SIZE + local_col] = b_vec.x;
-            if (local_col + 1 < TILE_SIZE) Bs[local_row * TILE_SIZE + local_col + 1] = b_vec.y;
-            if (local_col + 2 < TILE_SIZE) Bs[local_row * TILE_SIZE + local_col + 2] = b_vec.z;
-            if (local_col + 3 < TILE_SIZE) Bs[local_row * TILE_SIZE + local_col + 3] = b_vec.w;
+            Bs[local_row * CLOVER_TILE_16 + local_col] = b_vec.x;
+            if (local_col + 1 < CLOVER_TILE_16) Bs[local_row * CLOVER_TILE_16 + local_col + 1] = b_vec.y;
+            if (local_col + 2 < CLOVER_TILE_16) Bs[local_row * CLOVER_TILE_16 + local_col + 2] = b_vec.z;
+            if (local_col + 3 < CLOVER_TILE_16) Bs[local_row * CLOVER_TILE_16 + local_col + 3] = b_vec.w;
         } else {
-            Bs[local_row * TILE_SIZE + local_col] = 0.0f;
+            Bs[local_row * CLOVER_TILE_16 + local_col] = 0.0f;
         }
         
         barrier(CLK_LOCAL_MEM_FENCE);
         
         // Compute with vectorization
         #pragma unroll 4
-        for (int k = 0; k < TILE_SIZE; k++) {
-            float a_val = As[local_row * TILE_SIZE + k];
+        for (int k = 0; k < CLOVER_TILE_16; k++) {
+            float a_val = As[local_row * CLOVER_TILE_16 + k];
             
             // Cargar 4 valores de B en paralelo
             float4 b_vec;
-            b_vec.x = Bs[k * TILE_SIZE + local_col];
-            b_vec.y = Bs[k * TILE_SIZE + (local_col + 1) % TILE_SIZE];
-            b_vec.z = Bs[k * TILE_SIZE + (local_col + 2) % TILE_SIZE];
-            b_vec.w = Bs[k * TILE_SIZE + (local_col + 3) % TILE_SIZE];
+            b_vec.x = Bs[k * CLOVER_TILE_16 + local_col];
+            b_vec.y = Bs[k * CLOVER_TILE_16 + (local_col + 1) % CLOVER_TILE_16];
+            b_vec.z = Bs[k * CLOVER_TILE_16 + (local_col + 2) % CLOVER_TILE_16];
+            b_vec.w = Bs[k * CLOVER_TILE_16 + (local_col + 3) % CLOVER_TILE_16];
             
             sum += a_val * b_vec;
         }
