@@ -120,12 +120,12 @@ __kernel void gemm_float4_clover(
 // ============================================================================
 
 /**
- * gemm_float4_vec - GEMM con vectorización float4 agresiva
+ * gemm_float4_vec - GEMM con vectorización float4 para 4 columnas simultáneas
  * 
- * Cada work-item procesa un bloque de 4x4 elementos usando float4
+ * Cada work-item procesa 4 columnas consecutivas usando float4
  * Requiere que N sea múltiplo de 4
  * 
- * Máximo aprovechamiento de operaciones SIMD en GCN
+ * Aprovecha vload4/vstore4 para acceso vectorizado eficiente
  */
 __kernel void gemm_float4_vec(
     const int M,
@@ -137,23 +137,19 @@ __kernel void gemm_float4_vec(
     const float beta,
     __global float* C
 ) {
-    // Verificar alineación
-    const int N_vec = N / 4;
-    
-    // Local memory tiles
+    // Local memory tiles - cada work-item carga 1 float de A y 4 floats de B
     __local float As[CLOVER_TILE_16 * CLOVER_TILE_16];
-    __local float Bs[CLOVER_TILE_16 * CLOVER_TILE_16];
+    __local float Bs[CLOVER_TILE_16 * CLOVER_TILE_16 * 4];  // 4× más grande para 4 columnas
     
     // Work-item indices
     const int local_row = get_local_id(0);
     const int local_col = get_local_id(1);
     const int global_row = get_global_id(0);
-    const int global_col_vec = get_global_id(1);  // En unidades de float4
-    const int global_col = global_col_vec * 4;
+    const int global_col_base = get_global_id(1) * 4;  // 4 columnas por work-item
     const int group_row = get_group_id(0);
-    const int group_col_vec = get_group_id(1);
+    const int group_col = get_group_id(1);
     
-    // Accumulators (float4 para 4 resultados simultáneos)
+    // Accumulator - 4 valores para 4 columnas
     float4 sum = (float4)(0.0f);
     
     // Number of tiles
@@ -161,7 +157,7 @@ __kernel void gemm_float4_vec(
     
     // Loop over K in tiles
     for (int t = 0; t < num_tiles; t++) {
-        // Load tile from A
+        // Load tile from A (1 elemento por work-item)
         const int a_row = group_row * CLOVER_TILE_16 + local_row;
         const int a_col = t * CLOVER_TILE_16 + local_col;
         
@@ -171,67 +167,80 @@ __kernel void gemm_float4_vec(
             As[local_row * CLOVER_TILE_16 + local_col] = 0.0f;
         }
         
-        // Load tile from B (vectorizado)
+        // Load tile from B (4 elementos consecutivos por work-item)
         const int b_row = t * CLOVER_TILE_16 + local_row;
-        const int b_col_base = group_col_vec * CLOVER_TILE_16 * 4 + local_col * 4;
+        const int b_col_base = group_col * CLOVER_TILE_16 * 4 + local_col * 4;
+        
+        // Almacenar en LDS: cada work-item escribe 4 valores consecutivos
+        const int lds_offset = local_row * CLOVER_TILE_16 * 4 + local_col * 4;
         
         if (b_row < K && b_col_base + 3 < N) {
-            // Cargar 4 elementos consecutivos
+            // Carga vectorizada
             float4 b_vec = vload4(0, &B[b_row * N + b_col_base]);
-            Bs[local_row * CLOVER_TILE_16 + local_col] = b_vec.x;
-            if (local_col + 1 < CLOVER_TILE_16) Bs[local_row * CLOVER_TILE_16 + local_col + 1] = b_vec.y;
-            if (local_col + 2 < CLOVER_TILE_16) Bs[local_row * CLOVER_TILE_16 + local_col + 2] = b_vec.z;
-            if (local_col + 3 < CLOVER_TILE_16) Bs[local_row * CLOVER_TILE_16 + local_col + 3] = b_vec.w;
+            Bs[lds_offset + 0] = b_vec.x;
+            Bs[lds_offset + 1] = b_vec.y;
+            Bs[lds_offset + 2] = b_vec.z;
+            Bs[lds_offset + 3] = b_vec.w;
+        } else if (b_row < K) {
+            // Boundary - cargar elemento por elemento
+            for (int i = 0; i < 4; i++) {
+                if (b_col_base + i < N) {
+                    Bs[lds_offset + i] = B[b_row * N + b_col_base + i];
+                } else {
+                    Bs[lds_offset + i] = 0.0f;
+                }
+            }
         } else {
-            Bs[local_row * CLOVER_TILE_16 + local_col] = 0.0f;
+            Bs[lds_offset + 0] = 0.0f;
+            Bs[lds_offset + 1] = 0.0f;
+            Bs[lds_offset + 2] = 0.0f;
+            Bs[lds_offset + 3] = 0.0f;
         }
         
         barrier(CLK_LOCAL_MEM_FENCE);
         
-        // Compute with vectorization
+        // Compute: cada work-item acumula para sus 4 columnas
         #pragma unroll 4
         for (int k = 0; k < CLOVER_TILE_16; k++) {
             float a_val = As[local_row * CLOVER_TILE_16 + k];
             
-            // Cargar 4 valores de B en paralelo
+            // Cargar 4 valores de B para las 4 columnas
+            const int b_offset = k * CLOVER_TILE_16 * 4 + local_col * 4;
             float4 b_vec;
-            b_vec.x = Bs[k * CLOVER_TILE_16 + local_col];
-            b_vec.y = Bs[k * CLOVER_TILE_16 + (local_col + 1) % CLOVER_TILE_16];
-            b_vec.z = Bs[k * CLOVER_TILE_16 + (local_col + 2) % CLOVER_TILE_16];
-            b_vec.w = Bs[k * CLOVER_TILE_16 + (local_col + 3) % CLOVER_TILE_16];
+            b_vec.x = Bs[b_offset + 0];
+            b_vec.y = Bs[b_offset + 1];
+            b_vec.z = Bs[b_offset + 2];
+            b_vec.w = Bs[b_offset + 3];
             
-            sum += a_val * b_vec;
+            // FMA vectorizado
+            sum = mad(a_val, b_vec, sum);
         }
         
         barrier(CLK_LOCAL_MEM_FENCE);
     }
     
-    // Write results
-    if (global_row < M && global_col + 3 < N) {
-        const int c_idx = global_row * N + global_col;
+    // Write results - 4 valores por work-item
+    if (global_row < M && global_col_base + 3 < N) {
+        const int c_idx = global_row * N + global_col_base;
         
         float4 c_vec;
         if (beta == 0.0f) {
             c_vec = alpha * sum;
         } else {
-            c_vec = alpha * sum + beta * vload4(0, &C[c_idx]);
+            c_vec = mad(alpha, sum, beta * vload4(0, &C[c_idx]));
         }
         
         vstore4(c_vec, 0, &C[c_idx]);
     } else if (global_row < M) {
-        // Boundary handling
-        for (int i = 0; i < 4 && global_col + i < N; i++) {
-            const int c_idx = global_row * N + global_col + i;
-            float val;
-            if (i == 0) val = sum.x;
-            else if (i == 1) val = sum.y;
-            else if (i == 2) val = sum.z;
-            else val = sum.w;
+        // Boundary handling - escribir elemento por elemento
+        for (int i = 0; i < 4 && global_col_base + i < N; i++) {
+            const int c_idx = global_row * N + global_col_base + i;
+            float val = (i == 0) ? sum.x : (i == 1) ? sum.y : (i == 2) ? sum.z : sum.w;
             
             if (beta == 0.0f) {
                 C[c_idx] = alpha * val;
             } else {
-                C[c_idx] = alpha * val + beta * C[c_idx];
+                C[c_idx] = mad(alpha, val, beta * C[c_idx]);
             }
         }
     }

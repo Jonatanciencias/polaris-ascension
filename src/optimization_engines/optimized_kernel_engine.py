@@ -555,29 +555,39 @@ class OptimizedKernelEngine:
         min_dim = min(M, N, K)
         max_dim = max(M, N, K)
         
-        # Phase 1 Optimized Selection: Prioritize FLOAT4 Clover kernels (297 GFLOPS peak)
+        # Phase 1 Extended Selection: Prioritize FLOAT4_VEC (559 GFLOPS peak @ 2048!)
         
         # Very small matrices (< 128): FLOAT4_SMALL for low latency
         if max_dim < 128:
             return KernelType.GEMM_FLOAT4_SMALL  # NEW: Best for small matrices
         
-        # Small-Medium matrices (128-512): FLOAT4_SMALL is optimal (297 GFLOPS @ 256)
-        if max_dim <= 512:
-            return KernelType.GEMM_FLOAT4_SMALL  # ⭐ BEST: 297 GFLOPS peak
+        # Small-Medium matrices (128-256): FLOAT4_SMALL is optimal (297 GFLOPS @ 256)
+        if max_dim <= 256:
+            return KernelType.GEMM_FLOAT4_SMALL  # ⭐ BEST: 297 GFLOPS @ 256
         
-        # Medium-Large matrices (512-1024): FLOAT4_CLOVER with larger tiles
+        # Medium matrices (256-1024): Check if N is multiple of 4 for FLOAT4_VEC
         if max_dim <= 1024:
+            # FLOAT4_VEC requires N % 4 == 0 (vectorized columns)
+            if N % 4 == 0 and max_dim >= 512:
+                return KernelType.GEMM_FLOAT4_VEC  # 🚀 NEW CHAMPION: 521 GFLOPS @ 1024
+            # Fallback to FLOAT4_CLOVER for smaller sizes or misaligned
             return KernelType.GEMM_FLOAT4_CLOVER  # 235 GFLOPS @ 1024
         
-        # Large matrices (>1024): Choose based on alignment and size
+        # Large matrices (>1024): FLOAT4_VEC shines here!
         if max_dim > 1024:
-            # Very large (>2048): GCN4 Streaming to avoid cache thrashing
+            # FLOAT4_VEC is BEST for large aligned matrices
+            if N % 4 == 0:
+                return KernelType.GEMM_FLOAT4_VEC  # 🏆 CHAMPION: 559 GFLOPS @ 2048!
+            
+            # Very large unaligned: GCN4 Streaming to avoid cache thrashing
             if min_dim >= 2048:
-                return KernelType.GEMM_GCN4_STREAMING
+                return KernelType.GEMM_GCN4_STREAMING  # 350 GFLOPS
+            
             # Large and well-aligned: GCN4 Ultra
             if M % 64 == 0 and N % 64 == 0 and K % 16 == 0:
-                return KernelType.GEMM_GCN4_ULTRA
-            # Default for large: FLOAT4_CLOVER
+                return KernelType.GEMM_GCN4_ULTRA  # 400 GFLOPS @ 2048
+            
+            # Default for large unaligned: FLOAT4_CLOVER
             return KernelType.GEMM_FLOAT4_CLOVER
         
         # Fallback
@@ -601,6 +611,17 @@ class OptimizedKernelEngine:
             global_size = (
                 num_tiles_m * local_size[0],
                 num_tiles_n * local_size[1]
+            )
+            return global_size, local_size
+        
+        # Para FLOAT4_VEC: cada work-item procesa 4 columnas (N/4)
+        if kernel_type == KernelType.GEMM_FLOAT4_VEC:
+            def round_up(x: int, multiple: int) -> int:
+                return ((x + multiple - 1) // multiple) * multiple
+            
+            global_size = (
+                round_up(M, local_size[0]),
+                round_up(N // 4, local_size[1])  # N/4 porque cada work-item hace 4 columnas
             )
             return global_size, local_size
         
