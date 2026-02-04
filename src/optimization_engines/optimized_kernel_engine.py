@@ -47,10 +47,10 @@ class KernelType(Enum):
     GEMM_GCN4_VEC4 = auto()           # Vectorized float4
     GEMM_GCN4_HIGH_OCCUPANCY = auto() # Maximum wavefronts
     GEMM_GCN4_STREAMING = auto()      # Large matrix streaming
-    # Phase 1: Clover-compatible FLOAT4 kernels (297 GFLOPS peak)
+    # Phase 1: Clover-compatible FLOAT4 kernels (566 GFLOPS peak @ 2048)
     GEMM_FLOAT4_CLOVER = auto()       # Main Clover FLOAT4 (16x16 tiles)
     GEMM_FLOAT4_SMALL = auto()        # High occupancy (8x8 tiles) - BEST for <512
-    GEMM_FLOAT4_VEC = auto()          # Vectorized vload4/vstore4
+    GEMM_FLOAT4_VEC = auto()          # Vectorized vload4/vstore4 (16x16 tiles) 🏆 566 GFLOPS
     # Phase 1 Extension: REGISTER_TILED Clover-compatible
     GEMM_REGISTER_TILED_CLOVER = auto()  # Register tiling (4x4 work per thread)
     TRANSPOSE = auto()
@@ -555,7 +555,7 @@ class OptimizedKernelEngine:
         min_dim = min(M, N, K)
         max_dim = max(M, N, K)
         
-        # Phase 1 Extended Selection: Prioritize FLOAT4_VEC (559 GFLOPS peak @ 2048!)
+        # Phase 1 Extended Selection: Prioritize FLOAT4_VEC (566 GFLOPS peak @ 2048!)
         
         # Very small matrices (< 128): FLOAT4_SMALL for low latency
         if max_dim < 128:
@@ -569,7 +569,7 @@ class OptimizedKernelEngine:
         if max_dim <= 1024:
             # FLOAT4_VEC requires N % 4 == 0 (vectorized columns)
             if N % 4 == 0 and max_dim >= 512:
-                return KernelType.GEMM_FLOAT4_VEC  # 🚀 NEW CHAMPION: 521 GFLOPS @ 1024
+                return KernelType.GEMM_FLOAT4_VEC  # 🚀 CHAMPION: 521 GFLOPS @ 1024
             # Fallback to FLOAT4_CLOVER for smaller sizes or misaligned
             return KernelType.GEMM_FLOAT4_CLOVER  # 235 GFLOPS @ 1024
         
@@ -577,7 +577,7 @@ class OptimizedKernelEngine:
         if max_dim > 1024:
             # FLOAT4_VEC is BEST for large aligned matrices
             if N % 4 == 0:
-                return KernelType.GEMM_FLOAT4_VEC  # 🏆 CHAMPION: 559 GFLOPS @ 2048!
+                return KernelType.GEMM_FLOAT4_VEC  # 🏆 CHAMPION: 566 GFLOPS @ 2048!
             
             # Very large unaligned: GCN4 Streaming to avoid cache thrashing
             if min_dim >= 2048:
