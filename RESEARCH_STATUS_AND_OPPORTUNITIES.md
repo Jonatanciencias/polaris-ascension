@@ -149,6 +149,110 @@
 
 ---
 
+### ⚡ BAJA PRIORIDAD - Polish Optimizations
+
+#### 1. **Auto-tuner Framework** ⚠️ **CONDITIONAL**
+**Concepto**: Automated parameter search (tile sizes, workgroup, unroll factors)
+
+**Tools**:
+- **CLTune**: Cedric Nugteren (CLBlast author)
+- **kernel_tuner**: Python-based, Bayesian optimization
+- **AutoTVM**: Apache TVM, ML-guided
+
+**Expected Value** (Feb 5, 2026):
+- Probability: 30% (+0-1%), 50% (+1-3%), 15% (+3-5%), 5% (+5%+)
+- Expected gain: **+17 GFLOPS (+2.1%)**
+- 810 GFLOPS → **827 GFLOPS** expected
+
+**Effort**:
+- CLTune setup: 6-10 hours
+- GPU tuning time: 20-40 hours
+- Custom framework: 2-4 weeks (not worth it)
+
+**ROI**: ⭐⭐⭐ **GOOD** (with CLTune)
+
+**Decision**: ⚠️ **CONDITIONAL**
+- **IF** quieres "scientific closure" (exhaustive search): ✅ DO IT
+- **IF** satisfecho con 810 GFLOPS: ❌ SKIP
+- **IF** quieres publicar pronto: ❌ SKIP
+
+**Reality Check**:
+- Ya estás cerca del techo (810 GFLOPS)
+- LLVM ACO compiler is good (hard to beat +5%)
+- Diminishing returns: +2% esperado, no +20%
+
+**Priority**: MEDIUM (polish optimization)
+
+**See**: research/FINAL_OPTIMIZATIONS_EVALUATION.md
+
+**Status**: ⏸️ **OPTIONAL** (cierre científico, no game-changer)
+
+---
+
+#### 2. **Assembly-Level Optimization (GCN ISA)** ❌ **SKIP**
+**Concepto**: Hand-coded GCN assembly, bypassing OpenCL compiler
+
+**Example**:
+```asm
+; Direct GCN ISA control
+v_fma_f32 v2, v0, v1, v2    ; Fused multiply-add
+ds_write_b32 v3, v2         ; LDS write
+s_barrier                   ; Synchronization
+```
+
+**Expected Gains**:
+- Optimistic (20%): +8% (perfect scheduling, registers, LDS)
+- Realistic (60%): +3.5% (some improvements vs LLVM)
+- Pessimistic (20%): +1% (ACO already good)
+- **Expected value**: +32 GFLOPS (+3.9%)
+- 810 GFLOPS → **842 GFLOPS** expected
+
+**Effort**: **6-9 WEEKS** (1.5-2 months)
+- Week 1-2: Learn GCN ISA (900-page manual)
+- Week 3-5: Hand-code tile20 inner loop
+- Week 6-7: Debug + profile (hard without tools)
+- Week 8-9: Edge cases + polish
+
+**BLOCKERS** ❌:
+- Mesa Clover: OpenCL 1.1, no inline asm support
+- Requires ROCm migration (risky, 5-10 GB)
+- Polaris + ROCm = stability concerns
+- Binary support limited in Mesa
+
+**ROI**: ⭐ **VERY POOR**
+- 6-9 weeks para +3.9% (+32 GFLOPS)
+- Auto-tuner da +2.1% en 6 hours (53% del gain, 1% del esfuerzo)
+
+**Decision**: ❌ **HARD SKIP**
+
+**Reasons**:
+1. Terrible ROI (2 months → +4%)
+2. Mesa Clover blocker (requires full stack change)
+3. Hardware-specific (only Polaris GFX803)
+4. Not shareable (community can't learn from asm)
+5. Extreme complexity (debugging hell)
+6. Already at plateau (810 GFLOPS near ceiling)
+7. Better spent: Publication + community impact
+
+**When would assembly make sense?**
+- ✅ Commercial HPC library (rocBLAS competitor)
+- ✅ PhD thesis on GPU architecture
+- ✅ 3-6 month timeline + team
+- ✅ Record-breaking benchmark focus
+
+**For this project** (open-source GEMM library):
+- ❌ Wrong ROI
+- ❌ Wrong stage (project done, not starting)
+- ❌ Wrong focus (sharing knowledge > 3% gain)
+
+**Priority**: VERY LOW (extreme effort, marginal gain)
+
+**See**: research/FINAL_OPTIMIZATIONS_EVALUATION.md
+
+**Status**: ❌ **PROFESSIONALLY DECLINED** (clear rationale)
+
+---
+
 ### ⚡ MEDIA PRIORIDAD - Investigación Adicional
 
 #### 4. **Rectangular Tiles** ❌ **ANALYZED - SKIP**
@@ -394,10 +498,16 @@ PUBLICAR en blog/GitHub | 2-4   | IMPACTO COMUNIDAD | ⭐⭐⭐⭐⭐
 - ❌ FP16: Driver limitation (OpenCL 1.1)
 - ❌ tile32: Negative expected value (-46.5 GFLOPS)
 - ❌ Rectangular tiles: Low ROI (⭐⭐, high complexity)
+- ❌ Assembly optimization: Extreme effort (6-9 weeks), Mesa blocker, +4% expected
 
 **Evaluated as Application-Specific** (different project scope):
 - ⚠️ Kernel fusion: ⭐⭐⭐⭐ for ML pipelines (not general GEMM)
 - ⚠️ Batched GEMM: ⭐⭐⭐⭐ for custom inference (not general GEMM)
+
+**Optional Polish Optimization**:
+- ⏸️ Auto-tuner (CLTune): ⭐⭐⭐ ROI, +2% expected, 6h setup + 24h GPU time
+  - Use case: Scientific closure, exhaustive parameter search
+  - Decision: Optional if you want systematic confirmation
 
 ### **Conclusion** 🚀
 
@@ -509,6 +619,21 @@ If you later want to pivot to ML inference (Option B), you can start fresh repo:
 - Different goals, different scope
 - 3-6 month project
 
+**Option D: Auto-tuner Polish** (optional scientific closure):
+- Setup CLTune (6-10 hours)
+- Run exhaustive search (24h GPU time)
+- Expected: +2% (810 → 827 GFLOPS)
+- Value: Systematic confirmation of tile20 optimality
+- Then proceed to publication
+
 ---
 
-**¿Qué te parece?** ¿Procedemos a publicación, o te interesa más el pivot a ML?
+**¿Qué te parece?** 
+
+**Available paths**:
+1. **Publication NOW** ⭐⭐⭐⭐⭐ (recommended - project complete)
+2. **Auto-tuner polish** ⭐⭐⭐ (1-2 days, scientific closure, then publish)
+3. **ML Inference pivot** ⭐⭐⭐⭐ (3-6 months, new project)
+4. **Assembly optimization** ⭐ (NOT recommended - 2 months for +4%, Mesa blocker)
+
+**See detailed analysis**: [research/FINAL_OPTIMIZATIONS_EVALUATION.md](research/FINAL_OPTIMIZATIONS_EVALUATION.md)
