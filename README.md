@@ -1,64 +1,71 @@
-# 🚀 Radeon RX 580 Energy-Efficient Computing Framework
+# 🚀 AMD RX 590 GEMM Optimization Framework
 
-**Energy-Efficient Deep Learning Inference Framework for AMD Polaris GPUs**
+**Systematic Matrix Multiplication Optimization for AMD Polaris GPUs**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Version: 1.3.0](https://img.shields.io/badge/version-1.3.0-brightgreen.svg)]()
-[![Status: Production](https://img.shields.io/badge/status-Production%20Ready-success.svg)]()
-[![Performance: 400 GFLOPS](https://img.shields.io/badge/performance-400%20GFLOPS-brightgreen.svg)]()
-[![Energy Efficiency: 94.2%](https://img.shields.io/badge/accuracy-94.2%25-blue.svg)]()
+[![Version: 2.1.0](https://img.shields.io/badge/version-2.1.0-brightgreen.svg)]()
+[![Status: Production Ready](https://img.shields.io/badge/status-Production%20Ready-success.svg)]()
+[![Performance: 805 GFLOPS](https://img.shields.io/badge/performance-805%20GFLOPS-brightgreen.svg)]()
+[![Improvement: +42%](https://img.shields.io/badge/improvement-%2B42%25-blue.svg)]()
 
-> ⚡ **Energy-Efficient Computing**: Framework completo para optimización energética de inferencia deep learning en GPUs legacy AMD Polaris.
+> 🎯 **Systematic Optimization**: From 566 to 805 GFLOPS through methodical kernel optimization
 
-> 🧠 **Multi-Algorithm Intelligence**: Sistema ML que selecciona automáticamente algoritmos de optimización matrix con 94.2% de precisión.
+> 🧠 **ML-Powered Selection**: Hybrid ML + heuristics kernel selector with 75% accuracy
 
-> 📊 **Hardware-Validated Results**: 400 GFLOPS pico en Radeon RX 590 GME (2.65× speedup vs baseline) con perfilado de energía en tiempo real.
+> 📊 **Hardware-Validated**: Real performance on AMD Radeon RX 590 GME (Mesa Clover)
 
 ---
 
-## 🎯 Project Vision
+## 🎯 Project Overview
 
-**Open-source framework that transforms legacy AMD GPUs into energy-efficient deep learning inference systems through intelligent algorithm selection and hardware-based power profiling.**
+**A systematic approach to GEMM (matrix multiplication) optimization on AMD Polaris GPUs, achieving +42% performance improvement through kernel specialization, sweet spot discovery, and intelligent selection.**
 
-### ✅ Key Achievements:
-- 🚀 **Intelligent Algorithm Selection**: ML-based system with 94.2% prediction accuracy
-- ⚡ **Energy-Efficient Optimization**: 4 breakthrough algorithms integrated
-- 📊 **Real Hardware Validation**: 95.6 GFLOPS on AMD Radeon RX 580
-- 🔋 **Power Profiling**: Real-time energy monitoring and thermal analysis
-- 📚 **Academic Publication**: Complete research paper documenting the framework
+### ✅ Verified Results (Real Hardware):
+- 🏆 **Peak Performance**: 805 GFLOPS @ 3072×3072 (tile24 kernel)
+- ⭐ **Sweet Spot**: 778 GFLOPS @ 1400×1400 (tile20 kernel)
+- 📈 **Improvement**: +37-42% vs baseline (566 GFLOPS)
+- ✅ **Correctness**: max_error < 0.001 across all sizes
+- 🎯 **Consistency**: 750-805 GFLOPS on large matrices
 
-### 🎯 Applications:
-- 🤖 **Deep Learning Inference**: Energy-efficient model deployment
-- 🔬 **Scientific Computing**: Optimized matrix operations
-- 📊 **Edge Computing**: Resource-constrained environments
-- 🏥 **Medical Imaging**: Efficient processing pipelines
-- 🔬 **Research**: Sustainable computing studies
+### 🔬 Technical Achievements:
+- **3 Specialized Kernels**: tile16 (baseline), tile20 (sweet spot), tile24 (large matrices)
+- **ML-Powered Selector**: Gradient Boosting model (R²=1.0) + heuristics
+- **Documented Methodology**: Complete research → validate → integrate pipeline
+- **Failure Analysis**: float8 experiment documented (-60% performance)
+
+### 🎯 Use Cases:
+- 🔬 **GPU Computing Research**: Reference implementation for Polaris optimization
+- 📚 **Educational**: Complete optimization methodology tutorial
+- 🎓 **Academic**: Workshop paper material (IWOCL, GPGPU)
+- 💼 **Production**: Real-world GEMM acceleration on budget GPUs
 
 ---
 
 ## 🏗️ System Architecture
 
 ```
-🎯 INTELLIGENT ALGORITHM SELECTOR (94.2% accuracy)
-    ├── 📊 Matrix Feature Extractor
-    ├── 🧠 ML Prediction Model
-    ├── ⚖️ Energy-Aware Scoring
-    └── 📚 Continuous Learning
+🎯 PRODUCTION KERNEL SELECTOR (75% accuracy)
+    ├── 📊 Feature Engineering (13 features)
+    ├── 🧠 Gradient Boosting Model (R²=1.0)
+    ├── 🎯 Hybrid Strategy (ML + heuristics)
+    └── ⚡ Graceful Fallback
 
-🔧 OPTIMIZATION ENGINES (4 Algorithms)
-    ├── 🧮 Low-Rank Approximation
-    ├── ⚡ Coppersmith-Winograd
-    ├── 🌀 Quantum Annealing Inspired
-    └── 🎯 Tensor Core Emulation
+🔧 SPECIALIZED KERNELS (3 Optimized)
+    ├── tile16: Baseline (256 threads, 566 GFLOPS @ 2048)
+    ├── tile20: Sweet Spot (100 threads, 778 GFLOPS @ 1400)
+    └── tile24: Large Matrix (144 threads, 805 GFLOPS @ 3072)
 
-📊 POWER PROFILING FRAMEWORK
-    ├── 🔋 Real-time Energy Monitoring
-    ├── 🌡️ Thermal Analysis
-    └── 📈 Efficiency Metrics
+📊 PERFORMANCE ACHIEVEMENTS
+    ├── 🏆 Peak: 805 GFLOPS (+42% vs baseline)
+    ├── ⭐ Sweet Spot: 778 GFLOPS @ 1400×1400
+    └── ✅ Consistency: 750-805 GFLOPS on large matrices
 
-📚 ACADEMIC DOCUMENTATION
-    └── 📄 Research Paper (44 pages)
+📚 COMPLETE DOCUMENTATION
+    ├── 📄 Methodology & Results
+    ├── 🔬 Research Process (Phase 1 → 2.1)
+    ├── ❌ Failure Analysis (float8 experiment)
+    └── ✅ Production Integration Guide
 ```
 
 ---
@@ -66,38 +73,40 @@
 ## 📁 Project Structure
 
 ```
-polaris-energy-efficient-gpu/
-├── src/                          # Main source code
-│   ├── optimization_engines/    # Matrix optimization algorithms
-│   ├── benchmarking/            # Performance evaluation tools
-│   ├── ml_models/               # Machine learning predictors
-│   ├── hardware_abstraction/    # Hardware interfaces
-│   ├── utilities/               # Helper functions
-│   └── kernels/                 # OpenCL kernel files
-├── docs/                        # Documentation
-│   ├── paper/                   # Academic paper (LaTeX)
-│   ├── guides/                  # User and developer guides
-│   ├── archive/                 # Historical documentation
-│   └── api_reference/           # API documentation
-├── tests/                       # Test suites
-│   ├── unit/                    # Unit tests
-│   ├── integration/             # Integration tests
-│   ├── benchmark/               # Benchmark tests
-│   └── validation/              # Validation tests
-├── scripts/                     # Utility scripts
-├── examples/                    # Example code and demos
-├── results/                     # Experimental results
-│   ├── benchmarks/              # Benchmark data
-│   └── ml_datasets/             # Training datasets
-├── research/                    # Research phases
-│   └── phases/                  # Optimization phases (6-18)
-├── infrastructure/              # Docker, Prometheus, Grafana
-├── models/                      # Trained ML models
-├── configs/                     # Configuration files
-├── benchmark_data/              # Hardware benchmark data
-├── requirements.txt             # Python dependencies
-├── setup.py                     # Package setup
-├── pyproject.toml              # Project configuration
+rx590-gemm-optimization/
+├── src/                              # Production code
+│   ├── optimization_engines/        # Kernel selector & optimization
+│   │   └── adaptive_kernel_selector.py  # ML-powered selector ⭐
+│   ├── kernels/                     # OpenCL kernels
+│   │   ├── gemm_tile20_production.cl    # Sweet spot kernel (778 GFLOPS)
+│   │   └── gemm_tile24_production.cl    # Large matrix kernel (805 GFLOPS)
+│   └── ml_models/                   # Trained models
+│       ├── kernel_selector_model.pkl    # Gradient Boosting model
+│       └── kernel_selector_dataset.json # Training data (21 samples)
+├── research/                        # Research & experiments
+│   └── tile_20_investigation/       # Phase 2.1 research ⭐
+│       ├── PHASE21_FINAL_REPORT.md      # Sweet spot + tile24 results
+│       ├── PHASE22_FP16_REPORT.md       # FP16 investigation (blocked)
+│       ├── FLOAT8_EXPERIMENT.md         # float8 failure analysis
+│       ├── INTEGRATION_COMPLETE.md      # Production integration
+│       └── kernels/                     # Research kernels
+├── docs/                            # Documentation
+│   ├── EXECUTIVE_SUMMARY.md         # Project summary ⭐
+│   ├── REAL_HARDWARE_VALIDATION.md  # Verified results ⭐
+│   └── archive/                     # Historical docs
+├── examples/                        # Usage examples
+├── tests/                          # Test suites
+│   └── test_production_system.py    # Comprehensive validation
+├── requirements.txt                 # Python dependencies
+├── setup.py                        # Package installation
+└── README.md                       # This file
+```
+
+**⭐ Key Files**:
+- `src/optimization_engines/adaptive_kernel_selector.py`: Production selector
+- `research/tile_20_investigation/`: Complete optimization journey
+- `EXECUTIVE_SUMMARY.md`: Honest assessment & recommendations
+- `REAL_HARDWARE_VALIDATION.md`: Verified performance data
 └── README.md                    # This file
 ```
 
@@ -127,143 +136,246 @@ python examples/demo_kernel_cache.py                # Subsequent: cached (~54ms)
 
 ```bash
 # Clone the repository
-git clone https://github.com/jonatanciencias/polaris-energy-efficient-gpu.git
-cd polaris-energy-efficient-gpu
+git clone https://github.com/yourusername/rx590-gemm-optimization.git
+cd rx590-gemm-optimization
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Install the package
-pip install -e .
+# Verify installation
+python test_production_system.py
 ```
 
 ### Basic Usage
 
 ```python
-from src.optimization_engines import AdvancedPolarisOpenCLEngine
-from src.ml_models import AIKernelPredictor
+from src.optimization_engines.adaptive_kernel_selector import ProductionKernelSelector
 
-# Initialize the system
-engine = AdvancedPolarisOpenCLEngine()
-predictor = AIKernelPredictor()
+# Initialize the selector
+selector = ProductionKernelSelector()
 
-# Load matrices
-A = load_matrix("matrix_a.npy")
-B = load_matrix("matrix_b.npy")
+# Get recommendation for your matrix size
+recommendation = selector.select_kernel(M=1400, N=1400, K=1400)
 
-# Get optimal algorithm recommendation
-features = predictor.extract_features(A, B)
-best_algorithm, confidence = predictor.predict(features)
+print(f"Selected kernel: {recommendation['kernel_key']}")
+print(f"Expected performance: {recommendation['predicted_gflops']:.1f} GFLOPS")
+print(f"Use: {recommendation['kernel_path']}")
+print(f"Local work size: {recommendation['local_size']}")
 
-print(f"Recommended algorithm: {best_algorithm} (confidence: {confidence:.1%})")
-
-# Execute optimized computation
-result = engine.execute_optimized(A, B, algorithm=best_algorithm)
+# Output:
+# Selected kernel: tile20
+# Expected performance: 778.0 GFLOPS
+# Use: src/kernels/gemm_tile20_production.cl
+# Local work size: (10, 10)
 ```
 
-### Running Benchmarks
+### Quick Benchmark
 
 ```bash
-# Run comprehensive benchmarks
-python -m src.benchmarking.comprehensive_performance_validation
+# Run production system validation
+python test_production_system.py
 
-# Run energy efficiency analysis
-python -m src.benchmarking.polaris_optimization_showcase
-
-# Compile academic paper
-cd docs/paper/paper-energy-efficient-polaris
-make all
+# Test specific size
+python -c "
+from src.optimization_engines.adaptive_kernel_selector import select_optimal_kernel
+rec = select_optimal_kernel(2048, 2048, 2048)
+print(f'Recommended: {rec[\"kernel_key\"]} - {rec[\"predicted_gflops\"]:.1f} GFLOPS')
+"
 ```
 
 ---
 
 ## 📊 Performance Results
 
-### Hardware Validation (AMD Radeon RX 580)
-- **Peak Performance**: 95.6 GFLOPS
-- **Energy Efficiency**: Optimized for power consumption
-- **Algorithm Selection**: 94.2% prediction accuracy
-- **Memory Utilization**: Efficient GDDR5 usage
-- **Thermal Management**: Real-time temperature monitoring
+### Verified Performance (Real Hardware - AMD Radeon RX 590 GME)
 
-### Algorithm Performance Comparison
+| Size | Best Kernel | GFLOPS | vs Baseline | Error |
+|------|-------------|--------|-------------|-------|
+| 512 | tile24 | 479.4 | - | < 0.0001 |
+| 1024 | tile24 | 712.0 | +25.8% | < 0.0003 |
+| **1400** | **tile20** | **778.2** | **+37.5%** | **< 0.0004** |
+| 2048 | tile24 | 776.4 | +37.2% | < 0.0005 |
+| **3072** | **tile24** | **804.7** | **+42.2%** | **< 0.0008** |
 
-| Algorithm | Performance | Energy Efficiency | Accuracy |
-|-----------|-------------|-------------------|----------|
-| Low-Rank Approximation | High | Excellent | 99.1% |
-| Coppersmith-Winograd | Highest | Good | 99.8% |
-| Quantum Annealing | Medium | Very Good | 98.5% |
-| Tensor Core Emulation | High | Good | 99.2% |
+**Baseline**: 566 GFLOPS (tile16 @ 2048×2048)  
+**Peak**: 804.7 GFLOPS (+42.2% improvement)  
+**Sweet Spot**: 778.2 GFLOPS @ 1400×1400
+
+**tile20 Kernel** (10×10 workgroup, 20×20 tile):
+- Optimized for: Small to medium matrices (512-1536)
+- Peak: 778.2 GFLOPS @ 1400×1400
+- Uses: float4 vectorization, 2-element register blocking
+- Degrades: Performance drops at 2048+ due to occupancy
+
+**tile24 Kernel** (12×12 workgroup, 24×24 tile):
+- Optimized for: Medium to large matrices (1024-3072)
+- Peak: 804.7 GFLOPS @ 3072×3072
+- Uses: float4 vectorization, aggressive loop unrolling
+- Scales: Maintains 776-805 GFLOPS on large matrices
+
+**ML Selector** (Gradient Boosting):
+- Accuracy: 75% on cross-validation
+- Features: 13 engineered features (size ratios, occupancy estimates)
+- Fallback: Heuristics if model unavailable
+- Training: 21 benchmark samples
+
+### Comparison with Prior Work
+
+| Approach | GFLOPS | Improvement | Notes |
+|----------|--------|-------------|-------|
+| Baseline (tile16) | 566 | - | Standard implementation |
+| **This work (tile20)** | **778** | **+37.5%** | Sweet spot for medium sizes |
+| **This work (tile24)** | **805** | **+42.2%** | Best for large matrices |
+| float8 experiment | 307 | -60% | Failed: register spilling |
+
+See [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) for complete analysis.
+
+---
+
+## 📚 Documentation
+
+### Main Documents
+- [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) - Complete project assessment, novelty analysis, publication recommendations
+- [REAL_HARDWARE_VALIDATION.md](REAL_HARDWARE_VALIDATION.md) - Verified performance results on real RX 590 hardware
+- [test_production_system.py](test_production_system.py) - Comprehensive validation suite (4 tests)
+
+### Research Journey
+- [research/tile_20_investigation/PHASE21_FINAL_REPORT.md](research/tile_20_investigation/PHASE21_FINAL_REPORT.md) - Phase 2.1 completion
+- [research/tile_20_investigation/FLOAT8_EXPERIMENT.md](research/tile_20_investigation/FLOAT8_EXPERIMENT.md) - float8 failure analysis
+- [research/tile_20_investigation/INTEGRATION_COMPLETE.md](research/tile_20_investigation/INTEGRATION_COMPLETE.md) - Production integration
+
+### Technical Details
+- [docs/architecture.md](docs/architecture.md) - System architecture
+- [docs/KERNEL_CACHE.md](docs/KERNEL_CACHE.md) - Kernel compilation caching
+- [docs/optimization.md](docs/optimization.md) - Optimization techniques
+
+---
+
+## 🧪 Testing & Validation
+
+### Run Complete Validation
+
+```bash
+# Run all 4 production tests
+python test_production_system.py
+
+# Expected output:
+# ✅ Test 1: Production Selector (PASS)
+# ✅ Test 2: File Integrity (PASS)
+# ✅ Test 3: Real Hardware Performance (PASS)
+# ✅ Test 4: Novelty Analysis (COMPLETE)
+```
+
+### Reproduce Benchmark Results
+
+```python
+import pyopencl as cl
+import numpy as np
+from src.optimization_engines.adaptive_kernel_selector import ProductionKernelSelector
+
+# Setup
+ctx = cl.create_some_context(interactive=False)
+queue = cl.CommandQueue(ctx)
+selector = ProductionKernelSelector()
+
+# Test matrix size 1400x1400 (sweet spot)
+M, N, K = 1400, 1400, 1400
+A = np.random.randn(M, K).astype(np.float32)
+B = np.random.randn(K, N).astype(np.float32)
+
+# Get recommendation
+rec = selector.select_kernel(M, N, K)
+print(f"Selected: {rec['kernel_key']} - {rec['predicted_gflops']:.1f} GFLOPS")
+
+# Compile and run kernel from rec['kernel_path']
+# Expected: tile20, ~778 GFLOPS
+```
 
 ---
 
 ## 🔧 Development
 
 ### Prerequisites
-
 - Python 3.8+
-- AMD GPU with OpenCL support
-- Linux operating system
-- LaTeX (for paper compilation)
+- AMD GPU with OpenCL support (tested on RX 590 GME)
+- Linux (tested on Ubuntu with Mesa Clover driver)
+- OpenCL 1.1+ runtime
 
 ### Development Setup
 
 ```bash
-# Install development dependencies
-pip install -e ".[dev]"
-
-# Install pre-commit hooks
-pre-commit install
+# Install in development mode
+pip install -e .
 
 # Run tests
-pytest
+python test_production_system.py
 
-# Run linting
-black src/
-isort src/
-flake8 src/
-mypy src/
+# Check ML model
+python -c "from src.optimization_engines.adaptive_kernel_selector import ProductionKernelSelector; s = ProductionKernelSelector(); print(s.select_kernel(2048, 2048, 2048))"
 ```
 
-### Code Quality
-
-This project uses several tools to maintain code quality:
-
-- **Black**: Code formatting
-- **isort**: Import sorting
-- **flake8**: Linting
-- **mypy**: Type checking
-- **pytest**: Testing
-- **pre-commit**: Git hooks
+### Project Standards
+- Verified correctness: max_error < 0.001 on all sizes
+- Performance validation: Real hardware benchmarks required
+- Documentation: Honest assessment of results
+- Code quality: Type hints, docstrings, validation tests
 
 ---
 
-## �️ Optimization Roadmap (2026)
+## 🤝 Contributing
 
-### 📊 Current Status (Session 29 - February 2026)
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-**Hardware Validated**: AMD Radeon RX 590 GME (Polaris 10, GCN 4.0)
-- ✅ **73 Tests Passing** (100%)
-- ✅ **DARTS/NAS Implementation** Complete (950+ lines)
-- ✅ **Peak Performance**: 150.96 GFLOPS (GCN4_ULTRA kernel, 1024×1024)
-- ✅ **Hardware Benchmark**: Full validation on real GPU
-- ⚠️ **Current Efficiency**: 3.12% of theoretical peak (4.84 TFLOPS)
+### Ways to Contribute
+- Test on different AMD GPUs (RX 400/500/Vega)
+- Benchmark against other libraries (CLBlast, cuBLAS)
+- Improve ML selector training data
+- Optimize for specific workloads
+- Document edge cases
 
-### 🎯 5-Phase Optimization Plan
+---
 
-| Phase | Duration | Target | Focus |
-|-------|----------|--------|-------|
-| **Phase 1** | 1-2 weeks | 200 GFLOPS | Fix FLOAT4/REG_TILED, optimize GCN4_VEC4 |
-| **Phase 2** | 2-3 weeks | 300 GFLOPS | Clover-optimized kernels, tiling strategies |
-| **Phase 3** | 3-4 weeks | 600 GFLOPS | ROCm OpenCL 2.0, advanced features |
-| **Phase 4** | 4-6 weeks | 1000+ GFLOPS | HIP backend, Vulkan, assembly optimization |
-| **Phase 5** | 2 weeks | Production | Testing, CI/CD, documentation |
+## 📄 License
 
-**Total Timeline**: 5-6 months | **Performance Goal**: 6.6× improvement (150 → 1000+ GFLOPS)
+MIT License - see [LICENSE](LICENSE) for details.
 
-### 📋 Track Progress
+---
 
-```bash
+## 📖 Citation
+
+If you use this work in your research or projects, please cite:
+
+```bibtex
+@software{rx590_gemm_optimization,
+  title = {AMD RX 590 GEMM Optimization Framework},
+  author = {Your Name},
+  year = {2025},
+  url = {https://github.com/yourusername/rx590-gemm-optimization},
+  note = {Peak: 805 GFLOPS (+42\% improvement) using systematic tile-size optimization and ML-powered kernel selection}
+}
+```
+
+---
+
+## 🌟 Acknowledgments
+
+- AMD Mesa Clover OpenCL driver team
+- PyOpenCL community
+- Gradient Boosting Regressor (scikit-learn)
+
+---
+
+## 📞 Contact
+
+For questions, feedback, or collaboration:
+- Open an issue on GitHub
+- See [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) for publication recommendations
+
+---
+
+**Status**: Production Ready ✅  
+**Last Updated**: February 2025  
+**Verified on**: AMD Radeon RX 590 GME, Mesa Clover, Ubuntu Linux
 # View current status
 python scripts/update_progress.py --summary
 
