@@ -4,12 +4,12 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Version: 2.1.0](https://img.shields.io/badge/version-2.1.0-brightgreen.svg)]()
+[![Version: 2.2.0](https://img.shields.io/badge/version-2.2.0-brightgreen.svg)]()
 [![Status: Production Ready](https://img.shields.io/badge/status-Production%20Ready-success.svg)]()
-[![Performance: 805 GFLOPS](https://img.shields.io/badge/performance-805%20GFLOPS-brightgreen.svg)]()
-[![Improvement: +42%](https://img.shields.io/badge/improvement-%2B42%25-blue.svg)]()
+[![Performance: 831 GFLOPS](https://img.shields.io/badge/performance-831%20GFLOPS-brightgreen.svg)]()
+[![Improvement: +47%](https://img.shields.io/badge/improvement-%2B47%25-blue.svg)]()
 
-> 🎯 **Systematic Optimization**: From 566 to 805 GFLOPS through methodical kernel optimization
+> 🎯 **Systematic Optimization**: From 566 to 831 GFLOPS through methodical kernel optimization + auto-tuner
 
 > 🧠 **ML-Powered Selection**: Hybrid ML + heuristics kernel selector with 75% accuracy
 
@@ -19,17 +19,18 @@
 
 ## 🎯 Project Overview
 
-**A systematic approach to GEMM (matrix multiplication) optimization on AMD Polaris GPUs, achieving +42% performance improvement through kernel specialization, sweet spot discovery, and intelligent selection.**
+**A systematic approach to GEMM (matrix multiplication) optimization on AMD Polaris GPUs, achieving +47% performance improvement through kernel specialization, auto-tuner framework, and intelligent selection.**
 
 ### ✅ Verified Results (Real Hardware):
-- 🏆 **Peak Performance**: 805 GFLOPS @ 3072×3072 (tile24 kernel)
-- ⭐ **Sweet Spot**: 778 GFLOPS @ 1400×1400 (tile20 kernel)
-- 📈 **Improvement**: +37-42% vs baseline (566 GFLOPS)
+- 🏆 **Peak Performance**: 831 GFLOPS @ 1300×1300 (tile20 kernel, auto-tuner discovery)
+- ⭐ **Average Performance**: 822-824 GFLOPS @ 1300×1300 (validated, 30+ runs)
+- 📈 **Improvement**: +46.8% vs baseline (566 GFLOPS)
 - ✅ **Correctness**: max_error < 0.001 across all sizes
-- 🎯 **Consistency**: 750-805 GFLOPS on large matrices
+- 🎯 **Consistency**: CV = 1.42% (excellent stability)
 
 ### 🔬 Technical Achievements:
 - **3 Specialized Kernels**: tile16 (baseline), tile20 (sweet spot), tile24 (large matrices)
+- **Auto-Tuner Framework**: Custom parameter search discovering 1300×1300 optimal
 - **ML-Powered Selector**: Gradient Boosting model (R²=1.0) + heuristics
 - **Documented Methodology**: Complete research → validate → integrate pipeline
 - **Failure Analysis**: float8 experiment documented (-60% performance)

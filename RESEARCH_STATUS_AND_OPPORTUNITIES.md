@@ -1,8 +1,9 @@
 # 🔬 Estado de Investigación y Oportunidades Pendientes
 
 **Fecha**: 5 de febrero de 2026  
-**Contexto**: Post Phase 2.1, después de sanitización del proyecto  
-**Performance actual**: **805 GFLOPS** (tile24 @ 3072×3072), +42% vs baseline
+**Contexto**: Post Auto-Tuner Framework - Nuevo récord descubierto  
+**Performance actual**: **831 GFLOPS peak** (tile20 @ 1300×1300), +46.8% vs baseline  
+**Performance promedio**: **822-824 GFLOPS** (validado con 30+ runs)
 
 ---
 
@@ -12,11 +13,11 @@
 
 **Phase 2.1 - Tile Optimization** ✅
 - **tile16**: 566 GFLOPS @ 2048 (baseline)
-- **tile20**: 778 GFLOPS @ 1400 (sweet spot descubierto)
-- **tile24**: 805 GFLOPS @ 3072 (peak verificado)
-- **Resultado**: +42% mejora, producción completa
-- **Tiempo**: ~1 semana de investigación
-- **Status**: ✅ INTEGRADO A PRODUCCIÓN
+- **tile20**: 831 GFLOPS @ 1300 (AUTO-TUNER DISCOVERY)
+- **tile24**: 799 GFLOPS @ 1800 (large matrix specialist)
+- **Resultado**: +46.8% mejora, producción completa
+- **Tiempo**: ~1 semana investigación + auto-tuner framework
+- **Status**: ✅ INTEGRADO A PRODUCCIÓN + VALIDADO SISTEMÁTICAMENTE
 
 **ML-Powered Kernel Selector** ✅
 - Gradient Boosting Regressor (R²=1.0 training, 75% CV)
@@ -149,43 +150,40 @@
 
 ---
 
-### ⚡ BAJA PRIORIDAD - Polish Optimizations
+### ⚡ COMPLETADO - Auto-tuner Framework
 
-#### 1. **Auto-tuner Framework** ⚠️ **CONDITIONAL**
-**Concepto**: Automated parameter search (tile sizes, workgroup, unroll factors)
+#### 1. **Auto-tuner Framework** ✅ **COMPLETED + SUCCESSFUL**
+**Implementación**: Custom Python framework (no external dependencies)
 
-**Tools**:
-- **CLTune**: Cedric Nugteren (CLBlast author)
-- **kernel_tuner**: Python-based, Bayesian optimization
-- **AutoTVM**: Apache TVM, ML-guided
+**Resultados** (Feb 5, 2026):
+- **Configuraciones probadas**: 42 (2 kernels × 21 sizes)
+- **Tiempo total**: 2.6 minutos GPU time
+- **Protocolo**: 10 runs + 2 warmup por config
+- **Descubrimiento**: tile20 @ **1300×1300** = **831 GFLOPS peak**
 
-**Expected Value** (Feb 5, 2026):
-- Probability: 30% (+0-1%), 50% (+1-3%), 15% (+3-5%), 5% (+5%+)
-- Expected gain: **+17 GFLOPS (+2.1%)**
-- 810 GFLOPS → **827 GFLOPS** expected
+**Mejora vs expectativa**:
+- Expected: +17 GFLOPS (+2.1%)
+- **Actual: +21 GFLOPS (+2.6%)** ✅ Superado
 
-**Effort**:
-- CLTune setup: 6-10 hours
-- GPU tuning time: 20-40 hours
-- Custom framework: 2-4 weeks (not worth it)
+**Hallazgos clave**:
+1. **1300 > 1400**: Auto-tuner encontró sweet spot mejor que manual
+2. **tile20 domina**: Top 5 configs son todas tile20
+3. **tile24 para grandes**: 799 GFLOPS @ 1800 (mejor que 710 @ 3072)
+4. **Padding penalty**: tile20 colapsa @ 4096 (28 GFLOPS), validando skip tile32
 
-**ROI**: ⭐⭐⭐ **GOOD** (with CLTune)
+**ROI Real**: ⭐⭐⭐⭐⭐ **EXCELLENT**
+- 10 horas inversión (implementación + análisis)
+- +21 GFLOPS mejora (+2.6%)
+- Validación científica de metodología
+- Narrativa compelling para publicación
 
-**Decision**: ⚠️ **CONDITIONAL**
-- **IF** quieres "scientific closure" (exhaustive search): ✅ DO IT
-- **IF** satisfecho con 810 GFLOPS: ❌ SKIP
-- **IF** quieres publicar pronto: ❌ SKIP
+**Status**: ✅ **COMPLETADO Y DOCUMENTADO**
 
-**Reality Check**:
-- Ya estás cerca del techo (810 GFLOPS)
-- LLVM ACO compiler is good (hard to beat +5%)
-- Diminishing returns: +2% esperado, no +20%
-
-**Priority**: MEDIUM (polish optimization)
-
-**See**: research/FINAL_OPTIMIZATIONS_EVALUATION.md
-
-**Status**: ⏸️ **OPTIONAL** (cierre científico, no game-changer)
+**Archivos**:
+- `research/auto_tuner/gemm_auto_tuner.py` (framework)
+- `research/auto_tuner/AUTO_TUNER_RESULTS.md` (reporte completo)
+- `results/auto_tuner/tuning_results.csv` (42 configs)
+- `research/auto_tuner/validate_1300.py` (validation script)
 
 ---
 
@@ -488,10 +486,11 @@ PUBLICAR en blog/GitHub | 2-4   | IMPACTO COMUNIDAD | ⭐⭐⭐⭐⭐
 ### **All Optimization Paths Evaluated** ✅
 
 **Successfully Implemented**:
-- ✅ tile20/tile24 optimization: 805-810 GFLOPS (+42-43%)
-- ✅ Sweet spot refinement: 1400×1400 systematically validated
+- ✅ tile20/tile24 optimization: 831 GFLOPS peak (+46.8%)
+- ✅ Auto-tuner framework: 1300×1300 discovered as optimal
+- ✅ Validation: 30+ runs confirming 822-831 GFLOPS
 - ✅ ML kernel selector: Production-ready
-- ✅ Documentation: Complete (successes + failures)
+- ✅ Documentation: Complete (successes + failures + auto-tuner)
 
 **Evaluated and Professionally Skipped**:
 - ❌ float8: Register spilling (-60%)
@@ -504,18 +503,21 @@ PUBLICAR en blog/GitHub | 2-4   | IMPACTO COMUNIDAD | ⭐⭐⭐⭐⭐
 - ⚠️ Kernel fusion: ⭐⭐⭐⭐ for ML pipelines (not general GEMM)
 - ⚠️ Batched GEMM: ⭐⭐⭐⭐ for custom inference (not general GEMM)
 
-**Optional Polish Optimization**:
-- ⏸️ Auto-tuner (CLTune): ⭐⭐⭐ ROI, +2% expected, 6h setup + 24h GPU time
-  - Use case: Scientific closure, exhaustive parameter search
-  - Decision: Optional if you want systematic confirmation
+**Completed Optimizations**:
+- ✅ Auto-tuner framework: ⭐⭐⭐⭐⭐ ROI, +2.6% achieved
+  - Result: 831 GFLOPS peak @ 1300×1300 discovered
+  - Validation: Systematic search superior to manual tuning
+  - Time: 2.6 min GPU + 10h implementation = EXCELLENT ROI
 
 ### **Conclusion** 🚀
 
 **General-Purpose GEMM Library** → ✅ **MISSION ACCOMPLISHED**
 
 You've achieved:
-- 810 GFLOPS peak performance (Feb 5, 2026)
-- Professional documentation (honest results)
+- **831 GFLOPS peak performance** (Feb 5, 2026) 🏆
+- **822-824 GFLOPS average** (validated with 30+ runs)
+- Auto-tuner framework (systematic discovery)
+- Professional documentation (honest results + methodology)
 - Production-ready system (all tests passing)
 - Data-driven decisions (skip/go based on evidence)
 
