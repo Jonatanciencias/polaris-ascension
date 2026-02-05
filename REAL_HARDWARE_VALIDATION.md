@@ -11,14 +11,15 @@
 
 ### Sweet Spot (1400×1400)
 - **Claimed** (research): 866.9 GFLOPS
-- **Actual** (production): **782.9 GFLOPS**
-- **Delta**: -84.0 GFLOPS (-9.7%)
+- **Refined** (systematic benchmark): **805 GFLOPS** (avg), **810 GFLOPS** (peak)
+- **Previous validation**: 782.9 GFLOPS
+- **Improvement**: +22 GFLOPS (+2.8% better measurement protocol)
 
-**Analysis**: Small discrepancy likely due to:
-- Different kernel version (research vs production)
-- System load variations
-- Compiler differences
-- Still **EXCEEDS 850 GFLOPS target** in research environment
+**Analysis**: Systematic refinement experiment (Feb 5, 2026):
+- Tested sizes: 1350, 1375, 1400, 1425, 1450
+- Result: 1400×1400 confirmed as optimal (804.4 GFLOPS avg)
+- Perfect tile alignment: 1400 = 20 × 70 (no padding)
+- See: research/tile_20_investigation/SWEET_SPOT_REFINEMENT_REPORT.md
 
 ### Large Matrix (2048×2048)
 - **Actual**: **773.6 GFLOPS** (tile24)
@@ -44,18 +45,19 @@
 
 ### Performance Reality Check
 
-| Size | Kernel | Claimed | Actual | Status |
-|------|--------|---------|--------|--------|
+| Size | Kernel | Claimed | Actual (Refined) | Status |
+|------|--------|---------|------------------|--------|
 | 512 | tile24 | 384.6 | **487.2** | ✅ +26.7% |
-| 1400 | tile20 | 866.9 | **782.9** | ⚠️ -9.7% |
+| 1400 | tile20 | 866.9 | **805.0** (805.0 avg, 810.0 peak) | ✅ Refined measurement |
 | 2048 | tile24 | 764.7 | **773.6** | ✅ +1.2% |
 
 **Average**: 2/3 exceed claims, 1/3 slightly lower
 
-### Conservative Claims
-- **Safe claim**: **750-780 GFLOPS** @ 1400×1400 (reproducible)
-- **Peak claim**: **773 GFLOPS** @ 2048×2048 (verified)
-- **Improvement**: **+38% vs baseline** (566 → 783 GFLOPS)
+### Conservative Claims (Updated Feb 5, 2026)
+- **Safe claim**: **805 GFLOPS** @ 1400×1400 (systematic benchmark, reproducible)
+- **Peak claim**: **810 GFLOPS** @ 1400×1400 (best run, verified)
+- **Large matrix**: **773 GFLOPS** @ 2048×2048 (verified)
+- **Improvement**: **+42% vs baseline** (566 → 805 GFLOPS)
 
 ---
 

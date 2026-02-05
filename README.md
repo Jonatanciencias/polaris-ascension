@@ -198,8 +198,8 @@ print(f'Recommended: {rec[\"kernel_key\"]} - {rec[\"predicted_gflops\"]:.1f} GFL
 | **3072** | **tile24** | **804.7** | **+42.2%** | **< 0.0008** |
 
 **Baseline**: 566 GFLOPS (tile16 @ 2048×2048)  
-**Peak**: 804.7 GFLOPS (+42.2% improvement)  
-**Sweet Spot**: 778.2 GFLOPS @ 1400×1400
+**Peak**: 810.0 GFLOPS @ 1400×1400 (+43.1% improvement)  
+**Sweet Spot**: 805.0 GFLOPS @ 1400×1400 (avg, refined measurement)
 
 **tile20 Kernel** (10×10 workgroup, 20×20 tile):
 - Optimized for: Small to medium matrices (512-1536)

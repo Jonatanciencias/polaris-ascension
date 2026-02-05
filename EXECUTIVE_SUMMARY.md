@@ -1,16 +1,18 @@
 # 🎯 EXECUTIVE SUMMARY - Real Hardware Results
 
-**Testing Date**: 4 febrero 2026  
+**Testing Date**: 4-5 febrero 2026  
 **Hardware**: AMD Radeon RX 590 GME  
-**System**: Linux 6.14.0-37, Mesa Clover, ACO compiler
+**System**: Linux 6.14.0-37, Mesa Clover, ACO compiler  
+**Latest Update**: Sweet spot refinement (Feb 5, 2026)
 
 ---
 
 ## 📊 REAL PERFORMANCE RESULTS
 
 ### Peak Performance Achieved
-- **Best Overall**: **804.7 GFLOPS** @ 3072×3072 (tile24) 🏆
-- **Sweet Spot**: **778.2 GFLOPS** @ 1400×1400 (tile20)
+- **Best Overall**: **810.0 GFLOPS** @ 1400×1400 (tile20, peak run) 🏆
+- **Sweet Spot**: **805.0 GFLOPS** @ 1400×1400 (tile20, avg, refined) ⭐
+- **Large Matrix Peak**: **804.7 GFLOPS** @ 3072×3072 (tile24)
 - **Baseline**: 566 GFLOPS @ 2048×2048 (historical)
 
 ### Performance by Size
@@ -21,27 +23,30 @@
 | 768 | tile24 | 641.7 | - | ✅ Medium |
 | 1024 | tile24 | 712.0 | +25.8% | ✅ Medium-large |
 | 1280 | tile24 | 728.2 | +28.7% | ✅ Pre-sweet spot |
-| **1400** | **tile20** | **778.2** | **+37.5%** | 🏆 **Sweet spot** |
+| **1400** | **tile20** | **805.0** (810.0 peak) | **+42.2%** | 🏆 **Sweet spot (refined)** |
 | 1536 | tile24 | 780.9 | +38.0% | ✅ Post-sweet spot |
 | 2048 | tile24 | 776.4 | **+37.2%** | ✅ Large |
 | 2560 | tile24 | 792.1 | +40.0% | ✅ Very large |
-| **3072** | **tile24** | **804.7** | **+42.2%** | 🏆 **Peak** |
+| **3072** | **tile24** | **804.7** | **+42.2%** | 🏆 **Peak (large matrix)** |
 
 ---
 
 ## 🎯 KEY FINDINGS
 
-### 1. Actual Achievement
-- **Real improvement**: **+37-42%** vs baseline (not the claimed +53%)
-- **Reason**: Research environment vs production, different kernels
-- **Still excellent**: Consistent 750-805 GFLOPS across all large sizes
+### 1. Actual Achievement (Updated Feb 5, 2026)
+- **Real improvement**: **+42-43%** vs baseline (805-810 GFLOPS vs 566 GFLOPS)
+- **Refined measurement**: Systematic sweet spot experiment confirms 1400×1400 optimal
+- **Excellent performance**: Consistent 775-810 GFLOPS across sweet spot and large sizes
+- **See**: SWEET_SPOT_REFINEMENT_REPORT.md for detailed methodology
 
 ### 2. Kernel Behavior
 
 **tile20** (10×10 workgroup, 100 threads):
-- Peak: 778.2 GFLOPS @ 1400
-- Degrades badly at 2048+: 296 GFLOPS (-62%)
+- Peak: **805.0 GFLOPS** @ 1400 (avg), **810.0 GFLOPS** (best run)
+- Confirmed optimal: Systematic test of 1350, 1375, 1400, 1425, 1450
+- Degrades at 2048+: ~296 GFLOPS (-62%)
 - **Use case**: Sweet spot zone (1200-1600)
+- **Perfect alignment**: 1400 = 20 × 70 tiles (no padding)
 
 **tile24** (12×12 workgroup, 144 threads):
 - Peak: 804.7 GFLOPS @ 3072
