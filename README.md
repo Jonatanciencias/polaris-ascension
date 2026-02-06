@@ -237,7 +237,11 @@ See [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) for complete analysis.
 
 ### Main Documents
 - [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) - Complete project assessment, novelty analysis, publication recommendations
+- [INNOVATION_ASSESSMENT.md](INNOVATION_ASSESSMENT.md) - **NEW**: Innovation analysis, outstanding achievements, publication potential
+- [TESTING_VALIDATION_REPORT.md](TESTING_VALIDATION_REPORT.md) - **NEW**: Comprehensive testing results, objectives validation
 - [REAL_HARDWARE_VALIDATION.md](REAL_HARDWARE_VALIDATION.md) - Verified performance results on real RX 590 hardware
+- [PROJECT_STATUS_REVIEW_FEB2026.md](PROJECT_STATUS_REVIEW_FEB2026.md) - Complete project review, git status, roadmap assessment
+- [AUTO_TUNER_COMPLETE_SUMMARY.md](AUTO_TUNER_COMPLETE_SUMMARY.md) - Auto-tuner framework validation and discoveries
 - [test_production_system.py](test_production_system.py) - Comprehensive validation suite (4 tests)
 
 ### Research Journey
@@ -249,6 +253,8 @@ See [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) for complete analysis.
 - [docs/architecture.md](docs/architecture.md) - System architecture
 - [docs/KERNEL_CACHE.md](docs/KERNEL_CACHE.md) - Kernel compilation caching
 - [docs/optimization.md](docs/optimization.md) - Optimization techniques
+- [docs/ROADMAP_OPTIMIZATION.md](docs/ROADMAP_OPTIMIZATION.md) - Complete optimization roadmap (Phases 0-6)
+- [docs/ROADMAP_README.md](docs/ROADMAP_README.md) - Documentation navigation guide
 
 ---
 
