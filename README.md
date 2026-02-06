@@ -137,15 +137,22 @@ python examples/demo_kernel_cache.py                # Subsequent: cached (~54ms)
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/rx590-gemm-optimization.git
-cd rx590-gemm-optimization
+git clone https://github.com/Jonatanciencias/polaris-ascension.git
+cd polaris-ascension
 
-# Install dependencies
+# Option 1: Minimal dependencies (recommended for quick start)
+# ~100MB, 2 min install, core OpenCL functionality only
+pip install -r requirements-minimal.txt
+
+# Option 2: Full dependencies (ML features, API server)
+# ~10GB, 30 min install, includes PyTorch, TensorFlow
 pip install -r requirements.txt
 
 # Verify installation
 python test_production_system.py
 ```
+
+**💡 Tip**: Start with `requirements-minimal.txt` for core GEMM optimization. Install full requirements only if you need ML-based kernel selection or API server features.
 
 ### Basic Usage
 

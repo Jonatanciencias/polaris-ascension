@@ -98,6 +98,23 @@ aim/
 # GPU profiling and debug
 *.prof
 *.nvprof
+
+# ==========================================
+# Security & Secrets
+# ==========================================
+# API keys and sensitive configuration
+configs/*.json
+configs/api_keys.json
+*.key
+*.pem
+*.crt
+*.env
+.env.*
+!.env.example
+
+# Secrets
+secrets/
+*.secret
 *.nsight
 gpu_debug.log
 

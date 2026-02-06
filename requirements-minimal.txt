@@ -1,0 +1,30 @@
+# Radeon RX 590 GEMM Optimization Framework - Minimal Requirements
+# Core functionality only (OpenCL GEMM optimization)
+
+# Core dependencies
+numpy>=1.21.0              # Array operations
+pyopencl>=2022.1           # OpenCL bindings (REQUIRED)
+pyyaml>=6.0                # Configuration files
+psutil>=5.9.0              # System monitoring
+
+# Auto-tuner framework (optional, but recommended)
+scipy>=1.9.0               # Optimization algorithms
+pandas>=1.5.0              # Data analysis
+
+# ML-based kernel selector (optional)
+# Uncomment if you want intelligent kernel selection
+# scikit-learn>=1.3.0      # Gradient Boosting model
+# joblib>=1.3.0            # Model serialization
+
+# Data visualization (optional)
+# matplotlib>=3.6.0        # Plotting
+# seaborn>=0.12.0          # Statistical plots
+
+# Total size: ~100MB (vs >10GB with full requirements.txt)
+# Installation time: ~2 minutes (vs >30 minutes)
+
+# Quick install:
+#   pip install -r requirements-minimal.txt
+#
+# Full install (ML features):
+#   pip install -r requirements.txt
