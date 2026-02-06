@@ -388,10 +388,10 @@ python scripts/update_progress.py --task 1.1.1 --status in-progress
 ```
 
 **Documentation**:
-- 📖 [Complete Roadmap](docs/ROADMAP_OPTIMIZATION.md) - 53 tasks, 5 phases detailed
-- 📊 [Progress Tracking](docs/PROGRESS_TRACKING.md) - Daily progress and metrics
-- 📚 [System Guide](docs/ROADMAP_README.md) - How to use the tracking system
-- 🔥 [Hardware Benchmark](results/hardware_benchmark_rx590_gme.md) - RX 590 GME results
+- 📖 [Project Roadmap](docs/ROADMAP_OPTIMIZATION.md) - Complete project timeline and phases
+- 📚 [Documentation Guide](docs/ROADMAP_README.md) - How to navigate all documentation
+- 🎯 [Project Status](PROJECT_STATUS_REVIEW_FEB2026.md) - Current status and branches
+- ✅ [Auto-Tuner Report](AUTO_TUNER_COMPLETE_SUMMARY.md) - 831 GFLOPS discovery
 
 ---
 
