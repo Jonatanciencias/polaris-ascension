@@ -1,0 +1,218 @@
+\section{Power Profiling Framework}
+\label{sec:power_profiling}
+
+\subsection{Framework Overview}
+
+The power profiling framework provides comprehensive energy monitoring capabilities specifically designed for AMD Polaris architecture. Unlike modern GPUs with dedicated power management units, legacy hardware requires software-based instrumentation and external monitoring to achieve accurate power profiling.
+
+\subsection{Power Measurement Architecture}
+
+Our framework implements a multi-level power measurement approach:
+
+\begin{enumerate}
+    \item \textbf{Hardware-Level Monitoring:} Direct access to GPU power sensors
+    \item \textbf{Software-Level Instrumentation:} Application-level power tracking
+    \item \textbf{System-Level Correlation:} Integration with platform power consumption
+\end{enumerate}
+
+\subsection{GPU Power Sensors}
+
+\subsubsection{AMDGPU Driver Interface}
+
+We utilize the AMDGPU driver interfaces to access hardware power sensors:
+
+\begin{lstlisting}[language=C, caption=GPU Power Sensor Access]
+#include <amdgpu.h>
+#include <amdgpu_drm.h>
+
+// Initialize GPU context
+struct amdgpu_device *adev;
+amdgpu_device_initialize(fd, &adev);
+
+// Read power consumption
+struct amdgpu_power_info power_info;
+amdgpu_get_power_info(adev, &power_info);
+
+// Extract power metrics
+float gpu_power = power_info.current_gpu_power;
+float memory_power = power_info.current_memory_power;
+\end{lstlisting}
+
+\subsubsection{Sensor Calibration}
+
+Due to variations in hardware and driver implementations, we implement sensor calibration:
+
+\begin{enumerate}
+    \item \textbf{Baseline Measurement:} Establish idle power consumption
+    \item \textbf{Load Characterization:} Measure power under different computational loads
+    \item \textbf{Temperature Correction:} Account for thermal effects on power readings
+    \item \textbf{Cross-Validation:} Compare with external power meters
+\end{enumerate}
+
+\subsection{Real-Time Power Monitoring}
+
+\subsubsection{Sampling Strategy}
+
+Our framework implements adaptive sampling to balance accuracy and overhead:
+
+\begin{enumerate}
+    \item \textbf{High-Frequency Sampling:} 1000 Hz during kernel execution
+    \item \textbf{Adaptive Resolution:} Dynamic adjustment based on power variability
+    \item \textbf{Event-Driven Sampling:} Triggered by computational phase changes
+\end{enumerate}
+
+\subsubsection{Power Trace Collection}
+
+Power traces are collected with temporal synchronization:
+
+\begin{lstlisting}[language=Python, caption=Power Trace Collection]
+import time
+import threading
+
+class PowerMonitor:
+    def __init__(self, sampling_rate=1000):
+        self.sampling_rate = sampling_rate
+        self.power_trace = []
+        self.timestamps = []
+        self.monitoring = False
+
+    def start_monitoring(self):
+        self.monitoring = True
+        self.monitor_thread = threading.Thread(target=self._monitor_loop)
+        self.monitor_thread.start()
+
+    def _monitor_loop(self):
+        interval = 1.0 / self.sampling_rate
+        while self.monitoring:
+            timestamp = time.time()
+            power = self._read_gpu_power()
+            self.power_trace.append(power)
+            self.timestamps.append(timestamp)
+            time.sleep(interval)
+
+    def stop_monitoring(self):
+        self.monitoring = False
+        self.monitor_thread.join()
+\end{lstlisting}
+
+\subsection{Energy Consumption Analysis}
+
+\subsubsection{Power Integration}
+
+Energy consumption is calculated through numerical integration of power traces:
+
+\begin{equation}
+E = \int_{t_0}^{t_f} P(t) \, dt
+\label{eq:energy_integration}
+\end{equation}
+
+Where:
+\begin{itemize}
+    \item $E$ is total energy consumption in joules
+    \item $P(t)$ is instantaneous power consumption in watts
+    \item $t_0$ and $t_f$ are start and end times
+\end{itemize}
+
+\subsubsection{Discrete Integration Methods}
+
+For practical implementation, we employ trapezoidal integration:
+
+\begin{equation}
+E \approx \sum_{i=1}^{n} \frac{(P_i + P_{i-1})}{2} \cdot (t_i - t_{i-1})
+\label{eq:trapezoidal_integration}
+\end{equation}
+
+\subsection{Performance-Energy Correlation}
+
+\subsubsection{Metrics Definition}
+
+We define key performance-energy metrics:
+
+\begin{enumerate}
+    \item \textbf{Energy Efficiency:} GFLOPS per watt
+    \begin{equation}
+    \eta = \frac{\text{GFLOPS}}{\text{Power (W)}}
+    \label{eq:energy_efficiency}
+    \end{equation}
+
+    \item \textbf{Energy Delay Product:} Energy consumption normalized by performance
+    \begin{equation}
+    EDP = \frac{E \cdot T}{P}
+    \label{eq:edp}
+    \end{equation}
+
+    \item \textbf{Power Utilization:} Ratio of peak to average power consumption
+    \begin{equation}
+    PU = \frac{P_{\text{peak}}}{P_{\text{avg}}}
+    \label{eq:power_utilization}
+    \end{equation}
+\end{enumerate}
+
+\subsection{Thermal-Power Interaction}
+
+\subsubsection{Temperature Effects}
+
+GPU temperature significantly affects power consumption due to:
+
+\begin{enumerate}
+    \item \textbf{Leakage Current:} Exponential increase with temperature
+    \item \textbf{Fan Power:} Additional power for cooling
+    \item \textbf{Thermal Throttling:} Frequency reduction to prevent overheating
+\end{enumerate}
+
+\subsubsection{Thermal Modeling}
+
+We model the relationship between temperature and power:
+
+\begin{equation}
+P(T) = P_0 + P_{\text{dynamic}} + P_{\text{leakage}}(T)
+\label{eq:thermal_power_model}
+\end{equation}
+
+Where $P_{\text{leakage}}(T)$ follows an exponential relationship with temperature.
+
+\subsection{Power-Aware Optimization}
+
+\subsubsection{Dynamic Voltage Scaling}
+
+The framework supports dynamic adaptation based on power constraints:
+
+\begin{enumerate}
+    \item \textbf{Power Budget Enforcement:} Maintain operation within specified power limits
+    \item \textbf{Performance Scaling:} Adjust computational intensity based on available power
+    \item \textbf{Quality Adaptation:} Trade accuracy for energy efficiency when constrained
+\end{enumerate}
+
+\subsubsection{Predictive Power Management}
+
+Using historical data, the system predicts power consumption for different algorithms:
+
+\begin{enumerate}
+    \item \textbf{Algorithm Power Models:} Regression models for power prediction
+    \item \textbf{Workload Classification:} Categorization based on computational patterns
+    \item \textbf{Adaptive Selection:} Choose algorithms that meet power and performance constraints
+\end{enumerate}
+
+\subsection{Framework Validation}
+
+\subsubsection{Cross-Platform Verification}
+
+We validate our power measurements against external instrumentation:
+
+\begin{enumerate}
+    \item \textbf{External Power Meters:} Comparison with high-precision power analyzers
+    \item \textbf{Thermal Imaging:} Correlation with infrared temperature measurements
+    \item \textbf{Electrical Characterization:} Validation against electrical specifications
+\end{enumerate}
+
+\subsubsection{Accuracy Assessment}
+
+Measurement accuracy is evaluated through:
+
+\begin{enumerate}
+    \item \textbf{Calibration Error:} Deviation from reference measurements
+    \item \textbf{Temporal Resolution:} Ability to capture rapid power changes
+    \item \textbf{Measurement Overhead:} Impact on system performance
+\end{enumerate}
+
+This comprehensive power profiling framework enables precise energy characterization of legacy GPUs, providing the foundation for energy-efficient deep learning inference optimization.

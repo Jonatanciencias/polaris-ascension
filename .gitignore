@@ -1,4 +1,9 @@
+# Radeon RX 580 Breakthrough Optimization System - .gitignore
+# Sistema de Optimización Matrix Completamente Automatizado
+
+# ==========================================
 # Python
+# ==========================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -29,55 +34,415 @@ env/
 ENV/
 env.bak/
 venv.bak/
+.venv/
+.conda/
+conda_env/
+miniconda/
+anaconda/
+mamba/
 
-# PyCharm
-.idea/
+# ==========================================
+# Machine Learning & Data Science
+# ==========================================
+# Model files
+models/
+*.pth
+*.pt
+*.onnx
+*.h5
+*.hdf5
+*.pb
+*.pkl
+*.pickle
+*.joblib
+*.safetensors
+*.ckpt
+*.model
+*.weights
 
-# VS Code
-.vscode/
-*.code-workspace
+# Datasets and data
+data/
+datasets/
+*.csv
+*.tsv
+*.parquet
+*.feather
+*.npy
+*.npz
+*.mat
+*.bin
+*.dat
+*.data
 
-# Jupyter Notebook
+# ML training artifacts
+checkpoints/
+tensorboard/
+wandb/
+mlruns/
+lightning_logs/
+cometml/
+aim/
+
+# Jupyter notebooks (optional - comment out if you want to track)
 .ipynb_checkpoints
+*/.ipynb_checkpoints/*
 
-# Testing
+# ==========================================
+# GPU & OpenCL
+# ==========================================
+# OpenCL kernels compiled
+*.cl.bin
+*.cl.o
+*.cl.so
+
+# GPU profiling and debug
+*.prof
+*.nvprof
+
+# ==========================================
+# Security & Secrets
+# ==========================================
+# API keys and sensitive configuration
+configs/*.json
+configs/api_keys.json
+*.key
+*.pem
+*.crt
+*.env
+.env.*
+!.env.example
+
+# Secrets
+secrets/
+*.secret
+*.nsight
+gpu_debug.log
+
+# AMD specific
+*.hsaco
+*.isa
+*.elf
+
+# ==========================================
+# Performance & Benchmarks
+# ==========================================
+# Benchmark results
+benchmarks/results/
+performance_results/
+benchmark_*.json
+benchmark_*.csv
+benchmark_*.npz
+comprehensive_*.npz
+fast_integrated_*.npz
+*_results.npz
+*_results.csv
+
+# Profiling data
+*.prof
+profile_results/
+profiling/
+*.lprof
+
+# ==========================================
+# Testing & Coverage
+# ==========================================
 .pytest_cache/
 .coverage
 .coverage.*
 htmlcov/
 .tox/
 .nox/
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
 
-# Models and data
-models/
-*.pth
-*.onnx
-*.safetensors
-data/
-datasets/
-*.bin
+# Test artifacts
+test_results/
+test_data/
+test_models/
+test_outputs/
 
-# Logs
+# ==========================================
+# Documentation
+# ==========================================
+# Sphinx documentation
+docs/_build/
+docs/build/
+*.doctree
+
+# MkDocs
+site/
+
+# ==========================================
+# IDEs & Editors
+# ==========================================
+# PyCharm
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+*.code-workspace
+.history/
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+# ==========================================
+# OS Generated Files
+# ==========================================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ==========================================
+# Logs & Temporary Files
+# ==========================================
 logs/
 *.log
+*.log.*
+log.txt
+debug.log
+error.log
+access.log
 
 # Temporary files
 tmp/
 temp/
 *.tmp
-*.swp
+*.temp
+.cache/
+.tmp/
+
+# ==========================================
+# Docker & Containers
+# ==========================================
+.dockerignore
+docker-compose.override.yml
+.env
+.env.local
+.env.*.local
+
+# Docker volumes
+volumes/
+docker/volumes/
+
+# ==========================================
+# CI/CD & Deployment
+# ==========================================
+# GitHub Actions
+.github/workflows/*.log
+
+# GitLab CI
+.gitlab-ci.yml
+
+# Jenkins
+jenkins/
+
+# Build artifacts
+build/
+dist/
+*.tar.gz
+*.whl
+*.deb
+*.rpm
+
+# ==========================================
+# Secrets & Credentials
+# ==========================================
+# API keys, passwords, secrets
+secrets/
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+*.crt
+*.cer
+*.p12
+*.pfx
+config/secrets.*
+credentials.*
+auth.json
+
+# ==========================================
+# Database
+# ==========================================
+*.db
+*.sqlite
+*.sqlite3
+*.sql
+
+# ==========================================
+# Package Managers
+# ==========================================
+# Node.js (if any JS components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Poetry
+poetry.lock
+
+# Pipenv
+Pipfile.lock
+
+# Conda
+environment.yml
+environment.yaml
+
+# ==========================================
+# Backup & Archive Files
+# ==========================================
+*.bak
+*.backup
+*.old
+*.orig
+*.rej
 *~
 
-# OS
+# ==========================================
+# Project Specific - Radeon RX 580
+# ==========================================
+# Fase directories (development phases)
+fase_*/
+fase_*/**/*
+
+# Results and outputs
+results/
+models/
+*.pkl
+*.pickle
+
+# OpenCL kernels (keep in src/kernels/)
+# *.cl (uncomment if you want to ignore all .cl files)
+
+# Docker/Prometheus configs (keep in root for deployment)
+# alertmanager.yml
+# prometheus.yml
+
+# Build artifacts
+build/
+pytorch_build/
+*.so
+*.o
+
+# IDE and editor files
+.vscode/settings.json
+.idea/
+
+# OS specific
 .DS_Store
 Thumbs.db
 
-# Docker
-.dockerignore
+# Temporary and debug files
+debug_*.py
+test_*.py
+*_debug.py
+*_test.py
 
-# Benchmarks
-benchmarks/results/
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+
+# Sphinx documentation
+docs/_build/
+docs/build/
+
+# Node modules (if any JS components)
+node_modules/
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Large data files
+*.npz
 *.csv
 *.json
-!results/*.json
-pytorch_build/
+*.h5
+*.hdf5
+
+# ==========================================
+# Large Files (Git LFS candidates)
+# ==========================================
+# Consider using Git LFS for these if needed
+*.zip
+*.tar.gz
+*.7z
+*.rar
+*.iso
+*.dmg
+*.exe
+*.msi
+*.deb
+*.rpm
+*.pkg
+
+# Video files
+*.mp4
+*.avi
+*.mkv
+*.mov
+*.wmv
+
+# ==========================================
+# Custom Ignores (uncomment as needed)
+# ==========================================
+# Uncomment to ignore specific files/directories
+# results/
+# experiments/
+# private/
+# local_config.py
+
+# ==========================================
+# End of .gitignore
+# ==========================================

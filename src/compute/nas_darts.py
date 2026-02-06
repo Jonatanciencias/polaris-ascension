@@ -37,17 +37,21 @@ AMD Radeon RX 580 Optimizations:
 - Reduced batch sizes for 8GB VRAM
 - Memory-efficient gradient computation
 - Mixed operation execution
+
+Author: AMD GPU Computing Team
+Date: February 2026
 """
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-from typing import List, Tuple, Dict, Optional, Callable
-from dataclasses import dataclass
+from typing import List, Tuple, Dict, Optional, Callable, Any
+from dataclasses import dataclass, field
 from enum import Enum
 import numpy as np
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -58,9 +62,8 @@ logger = logging.getLogger(__name__)
 
 class SearchSpace(Enum):
     """Supported search spaces."""
-    CNN = "cnn"           # Convolutional cells
-    RNN = "rnn"           # Recurrent cells
-    CUSTOM = "custom"     # User-defined
+    CNN = "cnn"
+    RNN = "rnn"
 
 
 @dataclass
@@ -103,210 +106,130 @@ class DARTSConfig:
 @dataclass
 class SearchResult:
     """Results from architecture search."""
-    
-    # Architecture
-    normal_genotype: List[Tuple[str, int, int]]  # Normal cell operations
-    reduce_genotype: List[Tuple[str, int, int]]  # Reduction cell operations
-    
-    # Performance metrics
+    normal_genotype: List[Tuple[str, int]]
+    reduce_genotype: List[Tuple[str, int]]
     final_train_loss: float
     final_val_loss: float
     final_train_acc: float
     final_val_acc: float
-    
-    # Search statistics
     total_epochs: int
     total_time_seconds: float
     best_epoch: int
-    
-    # Architecture parameters
     architecture_weights: Dict[str, torch.Tensor]
-    
-    def __repr__(self):
-        return (
-            f"SearchResult(\n"
-            f"  Normal: {self.normal_genotype}\n"
-            f"  Reduce: {self.reduce_genotype}\n"
-            f"  Val Acc: {self.final_val_acc:.2f}%\n"
-            f"  Epochs: {self.total_epochs}\n"
-            f")"
-        )
 
 
 # ============================================================================
 # Primitive Operations
 # ============================================================================
 
+# Available primitive operations
+PRIMITIVES = [
+    'none',
+    'max_pool_3x3',
+    'avg_pool_3x3',
+    'skip_connect',
+    'sep_conv_3x3',
+    'sep_conv_5x5',
+    'dil_conv_3x3',
+    'dil_conv_5x5'
+]
+
+
 class Operation(nn.Module):
     """Base class for candidate operations."""
-    
-    def __init__(self, C: int, stride: int, affine: bool = True):
-        """
-        Initialize operation.
-        
-        Args:
-            C: Number of channels
-            stride: Stride for operation
-            affine: Use affine in batch norm
-        """
-        super().__init__()
-        self.C = C
-        self.stride = stride
-        self.affine = affine
+    pass
 
 
 class Identity(Operation):
     """Identity operation (skip connection)."""
-    
-    def forward(self, x):
+    def forward(self, x, drop_path_prob=0.0):
         return x
 
 
 class Zero(Operation):
     """Zero operation (no connection)."""
-    
-    def __init__(self, C, stride):
-        super().__init__(C, stride)
+    def __init__(self, stride):
+        super().__init__()
         self.stride = stride
     
-    def forward(self, x):
+    def forward(self, x, drop_path_prob=0.0):
         if self.stride == 1:
             return x.mul(0.)
         return x[:, :, ::self.stride, ::self.stride].mul(0.)
 
 
-class SepConv(Operation):
-    """
-    Separable Convolution.
+class PoolBN(Operation):
+    """Pooling + Batch Normalization."""
+    def __init__(self, pool_type, C, kernel_size, stride, padding, affine=True):
+        super().__init__()
+        if pool_type.lower() == 'max':
+            self.op = nn.Sequential(
+                nn.MaxPool2d(kernel_size, stride, padding),
+                nn.BatchNorm2d(C, affine=affine)
+            )
+        elif pool_type.lower() == 'avg':
+            self.op = nn.Sequential(
+                nn.AvgPool2d(kernel_size, stride, padding, count_include_pad=False),
+                nn.BatchNorm2d(C, affine=affine)
+            )
     
-    Depthwise conv + pointwise conv (MobileNet-style)
-    More efficient than standard conv.
-    """
-    
-    def __init__(self, C_in: int, C_out: int, kernel_size: int, 
-                 stride: int, padding: int, affine: bool = True):
-        super().__init__(C_out, stride, affine)
-        
+    def forward(self, x, drop_path_prob=0.0):
+        return self.op(x)
+
+
+class ReLUConvBN(Operation):
+    """ReLU + Conv + BatchNorm."""
+    def __init__(self, C_in, C_out, kernel_size, stride, padding, affine=True):
+        super().__init__()
         self.op = nn.Sequential(
-            # Depthwise
-            nn.Conv2d(C_in, C_in, kernel_size=kernel_size, stride=stride,
-                     padding=padding, groups=C_in, bias=False),
+            nn.ReLU(inplace=False),
+            nn.Conv2d(C_in, C_out, kernel_size, stride, padding, bias=False),
+            nn.BatchNorm2d(C_out, affine=affine)
+        )
+    
+    def forward(self, x, drop_path_prob=0.0):
+        return self.op(x)
+
+
+class SepConv(Operation):
+    """Separable Convolution (depthwise + pointwise)."""
+    def __init__(self, C_in, C_out, kernel_size, stride, padding, affine=True):
+        super().__init__()
+        self.op = nn.Sequential(
+            nn.ReLU(inplace=False),
+            nn.Conv2d(C_in, C_in, kernel_size, stride, padding, groups=C_in, bias=False),
+            nn.Conv2d(C_in, C_in, 1, 1, 0, bias=False),
             nn.BatchNorm2d(C_in, affine=affine),
             nn.ReLU(inplace=False),
-            
-            # Pointwise
-            nn.Conv2d(C_in, C_out, kernel_size=1, padding=0, bias=False),
+            nn.Conv2d(C_in, C_in, kernel_size, 1, padding, groups=C_in, bias=False),
+            nn.Conv2d(C_in, C_out, 1, 1, 0, bias=False),
             nn.BatchNorm2d(C_out, affine=affine),
         )
     
-    def forward(self, x):
+    def forward(self, x, drop_path_prob=0.0):
         return self.op(x)
 
 
 class DilConv(Operation):
-    """Dilated Convolution for larger receptive field."""
-    
-    def __init__(self, C_in: int, C_out: int, kernel_size: int,
-                 stride: int, padding: int, dilation: int, affine: bool = True):
-        super().__init__(C_out, stride, affine)
-        
+    """Dilated Convolution."""
+    def __init__(self, C_in, C_out, kernel_size, stride, padding, dilation, affine=True):
+        super().__init__()
         self.op = nn.Sequential(
-            nn.Conv2d(C_in, C_in, kernel_size=kernel_size, stride=stride,
-                     padding=padding, dilation=dilation, groups=C_in, bias=False),
-            nn.BatchNorm2d(C_in, affine=affine),
             nn.ReLU(inplace=False),
-            nn.Conv2d(C_in, C_out, kernel_size=1, padding=0, bias=False),
+            nn.Conv2d(C_in, C_in, kernel_size, stride, padding, dilation=dilation, groups=C_in, bias=False),
+            nn.Conv2d(C_in, C_out, 1, 1, 0, bias=False),
             nn.BatchNorm2d(C_out, affine=affine),
         )
     
-    def forward(self, x):
+    def forward(self, x, drop_path_prob=0.0):
         return self.op(x)
 
 
-class AvgPool(Operation):
-    """Average Pooling operation."""
-    
-    def __init__(self, C: int, stride: int):
-        super().__init__(C, stride)
-        self.pool = nn.AvgPool2d(3, stride=stride, padding=1, count_include_pad=False)
-    
-    def forward(self, x):
-        return self.pool(x)
-
-
-class MaxPool(Operation):
-    """Max Pooling operation."""
-    
-    def __init__(self, C: int, stride: int):
-        super().__init__(C, stride)
-        self.pool = nn.MaxPool2d(3, stride=stride, padding=1)
-    
-    def forward(self, x):
-        return self.pool(x)
-
-
-# ============================================================================
-# Search Space Definition
-# ============================================================================
-
-# DARTS search space: 8 candidate operations
-PRIMITIVES = [
-    'none',           # No connection (learnable)
-    'max_pool_3x3',   # Max pooling
-    'avg_pool_3x3',   # Average pooling
-    'skip_connect',   # Identity skip
-    'sep_conv_3x3',   # Separable 3x3
-    'sep_conv_5x5',   # Separable 5x5
-    'dil_conv_3x3',   # Dilated 3x3
-    'dil_conv_5x5',   # Dilated 5x5
-]
-
-
-def create_operation(primitive: str, C: int, stride: int, affine: bool = True) -> nn.Module:
-    """
-    Factory function to create operation from primitive name.
-    
-    Args:
-        primitive: Operation name from PRIMITIVES
-        C: Number of channels
-        stride: Stride for operation
-        affine: Use affine in batch norm
-    
-    Returns:
-        Operation module
-    """
-    if primitive == 'none':
-        return Zero(C, stride)
-    elif primitive == 'avg_pool_3x3':
-        return AvgPool(C, stride)
-    elif primitive == 'max_pool_3x3':
-        return MaxPool(C, stride)
-    elif primitive == 'skip_connect':
-        return Identity(C, stride) if stride == 1 else FactorizedReduce(C, C, affine)
-    elif primitive == 'sep_conv_3x3':
-        return SepConv(C, C, 3, stride, 1, affine)
-    elif primitive == 'sep_conv_5x5':
-        return SepConv(C, C, 5, stride, 2, affine)
-    elif primitive == 'dil_conv_3x3':
-        return DilConv(C, C, 3, stride, 2, 2, affine)
-    elif primitive == 'dil_conv_5x5':
-        return DilConv(C, C, 5, stride, 4, 2, affine)
-    else:
-        raise ValueError(f"Unknown primitive: {primitive}")
-
-
 class FactorizedReduce(nn.Module):
-    """
-    Factorized reduction for stride=2.
-    
-    Reduces spatial dimensions by 2x while preserving channels.
-    More efficient than strided convolution.
-    """
-    
-    def __init__(self, C_in: int, C_out: int, affine: bool = True):
+    """Factorized reduction for spatial downsampling."""
+    def __init__(self, C_in, C_out, affine=True):
         super().__init__()
         assert C_out % 2 == 0
-        
         self.relu = nn.ReLU(inplace=False)
         self.conv_1 = nn.Conv2d(C_in, C_out // 2, 1, stride=2, padding=0, bias=False)
         self.conv_2 = nn.Conv2d(C_in, C_out // 2, 1, stride=2, padding=0, bias=False)
@@ -319,21 +242,40 @@ class FactorizedReduce(nn.Module):
         return out
 
 
-class ReLUConvBN(nn.Module):
-    """Standard ReLU + Conv + BatchNorm block."""
+def create_operation(primitive: str, C: int, stride: int, affine: bool = True) -> nn.Module:
+    """
+    Factory function to create operation from primitive name.
     
-    def __init__(self, C_in: int, C_out: int, kernel_size: int,
-                 stride: int, padding: int, affine: bool = True):
-        super().__init__()
-        self.op = nn.Sequential(
-            nn.ReLU(inplace=False),
-            nn.Conv2d(C_in, C_out, kernel_size, stride=stride, 
-                     padding=padding, bias=False),
-            nn.BatchNorm2d(C_out, affine=affine)
-        )
+    Args:
+        primitive: Operation name from PRIMITIVES
+        C: Number of channels
+        stride: Stride for the operation
+        affine: Use affine in BatchNorm
     
-    def forward(self, x):
-        return self.op(x)
+    Returns:
+        Operation module
+    """
+    if primitive == 'none':
+        return Zero(stride)
+    elif primitive == 'avg_pool_3x3':
+        return PoolBN('avg', C, 3, stride, 1, affine=affine)
+    elif primitive == 'max_pool_3x3':
+        return PoolBN('max', C, 3, stride, 1, affine=affine)
+    elif primitive == 'skip_connect':
+        if stride == 1:
+            return Identity()
+        else:
+            return FactorizedReduce(C, C, affine=affine)
+    elif primitive == 'sep_conv_3x3':
+        return SepConv(C, C, 3, stride, 1, affine=affine)
+    elif primitive == 'sep_conv_5x5':
+        return SepConv(C, C, 5, stride, 2, affine=affine)
+    elif primitive == 'dil_conv_3x3':
+        return DilConv(C, C, 3, stride, 2, 2, affine=affine)
+    elif primitive == 'dil_conv_5x5':
+        return DilConv(C, C, 5, stride, 4, 2, affine=affine)
+    else:
+        raise ValueError(f"Unknown primitive: {primitive}")
 
 
 # ============================================================================
@@ -342,48 +284,36 @@ class ReLUConvBN(nn.Module):
 
 class MixedOp(nn.Module):
     """
-    Mixed operation with weighted sum over primitives.
+    Mixed operation: weighted sum of all candidate operations.
     
-    This is the key innovation of DARTS:
-    - Instead of choosing one operation, use weighted sum of all
-    - Weights (α) are continuous and learnable
-    - After search, derive discrete architecture by selecting max(α)
+    Key DARTS innovation: Instead of choosing one operation,
+    compute weighted combination using architecture parameters α.
     
     Forward pass:
-        output = Σ_i softmax(α_i) * operation_i(x)
+        out = Σ_i softmax(α_i) * op_i(x)
     """
     
     def __init__(self, C: int, stride: int):
-        """
-        Initialize mixed operation.
-        
-        Args:
-            C: Number of channels
-            stride: Stride for operations
-        """
         super().__init__()
         self._ops = nn.ModuleList()
-        
-        # Create all candidate operations
         for primitive in PRIMITIVES:
             op = create_operation(primitive, C, stride, affine=False)
+            if 'pool' in primitive:
+                op = nn.Sequential(op, nn.BatchNorm2d(C, affine=False))
             self._ops.append(op)
     
     def forward(self, x, weights):
         """
-        Forward pass with architecture weights.
+        Forward pass with weighted operations.
         
         Args:
-            x: Input tensor [N, C, H, W]
-            weights: Architecture parameters [len(PRIMITIVES)]
-                     Normalized via softmax
+            x: Input tensor
+            weights: Architecture weights (softmax of α)
         
         Returns:
             Weighted sum of operations
         """
-        # Memory-efficient implementation
-        # Only compute operations with significant weights
-        return sum(w * op(x) for w, op in zip(weights, self._ops))
+        return sum(w * op(x) if w != 0 else 0 for w, op in zip(weights, self._ops))
 
 
 # ============================================================================
@@ -392,49 +322,47 @@ class MixedOp(nn.Module):
 
 class Cell(nn.Module):
     """
-    DARTS cell with mixed operations.
+    Cell: Basic building block in DARTS.
     
-    A cell has:
-    - 2 input nodes (from previous 2 cells)
-    - N intermediate nodes (default 4)
-    - Each intermediate node receives from 2 predecessors
+    Structure:
+    - 2 input nodes (from previous cells)
+    - k intermediate nodes (computed from previous nodes)
     - Output: concatenation of all intermediate nodes
     
-    Architecture search: Learn which edges (operations) to use
+    Each edge is a MixedOp controlled by architecture parameters.
     """
     
-    def __init__(self, steps: int, multiplier: int, C_prev_prev: int,
+    def __init__(self, steps: int, multiplier: int, C_prev_prev: int, 
                  C_prev: int, C: int, reduction: bool, reduction_prev: bool):
         """
         Initialize cell.
         
         Args:
             steps: Number of intermediate nodes
-            multiplier: Output multiplier (usually steps)
-            C_prev_prev: Channels from cell s-2
-            C_prev: Channels from cell s-1
+            multiplier: Output multiplier
+            C_prev_prev: Channels from cell i-2
+            C_prev: Channels from cell i-1
             C: Current channels
-            reduction: Is this a reduction cell?
-            reduction_prev: Was previous cell reduction?
+            reduction: Is this a reduction cell
+            reduction_prev: Was previous cell reduction
         """
         super().__init__()
         self.reduction = reduction
-        self.steps = steps
-        self.multiplier = multiplier
         
-        # Preprocessing of inputs
+        # Preprocess inputs
         if reduction_prev:
             self.preprocess0 = FactorizedReduce(C_prev_prev, C, affine=False)
         else:
             self.preprocess0 = ReLUConvBN(C_prev_prev, C, 1, 1, 0, affine=False)
         self.preprocess1 = ReLUConvBN(C_prev, C, 1, 1, 0, affine=False)
         
-        # Mixed operations for each edge
-        self._ops = nn.ModuleList()
-        self._bns = nn.ModuleList()
+        self._steps = steps
+        self._multiplier = multiplier
         
-        for i in range(self.steps):
-            for j in range(2 + i):  # Each node connects to all previous
+        # Build edges (MixedOps)
+        self._ops = nn.ModuleList()
+        for i in range(self._steps):
+            for j in range(2 + i):
                 stride = 2 if reduction and j < 2 else 1
                 op = MixedOp(C, stride)
                 self._ops.append(op)
@@ -444,9 +372,9 @@ class Cell(nn.Module):
         Forward pass through cell.
         
         Args:
-            s0: Output from cell s-2
-            s1: Output from cell s-1
-            weights: Architecture parameters for this cell
+            s0: Output from cell i-2
+            s1: Output from cell i-1
+            weights: Architecture weights for this cell
         
         Returns:
             Cell output (concatenation of intermediate nodes)
@@ -457,15 +385,15 @@ class Cell(nn.Module):
         states = [s0, s1]
         offset = 0
         
-        # Compute each intermediate node
-        for i in range(self.steps):
-            s = sum(self._ops[offset + j](h, weights[offset + j])
+        for i in range(self._steps):
+            # Compute node i from all previous nodes
+            s = sum(self._ops[offset + j](h, weights[offset + j]) 
                    for j, h in enumerate(states))
             offset += len(states)
             states.append(s)
         
-        # Concatenate intermediate nodes
-        return torch.cat(states[-self.multiplier:], dim=1)
+        # Output: concatenate intermediate nodes
+        return torch.cat(states[-self._multiplier:], dim=1)
 
 
 # ============================================================================
@@ -697,45 +625,34 @@ class DARTSTrainer:
     
     def step(self, train_data, valid_data):
         """
-        Single optimization step (bilevel).
+        Perform one training step (bilevel optimization).
         
         Args:
-            train_data: Batch from training set
-            valid_data: Batch from validation set
+            train_data: (input, target) for training
+            valid_data: (input, target) for validation
         
         Returns:
-            Tuple of (train_loss, valid_loss)
+            train_loss, valid_loss
         """
+        # Unpack data
         input_train, target_train = train_data
         input_valid, target_valid = valid_data
         
         # 1. Update architecture parameters (α) on validation data
         self.arch_optimizer.zero_grad()
-        loss_valid = self.model._loss(input_valid, target_valid)
-        loss_valid.backward()
-        
-        # Clip architecture gradients
-        nn.utils.clip_grad_norm_(
-            self.model.arch_parameters(),
-            self.config.arch_grad_clip
-        )
-        
+        loss_arch = self.model._loss(input_valid, target_valid)
+        loss_arch.backward()
+        nn.utils.clip_grad_norm_(self.model.arch_parameters(), self.config.arch_grad_clip)
         self.arch_optimizer.step()
         
         # 2. Update network weights (w) on training data
         self.optimizer.zero_grad()
-        loss_train = self.model._loss(input_train, target_train)
-        loss_train.backward()
-        
-        # Clip weight gradients
-        nn.utils.clip_grad_norm_(
-            self.model.parameters(),
-            self.config.grad_clip
-        )
-        
+        loss_weight = self.model._loss(input_train, target_train)
+        loss_weight.backward()
+        nn.utils.clip_grad_norm_(self.model.parameters(), self.config.grad_clip)
         self.optimizer.step()
         
-        return loss_train.item(), loss_valid.item()
+        return loss_weight.item(), loss_arch.item()
 
 
 # ============================================================================
@@ -768,7 +685,6 @@ def search_architecture(
         >>> print(result.normal_genotype)
         [('sep_conv_3x3', 0), ('sep_conv_3x3', 1), ...]
     """
-    import time
     start_time = time.time()
     
     # Create model
@@ -858,7 +774,7 @@ def evaluate(model, data_loader, device):
     Evaluate model accuracy.
     
     Args:
-        model: DARTS network
+        model: Network to evaluate
         data_loader: Data loader
         device: Device
     
@@ -877,32 +793,20 @@ def evaluate(model, data_loader, device):
             total += target.size(0)
             correct += (predicted == target).sum().item()
     
-    return 100.0 * correct / total
+    return 100.0 * correct / total if total > 0 else 0.0
 
 
 # ============================================================================
 # Utility Functions
 # ============================================================================
 
-def save_search_result(result: SearchResult, path: str):
-    """Save search result to file."""
-    import pickle
-    with open(path, 'wb') as f:
-        pickle.dump(result, f)
-    logger.info(f"Search result saved to {path}")
+def count_parameters(model: nn.Module) -> int:
+    """Count trainable parameters in model."""
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-def load_search_result(path: str) -> SearchResult:
-    """Load search result from file."""
-    import pickle
-    with open(path, 'rb') as f:
-        result = pickle.load(f)
-    logger.info(f"Search result loaded from {path}")
-    return result
-
-
-if __name__ == "__main__":
-    # Quick test
-    print("DARTS module loaded successfully!")
-    print(f"Available primitives: {PRIMITIVES}")
-    print(f"Search space: {len(PRIMITIVES)} operations")
+def print_genotype(genotype: List[Tuple[str, int]], name: str = "Cell"):
+    """Pretty print genotype."""
+    print(f"\n{name} Architecture:")
+    for i, (op, from_node) in enumerate(genotype):
+        print(f"  Edge {i}: {op} from node {from_node}")

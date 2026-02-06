@@ -1,0 +1,135 @@
+\section{System Architecture}
+\label{sec:system_architecture}
+
+\subsection{Overall System Design}
+
+Our energy-efficient deep learning inference framework for legacy GPUs follows a modular, hierarchical architecture designed to maximize performance while maintaining energy efficiency. The system is organized into four primary layers, as illustrated in Figure \ref{fig:system_architecture}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/system_architecture.pdf}
+\caption{Overall System Architecture}
+\label{fig:system_architecture}
+\end{figure}
+
+\subsection{Application Layer}
+
+The application layer serves as the primary interface for deep learning workloads. It includes:
+
+\begin{enumerate}
+    \item \textbf{Model Loader:} Supports popular deep learning frameworks (TensorFlow, PyTorch)
+    \item \textbf{Inference Engine:} Optimized execution of neural network models
+    \item \textbf{Workload Analyzer:} Characterizes computational patterns and resource requirements
+    \item \textbf{API Interface:} Provides high-level programming interfaces for application integration
+\end{enumerate}
+
+\subsection{Optimization Layer}
+
+The optimization layer implements our multi-algorithm approach to matrix multiplication:
+
+\subsubsection{Algorithm Implementations}
+
+\begin{enumerate}
+    \item \textbf{Low-Rank Matrix Approximator (LRMA):}
+    \begin{itemize}
+        \item SVD-based dimensionality reduction
+        \item Adaptive rank selection based on error tolerance
+        \item Memory-efficient implementation for large matrices
+    \end{itemize}
+
+    \item \textbf{Coppersmith-Winograd Algorithm (CW):}
+    \begin{itemize}
+        \item Block-based matrix multiplication
+        \item Reduced arithmetic complexity: $O(n^{2.376})$
+        \item Cache-aware memory access patterns
+    \end{itemize}
+
+    \item \textbf{Quantum Annealing Simulator (QAS):}
+    \begin{itemize}
+        \item Simulated quantum optimization for matrix operations
+        \item Parallel processing of subproblems
+        \item Adaptive cooling schedules
+    \end{itemize}
+
+    \item \textbf{Tensor Core Emulator (TCE):}
+    \begin{itemize}
+        \item Software emulation of tensor operations
+        \item Tile-based computation patterns
+        \item Memory layout optimization
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Intelligent Technique Selector}
+
+The technique selector employs machine learning algorithms to make optimal algorithm choices:
+
+\begin{enumerate}
+    \item \textbf{Feature Extraction:} Analyzes matrix characteristics (sparsity, condition number, dimensions)
+    \item \textbf{Performance Prediction:} Uses regression models to estimate execution time and energy consumption
+    \item \textbf{Bayesian Optimization:} Explores algorithm parameter spaces for optimal configurations
+    \item \textbf{Adaptive Learning:} Updates selection models based on execution feedback
+\end{enumerate}
+
+\subsection{Hardware Abstraction Layer}
+
+The hardware abstraction layer provides unified access to GPU resources:
+
+\begin{enumerate}
+    \item \textbf{Memory Management:} Efficient GPU memory allocation and transfer
+    \item \textbf{Kernel Launch:} Optimized kernel execution with appropriate workgroup sizes
+    \item \textbf{Synchronization:} Proper barrier management for concurrent operations
+    \item \textbf{Error Handling:} Robust error detection and recovery mechanisms
+\end{enumerate}
+
+\subsection{Power Profiling Framework}
+
+The power profiling framework provides comprehensive energy monitoring:
+
+\subsubsection{Power Sensors}
+
+\begin{enumerate}
+    \item \textbf{GPU Power Draw:} Real-time measurement of GPU power consumption
+    \item \textbf{Memory Power:} Separate tracking of memory subsystem power
+    \item \textbf{System Integration:} Correlation with total system power consumption
+\end{enumerate}
+
+\subsubsection{Performance Counters}
+
+\begin{enumerate}
+    \item \textbf{Instruction Throughput:} Monitoring of arithmetic operations
+    \item \textbf{Memory Bandwidth:} Tracking of memory access patterns
+    \item \textbf{Cache Hit Rates:} Analysis of memory hierarchy efficiency
+    \item \textbf{Branch Divergence:} Tracking of execution flow efficiency
+\end{enumerate}
+
+\subsubsection{Thermal Monitoring}
+
+\begin{enumerate}
+    \item \textbf{Junction Temperature:} GPU die temperature monitoring
+    \item \textbf{Memory Temperature:} VRAM temperature tracking
+    \item \textbf{Fan Speed Control:} Dynamic cooling management
+\end{enumerate}
+
+\subsection{Data Management Layer}
+
+The data management layer handles experimental data and model updates:
+
+\begin{enumerate}
+    \item \textbf{Performance Database:} Storage of benchmarking results and performance metrics
+    \item \textbf{Model Repository:} Versioned storage of trained selection models
+    \item \textbf{Calibration Data:} Hardware-specific calibration parameters
+    \item \textbf{Logging System:} Comprehensive logging of system events and performance data
+\end{enumerate}
+
+\subsection{System Integration}
+
+The layers communicate through well-defined interfaces:
+
+\begin{enumerate}
+    \item \textbf{Configuration Files:} JSON-based configuration for system parameters
+    \item \textbf{Shared Memory:} Efficient data sharing between components
+    \item \textbf{Message Passing:} Asynchronous communication for real-time adaptation
+    \item \textbf{RESTful APIs:} External interfaces for monitoring and control
+\end{enumerate}
+
+This modular architecture ensures scalability, maintainability, and extensibility while providing the performance and energy efficiency required for production deep learning inference on legacy GPUs.

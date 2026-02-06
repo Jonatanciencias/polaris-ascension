@@ -1,0 +1,184 @@
+{
+  "timestamp": 1769279432.0039577,
+  "hardware_specs": {
+    "peak_gflops": 6170,
+    "peak_bandwidth_gbs": 256,
+    "max_waves_per_cu": 10,
+    "cu_count": 36,
+    "lds_size_kb": 64
+  },
+  "baselines": {
+    "expected_task_1_1_2": 650,
+    "phase_1_target": 750
+  },
+  "original_kernel": {
+    "256": {
+      "name": "gemm_hybrid_float4_v1",
+      "matrix_size": 256,
+      "compile_time_ms": 0.0,
+      "binary_size_kb": 0.0,
+      "register_usage": 24,
+      "lds_usage_bytes": 2560,
+      "gpu_time_ms": 0.050918578271378793,
+      "gpu_time_std_ms": 0.0010837655987967747,
+      "gflops": 658.9821071037418,
+      "gflops_std": 14.025963845559433,
+      "error_rel": "0.0",
+      "stability_cv": 2.128428631727836,
+      "bandwidth_util_percent": 5.618819390381376,
+      "occupancy_percent": 10.680423129720289
+    },
+    "512": {
+      "name": "gemm_hybrid_float4_v1",
+      "matrix_size": 512,
+      "compile_time_ms": 0.0,
+      "binary_size_kb": 0.0,
+      "register_usage": 24,
+      "lds_usage_bytes": 2560,
+      "gpu_time_ms": 0.41204858505241676,
+      "gpu_time_std_ms": 0.00811146874788158,
+      "gflops": 651.4655449328926,
+      "gflops_std": 12.824561471003667,
+      "error_rel": "0.0",
+      "stability_cv": 1.9685709506440168,
+      "bandwidth_util_percent": 2.7773646633003715,
+      "occupancy_percent": 10.558598783353203
+    },
+    "1024": {
+      "name": "gemm_hybrid_float4_v1",
+      "matrix_size": 1024,
+      "compile_time_ms": 0.0,
+      "binary_size_kb": 0.0,
+      "register_usage": 24,
+      "lds_usage_bytes": 2560,
+      "gpu_time_ms": 3.3066339349314773,
+      "gpu_time_std_ms": 0.0699865478615011,
+      "gflops": 649.4470480429827,
+      "gflops_std": 13.74586900328074,
+      "error_rel": "0.0",
+      "stability_cv": 2.1165496162777213,
+      "bandwidth_util_percent": 1.3843796467433465,
+      "occupancy_percent": 10.52588408497541
+    },
+    "2048": {
+      "name": "gemm_hybrid_float4_v1",
+      "matrix_size": 2048,
+      "compile_time_ms": 0.0,
+      "binary_size_kb": 0.0,
+      "register_usage": 24,
+      "lds_usage_bytes": 2560,
+      "gpu_time_ms": 26.349969163278576,
+      "gpu_time_std_ms": 0.5047012381166298,
+      "gflops": 651.9882083179792,
+      "gflops_std": 12.488031918993878,
+      "error_rel": "0.0",
+      "stability_cv": 1.9153769592261363,
+      "bandwidth_util_percent": 0.6948982278323745,
+      "occupancy_percent": 10.567069826871625
+    }
+  },
+  "optimized_kernel": {
+    "256": {
+      "name": "gemm_hybrid_float4_full_opt",
+      "matrix_size": 256,
+      "compile_time_ms": 0.0,
+      "binary_size_kb": 0.0,
+      "register_usage": 22,
+      "lds_usage_bytes": 2816,
+      "gpu_time_ms": 0.04328079153067198,
+      "gpu_time_std_ms": 0.0009212007589772568,
+      "gflops": 775.2730671808727,
+      "gflops_std": 16.50113393595224,
+      "error_rel": "0.0",
+      "stability_cv": 2.1284286317278314,
+      "bandwidth_util_percent": 6.610375753389854,
+      "occupancy_percent": 12.565203682023867
+    },
+    "512": {
+      "name": "gemm_hybrid_float4_full_opt",
+      "matrix_size": 512,
+      "compile_time_ms": 0.0,
+      "binary_size_kb": 0.0,
+      "register_usage": 22,
+      "lds_usage_bytes": 2816,
+      "gpu_time_ms": 0.3502412972945543,
+      "gpu_time_std_ms": 0.006894748435699333,
+      "gflops": 766.4300528622265,
+      "gflops_std": 15.087719377651348,
+      "error_rel": "0.0",
+      "stability_cv": 1.9685709506440134,
+      "bandwidth_util_percent": 3.267487839176907,
+      "occupancy_percent": 12.421880921592003
+    },
+    "1024": {
+      "name": "gemm_hybrid_float4_full_opt",
+      "matrix_size": 1024,
+      "compile_time_ms": 0.0,
+      "binary_size_kb": 0.0,
+      "register_usage": 22,
+      "lds_usage_bytes": 2816,
+      "gpu_time_ms": 2.8106388446917556,
+      "gpu_time_std_ms": 0.05948856568227588,
+      "gflops": 764.0553506388032,
+      "gflops_std": 16.17161059209497,
+      "error_rel": "0.0",
+      "stability_cv": 2.1165496162777195,
+      "bandwidth_util_percent": 1.6286819373451136,
+      "occupancy_percent": 12.38339304114754
+    },
+    "2048": {
+      "name": "gemm_hybrid_float4_full_opt",
+      "matrix_size": 2048,
+      "compile_time_ms": 0.0,
+      "binary_size_kb": 0.0,
+      "register_usage": 22,
+      "lds_usage_bytes": 2816,
+      "gpu_time_ms": 22.39747378878679,
+      "gpu_time_std_ms": 0.4289960523991358,
+      "gflops": 767.0449509623284,
+      "gflops_std": 14.69180225763987,
+      "error_rel": "0.0",
+      "stability_cv": 1.9153769592261383,
+      "bandwidth_util_percent": 0.8175273268616171,
+      "occupancy_percent": 12.431846855143085
+    }
+  },
+  "comparison": {
+    "256": {
+      "original_gflops": 658.9821071037418,
+      "optimized_gflops": 775.2730671808727,
+      "improvement_percent": 17.647058823529406,
+      "original_error": "0.0",
+      "optimized_error": "0.0",
+      "original_stability": 2.128428631727836,
+      "optimized_stability": 2.1284286317278314
+    },
+    "512": {
+      "original_gflops": 651.4655449328926,
+      "optimized_gflops": 766.4300528622265,
+      "improvement_percent": 17.64705882352939,
+      "original_error": "0.0",
+      "optimized_error": "0.0",
+      "original_stability": 1.9685709506440168,
+      "optimized_stability": 1.9685709506440134
+    },
+    "1024": {
+      "original_gflops": 649.4470480429827,
+      "optimized_gflops": 764.0553506388032,
+      "improvement_percent": 17.64705882352942,
+      "original_error": "0.0",
+      "optimized_error": "0.0",
+      "original_stability": 2.1165496162777213,
+      "optimized_stability": 2.1165496162777195
+    },
+    "2048": {
+      "original_gflops": 651.9882083179792,
+      "optimized_gflops": 767.0449509623284,
+      "improvement_percent": 17.647058823529388,
+      "original_error": "0.0",
+      "optimized_error": "0.0",
+      "original_stability": 1.9153769592261363,
+      "optimized_stability": 1.9153769592261383
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "timestamp": "2026-01-24 20:19:54",
+  "phase": "Phase 2 - Technique 1",
+  "technique": "Block Recursive GEMM",
+  "results": [
+    {
+      "variant": "optimized",
+      "peak_gflops": 148.84613387410602,
+      "peak_size": 2048,
+      "avg_gflops": 103.07735230031938,
+      "improvement_vs_phase1": -83.63228029105736,
+      "target_gflops": 860.0,
+      "min_gflops": 850.0,
+      "all_passed": false,
+      "details": [
+        {
+          "kernel_variant": "optimized",
+          "matrix_size": 256,
+          "iterations": 20,
+          "time_mean_ms": 0.948241749938461,
+          "time_std_ms": 0.029232608396344832,
+          "gflops": 35.385946676760035,
+          "relative_error": NaN,
+          "cv_percent": 3.082822328614193,
+          "memory_mb": 0.75,
+          "passed": false
+        },
+        {
+          "kernel_variant": "optimized",
+          "matrix_size": 512,
+          "iterations": 20,
+          "time_mean_ms": 2.6530906001426047,
+          "time_std_ms": 0.20127539476110975,
+          "gflops": 101.17839774697913,
+          "relative_error": NaN,
+          "cv_percent": 7.586450110308752,
+          "memory_mb": 3.0,
+          "passed": false
+        },
+        {
+          "kernel_variant": "optimized",
+          "matrix_size": 1024,
+          "iterations": 20,
+          "time_mean_ms": 16.92278754999279,
+          "time_std_ms": 1.1316919495653452,
+          "gflops": 126.89893090343234,
+          "relative_error": NaN,
+          "cv_percent": 6.687384960794048,
+          "memory_mb": 12.0,
+          "passed": false
+        },
+        {
+          "kernel_variant": "optimized",
+          "matrix_size": 2048,
+          "iterations": 20,
+          "time_mean_ms": 115.42032525030663,
+          "time_std_ms": 14.056245338725605,
+          "gflops": 148.84613387410602,
+          "relative_error": NaN,
+          "cv_percent": 12.178310283082713,
+          "memory_mb": 48.0,
+          "passed": false
+        }
+      ]
+    }
+  ],
+  "comparison_with_phase1": {},
+  "acceptance_status": {
+    "optimized": false
+  },
+  "all_variants_passed": false
+}

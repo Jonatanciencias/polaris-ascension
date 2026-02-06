@@ -1,14 +1,21 @@
 """
-Radeon RX 580 AI Framework
+Radeon RX 580 Energy-Efficient Computing Framework
 
-A framework for running AI workloads on AMD Radeon RX 580 GPUs.
+A comprehensive framework for energy-efficient deep learning inference
+on AMD Polaris architecture GPUs, featuring multi-algorithm optimization
+and hardware-based power profiling.
 """
 
-__version__ = "0.6.0-dev"
-__author__ = "RX580 AI Framework Contributors"
+__version__ = "1.0.0"
+__author__ = "Jonathan Ciencias"
+__description__ = "Energy-efficient deep learning inference framework for AMD Polaris GPUs"
 
-from src.core.gpu import GPUManager
-from src.core.memory import MemoryManager
-from src.utils.config import Config
-
-__all__ = ["GPUManager", "MemoryManager", "Config"]
+# Submodules available for import
+__all__ = [
+    'optimization_engines',
+    'benchmarking',
+    'ml_models',
+    'hardware_abstraction',
+    'utilities',
+    'kernels'
+]

@@ -1,0 +1,13 @@
+\section*{Abstract}
+
+The proliferation of deep learning applications has led to an increased demand for energy-efficient computing solutions. While modern GPUs offer superior performance, legacy hardware such as the AMD Radeon RX 580 (Polaris architecture) remains widely deployed in data centers and edge computing environments. This paper presents a comprehensive hardware-based power profiling framework specifically designed for legacy GPUs, enabling real-time power monitoring and performance benchmarking.
+
+We develop a multi-algorithm optimization system that implements four distinct matrix multiplication techniques: Low-Rank Approximation, Coppersmith-Winograd Algorithm, Quantum Annealing Simulation, and Tensor Core Emulation. Each algorithm is optimized for different matrix characteristics and computational patterns, providing adaptive optimization based on input data properties.
+
+The framework includes an intelligent technique selector that uses Bayesian optimization and machine learning to recommend the most appropriate algorithm for specific workloads. We validate our system through extensive benchmarking on consumer-grade AMD Polaris hardware, achieving up to 95.6 GFLOPS in optimized matrix operations while maintaining energy efficiency.
+
+Our experimental results demonstrate that legacy GPUs can achieve competitive performance through intelligent algorithm selection and hardware-aware optimization. The power profiling framework provides real-time monitoring capabilities, enabling dynamic adaptation to changing workload characteristics and power constraints.
+
+This work contributes to sustainable computing by extending the useful life of legacy hardware through software optimization, reducing electronic waste and energy consumption in AI inference workloads. The framework is open-source and can be adapted to other legacy GPU architectures.
+
+\textbf{Keywords:} Energy-efficient computing, legacy GPUs, AMD Polaris, power profiling, deep learning inference, hardware optimization, matrix multiplication algorithms

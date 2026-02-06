@@ -1,0 +1,110 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,english]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% Configuración de geometría
+\geometry{margin=1in}
+
+% Configuración de hipervínculos
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor=red,
+}
+
+% Configuración de código
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny,
+    frame=single,
+    breaklines=true,
+    captionpos=b,
+}
+
+% Título y autores
+\title{Energy-Efficient Deep Learning Inference on Legacy GPUs: \\
+A Hardware-Based Power Profiling Framework for AMD Polaris Architecture}
+
+\author{
+    Jonathan Ciencias \\
+    \texttt{jonathan.ciencias@email.com} \\
+    Independent Researcher
+}
+
+\date{\today}
+
+\begin{document}
+
+% Portada
+\maketitle
+
+% Resumen
+\input{sections/abstract}
+
+% Palabras clave
+\textbf{Keywords:} Energy-efficient computing, legacy GPUs, AMD Polaris, power profiling, deep learning inference, hardware optimization, matrix multiplication algorithms
+
+% Introducción
+\input{sections/introduction}
+
+% Estado del arte
+\input{sections/related_work}
+
+% Metodología
+\input{sections/methodology}
+
+% Arquitectura del Sistema
+\input{sections/system_architecture}
+
+% Marco de Perfilado de Energía
+\input{sections/power_profiling_framework}
+
+% Algoritmos de Optimización
+\input{sections/optimization_algorithms}
+
+% Resultados Experimentales
+\input{sections/experimental_results}
+
+% Análisis de Performance
+\input{sections/performance_analysis}
+
+% Eficiencia Energética
+\input{sections/energy_efficiency}
+
+% Conclusiones
+\input{sections/conclusions}
+
+% Trabajo Futuro
+\input{sections/future_work}
+
+% Agradecimientos
+\input{sections/acknowledgments}
+
+% Referencias
+\input{sections/references}
+
+% Apéndices
+\appendix
+\input{sections/appendix}
+
+\end{document}
