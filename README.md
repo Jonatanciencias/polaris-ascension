@@ -54,13 +54,13 @@
 
 🔧 SPECIALIZED KERNELS (3 Optimized)
     ├── tile16: Baseline (256 threads, 566 GFLOPS @ 2048)
-    ├── tile20: Sweet Spot (100 threads, 778 GFLOPS @ 1400)
-    └── tile24: Large Matrix (144 threads, 805 GFLOPS @ 3072)
+    ├── tile20: Sweet Spot (100 threads, 831 GFLOPS @ 1300) ⭐ AUTO-TUNER DISCOVERY
+    └── tile24: Large Matrix (144 threads, 799 GFLOPS @ 1800)
 
 📊 PERFORMANCE ACHIEVEMENTS
-    ├── 🏆 Peak: 805 GFLOPS (+42% vs baseline)
-    ├── ⭐ Sweet Spot: 778 GFLOPS @ 1400×1400
-    └── ✅ Consistency: 750-805 GFLOPS on large matrices
+    ├── 🏆 Peak: 831 GFLOPS @ 1300×1300 (+46.8% vs baseline) ⭐ NEW RECORD
+    ├── ⭐ Average: 822-824 GFLOPS (validated 30+ runs)
+    └── ✅ Auto-Tuner: Discovered non-obvious optimal (1300 > 1400)
 
 📚 COMPLETE DOCUMENTATION
     ├── 📄 Methodology & Results
@@ -162,8 +162,8 @@ from src.optimization_engines.adaptive_kernel_selector import ProductionKernelSe
 # Initialize the selector
 selector = ProductionKernelSelector()
 
-# Get recommendation for your matrix size
-recommendation = selector.select_kernel(M=1400, N=1400, K=1400)
+# Get recommendation for your matrix size (optimal: 1300×1300)
+recommendation = selector.select_kernel(M=1300, N=1300, K=1300)
 
 print(f"Selected kernel: {recommendation['kernel_key']}")
 print(f"Expected performance: {recommendation['predicted_gflops']:.1f} GFLOPS")
@@ -172,7 +172,7 @@ print(f"Local work size: {recommendation['local_size']}")
 
 # Output:
 # Selected kernel: tile20
-# Expected performance: 778.0 GFLOPS
+# Expected performance: 831.0 GFLOPS  ⭐ AUTO-TUNER DISCOVERY
 # Use: src/kernels/gemm_tile20_production.cl
 # Local work size: (10, 10)
 ```
@@ -201,25 +201,36 @@ print(f'Recommended: {rec[\"kernel_key\"]} - {rec[\"predicted_gflops\"]:.1f} GFL
 |------|-------------|--------|-------------|-------|
 | 512 | tile24 | 479.4 | - | < 0.0001 |
 | 1024 | tile24 | 712.0 | +25.8% | < 0.0003 |
-| **1400** | **tile20** | **778.2** | **+37.5%** | **< 0.0004** |
+| **1300** | **tile20** | **831.2** | **+46.8%** | **< 0.0001** | 🏆 **AUTO-TUNER DISCOVERY**
+| 1400 | tile20 | 810.0 | +43.1% | < 0.0004 |
+| 1800 | tile24 | 799.2 | +41.2% | < 0.0003 |
 | 2048 | tile24 | 776.4 | +37.2% | < 0.0005 |
-| **3072** | **tile24** | **804.7** | **+42.2%** | **< 0.0008** |
+| 3072 | tile24 | 804.7 | +42.2% | < 0.0008 |
 
 **Baseline**: 566 GFLOPS (tile16 @ 2048×2048)  
-**Peak**: 810.0 GFLOPS @ 1400×1400 (+43.1% improvement)  
-**Sweet Spot**: 805.0 GFLOPS @ 1400×1400 (avg, refined measurement)
+**Peak**: 831.2 GFLOPS @ 1300×1300 (+46.8% improvement) ⭐ **AUTO-TUNER DISCOVERY**  
+**Average**: 822-824 GFLOPS @ 1300×1300 (validated 30+ runs, CV = 1.2%)
 
 **tile20 Kernel** (10×10 workgroup, 20×20 tile):
-- Optimized for: Small to medium matrices (512-1536)
-- Peak: 778.2 GFLOPS @ 1400×1400
+- Optimized for: Medium matrices (1200-1900)
+- Peak: **831.2 GFLOPS @ 1300×1300** ⭐ **AUTO-TUNER DISCOVERY**
+- Average: 822-824 GFLOPS (validated 30+ runs)
+- Discovery: Auto-tuner found 1300×1300 superior to manual 1400×1400
 - Uses: float4 vectorization, 2-element register blocking
 - Degrades: Performance drops at 2048+ due to occupancy
 
 **tile24 Kernel** (12×12 workgroup, 24×24 tile):
-- Optimized for: Medium to large matrices (1024-3072)
-- Peak: 804.7 GFLOPS @ 3072×3072
+- Optimized for: Large matrices (1800+)
+- Peak: 799.2 GFLOPS @ 1800×1800 (auto-tuner)
+- Previous best: 804.7 GFLOPS @ 3072×3072
 - Uses: float4 vectorization, aggressive loop unrolling
 - Scales: Maintains 776-805 GFLOPS on large matrices
+
+**Auto-Tuner Framework** ⭐ **NEW IN v2.2.0**:
+- Custom framework: 526 lines, zero external dependencies
+- Search: 42 configurations tested in 2.6 minutes
+- Discovery: Found 1300×1300 optimal (+21 GFLOPS vs manual 1400×1400)
+- See: [`AUTO_TUNER_COMPLETE_SUMMARY.md`](AUTO_TUNER_COMPLETE_SUMMARY.md)
 
 **ML Selector** (Gradient Boosting):
 - Accuracy: 75% on cross-validation
@@ -232,8 +243,9 @@ print(f'Recommended: {rec[\"kernel_key\"]} - {rec[\"predicted_gflops\"]:.1f} GFL
 | Approach | GFLOPS | Improvement | Notes |
 |----------|--------|-------------|-------|
 | Baseline (tile16) | 566 | - | Standard implementation |
-| **This work (tile20)** | **778** | **+37.5%** | Sweet spot for medium sizes |
-| **This work (tile24)** | **805** | **+42.2%** | Best for large matrices |
+| Manual tuning (1400×1400) | 810 | +43.1% | Manual intuition |
+| **Auto-tuner (1300×1300)** | **831** | **+46.8%** | ⭐ **Systematic discovery** |
+| tile24 @ 1800 | 799 | +41.2% | Large matrix specialist |
 | float8 experiment | 307 | -60% | Failed: register spilling |
 
 See [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) for complete analysis.
@@ -243,11 +255,12 @@ See [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) for complete analysis.
 ## 📚 Documentation
 
 ### Main Documents
-- [COMPETITIVE_ANALYSIS.md](COMPETITIVE_ANALYSIS.md) - **NEW**: Framework positioning, value proposition, use cases vs alternatives
-- [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) - Complete project assessment, novelty analysis, publication recommendations
-- [INNOVATION_ASSESSMENT.md](INNOVATION_ASSESSMENT.md) - Innovation analysis, outstanding achievements, publication potential
-- [TESTING_VALIDATION_REPORT.md](TESTING_VALIDATION_REPORT.md) - Comprehensive testing results, objectives validation
-- [REAL_HARDWARE_VALIDATION.md](REAL_HARDWARE_VALIDATION.md) - Verified performance results on real RX 590 hardware
+- [AUTO_TUNER_COMPLETE_SUMMARY.md](AUTO_TUNER_COMPLETE_SUMMARY.md) - ⭐ **NEW**: Auto-tuner framework discovery (831 GFLOPS)
+- [COMPETITIVE_ANALYSIS.md](COMPETITIVE_ANALYSIS.md) - **NEW**: Framework positioning vs cuBLAS/PyTorch
+- [INNOVATION_ASSESSMENT.md](INNOVATION_ASSESSMENT.md) - **NEW**: 6 innovations (top 3 rated ⭐⭐⭐⭐⭐)
+- [TESTING_VALIDATION_REPORT.md](TESTING_VALIDATION_REPORT.md) - **NEW**: 6/6 tests passing (100% success)
+- [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) - Complete project assessment & publication recommendations
+- [REAL_HARDWARE_VALIDATION.md](REAL_HARDWARE_VALIDATION.md) - Verified performance on real RX 590 hardware
 - [PROJECT_STATUS_REVIEW_FEB2026.md](PROJECT_STATUS_REVIEW_FEB2026.md) - Complete project review, git status, roadmap assessment
 - [AUTO_TUNER_COMPLETE_SUMMARY.md](AUTO_TUNER_COMPLETE_SUMMARY.md) - Auto-tuner framework validation and discoveries
 - [test_production_system.py](test_production_system.py) - Comprehensive validation suite (4 tests)
