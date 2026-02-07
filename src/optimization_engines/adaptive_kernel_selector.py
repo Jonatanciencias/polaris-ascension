@@ -218,6 +218,19 @@ class ProductionKernelSelector:
         Everything else must fall back to the existing production policy.
         """
         return M == 1400 and N == 1400 and K == 1400
+
+    def _eligible_kernel_keys(self, M: int, N: int, K: int) -> list[str]:
+        """
+        Return kernels that are eligible for selection at the given shape.
+
+        Rules:
+        - `tile16` is not a production GEMM path (debug-only), so exclude it.
+        - The promoted T2 kernel must not participate outside its validated scope.
+        """
+        base_keys = [key for key in self.kernel_configs.keys() if key != "tile16"]
+        if self._in_t2_promoted_scope(M, N, K):
+            return base_keys
+        return [key for key in base_keys if key != "tile20_v3_1400"]
     
     def select_kernel(self, M: int, N: int, K: int) -> Dict:
         """
@@ -239,9 +252,11 @@ class ProductionKernelSelector:
                 'best_for': str            # Description of use case
             }
         """
-        # Get predictions for all kernels
+        eligible_keys = self._eligible_kernel_keys(M, N, K)
+
+        # Get predictions for eligible kernels only.
         predictions = {}
-        for kernel_key in self.kernel_configs.keys():
+        for kernel_key in eligible_keys:
             predictions[kernel_key] = self._predict_performance(M, N, K, kernel_key)
 
         # Hard scope override for the promoted T2 candidate.
@@ -313,6 +328,9 @@ class ProductionKernelSelector:
         """
         predictions = {}
         for kernel_key in self.kernel_configs.keys():
+            if kernel_key == "tile20_v3_1400" and not self._in_t2_promoted_scope(M, N, K):
+                predictions[kernel_key] = None
+                continue
             predictions[kernel_key] = self._predict_performance(M, N, K, kernel_key)
         
         selected = self.select_kernel(M, N, K)['kernel_key']
