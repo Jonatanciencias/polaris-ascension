@@ -1,0 +1,1075 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-07T18:40:01.563012+00:00",
+    "search_space": "expanded",
+    "kernels": [
+      "tile20",
+      "tile24"
+    ],
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ],
+    "runs_per_config": 12,
+    "warmup": 2,
+    "replay_sessions": 5,
+    "replay_runs": 10,
+    "top_k": 5,
+    "correctness_threshold": 0.001,
+    "seed": 42,
+    "input_distribution": "standard_normal",
+    "config_count": 6,
+    "dimensions": {
+      "vector_widths": [
+        4,
+        8
+      ],
+      "unroll_k": [
+        0,
+        4,
+        8,
+        10
+      ],
+      "local_sizes": [
+        "10x10",
+        "12x12",
+        "5x5"
+      ]
+    }
+  },
+  "search": {
+    "configs": [
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "tile_size": 20,
+        "local_size": [
+          10,
+          10
+        ],
+        "vector_width": 4,
+        "unroll_k": 10,
+        "source": "production"
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "tile_size": 24,
+        "local_size": [
+          12,
+          12
+        ],
+        "vector_width": 4,
+        "unroll_k": 0,
+        "source": "production"
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "tile_size": 20,
+        "local_size": [
+          10,
+          10
+        ],
+        "vector_width": 4,
+        "unroll_k": 4,
+        "source": "research"
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "tile_size": 20,
+        "local_size": [
+          10,
+          10
+        ],
+        "vector_width": 4,
+        "unroll_k": 0,
+        "source": "research"
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "tile_size": 20,
+        "local_size": [
+          5,
+          5
+        ],
+        "vector_width": 4,
+        "unroll_k": 0,
+        "source": "research"
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "tile_size": 20,
+        "local_size": [
+          10,
+          10
+        ],
+        "vector_width": 8,
+        "unroll_k": 8,
+        "source": "research"
+      }
+    ],
+    "raw_candidates": [
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 799.6565129458484,
+        "avg_time_ms": 6.862946666666666,
+        "max_error": 0.0004119873046875,
+        "runs": 12,
+        "seed": 1442
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 291.3703053746867,
+        "avg_time_ms": 58.962320000000005,
+        "max_error": 0.0004730224609375,
+        "runs": 12,
+        "seed": 2090
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 156.29767924247145,
+        "avg_time_ms": 370.9719733333333,
+        "max_error": 0.0007171630859375,
+        "runs": 12,
+        "seed": 3114
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 768.5427749323603,
+        "avg_time_ms": 7.140786666666667,
+        "max_error": 0.00030517578125,
+        "runs": 12,
+        "seed": 2442
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 739.8474408605608,
+        "avg_time_ms": 23.220826666666667,
+        "max_error": 0.00049591064453125,
+        "runs": 12,
+        "seed": 3090
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 710.4422045030487,
+        "avg_time_ms": 81.61404,
+        "max_error": 0.000823974609375,
+        "runs": 12,
+        "seed": 4114
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 837.8114313629702,
+        "avg_time_ms": 6.5504,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 3442
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 234.31026494082556,
+        "avg_time_ms": 73.32102666666667,
+        "max_error": 0.0005340576171875,
+        "runs": 12,
+        "seed": 4090
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 193.45319044744846,
+        "avg_time_ms": 299.72138666666666,
+        "max_error": 0.000732421875,
+        "runs": 12,
+        "seed": 5114
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 926.6388404857424,
+        "avg_time_ms": 5.92248,
+        "max_error": 0.000396728515625,
+        "runs": 12,
+        "seed": 4442
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 336.0612767608923,
+        "avg_time_ms": 51.12124,
+        "max_error": 0.000518798828125,
+        "runs": 12,
+        "seed": 5090
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 222.68746432121455,
+        "avg_time_ms": 260.3741466666666,
+        "max_error": 0.0008087158203125,
+        "runs": 12,
+        "seed": 6114
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 631.9639246249441,
+        "avg_time_ms": 8.684040000000001,
+        "max_error": 0.0003204345703125,
+        "runs": 12,
+        "seed": 5442
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 435.3588363311996,
+        "avg_time_ms": 39.4614,
+        "max_error": 0.00048828125,
+        "runs": 12,
+        "seed": 6090
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 302.74087458201,
+        "avg_time_ms": 191.52372,
+        "max_error": 0.000732421875,
+        "runs": 12,
+        "seed": 7114
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 308.9862757845143,
+        "avg_time_ms": 17.761306666666666,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 6442
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 223.03438975872297,
+        "avg_time_ms": 77.02789333333332,
+        "max_error": 20.885696411132812,
+        "runs": 12,
+        "seed": 7090
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 182.1675576732443,
+        "avg_time_ms": 318.28970666666663,
+        "max_error": 25.81478500366211,
+        "runs": 12,
+        "seed": 8114
+      }
+    ],
+    "baseline_by_size": {
+      "1400": 799.6565129458484,
+      "2048": 739.8474408605608,
+      "3072": 710.4422045030487
+    },
+    "baseline_config_by_size": {
+      "1400": "t20_prod_v4_u10_l10",
+      "2048": "t24_prod_v4_u0_l12",
+      "3072": "t24_prod_v4_u0_l12"
+    },
+    "ranked_candidates": [
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 926.6388404857424,
+        "avg_time_ms": 5.92248,
+        "max_error": 0.000396728515625,
+        "runs": 12,
+        "seed": 4442,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 15.879608992629207
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 837.8114313629702,
+        "avg_time_ms": 6.5504,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 3442,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 4.771413450578079
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 799.6565129458484,
+        "avg_time_ms": 6.862946666666666,
+        "max_error": 0.0004119873046875,
+        "runs": 12,
+        "seed": 1442,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 739.8474408605608,
+        "avg_time_ms": 23.220826666666667,
+        "max_error": 0.00049591064453125,
+        "runs": 12,
+        "seed": 3090,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 710.4422045030487,
+        "avg_time_ms": 81.61404,
+        "max_error": 0.000823974609375,
+        "runs": 12,
+        "seed": 4114,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 768.5427749323603,
+        "avg_time_ms": 7.140786666666667,
+        "max_error": 0.00030517578125,
+        "runs": 12,
+        "seed": 2442,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -3.8908878386881875
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 631.9639246249441,
+        "avg_time_ms": 8.684040000000001,
+        "max_error": 0.0003204345703125,
+        "runs": 12,
+        "seed": 5442,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -20.970577442449994
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 435.3588363311996,
+        "avg_time_ms": 39.4614,
+        "max_error": 0.00048828125,
+        "runs": 12,
+        "seed": 6090,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -41.15559339844337
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 336.0612767608923,
+        "avg_time_ms": 51.12124,
+        "max_error": 0.000518798828125,
+        "runs": 12,
+        "seed": 5090,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -54.57694948974895
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 302.74087458201,
+        "avg_time_ms": 191.52372,
+        "max_error": 0.000732421875,
+        "runs": 12,
+        "seed": 7114,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -57.38698057869803
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 291.3703053746867,
+        "avg_time_ms": 58.962320000000005,
+        "max_error": 0.0004730224609375,
+        "runs": 12,
+        "seed": 2090,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -60.61751527642287
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 308.9862757845143,
+        "avg_time_ms": 17.761306666666666,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 6442,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -61.360125155957
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 234.31026494082556,
+        "avg_time_ms": 73.32102666666667,
+        "max_error": 0.0005340576171875,
+        "runs": 12,
+        "seed": 4090,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -68.32992154865262
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 222.68746432121455,
+        "avg_time_ms": 260.3741466666666,
+        "max_error": 0.0008087158203125,
+        "runs": 12,
+        "seed": 6114,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -68.6550907435203
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 193.45319044744846,
+        "avg_time_ms": 299.72138666666666,
+        "max_error": 0.000732421875,
+        "runs": 12,
+        "seed": 5114,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -72.77003122544386
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 156.29767924247145,
+        "avg_time_ms": 370.9719733333333,
+        "max_error": 0.0007171630859375,
+        "runs": 12,
+        "seed": 3114,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -77.99994450614022
+      }
+    ],
+    "valid_count": 16,
+    "completed_count": 18
+  },
+  "replay": {
+    "candidates": [
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "size": 1400,
+        "status": "completed",
+        "gflops": {
+          "mean": 926.3030078404988,
+          "std": 3.900567627192513,
+          "min": 918.844345624774,
+          "p50": 928.3065847519554,
+          "p95": 929.2497075415673,
+          "max": 929.310115933469
+        },
+        "avg_time_ms": {
+          "mean": 5.924732799999999,
+          "std": 0.02507675543925083,
+          "min": 5.905456,
+          "p50": 5.91184,
+          "p95": 5.9634304,
+          "max": 5.97272
+        },
+        "max_error": {
+          "mean": 0.00030364990234375,
+          "std": 1.8310546875000003e-05,
+          "min": 0.00028228759765625,
+          "p50": 0.00030517578125,
+          "p95": 0.00032958984375,
+          "max": 0.000335693359375
+        },
+        "cv_peak": 0.0042108981555462645,
+        "mean_delta_vs_baseline_percent": 15.837611880143191,
+        "correctness_passed": true,
+        "stability_passed": true,
+        "promotion_gate_passed": true
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "size": 1400,
+        "status": "completed",
+        "gflops": {
+          "mean": 839.4768331389503,
+          "std": 0.5741803870941427,
+          "min": 839.1642608993492,
+          "p50": 839.1971110088961,
+          "p95": 840.3443318333146,
+          "max": 840.6244638874592
+        },
+        "avg_time_ms": {
+          "mean": 6.537407999999999,
+          "std": 0.004466849269899509,
+          "min": 6.528479999999999,
+          "p50": 6.539584,
+          "p95": 6.539823999999999,
+          "max": 6.53984
+        },
+        "max_error": {
+          "mean": 0.000350189208984375,
+          "std": 5.2880015414927535e-05,
+          "min": 0.000286102294921875,
+          "p50": 0.000335693359375,
+          "p95": 0.00042724609375,
+          "max": 0.0004425048828125
+        },
+        "cv_peak": 0.0006839740710260962,
+        "mean_delta_vs_baseline_percent": 4.979678092836153,
+        "correctness_passed": true,
+        "stability_passed": true,
+        "promotion_gate_passed": false
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "size": 1400,
+        "status": "completed",
+        "gflops": {
+          "mean": 803.0487685955801,
+          "std": 0.722734051324808,
+          "min": 801.8308861517027,
+          "p50": 803.1489056803467,
+          "p95": 803.7662188717137,
+          "max": 803.7681023574074
+        },
+        "avg_time_ms": {
+          "mean": 6.833961599999999,
+          "std": 0.006153730627838769,
+          "min": 6.827839999999999,
+          "p50": 6.8331040000000005,
+          "p95": 6.8427904,
+          "max": 6.844336
+        },
+        "max_error": {
+          "mean": 0.00029449462890625,
+          "std": 1.4150418846886755e-05,
+          "min": 0.00028228759765625,
+          "p50": 0.0002899169921875,
+          "p95": 0.00031585693359375,
+          "max": 0.0003204345703125
+        },
+        "cv_peak": 0.000899987746184791,
+        "mean_delta_vs_baseline_percent": 0.4242140962792929,
+        "correctness_passed": true,
+        "stability_passed": true,
+        "promotion_gate_passed": false
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "size": 2048,
+        "status": "completed",
+        "gflops": {
+          "mean": 782.7698587956301,
+          "std": 0.6115286639521191,
+          "min": 781.6996255821387,
+          "p50": 782.7635602289658,
+          "p95": 783.4085757717571,
+          "max": 783.4397802922628
+        },
+        "avg_time_ms": {
+          "mean": 21.9475488,
+          "std": 0.01715551426684822,
+          "min": 21.928767999999998,
+          "p50": 21.947712000000003,
+          "p95": 21.972176,
+          "max": 21.977584
+        },
+        "max_error": {
+          "mean": 0.0004913330078125,
+          "std": 3.532665070431587e-05,
+          "min": 0.0004425048828125,
+          "p50": 0.00048828125,
+          "p95": 0.0005401611328125,
+          "max": 0.00054931640625
+        },
+        "cv_peak": 0.0007812368566324428,
+        "mean_delta_vs_baseline_percent": 5.801522795719021,
+        "correctness_passed": true,
+        "stability_passed": true,
+        "promotion_gate_passed": false
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "size": 3072,
+        "status": "completed",
+        "gflops": {
+          "mean": 708.4936934848622,
+          "std": 0.8279361063401506,
+          "min": 707.4650518327257,
+          "p50": 708.3265471266956,
+          "p95": 709.6069781848586,
+          "max": 709.7316905027515
+        },
+        "avg_time_ms": {
+          "mean": 81.838608,
+          "std": 0.09560593949750483,
+          "min": 81.69574399999999,
+          "p50": 81.857808,
+          "p95": 81.9488736,
+          "max": 81.957488
+        },
+        "max_error": {
+          "mean": 0.00078125,
+          "std": 6.918813506319967e-05,
+          "min": 0.000732421875,
+          "p50": 0.0007476806640625,
+          "p95": 0.0008880615234374999,
+          "max": 0.00091552734375
+        },
+        "cv_peak": 0.0011685864164404738,
+        "mean_delta_vs_baseline_percent": -0.2742673514940616,
+        "correctness_passed": true,
+        "stability_passed": true,
+        "promotion_gate_passed": false
+      }
+    ]
+  },
+  "summary": {
+    "decision_hint": "promote",
+    "decision_rationale": "At least one replayed candidate passed performance, correctness and stability gates."
+  }
+}

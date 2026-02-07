@@ -21,6 +21,7 @@ import sys
 import time
 import json
 import csv
+import warnings
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass, asdict
@@ -73,6 +74,7 @@ class GEMMAutoTuner:
         self.results: List[TuningResult] = []
         self.best_result: Optional[TuningResult] = None
         self.best_gflops: float = 0.0
+        self._compiled_kernel_cache: Dict[Tuple[str, str, Tuple[str, ...]], cl.Kernel] = {}
         
         # Setup OpenCL
         self._setup_opencl()
@@ -210,107 +212,178 @@ class GEMMAutoTuner:
         """
         if kernel_name not in self.kernels:
             return None
-        
+
         kernel_info = self.kernels[kernel_name]
-        kernel = kernel_info['kernel']
-        tile_size = kernel_info['tile_size']
-        local_size = kernel_info['local_size']
-        
+        return self._benchmark_with_kernel(
+            kernel=kernel_info['kernel'],
+            tile_size=int(kernel_info['tile_size']),
+            local_size=tuple(kernel_info['local_size']),
+            M=M,
+            N=N,
+            K=K,
+            runs=runs,
+            warmup=warmup,
+            seed=seed,
+            input_distribution=input_distribution,
+        )
+
+    def benchmark_custom_kernel(
+        self,
+        *,
+        kernel_file: str,
+        kernel_name: str,
+        tile_size: int,
+        local_size: Tuple[int, int],
+        M: int,
+        N: int,
+        K: int,
+        runs: int = 10,
+        warmup: int = 2,
+        seed: Optional[int] = None,
+        input_distribution: str = "standard_normal",
+        build_options: Optional[List[str]] = None,
+    ) -> Optional[TuningResult]:
+        """
+        Benchmark a kernel defined by file/name with explicit execution parameters.
+        """
         try:
-            # Allocate matrices with deterministic, canonical-friendly distribution.
-            # This aligns error measurements with the production reproducibility protocol.
+            path = Path(kernel_file)
+            if not path.is_absolute():
+                path = (project_root / path).resolve()
+            if not path.exists():
+                if self.verbose:
+                    print(f"  ❌ Kernel file not found: {path}")
+                return None
+
+            options = tuple(build_options or [])
+            cache_key = (str(path), kernel_name, options)
+            if cache_key not in self._compiled_kernel_cache:
+                source = path.read_text()
+                with warnings.catch_warnings():
+                    warnings.filterwarnings(
+                        "ignore",
+                        category=UserWarning,
+                        message=".*PyOpenCL compiler caching failed.*",
+                    )
+                    program = cl.Program(self.ctx, source).build(options=list(options))
+                self._compiled_kernel_cache[cache_key] = getattr(program, kernel_name)
+
+            kernel = self._compiled_kernel_cache[cache_key]
+            return self._benchmark_with_kernel(
+                kernel=kernel,
+                tile_size=tile_size,
+                local_size=local_size,
+                M=M,
+                N=N,
+                K=K,
+                runs=runs,
+                warmup=warmup,
+                seed=seed,
+                input_distribution=input_distribution,
+            )
+        except Exception as e:
+            if self.verbose:
+                print(f"  ❌ Error benchmarking custom kernel {kernel_name}: {e}")
+            return None
+
+    def _benchmark_with_kernel(
+        self,
+        *,
+        kernel: cl.Kernel,
+        tile_size: int,
+        local_size: Tuple[int, int],
+        M: int,
+        N: int,
+        K: int,
+        runs: int,
+        warmup: int,
+        seed: Optional[int],
+        input_distribution: str,
+    ) -> Optional[TuningResult]:
+        try:
             if input_distribution not in {"standard_normal", "uniform"}:
                 raise ValueError(
                     f"Unsupported input_distribution '{input_distribution}'. "
                     "Use 'standard_normal' or 'uniform'."
                 )
 
-            if seed is None:
-                rng = np.random.default_rng()
-            else:
-                rng = np.random.default_rng(seed)
-
+            rng = np.random.default_rng(seed)
             if input_distribution == "standard_normal":
                 A = rng.standard_normal((M, K), dtype=np.float32)
                 B = rng.standard_normal((K, N), dtype=np.float32)
             else:
                 A = rng.random((M, K), dtype=np.float32)
                 B = rng.random((K, N), dtype=np.float32)
-
             C = np.zeros((M, N), dtype=np.float32)
-            
-            # Create OpenCL buffers
+
             mf = cl.mem_flags
             A_buf = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A)
             B_buf = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B)
             C_buf = cl.Buffer(self.ctx, mf.WRITE_ONLY, C.nbytes)
-            
-            # Global size (tiles)
+
             global_size = (
-                ((N + tile_size - 1) // tile_size) * local_size[0],
-                ((M + tile_size - 1) // tile_size) * local_size[1]
+                ((N + tile_size - 1) // tile_size) * int(local_size[0]),
+                ((M + tile_size - 1) // tile_size) * int(local_size[1]),
             )
-            
-            # Warmup
+
             for _ in range(warmup):
                 event = kernel(
-                    self.queue, global_size, local_size,
-                    np.int32(M), np.int32(N), np.int32(K),
-                    np.float32(1.0),  # alpha
-                    A_buf, B_buf,
-                    np.float32(0.0),  # beta
-                    C_buf
+                    self.queue,
+                    global_size,
+                    local_size,
+                    np.int32(M),
+                    np.int32(N),
+                    np.int32(K),
+                    np.float32(1.0),
+                    A_buf,
+                    B_buf,
+                    np.float32(0.0),
+                    C_buf,
                 )
                 event.wait()
-            
-            # Benchmark runs
+
             times = []
             for _ in range(runs):
                 event = kernel(
-                    self.queue, global_size, local_size,
-                    np.int32(M), np.int32(N), np.int32(K),
-                    np.float32(1.0),  # alpha
-                    A_buf, B_buf,
-                    np.float32(0.0),  # beta
-                    C_buf
+                    self.queue,
+                    global_size,
+                    local_size,
+                    np.int32(M),
+                    np.int32(N),
+                    np.int32(K),
+                    np.float32(1.0),
+                    A_buf,
+                    B_buf,
+                    np.float32(0.0),
+                    C_buf,
                 )
                 event.wait()
-                
-                # Extract time
-                elapsed = (event.profile.end - event.profile.start) * 1e-6  # Convert to ms
+                elapsed = (event.profile.end - event.profile.start) * 1e-6
                 times.append(elapsed)
-            
-            # Verify correctness (one time)
+
             cl.enqueue_copy(self.queue, C, C_buf).wait()
             C_ref = A @ B
-            max_error = np.max(np.abs(C - C_ref))
-            
-            # Calculate statistics
-            avg_time_ms = np.mean(times)
-            min_time_ms = np.min(times)
+            max_error = float(np.max(np.abs(C - C_ref)))
+
+            avg_time_ms = float(np.mean(times))
             gflops = (2.0 * M * N * K) / (avg_time_ms * 1e-3 * 1e9)
-            peak_gflops = (2.0 * M * N * K) / (min_time_ms * 1e-3 * 1e9)
-            
-            # Create result
+
             result = TuningResult(
-                tile_size=tile_size,
-                matrix_size=M,  # Assuming square
-                workgroup_x=local_size[0],
-                workgroup_y=local_size[1],
-                gflops=gflops,
+                tile_size=int(tile_size),
+                matrix_size=M,
+                workgroup_x=int(local_size[0]),
+                workgroup_y=int(local_size[1]),
+                gflops=float(gflops),
                 avg_time_ms=avg_time_ms,
                 max_error=max_error,
                 timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                runs=runs
+                runs=runs,
             )
-            
-            # Cleanup
+
             A_buf.release()
             B_buf.release()
             C_buf.release()
-            
             return result
-            
         except Exception as e:
             if self.verbose:
                 print(f"  ❌ Error: {e}")

@@ -2,8 +2,8 @@
 """
 Week 2 T2 bounded-search runner.
 
-Runs an expanded bounded search and enforces strict correctness filtering
-before candidate ranking.
+Supports a basic search space (production kernels) and an expanded space
+including vector/unroll/local-size variants from research kernels.
 """
 
 from __future__ import annotations
@@ -34,18 +34,95 @@ def _stats(values: list[float]) -> dict[str, float]:
     }
 
 
-def _baseline_kernel_for_size(size: int) -> str:
-    return "tile20" if size < 1800 else "tile24"
+def _build_search_configs(*, kernels: list[str], search_space: str) -> list[dict[str, Any]]:
+    all_configs: list[dict[str, Any]] = [
+        {
+            "config_id": "t20_prod_v4_u10_l10",
+            "family": "tile20",
+            "kernel_file": "src/kernels/gemm_tile20_production.cl",
+            "kernel_name": "gemm_tile20_optimized",
+            "tile_size": 20,
+            "local_size": [10, 10],
+            "vector_width": 4,
+            "unroll_k": 10,
+            "source": "production",
+        },
+        {
+            "config_id": "t24_prod_v4_u0_l12",
+            "family": "tile24",
+            "kernel_file": "src/kernels/gemm_tile24_production.cl",
+            "kernel_name": "gemm_tile24_vectorized",
+            "tile_size": 24,
+            "local_size": [12, 12],
+            "vector_width": 4,
+            "unroll_k": 0,
+            "source": "production",
+        },
+        {
+            "config_id": "t20_prefetch_v4_u4_l10",
+            "family": "tile20",
+            "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+            "kernel_name": "gemm_tile20_prefetch",
+            "tile_size": 20,
+            "local_size": [10, 10],
+            "vector_width": 4,
+            "unroll_k": 4,
+            "source": "research",
+        },
+        {
+            "config_id": "t20_v3vec_v4_u0_l10",
+            "family": "tile20",
+            "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+            "kernel_name": "gemm_tile20_vectorized",
+            "tile_size": 20,
+            "local_size": [10, 10],
+            "vector_width": 4,
+            "unroll_k": 0,
+            "source": "research",
+        },
+        {
+            "config_id": "t20_regblock_v4_u0_l5",
+            "family": "tile20",
+            "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+            "kernel_name": "gemm_tile20_register_blocking",
+            "tile_size": 20,
+            "local_size": [5, 5],
+            "vector_width": 4,
+            "unroll_k": 0,
+            "source": "research",
+        },
+        {
+            "config_id": "t20_float8_v8_u8_l10",
+            "family": "tile20",
+            "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+            "kernel_name": "gemm_tile20_float8",
+            "tile_size": 20,
+            "local_size": [10, 10],
+            "vector_width": 8,
+            "unroll_k": 8,
+            "source": "research",
+        },
+    ]
+
+    filtered = [cfg for cfg in all_configs if cfg["family"] in kernels]
+    if search_space == "basic":
+        return [cfg for cfg in filtered if cfg["source"] == "production"]
+    return filtered
+
+
+def _baseline_config_for_size(size: int) -> str:
+    return "t20_prod_v4_u10_l10" if size < 1800 else "t24_prod_v4_u0_l12"
 
 
 def _markdown_report(report: dict[str, Any]) -> str:
     lines: list[str] = []
-    lines.append("# T2 Week 2 Bounded Search")
+    lines.append("# T2 Week 2 Search (Deterministic + Strict)")
     lines.append("")
     lines.append(f"- Date: {report['metadata']['timestamp_utc']}")
+    lines.append(f"- Search space: {report['metadata']['search_space']}")
     lines.append(
         "- Budget: "
-        f"{report['metadata']['kernels']} kernels x {report['metadata']['sizes']} sizes x "
+        f"{report['metadata']['config_count']} configs x {report['metadata']['sizes']} sizes x "
         f"{report['metadata']['runs_per_config']} runs"
     )
     lines.append(f"- Input distribution: {report['metadata']['input_distribution']}")
@@ -54,32 +131,39 @@ def _markdown_report(report: dict[str, Any]) -> str:
     lines.append("## Search Results")
     lines.append("")
     lines.append(
-        "| Rank | Kernel | Size | GFLOPS | Max Error | Delta vs Baseline | Status |"
+        "| Rank | Config | Family | Vec | Unroll | Local | Size | GFLOPS | Max Error | Delta vs Baseline | Status |"
     )
-    lines.append("| ---: | --- | ---: | ---: | ---: | ---: | --- |")
+    lines.append("| ---: | --- | --- | ---: | ---: | --- | ---: | ---: | ---: | ---: | --- |")
 
     for idx, item in enumerate(report["search"]["ranked_candidates"], start=1):
         delta = item["delta_vs_baseline_percent"]
         delta_text = "n/a" if delta is None else f"{delta:+.3f}%"
         status = "valid" if item["correctness_passed"] else "filtered"
         lines.append(
-            f"| {idx} | {item['kernel']} | {item['size']} | {item['gflops']:.3f} | "
-            f"{item['max_error']:.6f} | {delta_text} | {status} |"
+            f"| {idx} | {item['config_id']} | {item['family']} | {item['vector_width']} | "
+            f"{item['unroll_k']} | {item['local_size'][0]}x{item['local_size'][1]} | "
+            f"{item['size']} | {item['gflops']:.3f} | {item['max_error']:.6f} | {delta_text} | {status} |"
         )
 
     lines.append("")
     lines.append("## Replay Summary")
     lines.append("")
     lines.append(
-        "| Candidate | Mean GFLOPS | CV | Max Error (max) | Delta vs Baseline | Correctness | Stability | Promotion |"
+        "| Candidate | Vec | Unroll | Local | Mean GFLOPS | CV | Max Error (max) | Delta vs Baseline | Correctness | Stability | Promotion |"
     )
-    lines.append("| --- | ---: | ---: | ---: | ---: | --- | --- | --- |")
+    lines.append("| --- | ---: | ---: | --- | ---: | ---: | ---: | ---: | --- | --- | --- |")
 
     for item in report["replay"]["candidates"]:
+        if item.get("status") != "completed":
+            lines.append(
+                f"| {item['config_id']}@{item['size']} | - | - | - | - | - | - | - | - | - | failed |"
+            )
+            continue
         delta = item["mean_delta_vs_baseline_percent"]
         delta_text = "n/a" if delta is None else f"{delta:+.3f}%"
         lines.append(
-            f"| {item['kernel']}@{item['size']} | {item['gflops']['mean']:.3f} | "
+            f"| {item['config_id']}@{item['size']} | {item['vector_width']} | {item['unroll_k']} | "
+            f"{item['local_size'][0]}x{item['local_size'][1]} | {item['gflops']['mean']:.3f} | "
             f"{item['cv_peak']:.5f} | {item['max_error']['max']:.6f} | {delta_text} | "
             f"{item['correctness_passed']} | {item['stability_passed']} | {item['promotion_gate_passed']} |"
         )
@@ -94,6 +178,7 @@ def _markdown_report(report: dict[str, Any]) -> str:
 
 def run_search(
     *,
+    search_space: str,
     kernels: list[str],
     sizes: list[int],
     runs_per_config: int,
@@ -106,26 +191,47 @@ def run_search(
     input_distribution: str,
 ) -> dict[str, Any]:
     tuner = GEMMAutoTuner(output_dir="results/auto_tuner", verbose=False)
-
+    configs = _build_search_configs(kernels=kernels, search_space=search_space)
     raw_candidates: list[dict[str, Any]] = []
-    config_idx = 0
-    for kernel in kernels:
-        if kernel not in tuner.kernels:
-            raw_candidates.append(
-                {
-                    "kernel": kernel,
-                    "size": None,
-                    "status": "failed",
-                    "error": f"kernel '{kernel}' not available",
-                }
-            )
-            continue
+    if not configs:
+        return {
+            "metadata": {
+                "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+                "search_space": search_space,
+                "kernels": kernels,
+                "sizes": sizes,
+                "runs_per_config": runs_per_config,
+                "warmup": warmup,
+                "replay_sessions": replay_sessions,
+                "replay_runs": replay_runs,
+                "top_k": top_k,
+                "correctness_threshold": correctness_threshold,
+                "seed": seed,
+                "input_distribution": input_distribution,
+                "config_count": 0,
+            },
+            "search": {
+                "raw_candidates": [],
+                "baseline_by_size": {},
+                "ranked_candidates": [],
+                "valid_count": 0,
+                "completed_count": 0,
+            },
+            "replay": {"candidates": []},
+            "summary": {
+                "decision_hint": "refine",
+                "decision_rationale": "No valid configurations selected for this search space.",
+            },
+        }
 
+    for cfg_idx, config in enumerate(configs):
         for size in sizes:
-            config_seed = seed + config_idx
-            config_idx += 1
-            result = tuner.benchmark_kernel(
-                kernel_name=kernel,
+            config_seed = seed + cfg_idx * 1000 + size
+            result = tuner.benchmark_custom_kernel(
+                kernel_file=config["kernel_file"],
+                kernel_name=config["kernel_name"],
+                tile_size=int(config["tile_size"]),
+                local_size=(int(config["local_size"][0]), int(config["local_size"][1])),
                 M=size,
                 N=size,
                 K=size,
@@ -137,17 +243,31 @@ def run_search(
             if result is None:
                 raw_candidates.append(
                     {
-                        "kernel": kernel,
+                        "config_id": config["config_id"],
+                        "family": config["family"],
+                        "tile_size": int(config["tile_size"]),
+                        "vector_width": int(config["vector_width"]),
+                        "unroll_k": int(config["unroll_k"]),
+                        "local_size": list(config["local_size"]),
+                        "kernel_file": config["kernel_file"],
+                        "kernel_name": config["kernel_name"],
                         "size": size,
                         "status": "failed",
-                        "error": "benchmark_kernel returned None",
+                        "error": "benchmark_custom_kernel returned None",
                     }
                 )
                 continue
 
             raw_candidates.append(
                 {
-                    "kernel": kernel,
+                    "config_id": config["config_id"],
+                    "family": config["family"],
+                    "tile_size": int(config["tile_size"]),
+                    "vector_width": int(config["vector_width"]),
+                    "unroll_k": int(config["unroll_k"]),
+                    "local_size": list(config["local_size"]),
+                    "kernel_file": config["kernel_file"],
+                    "kernel_name": config["kernel_name"],
                     "size": size,
                     "status": "completed",
                     "gflops": float(result.gflops),
@@ -160,15 +280,17 @@ def run_search(
 
     completed = [item for item in raw_candidates if item.get("status") == "completed"]
     baseline_by_size: dict[int, float] = {}
+    baseline_config_by_size: dict[int, str] = {}
     for size in sizes:
-        baseline_kernel = _baseline_kernel_for_size(size)
+        baseline_config = _baseline_config_for_size(size)
         baseline_items = [
             item
             for item in completed
-            if item["size"] == size and item["kernel"] == baseline_kernel
+            if item["size"] == size and item["config_id"] == baseline_config
         ]
         if baseline_items:
             baseline_by_size[size] = baseline_items[0]["gflops"]
+            baseline_config_by_size[size] = baseline_config
 
     ranked_input: list[dict[str, Any]] = []
     for item in completed:
@@ -187,7 +309,14 @@ def run_search(
 
     valid = [item for item in ranked_input if item["correctness_passed"]]
     pool = valid if valid else ranked_input
-    ranked = sorted(pool, key=lambda item: item["gflops"], reverse=True)
+    ranked = sorted(
+        pool,
+        key=lambda item: (
+            item["delta_vs_baseline_percent"] if item["delta_vs_baseline_percent"] is not None else -1e9,
+            item["gflops"],
+        ),
+        reverse=True,
+    )
     top_candidates = ranked[:top_k]
 
     replay_candidates: list[dict[str, Any]] = []
@@ -198,8 +327,11 @@ def run_search(
 
         for session_idx in range(replay_sessions):
             replay_seed = seed + 10_000 + idx * 100 + session_idx
-            replay_result = tuner.benchmark_kernel(
-                kernel_name=candidate["kernel"],
+            replay_result = tuner.benchmark_custom_kernel(
+                kernel_file=candidate["kernel_file"],
+                kernel_name=candidate["kernel_name"],
+                tile_size=int(candidate["tile_size"]),
+                local_size=(int(candidate["local_size"][0]), int(candidate["local_size"][1])),
                 M=candidate["size"],
                 N=candidate["size"],
                 K=candidate["size"],
@@ -217,7 +349,12 @@ def run_search(
         if not gflops_values:
             replay_candidates.append(
                 {
-                    "kernel": candidate["kernel"],
+                    "config_id": candidate["config_id"],
+                    "family": candidate["family"],
+                    "tile_size": candidate["tile_size"],
+                    "vector_width": candidate["vector_width"],
+                    "unroll_k": candidate["unroll_k"],
+                    "local_size": candidate["local_size"],
                     "size": candidate["size"],
                     "status": "failed",
                     "error": "no replay samples",
@@ -245,7 +382,12 @@ def run_search(
 
         replay_candidates.append(
             {
-                "kernel": candidate["kernel"],
+                "config_id": candidate["config_id"],
+                "family": candidate["family"],
+                "tile_size": candidate["tile_size"],
+                "vector_width": candidate["vector_width"],
+                "unroll_k": candidate["unroll_k"],
+                "local_size": candidate["local_size"],
                 "size": candidate["size"],
                 "status": "completed",
                 "gflops": _stats(gflops_values),
@@ -277,6 +419,7 @@ def run_search(
     return {
         "metadata": {
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "search_space": search_space,
             "kernels": kernels,
             "sizes": sizes,
             "runs_per_config": runs_per_config,
@@ -287,10 +430,18 @@ def run_search(
             "correctness_threshold": correctness_threshold,
             "seed": seed,
             "input_distribution": input_distribution,
+            "config_count": len(configs),
+            "dimensions": {
+                "vector_widths": sorted({int(cfg["vector_width"]) for cfg in configs}),
+                "unroll_k": sorted({int(cfg["unroll_k"]) for cfg in configs}),
+                "local_sizes": sorted({f"{cfg['local_size'][0]}x{cfg['local_size'][1]}" for cfg in configs}),
+            },
         },
         "search": {
+            "configs": configs,
             "raw_candidates": raw_candidates,
             "baseline_by_size": baseline_by_size,
+            "baseline_config_by_size": baseline_config_by_size,
             "ranked_candidates": ranked,
             "valid_count": len(valid),
             "completed_count": len(completed),
@@ -307,6 +458,11 @@ def run_search(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run Week 2 T2 bounded search")
+    parser.add_argument(
+        "--search-space",
+        choices=["basic", "expanded"],
+        default="expanded",
+    )
     parser.add_argument("--kernels", nargs="+", default=["tile20", "tile24"])
     parser.add_argument("--sizes", nargs="+", type=int, default=[1400, 2048, 3072])
     parser.add_argument("--runs-per-config", type=int, default=12)
@@ -329,6 +485,7 @@ def main() -> int:
     args = parser.parse_args()
 
     report = run_search(
+        search_space=args.search_space,
         kernels=args.kernels,
         sizes=args.sizes,
         runs_per_config=args.runs_per_config,
@@ -346,8 +503,9 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
 
-    json_path = output_dir / f"week2_t2_bounded_search_{timestamp}.json"
-    md_path = output_dir / f"week2_t2_bounded_search_{timestamp}.md"
+    prefix = "week2_t2_expanded_search" if args.search_space == "expanded" else "week2_t2_bounded_search"
+    json_path = output_dir / f"{prefix}_{timestamp}.json"
+    md_path = output_dir / f"{prefix}_{timestamp}.md"
 
     json_path.write_text(json.dumps(report, indent=2))
     md_path.write_text(_markdown_report(report))
