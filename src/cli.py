@@ -1,339 +1,233 @@
 #!/usr/bin/env python3
 """
-Radeon RX 580 AI - Command Line Interface
-
-Simple, user-friendly CLI for running AI inference on AMD GPUs.
-Designed to be accessible for both technical and non-technical users.
-
-Examples:
-    # Basic inference (automatic optimization)
-    python -m src.cli classify image.jpg
-    
-    # Fast mode (FP16, ~1.5x speedup)
-    python -m src.cli classify image.jpg --fast
-    
-    # Maximum speed (INT8, ~2.5x speedup)
-    python -m src.cli classify image.jpg --ultra-fast
-    
-    # Batch processing multiple images
-    python -m src.cli classify folder/*.jpg --batch 4
-    
-    # Get system information
-    python -m src.cli info
+Radeon RX 580 AI command-line interface.
 """
 
+from __future__ import annotations
+
 import argparse
-import sys
+import time
 from pathlib import Path
-from typing import List, Optional
-import logging
+from typing import Any, List, Optional
+
+import numpy as np
 
 from .core.gpu import GPUManager
 from .core.memory import MemoryManager
-from .inference.onnx_engine import ONNXInferenceEngine
 from .inference.base import InferenceConfig
-
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(message)s'
-)
-logger = logging.getLogger(__name__)
+from .inference.onnx_engine import ONNXInferenceEngine
+from .optimization_engines.optimized_kernel_engine import OptimizedKernelEngine
 
 
 class CLI:
-    """Command Line Interface for Radeon RX 580 AI Framework"""
-    
-    def __init__(self):
+    """CLI wrapper for system info, inference and GEMM benchmarking."""
+
+    def __init__(self) -> None:
         self.gpu_manager = GPUManager()
+        self.gpu_manager.initialize()
         self.memory_manager = MemoryManager()
-    
-    def info(self):
-        """Display system information"""
-        print("\n" + "="*60)
-        print("🖥️  RADEON RX 580 AI - SYSTEM INFORMATION")
-        print("="*60)
-        
-        # GPU Info
+
+    def info(self) -> int:
+        """Display system and runtime capabilities."""
+        print("\n" + "=" * 60)
+        print("RADEON RX 580 AI - SYSTEM INFORMATION")
+        print("=" * 60)
+
         gpu_info = self.gpu_manager.get_info()
-        print(f"\n📊 GPU Information:")
+        print("\nGPU Information:")
         if gpu_info:
             print(f"   Name: {gpu_info.name}")
+            print(f"   Vendor: {gpu_info.vendor}")
+            print(f"   Platform: {gpu_info.platform}")
             print(f"   Driver: {gpu_info.driver}")
+            print(f"   OpenCL: {gpu_info.opencl_version}")
             print(f"   VRAM: {gpu_info.vram_gb:.1f} GB")
-            print(f"   OpenCL: {'✅ Available' if gpu_info.opencl_available else '❌ Not available'}")
+            print(f"   Backend: {self.gpu_manager.get_compute_backend().upper()}")
         else:
-            print(f"   ⚠️  GPU not detected (will use CPU)")
-        
-        # Memory Info
-        memory_stats = self.memory_manager.get_stats()
-        
-        print(f"\n💾 Memory Information:")
-        vram_gb = memory_stats.gpu_vram_gb if memory_stats.gpu_vram_gb else 0
-        print(f"   VRAM: {vram_gb:.1f} GB total")
-        print(f"   RAM: {memory_stats.available_ram_gb:.1f} GB available / {memory_stats.total_ram_gb:.1f} GB total")
-        
-        # Optimization Recommendations
-        print(f"\n⚡ Performance Tips:")
-        print(f"   • Use --fast for 1.5x speedup (FP16)")
-        print(f"   • Use --ultra-fast for 2.5x speedup (INT8)")
-        print(f"   • Use --batch N for processing multiple images")
-        print(f"   • Available VRAM allows batch size up to ~8")
-        
-        print("\n" + "="*60 + "\n")
-    
-    def classify(self, 
-                 image_paths: List[str],
-                 model_path: Optional[str] = None,
-                 fast: bool = False,
-                 ultra_fast: bool = False,
-                 batch_size: int = 1,
-                 top_k: int = 5,
-                 output: Optional[str] = None):
-        """
-        Classify one or more images.
-        
-        Args:
-            image_paths: List of image file paths or patterns
-            model_path: Path to ONNX model (defaults to MobileNetV2)
-            fast: Use FP16 precision (~1.5x speedup)
-            ultra_fast: Use INT8 precision (~2.5x speedup)
-            batch_size: Number of images to process together
-            top_k: Number of top predictions to show
-            output: Optional output file for results (JSON/CSV)
-        """
-        # Determine precision
+            print("   WARN No AMD OpenCL GPU detected")
+            print("   Backend: CPU")
+
+        stats = self.memory_manager.get_stats()
+        print("\nMemory Information:")
+        print(f"   RAM total: {stats.total_ram_gb:.1f} GB")
+        print(f"   RAM available: {stats.available_ram_gb:.1f} GB")
+        print(f"   RAM usage: {stats.ram_percent:.1f}%")
+        print(f"   Strategy: {self.memory_manager.strategy.value}")
+
+        print("\nCLI Capabilities:")
+        print("   info: available")
+        print("   classify: available (ONNX)")
+        print("   benchmark: available (GEMM)")
+
+        print("\n" + "=" * 60 + "\n")
+        return 0
+
+    def classify(
+        self,
+        image_paths: List[str],
+        model_path: Optional[str] = None,
+        fast: bool = False,
+        ultra_fast: bool = False,
+        batch_size: int = 1,
+        top_k: int = 5,
+        output: Optional[str] = None,
+    ) -> int:
+        """Run ONNX image classification."""
         if ultra_fast:
-            precision = 'int8'
+            precision = "int8"
             mode_name = "Ultra-Fast Mode (INT8)"
         elif fast:
-            precision = 'fp16'
+            precision = "fp16"
             mode_name = "Fast Mode (FP16)"
         else:
-            precision = 'fp32'
+            precision = "fp32"
             mode_name = "Standard Mode (FP32)"
-        
-        # Setup configuration
-        config = InferenceConfig(
-            device='auto',
+
+        cfg = InferenceConfig(
+            device="auto",
             precision=precision,
             batch_size=batch_size,
             enable_profiling=True,
-            optimization_level=2
+            optimization_level=2,
         )
-        
-        # Create engine
-        print(f"\n🚀 Initializing {mode_name}...")
-        engine = ONNXInferenceEngine(config, self.gpu_manager, self.memory_manager)
-        
-        # Load model
+        engine = ONNXInferenceEngine(cfg, self.gpu_manager, self.memory_manager)
+
         if model_path is None:
-            # Default to MobileNetV2
-            model_path = Path(__file__).parent.parent / "examples/models/mobilenetv2.onnx"
-            if not model_path.exists():
-                print(f"❌ Error: Default model not found at {model_path}")
-                print(f"   Please specify a model with --model or download MobileNetV2")
-                return
-        
-        print(f"📦 Loading model from {model_path}...")
+            model_path = str(Path(__file__).parent.parent / "examples/models/mobilenetv2.onnx")
+        if not Path(model_path).exists():
+            print(f"ERROR: model not found: {model_path}")
+            print("Use --model to specify an ONNX file.")
+            return 2
+
+        print(f"\nInitializing {mode_name}...")
+        print(f"Loading model from {model_path}...")
         engine.load_model(model_path)
-        
-        # Show optimization info
-        opt_info = engine.get_optimization_info()
-        print(f"\n⚙️  Optimization Settings:")
-        print(f"   Precision: {opt_info['precision'].upper()}")
-        print(f"   Batch Size: {opt_info['batch_size']}")
-        print(f"   Expected Performance: {opt_info['expected_speedup']}")
-        print(f"   Memory Savings: {opt_info['memory_savings']}")
-        print(f"   Accuracy: {opt_info['accuracy']}")
-        
-        # Process images
-        print(f"\n🖼️  Processing {len(image_paths)} image(s)...\n")
-        
+
+        print(f"Processing {len(image_paths)} image(s)...")
         if len(image_paths) == 1:
-            # Single image
-            result = engine.infer(image_paths[0])
+            result = engine.infer(image_paths[0], top_k=top_k)
             self._print_result(image_paths[0], result, top_k)
         else:
-            # Batch processing
-            results = engine.infer_batch(image_paths, batch_size)
-            for img_path, result in zip(image_paths, results):
-                self._print_result(img_path, result, top_k)
-        
-        # Show performance stats
-        if engine.profiler:
-            stats = engine.profiler.get_statistics()
-            print(f"\n📈 Performance Statistics:")
-            print(f"   Average Inference Time: {stats['mean']:.1f}ms")
-            print(f"   Throughput: {1000/stats['mean']:.1f} images/second")
-            if len(image_paths) > 1:
-                print(f"   Total Time: {stats['total']:.1f}ms for {len(image_paths)} images")
-        
-        print()
-    
-    def _print_result(self, image_path: str, result: dict, top_k: int = 5):
-        """Print classification results in a user-friendly format"""
-        print(f"📸 {Path(image_path).name}")
-        print(f"   Top prediction: Class {result['top1_class']} ({result['top1_confidence']:.1%} confident)")
-        
-        if top_k > 1 and 'predictions' in result:
-            print(f"   Top {top_k} predictions:")
-            for i, pred in enumerate(result['predictions'][:top_k], 1):
-                print(f"      {i}. Class {pred['class_id']}: {pred['confidence']:.1%}")
-        print()
-    
-    def benchmark(self, 
-                  model_path: Optional[str] = None,
-                  iterations: int = 100):
-        """
-        Run performance benchmark comparing different optimization modes.
-        
-        Args:
-            model_path: Path to ONNX model
-            iterations: Number of iterations per mode
-        """
-        print("\n" + "="*60)
-        print("🔬 PERFORMANCE BENCHMARK")
-        print("="*60)
-        
-        if model_path is None:
-            model_path = Path(__file__).parent.parent / "examples/models/mobilenetv2.onnx"
-        
-        # Test image
-        test_image = Path(__file__).parent.parent / "examples/test_images"
-        if test_image.exists():
-            test_images = list(test_image.glob("*.jpg")) + list(test_image.glob("*.png"))
-            if test_images:
-                test_image = test_images[0]
-        
-        modes = [
-            ('fp32', 'Standard (FP32)'),
-            ('fp16', 'Fast (FP16)'),
-            ('int8', 'Ultra-Fast (INT8)')
-        ]
-        
-        results = {}
-        
-        for precision, name in modes:
-            print(f"\n⚡ Testing {name}...")
-            
-            config = InferenceConfig(
-                precision=precision,
-                enable_profiling=True,
-                optimization_level=2
-            )
-            
-            engine = ONNXInferenceEngine(config, self.gpu_manager, self.memory_manager)
-            engine.load_model(model_path)
-            
-            # Warmup
-            for _ in range(10):
-                engine.infer(test_image)
-            
-            # Benchmark
-            engine.profiler.reset()
-            for _ in range(iterations):
-                engine.infer(test_image)
-            
-            stats = engine.profiler.get_statistics()
-            results[precision] = stats
-            
-            print(f"   Average: {stats['mean']:.1f}ms")
-            print(f"   FPS: {1000/stats['mean']:.1f}")
-        
-        # Summary
-        print(f"\n📊 BENCHMARK SUMMARY:")
-        print(f"   {'Mode':<20} {'Time':<15} {'FPS':<10} {'Speedup'}")
-        print(f"   {'-'*20} {'-'*15} {'-'*10} {'-'*10}")
-        
-        baseline = results['fp32']['mean']
-        for precision, name in modes:
-            stats = results[precision]
-            speedup = baseline / stats['mean']
-            fps = 1000 / stats['mean']
-            print(f"   {name:<20} {stats['mean']:.1f}ms{'':<9} {fps:.1f}{'':<5} {speedup:.2f}x")
-        
-        print("\n" + "="*60 + "\n")
+            results = engine.infer_batch(image_paths, batch_size=batch_size)
+            for img, result in zip(image_paths, results):
+                self._print_result(img, result, top_k)
+
+        if output:
+            print(f"INFO: output export not implemented yet: {output}")
+
+        return 0
+
+    @staticmethod
+    def _print_result(image_path: str, result: dict[str, Any], top_k: int) -> None:
+        print(Path(image_path).name)
+        print(f"   Top prediction: Class {result['top1_class']} ({result['top1_confidence']:.1%})")
+        preds = result.get("predictions", [])[:max(1, top_k)]
+        if len(preds) > 1:
+            print(f"   Top {len(preds)} predictions:")
+            for idx, pred in enumerate(preds, 1):
+                print(f"      {idx}. Class {pred['class_id']}: {pred['confidence']:.1%}")
+
+    def benchmark(self, size: int = 1024, iterations: int = 20) -> int:
+        """Benchmark GEMM throughput with current OpenCL engine."""
+        print("\n" + "=" * 60)
+        print("GEMM PERFORMANCE BENCHMARK")
+        print("=" * 60)
+        print(f"Matrix size: {size}x{size}")
+        print(f"Iterations: {iterations}")
+
+        try:
+            engine = OptimizedKernelEngine()
+        except Exception as exc:
+            print(f"ERROR: failed to initialize OpenCL engine: {exc}")
+            return 2
+
+        rng = np.random.default_rng(42)
+        A = rng.standard_normal((size, size), dtype=np.float32)
+        B = rng.standard_normal((size, size), dtype=np.float32)
+        _ = engine.gemm(A, B)  # warm-up
+
+        times: List[float] = []
+        gflops_values: List[float] = []
+        flops = 2.0 * (size**3)
+
+        for _ in range(iterations):
+            start = time.perf_counter()
+            _ = engine.gemm(A, B)
+            elapsed = time.perf_counter() - start
+            times.append(elapsed)
+            gflops_values.append(flops / elapsed / 1e9)
+
+        mean_ms = float(np.mean(times) * 1000.0)
+        p95_ms = float(np.percentile(times, 95) * 1000.0)
+        mean_gflops = float(np.mean(gflops_values))
+        peak_gflops = float(np.max(gflops_values))
+
+        print("\nResults:")
+        print(f"   Mean latency: {mean_ms:.2f} ms")
+        print(f"   P95 latency: {p95_ms:.2f} ms")
+        print(f"   Mean throughput: {mean_gflops:.1f} GFLOPS")
+        print(f"   Peak throughput: {peak_gflops:.1f} GFLOPS")
+        print("\n" + "=" * 60 + "\n")
+        return 0
 
 
-def main():
-    """Main entry point for CLI"""
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description='Radeon RX 580 AI - Accessible AI inference on AMD GPUs',
+        description="Radeon RX 580 AI CLI",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  # Get system information
-  python -m src.cli info
-  
-  # Classify a single image (standard quality)
-  python -m src.cli classify photo.jpg
-  
-  # Fast mode (~1.5x speedup, great for real-time)
-  python -m src.cli classify photo.jpg --fast
-  
-  # Ultra-fast mode (~2.5x speedup, for high throughput)
-  python -m src.cli classify photo.jpg --ultra-fast
-  
-  # Process multiple images in batch
-  python -m src.cli classify image1.jpg image2.jpg image3.jpg --batch 4
-  
-  # Run performance benchmark
-  python -m src.cli benchmark
-  
-For more information, visit: https://github.com/yourusername/radeon-rx580-ai
-        """
+        epilog=(
+            "Examples:\n"
+            "  python -m src.cli info\n"
+            "  python -m src.cli benchmark --size 1024 --iterations 20\n"
+            "  python -m src.cli classify image.jpg --model model.onnx\n"
+        ),
     )
-    
-    subparsers = parser.add_subparsers(dest='command', help='Available commands')
-    
-    # Info command
-    subparsers.add_parser('info', help='Display system information')
-    
-    # Classify command
-    classify_parser = subparsers.add_parser('classify', help='Classify images')
-    classify_parser.add_argument('images', nargs='+', help='Image file path(s)')
-    classify_parser.add_argument('--model', '-m', help='Path to ONNX model')
-    classify_parser.add_argument('--fast', '-f', action='store_true', 
-                                 help='Fast mode (FP16, ~1.5x speedup)')
-    classify_parser.add_argument('--ultra-fast', '-u', action='store_true',
-                                 help='Ultra-fast mode (INT8, ~2.5x speedup)')
-    classify_parser.add_argument('--batch', '-b', type=int, default=1,
-                                 help='Batch size for processing multiple images')
-    classify_parser.add_argument('--top-k', '-k', type=int, default=5,
-                                 help='Number of top predictions to show')
-    classify_parser.add_argument('--output', '-o', help='Output file (JSON/CSV)')
-    
-    # Benchmark command
-    benchmark_parser = subparsers.add_parser('benchmark', help='Run performance benchmark')
-    benchmark_parser.add_argument('--model', '-m', help='Path to ONNX model')
-    benchmark_parser.add_argument('--iterations', '-i', type=int, default=100,
-                                  help='Number of iterations per mode')
-    
+    sub = parser.add_subparsers(dest="command", help="Available commands")
+    sub.add_parser("info", help="Display system information")
+
+    classify = sub.add_parser("classify", help="Classify image(s) with an ONNX model")
+    classify.add_argument("images", nargs="+", help="Image file path(s)")
+    classify.add_argument("--model", "-m", help="Path to ONNX model")
+    classify.add_argument("--fast", "-f", action="store_true", help="Use FP16 mode")
+    classify.add_argument("--ultra-fast", "-u", action="store_true", help="Use INT8 mode")
+    classify.add_argument("--batch", "-b", type=int, default=1, help="Batch size")
+    classify.add_argument("--top-k", "-k", type=int, default=5, help="Top-k predictions")
+    classify.add_argument("--output", "-o", help="Output path")
+
+    bench = sub.add_parser("benchmark", help="Run GEMM benchmark")
+    bench.add_argument("--size", "-s", type=int, default=1024, help="Square matrix size")
+    bench.add_argument("--iterations", "-i", type=int, default=20, help="Number of iterations")
+    return parser
+
+
+def main() -> None:
+    parser = _build_parser()
     args = parser.parse_args()
-    
     if not args.command:
         parser.print_help()
-        return
-    
-    # Execute command
+        raise SystemExit(0)
+
     cli = CLI()
-    
-    if args.command == 'info':
-        cli.info()
-    elif args.command == 'classify':
-        cli.classify(
-            image_paths=args.images,
-            model_path=args.model,
-            fast=args.fast,
-            ultra_fast=args.ultra_fast,
-            batch_size=args.batch,
-            top_k=args.top_k,
-            output=args.output
+    if args.command == "info":
+        raise SystemExit(cli.info())
+    if args.command == "classify":
+        raise SystemExit(
+            cli.classify(
+                image_paths=args.images,
+                model_path=args.model,
+                fast=args.fast,
+                ultra_fast=args.ultra_fast,
+                batch_size=args.batch,
+                top_k=args.top_k,
+                output=args.output,
+            )
         )
-    elif args.command == 'benchmark':
-        cli.benchmark(model_path=args.model, iterations=args.iterations)
+    if args.command == "benchmark":
+        raise SystemExit(cli.benchmark(size=args.size, iterations=args.iterations))
+
+    parser.print_help()
+    raise SystemExit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
