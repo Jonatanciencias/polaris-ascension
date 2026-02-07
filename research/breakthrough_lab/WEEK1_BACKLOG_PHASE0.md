@@ -11,6 +11,16 @@ Establish the minimum governance and execution baseline for the breakthrough lab
 - all tracks have experiment cards and results schema
 - first two executable experiments prepared (T1 + T2)
 
+## Progress Snapshot
+
+- [x] `P0-01` baseline command set frozen (`BASELINE_RUNBOOK.md`)
+- [x] `P0-02` promotion gate checklist created (`PROMOTION_GATE_CHECKLIST.md`)
+- [x] `P0-03` results schema/template created (`results.schema.json`, `results.template.json`)
+- [x] `P0-04` to `P0-09` experiment cards created for T1..T6
+- [x] `P0-10` first executable T1 run completed (`t1_io_aware/results.json`, `t1_io_aware/report.md`)
+- [x] `P0-11` first executable T2 dry-run completed (`t2_auto_scheduler/results.json`, `t2_auto_scheduler/report.md`)
+- [ ] `P0-12` week-1 review and kill/continue decisions
+
 ## Atomic Tasks
 
 1. `P0-01` Freeze baseline command set
