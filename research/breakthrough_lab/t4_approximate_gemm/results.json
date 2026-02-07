@@ -1,17 +1,17 @@
 {
   "$schema": "../results.schema.json",
   "schema_version": "1.0.0",
-  "experiment_id": "t4_approximate_gemm-003",
+  "experiment_id": "t4_approximate_gemm-004",
   "track": "t4_approximate_gemm",
-  "title": "T4 Week 4 Block 3 compressibility-gated activation policy refinement",
+  "title": "T4 Week 5 Block 2 controlled integration rerun with policy_activation_block3",
   "status": "completed",
   "owner": "codex",
   "branch": "feat/breakthrough-roadmap-2026q1",
   "commit": null,
   "timestamps": {
     "created_at": "2026-02-07T00:00:00Z",
-    "started_at": "2026-02-07T22:42:56.404813+00:00",
-    "ended_at": "2026-02-07T22:42:56.404813+00:00"
+    "started_at": "2026-02-07T23:30:25.966135+00:00",
+    "ended_at": "2026-02-07T23:30:25.966135+00:00"
   },
   "environment": {
     "os": "linux",
@@ -30,7 +30,11 @@
     ]
   },
   "parameters": {
-    "campaign": "week4_block3_t4_policy_gating",
+    "campaign": "week5_block2_t4_controlled_integration",
+    "policy_id": "t4-approx-gating-block3-2026-02-07",
+    "policy_path": "research/breakthrough_lab/t4_approximate_gemm/policy_activation_block3.json",
+    "activation_mode": "compressibility_energy_gate",
+    "controlled_integration_mode": "strict_deterministic_rerun",
     "families": [
       "dense_random",
       "compressible_lowrank"
@@ -40,26 +44,31 @@
       1024,
       1400
     ],
-    "sessions": 6,
+    "sessions": 8,
     "target_rank": 16,
     "noise_scale": 0.01,
     "error_budget": 0.005,
     "precheck_energy_threshold": 0.95,
     "sample_size": 64,
     "seed": 42,
-    "activation_mode": "compressibility_energy_gate",
     "policy_exact_route_for_low_compressibility": true,
     "fallback_semantics": "fallback_only_after_postcheck_contract_violation",
-    "policy_artifact": "research/breakthrough_lab/t4_approximate_gemm/policy_activation_block3.json"
+    "policy_artifact": "research/breakthrough_lab/t4_approximate_gemm/policy_activation_block3.json",
+    "runtime_guardrails": {
+      "disable_if_post_fallback_violation_rate_gt": 0.01,
+      "disable_if_contract_compliance_rate_lt": 0.99,
+      "disable_if_fallback_rate_gt": 0.1,
+      "disable_if_compressible_speedup_lt": 2.0
+    }
   },
   "metrics": {
-    "peak_gflops_mean": 1148.7044549623188,
-    "avg_gflops_mean": 1148.7044549623188,
-    "p95_time_ms": 7.84294499680982,
+    "peak_gflops_mean": 1207.0143569620066,
+    "avg_gflops_mean": 1207.0143569620066,
+    "p95_time_ms": 8.401783000226713,
     "max_error": 0.002532395999878645,
-    "cv_peak": 0.36392142335706357,
-    "delta_vs_baseline_percent": 107.72694790392204,
-    "reproducibility_score": 0.8400146718391643,
+    "cv_peak": 0.9636145602448473,
+    "delta_vs_baseline_percent": 104.76801618671693,
+    "reproducibility_score": 0.03638543975515274,
     "energy_joules": null
   },
   "validation": {
@@ -68,12 +77,15 @@
     "promotion_gate_passed": true
   },
   "artifacts": [
+    "research/breakthrough_lab/t4_approximate_gemm/policy_activation_block3.json",
+    "research/breakthrough_lab/t4_approximate_gemm/run_week5_t4_controlled_integration.py",
+    "research/breakthrough_lab/t4_approximate_gemm/week5_t4_controlled_integration_20260207_233025.json",
+    "research/breakthrough_lab/t4_approximate_gemm/week5_t4_controlled_integration_20260207_233025.md",
     "research/breakthrough_lab/t4_approximate_gemm/week4_t4_policy_gating_20260207_224256.json",
     "research/breakthrough_lab/t4_approximate_gemm/week4_t4_policy_gating_20260207_224256.md",
-    "research/breakthrough_lab/t4_approximate_gemm/policy_activation_block3.json",
     "research/breakthrough_lab/t4_approximate_gemm/run_t4_policy_gating.py",
     "research/breakthrough_lab/t4_approximate_gemm/report.md"
   ],
   "decision": "promote",
-  "notes": "Block 3 policy gating reduced fallback to zero by routing low-compressibility workloads directly to exact path while preserving contract safety. Compressible workloads keep strong speedup (3.022x) with full contract compliance, enabling scoped promotion gate passage."
+  "notes": "Week 5 Block 2 controlled rerun using policy_activation_block3 stayed fully within guardrails (contract=1.0, fallback=0.0, post_fallback_violations=0.0) and preserved strong compressible speedup (2.852x). Track remains promoted for controlled production progression."
 }
