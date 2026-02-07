@@ -1,0 +1,143 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-07T19:52:35.158590+00:00",
+    "sizes": [
+      1200,
+      1280,
+      1400,
+      1536,
+      1600,
+      1792,
+      1920,
+      2048
+    ],
+    "epochs": 2,
+    "runs_per_decision": 8,
+    "warmup": 2,
+    "epsilon": 0.15,
+    "fallback_regression_limit": 0.1,
+    "max_fallback_rate": 0.2,
+    "correctness_threshold": 0.001,
+    "seed": 42,
+    "total_steps_planned": 16,
+    "total_steps_executed": 3
+  },
+  "decisions": [
+    {
+      "step": 0,
+      "size": 1200,
+      "context": "small",
+      "status": "completed",
+      "static_arm": "tile20",
+      "online_arm": "tile20",
+      "explored": false,
+      "static_gflops": 739.4601256397528,
+      "online_gflops": 739.4601256397528,
+      "executed_shadow_gflops": 739.4601256397528,
+      "static_time_ms": 4.67368,
+      "online_time_ms": 4.67368,
+      "executed_shadow_time_ms": 4.67368,
+      "online_max_error": 0.0002288818359375,
+      "fallback_triggered": false,
+      "fallback_reason": null
+    },
+    {
+      "step": 1,
+      "size": 1280,
+      "context": "small",
+      "status": "completed",
+      "static_arm": "tile20",
+      "online_arm": "tile20",
+      "explored": false,
+      "static_gflops": 636.3432788268101,
+      "online_gflops": 636.3432788268101,
+      "executed_shadow_gflops": 636.3432788268101,
+      "static_time_ms": 6.59126,
+      "online_time_ms": 6.59126,
+      "executed_shadow_time_ms": 6.59126,
+      "online_max_error": 0.00025177001953125,
+      "fallback_triggered": false,
+      "fallback_reason": null
+    },
+    {
+      "step": 2,
+      "size": 1400,
+      "context": "small",
+      "status": "completed",
+      "static_arm": "tile20_v3_1400",
+      "online_arm": "tile20",
+      "explored": false,
+      "static_gflops": 922.5886276830383,
+      "online_gflops": 801.7601323021092,
+      "executed_shadow_gflops": 922.5886276830383,
+      "static_time_ms": 5.94848,
+      "online_time_ms": 6.844939999999999,
+      "executed_shadow_time_ms": 5.94848,
+      "online_max_error": 0.0003204345703125,
+      "fallback_triggered": true,
+      "fallback_reason": "regression_guard"
+    }
+  ],
+  "policy_snapshot": {
+    "small": {
+      "tile20": {
+        "count": 3,
+        "mean_reward": 766.1306773832004
+      },
+      "tile20_v3_1400": {
+        "count": 0,
+        "mean_reward": 0.0
+      },
+      "tile24": {
+        "count": 0,
+        "mean_reward": 0.0
+      }
+    }
+  },
+  "summary": {
+    "static_gflops": {
+      "mean": 766.1306773832004,
+      "std": 118.37113579241884,
+      "min": 636.3432788268101,
+      "p50": 739.4601256397528,
+      "p95": 904.2757774787098,
+      "max": 922.5886276830383
+    },
+    "shadow_gflops": {
+      "mean": 766.1306773832004,
+      "std": 118.37113579241884,
+      "min": 636.3432788268101,
+      "p50": 739.4601256397528,
+      "p95": 904.2757774787098,
+      "max": 922.5886276830383
+    },
+    "static_time_ms": {
+      "mean": 5.737806666666667,
+      "std": 0.7968963563447605,
+      "min": 4.67368,
+      "p50": 5.94848,
+      "p95": 6.526982,
+      "max": 6.59126
+    },
+    "shadow_time_ms": {
+      "mean": 5.737806666666667,
+      "std": 0.7968963563447605,
+      "min": 4.67368,
+      "p50": 5.94848,
+      "p95": 6.526982,
+      "max": 6.59126
+    },
+    "delta_vs_static_percent": 0.0,
+    "p95_latency_delta_percent": 0.0,
+    "cv_shadow": 0.15450515073580903,
+    "correctness_failures": 0,
+    "correctness_passed": true,
+    "stability_passed": false,
+    "fallback_rate": 0.3333333333333333,
+    "stop_rule_triggered": true,
+    "stop_reason": "fallback rate exceeded threshold (0.333 > 0.200)",
+    "decision_hint": "drop",
+    "decision_rationale": "Stop rule triggered: fallback rate exceeded threshold (0.333 > 0.200).",
+    "promotion_gate_passed": false
+  }
+}
