@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Week 4 T5 ABFT-lite detect-only runner.
+Week 4 T5 ABFT-lite detect-only runner (coverage refinement).
 
 Implements a lab-side ABFT-lite checksum verifier with:
 - deterministic workload generation
@@ -123,6 +123,34 @@ def _abft_residuals(c: np.ndarray, abft: dict[str, Any]) -> tuple[float, float]:
     return row_residual, col_residual
 
 
+def _prepare_projection_bank(
+    *,
+    a: np.ndarray,
+    b: np.ndarray,
+    seed: int,
+    projection_count: int,
+) -> dict[str, Any]:
+    # Rademacher vectors provide stable magnitude and broad fault observability.
+    rng = np.random.default_rng(seed)
+    size = a.shape[0]
+    u = rng.choice(np.array([-1.0, 1.0], dtype=np.float32), size=(projection_count, size))
+    v = rng.choice(np.array([-1.0, 1.0], dtype=np.float32), size=(size, projection_count))
+
+    left = u @ a
+    right = b @ v
+    expected = np.sum(left * right.T, axis=1).astype(np.float32)
+    return {
+        "u": u,
+        "v": v,
+        "expected": expected,
+    }
+
+
+def _projection_residuals(c: np.ndarray, projection: dict[str, Any]) -> np.ndarray:
+    observed = np.sum(projection["u"] * (c @ projection["v"]).T, axis=1).astype(np.float32)
+    return np.abs(observed - projection["expected"]).astype(np.float32)
+
+
 def _inject_faults(
     *,
     c: np.ndarray,
@@ -206,6 +234,7 @@ def _run_mode(
     residual_scale: float,
     residual_margin: float,
     residual_floor: float,
+    projection_count: int,
     correctness_threshold: float,
     seed: int,
     selector: ProductionKernelSelector,
@@ -268,6 +297,12 @@ def _run_mode(
                 row_indices=row_indices,
                 col_indices=col_indices,
             )
+            projection = _prepare_projection_bank(
+                a=a,
+                b=b,
+                seed=case_seed + 9001,
+                projection_count=projection_count,
+            )
 
             mf = cl.mem_flags
             a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=a)
@@ -300,8 +335,13 @@ def _run_mode(
             )
             _ = cal_ms
             cal_row_res, cal_col_res = _abft_residuals(c_cal, abft)
+            cal_proj_residuals = _projection_residuals(c_cal, projection)
             row_threshold = max(residual_floor, cal_row_res * residual_scale + residual_margin)
             col_threshold = max(residual_floor, cal_col_res * residual_scale + residual_margin)
+            proj_thresholds = np.maximum(
+                residual_floor,
+                cal_proj_residuals * residual_scale + residual_margin,
+            ).astype(np.float32)
 
             c_ref = a @ b
             max_error = float(np.max(np.abs(c_cal - c_ref)))
@@ -337,12 +377,15 @@ def _run_mode(
                     size_checked += 1
                     t0 = time.perf_counter()
                     clean_row_res, clean_col_res = _abft_residuals(c, abft)
+                    clean_proj_residuals = _projection_residuals(c, projection)
                     verify_ms = float((time.perf_counter() - t0) * 1000.0)
                     verify_times_ms.append(verify_ms)
                     size_verify_times.append(verify_ms)
 
                     clean_anomaly = (
-                        clean_row_res > row_threshold or clean_col_res > col_threshold
+                        clean_row_res > row_threshold
+                        or clean_col_res > col_threshold
+                        or bool(np.any(clean_proj_residuals > proj_thresholds))
                     )
                     if clean_anomaly:
                         clean_anomaly_count += 1
@@ -364,8 +407,11 @@ def _run_mode(
                             magnitude=fault_mag,
                         )
                         f_row_res, f_col_res = _abft_residuals(c_fault, abft)
+                        f_proj_residuals = _projection_residuals(c_fault, projection)
                         detected = (
-                            f_row_res > row_threshold or f_col_res > col_threshold
+                            f_row_res > row_threshold
+                            or f_col_res > col_threshold
+                            or bool(np.any(f_proj_residuals > proj_thresholds))
                         )
                         entry = {
                             "mode": label,
@@ -376,8 +422,10 @@ def _run_mode(
                             "detected": bool(detected),
                             "row_residual": float(f_row_res),
                             "col_residual": float(f_col_res),
+                            "projection_residual_max": float(np.max(f_proj_residuals)),
                             "row_threshold": float(row_threshold),
                             "col_threshold": float(col_threshold),
+                            "projection_threshold_max": float(np.max(proj_thresholds)),
                             "fault_magnitude": float(fault_mag),
                         }
                         fault_trials.append(entry)
@@ -456,15 +504,18 @@ def _run_mode(
     )
     critical_recall = by_fault_model["critical_monitored"]["recall"]
     critical_misses = by_fault_model["critical_monitored"]["misses"]
+    uniform_recall = by_fault_model["uniform_random"]["recall"]
 
     mode_pass = (
         critical_recall >= 0.95
+        and uniform_recall >= 0.95
         and critical_misses == 0
         and effective_overhead_percent <= 5.0
         and false_positive_rate <= 0.05
     )
     stop_rule_triggered = (
-        effective_overhead_percent > 8.0 and critical_recall < 0.95
+        effective_overhead_percent > 8.0
+        and (critical_recall < 0.95 or uniform_recall < 0.95)
     )
 
     return {
@@ -487,6 +538,7 @@ def _run_mode(
         ),
         "by_fault_model": by_fault_model,
         "critical_recall": float(critical_recall),
+        "uniform_recall": float(uniform_recall),
         "critical_misses": int(critical_misses),
         "mode_pass": bool(mode_pass),
         "stop_rule_triggered": bool(stop_rule_triggered),
@@ -501,6 +553,7 @@ def _pick_recommended_mode(modes: list[dict[str, Any]]) -> dict[str, Any]:
             passing,
             key=lambda x: (
                 -x["critical_recall"],
+                -x["uniform_recall"],
                 x["effective_overhead_percent"],
                 x["false_positive_rate"],
             ),
@@ -510,6 +563,7 @@ def _pick_recommended_mode(modes: list[dict[str, Any]]) -> dict[str, Any]:
         key=lambda x: (
             x["critical_misses"],
             -x["critical_recall"],
+            -x["uniform_recall"],
             x["effective_overhead_percent"],
         ),
     )[0]
@@ -517,7 +571,7 @@ def _pick_recommended_mode(modes: list[dict[str, Any]]) -> dict[str, Any]:
 
 def _markdown_report(report: dict[str, Any]) -> str:
     lines: list[str] = []
-    lines.append("# T5 Week 4 Block 1 - ABFT-lite Detect-only Report")
+    lines.append("# T5 Week 4 Block 2 - ABFT-lite Coverage Refinement Report")
     lines.append("")
     lines.append(f"- Date: {report['metadata']['timestamp_utc']}")
     lines.append(
@@ -525,6 +579,9 @@ def _markdown_report(report: dict[str, Any]) -> str:
     )
     lines.append(
         f"- Sampling periods: {report['metadata']['sampling_periods']} | Row samples={report['metadata']['row_samples']} | Col samples={report['metadata']['col_samples']}"
+    )
+    lines.append(
+        f"- Projection checks: count={report['metadata']['projection_count']}"
     )
     lines.append(
         f"- Fault injection: faults_per_matrix={report['metadata']['faults_per_matrix']}, models={report['metadata']['fault_models']}"
@@ -543,13 +600,14 @@ def _markdown_report(report: dict[str, Any]) -> str:
     lines.append("## Mode Comparison")
     lines.append("")
     lines.append(
-        "| Mode | Coverage | Overhead % | Critical Recall | Critical Misses | False Pos Rate | Correctness | Pass |"
+        "| Mode | Coverage | Overhead % | Critical Recall | Uniform Recall | Critical Misses | False Pos Rate | Correctness | Pass |"
     )
-    lines.append("| --- | ---: | ---: | ---: | ---: | ---: | --- | --- |")
+    lines.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |")
     for mode in report["modes"]:
         lines.append(
             f"| {mode['mode']} | {mode['sampling_coverage']:.3f} | "
             f"{mode['effective_overhead_percent']:.3f} | {mode['critical_recall']:.3f} | "
+            f"{mode['uniform_recall']:.3f} | "
             f"{mode['critical_misses']} | {mode['false_positive_rate']:.3f} | "
             f"{mode['correctness_passed']} | {mode['mode_pass']} |"
         )
@@ -593,6 +651,7 @@ def run_experiment(
     residual_scale: float,
     residual_margin: float,
     residual_floor: float,
+    projection_count: int,
     correctness_threshold: float,
     seed: int,
 ) -> dict[str, Any]:
@@ -622,6 +681,7 @@ def run_experiment(
                 residual_scale=residual_scale,
                 residual_margin=residual_margin,
                 residual_floor=residual_floor,
+                projection_count=projection_count,
                 correctness_threshold=correctness_threshold,
                 seed=seed,
                 selector=selector,
@@ -637,13 +697,13 @@ def run_experiment(
     if passes:
         decision_hint = "iterate"
         rationale = (
-            "ABFT-lite detect-only achieves fault-detection and overhead targets in at least "
-            "one validated mode; continue toward integration hardening."
+            "ABFT-lite detect-only achieves critical and uniform recall targets with low overhead "
+            "in validated periodic mode; continue toward integration hardening."
         )
     elif len(stop_modes) == len(modes):
         decision_hint = "drop"
         rationale = (
-            "All tested modes trigger stop rule (overhead > 8% with insufficient critical recall)."
+            "All tested modes trigger stop rule (overhead > 8% with insufficient fault recall)."
         )
     else:
         decision_hint = "refine"
@@ -675,6 +735,7 @@ def run_experiment(
             "residual_scale": residual_scale,
             "residual_margin": residual_margin,
             "residual_floor": residual_floor,
+            "projection_count": projection_count,
             "correctness_threshold": correctness_threshold,
             "seed": seed,
             "opencl_platform": platform.name,
@@ -700,7 +761,7 @@ def main() -> int:
     parser.add_argument("--sessions", type=int, default=4)
     parser.add_argument("--iterations", type=int, default=8)
     parser.add_argument("--warmup", type=int, default=2)
-    parser.add_argument("--sampling-periods", nargs="+", type=int, default=[1, 4])
+    parser.add_argument("--sampling-periods", nargs="+", type=int, default=[4, 8])
     parser.add_argument("--row-samples", type=int, default=16)
     parser.add_argument("--col-samples", type=int, default=16)
     parser.add_argument("--faults-per-matrix", type=int, default=2)
@@ -709,6 +770,7 @@ def main() -> int:
     parser.add_argument("--residual-scale", type=float, default=5.0)
     parser.add_argument("--residual-margin", type=float, default=1e-2)
     parser.add_argument("--residual-floor", type=float, default=5e-2)
+    parser.add_argument("--projection-count", type=int, default=4)
     parser.add_argument("--correctness-threshold", type=float, default=1e-3)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
@@ -732,6 +794,7 @@ def main() -> int:
         residual_scale=args.residual_scale,
         residual_margin=args.residual_margin,
         residual_floor=args.residual_floor,
+        projection_count=args.projection_count,
         correctness_threshold=args.correctness_threshold,
         seed=args.seed,
     )
