@@ -1,17 +1,17 @@
 {
   "$schema": "../results.schema.json",
   "schema_version": "1.0.0",
-  "experiment_id": "t2_auto_scheduler-002",
+  "experiment_id": "t2_auto_scheduler-003",
   "track": "t2_auto_scheduler",
-  "title": "T2 Week 2 bounded search with strict correctness filter",
+  "title": "T2 Week 2 hardening + strict rerun (canonical input distribution)",
   "status": "completed",
   "owner": "codex",
   "branch": "feat/breakthrough-roadmap-2026q1",
-  "commit": "0ebb65f",
+  "commit": "23721fb",
   "timestamps": {
     "created_at": "2026-02-07T00:00:00Z",
-    "started_at": "2026-02-07T17:42:30.000000+00:00",
-    "ended_at": "2026-02-07T17:43:03.620761+00:00"
+    "started_at": "2026-02-07T18:31:28.000000+00:00",
+    "ended_at": "2026-02-07T18:31:38.181820+00:00"
   },
   "environment": {
     "os": "linux",
@@ -30,8 +30,8 @@
     ]
   },
   "parameters": {
-    "campaign": "week2_block1",
-    "search_mode": "bounded_expanded",
+    "campaign": "week2_block2_partial_t2",
+    "search_mode": "bounded_expanded_strict_rerun",
     "kernels": [
       "tile20",
       "tile24"
@@ -44,28 +44,31 @@
     "runs_per_config": 12,
     "warmup": 2,
     "correctness_threshold": 0.001,
+    "input_distribution": "standard_normal",
     "top_candidate_replay_sessions": 5,
     "top_candidate_runs_per_session": 10
   },
   "metrics": {
-    "peak_gflops_mean": 802.609050594992,
-    "avg_gflops_mean": 802.609050594992,
-    "p95_time_ms": 6.8556608,
-    "max_error": 0.0010986328125,
-    "cv_peak": 0.001899303050316743,
-    "delta_vs_baseline_percent": 0.11143925326005172,
-    "reproducibility_score": 0.9981006969496832,
+    "peak_gflops_mean": 783.9233331357134,
+    "avg_gflops_mean": 783.9233331357134,
+    "p95_time_ms": 21.927772799999996,
+    "max_error": 0.0006103515625,
+    "cv_peak": 0.0003864229941534548,
+    "delta_vs_baseline_percent": 6.025571161540473,
+    "reproducibility_score": 0.9996135770058466,
     "energy_joules": null
   },
   "validation": {
-    "correctness_passed": false,
+    "correctness_passed": true,
     "stability_passed": true,
     "promotion_gate_passed": false
   },
   "artifacts": [
-    "research/breakthrough_lab/t2_auto_scheduler/week2_t2_bounded_search_20260207_174303.json",
-    "research/breakthrough_lab/t2_auto_scheduler/week2_t2_bounded_search_20260207_174303.md"
+    "research/breakthrough_lab/t2_auto_scheduler/week2_t2_bounded_search_20260207_183138.json",
+    "research/breakthrough_lab/t2_auto_scheduler/week2_t2_bounded_search_20260207_183138.md",
+    "research/breakthrough_lab/t2_auto_scheduler/run_week2_t2_search.py",
+    "research/auto_tuner/gemm_auto_tuner.py"
   ],
   "decision": "iterate",
-  "notes": "Expanded bounded search completed with strict correctness filtering before ranking. No candidate passed max_error<=1e-3, so promotion is blocked; continue with precision-focused refinement."
+  "notes": "After hardening (deterministic seed + canonical standard_normal inputs), strict correctness filter passed (6/6 search candidates valid). Best replay candidate tile24@2048 reached +6.03% with correctness/stability pass, still below +10% promotion threshold."
 }

@@ -1,0 +1,277 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-07T18:31:38.181820+00:00",
+    "kernels": [
+      "tile20",
+      "tile24"
+    ],
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ],
+    "runs_per_config": 12,
+    "warmup": 2,
+    "replay_sessions": 5,
+    "replay_runs": 10,
+    "top_k": 3,
+    "correctness_threshold": 0.001,
+    "seed": 42,
+    "input_distribution": "standard_normal"
+  },
+  "search": {
+    "raw_candidates": [
+      {
+        "kernel": "tile20",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 799.5244810666542,
+        "avg_time_ms": 6.86408,
+        "max_error": 0.00029754638671875,
+        "runs": 12,
+        "seed": 42
+      },
+      {
+        "kernel": "tile20",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 286.9828592530459,
+        "avg_time_ms": 59.86374666666668,
+        "max_error": 0.000518798828125,
+        "runs": 12,
+        "seed": 43
+      },
+      {
+        "kernel": "tile20",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 152.55046079232775,
+        "avg_time_ms": 380.08445333333333,
+        "max_error": 0.0007171630859375,
+        "runs": 12,
+        "seed": 44
+      },
+      {
+        "kernel": "tile24",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 768.2228966258665,
+        "avg_time_ms": 7.143759999999999,
+        "max_error": 0.0003509521484375,
+        "runs": 12,
+        "seed": 45
+      },
+      {
+        "kernel": "tile24",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 739.3719501320379,
+        "avg_time_ms": 23.23576,
+        "max_error": 0.00048828125,
+        "runs": 12,
+        "seed": 46
+      },
+      {
+        "kernel": "tile24",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 712.5111578874241,
+        "avg_time_ms": 81.37705333333332,
+        "max_error": 0.0008087158203125,
+        "runs": 12,
+        "seed": 47
+      }
+    ],
+    "baseline_by_size": {
+      "1400": 799.5244810666542,
+      "2048": 739.3719501320379,
+      "3072": 712.5111578874241
+    },
+    "ranked_candidates": [
+      {
+        "kernel": "tile20",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 799.5244810666542,
+        "avg_time_ms": 6.86408,
+        "max_error": 0.00029754638671875,
+        "runs": 12,
+        "seed": 42,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "kernel": "tile24",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 768.2228966258665,
+        "avg_time_ms": 7.143759999999999,
+        "max_error": 0.0003509521484375,
+        "runs": 12,
+        "seed": 45,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -3.9150251408221917
+      },
+      {
+        "kernel": "tile24",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 739.3719501320379,
+        "avg_time_ms": 23.23576,
+        "max_error": 0.00048828125,
+        "runs": 12,
+        "seed": 46,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "kernel": "tile24",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 712.5111578874241,
+        "avg_time_ms": 81.37705333333332,
+        "max_error": 0.0008087158203125,
+        "runs": 12,
+        "seed": 47,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "kernel": "tile20",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 286.9828592530459,
+        "avg_time_ms": 59.86374666666668,
+        "max_error": 0.000518798828125,
+        "runs": 12,
+        "seed": 43,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -61.18559012121083
+      },
+      {
+        "kernel": "tile20",
+        "size": 3072,
+        "status": "completed",
+        "gflops": 152.55046079232775,
+        "avg_time_ms": 380.08445333333333,
+        "max_error": 0.0007171630859375,
+        "runs": 12,
+        "seed": 44,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -78.5897443003369
+      }
+    ],
+    "valid_count": 6,
+    "completed_count": 6
+  },
+  "replay": {
+    "candidates": [
+      {
+        "kernel": "tile20",
+        "size": 1400,
+        "status": "completed",
+        "gflops": {
+          "mean": 802.6221810310657,
+          "std": 1.87441915875393,
+          "min": 799.3456086096279,
+          "p50": 802.9420921908614,
+          "p95": 804.7562291943292,
+          "max": 805.1340794711934
+        },
+        "avg_time_ms": {
+          "mean": 6.8376256,
+          "std": 0.015990149287608314,
+          "min": 6.816256,
+          "p50": 6.8348640000000005,
+          "p95": 6.8603136000000005,
+          "max": 6.865616
+        },
+        "max_error": {
+          "mean": 0.00030364990234375,
+          "std": 1.8310546875000003e-05,
+          "min": 0.00028228759765625,
+          "p50": 0.00030517578125,
+          "p95": 0.00032958984375,
+          "max": 0.000335693359375
+        },
+        "cv_peak": 0.002335369247266517,
+        "mean_delta_vs_baseline_percent": 0.3874427910298418,
+        "correctness_passed": true,
+        "stability_passed": true,
+        "promotion_gate_passed": false
+      },
+      {
+        "kernel": "tile24",
+        "size": 1400,
+        "status": "completed",
+        "gflops": {
+          "mean": 769.8433706117261,
+          "std": 0.17893055109332867,
+          "min": 769.5863080947914,
+          "p50": 769.8022079633008,
+          "p95": 770.0901611141927,
+          "max": 770.140982951369
+        },
+        "avg_time_ms": {
+          "mean": 7.1287232000000005,
+          "std": 0.001656765813264457,
+          "min": 7.1259679999999985,
+          "p50": 7.129104,
+          "p95": 7.1307072,
+          "max": 7.1311040000000006
+        },
+        "max_error": {
+          "mean": 0.000350189208984375,
+          "std": 5.2880015414927535e-05,
+          "min": 0.000286102294921875,
+          "p50": 0.000335693359375,
+          "p95": 0.00042724609375,
+          "max": 0.0004425048828125
+        },
+        "cv_peak": 0.0002324246176870348,
+        "mean_delta_vs_baseline_percent": -3.7123454200339454,
+        "correctness_passed": true,
+        "stability_passed": true,
+        "promotion_gate_passed": false
+      },
+      {
+        "kernel": "tile24",
+        "size": 2048,
+        "status": "completed",
+        "gflops": {
+          "mean": 783.9233331357134,
+          "std": 0.30292600157705857,
+          "min": 783.3911951631109,
+          "p50": 784.0295695489723,
+          "p95": 784.2291921980047,
+          "max": 784.2540483885693
+        },
+        "avg_time_ms": {
+          "mean": 21.9152448,
+          "std": 0.008471049767294295,
+          "min": 21.906,
+          "p50": 21.912272,
+          "p95": 21.927772799999996,
+          "max": 21.930127999999996
+        },
+        "max_error": {
+          "mean": 0.000555419921875,
+          "std": 3.558930599881165e-05,
+          "min": 0.000518798828125,
+          "p50": 0.00054931640625,
+          "p95": 0.000604248046875,
+          "max": 0.0006103515625
+        },
+        "cv_peak": 0.0003864229941534548,
+        "mean_delta_vs_baseline_percent": 6.025571161540473,
+        "correctness_passed": true,
+        "stability_passed": true,
+        "promotion_gate_passed": false
+      }
+    ]
+  },
+  "summary": {
+    "decision_hint": "iterate",
+    "decision_rationale": "Correct/stable candidates exist but promotion uplift threshold is not met."
+  }
+}

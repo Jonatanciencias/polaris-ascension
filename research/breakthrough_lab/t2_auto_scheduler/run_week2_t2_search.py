@@ -48,6 +48,7 @@ def _markdown_report(report: dict[str, Any]) -> str:
         f"{report['metadata']['kernels']} kernels x {report['metadata']['sizes']} sizes x "
         f"{report['metadata']['runs_per_config']} runs"
     )
+    lines.append(f"- Input distribution: {report['metadata']['input_distribution']}")
     lines.append(f"- Correctness threshold: {report['metadata']['correctness_threshold']}")
     lines.append("")
     lines.append("## Search Results")
@@ -102,6 +103,7 @@ def run_search(
     top_k: int,
     correctness_threshold: float,
     seed: int,
+    input_distribution: str,
 ) -> dict[str, Any]:
     tuner = GEMMAutoTuner(output_dir="results/auto_tuner", verbose=False)
 
@@ -120,7 +122,7 @@ def run_search(
             continue
 
         for size in sizes:
-            np.random.seed(seed + config_idx)
+            config_seed = seed + config_idx
             config_idx += 1
             result = tuner.benchmark_kernel(
                 kernel_name=kernel,
@@ -129,6 +131,8 @@ def run_search(
                 K=size,
                 runs=runs_per_config,
                 warmup=warmup,
+                seed=config_seed,
+                input_distribution=input_distribution,
             )
             if result is None:
                 raw_candidates.append(
@@ -150,6 +154,7 @@ def run_search(
                     "avg_time_ms": float(result.avg_time_ms),
                     "max_error": float(result.max_error),
                     "runs": int(result.runs),
+                    "seed": config_seed,
                 }
             )
 
@@ -192,7 +197,7 @@ def run_search(
         error_values: list[float] = []
 
         for session_idx in range(replay_sessions):
-            np.random.seed(seed + 10_000 + idx * 100 + session_idx)
+            replay_seed = seed + 10_000 + idx * 100 + session_idx
             replay_result = tuner.benchmark_kernel(
                 kernel_name=candidate["kernel"],
                 M=candidate["size"],
@@ -200,6 +205,8 @@ def run_search(
                 K=candidate["size"],
                 runs=replay_runs,
                 warmup=warmup,
+                seed=replay_seed,
+                input_distribution=input_distribution,
             )
             if replay_result is None:
                 continue
@@ -279,6 +286,7 @@ def run_search(
             "top_k": top_k,
             "correctness_threshold": correctness_threshold,
             "seed": seed,
+            "input_distribution": input_distribution,
         },
         "search": {
             "raw_candidates": raw_candidates,
@@ -309,6 +317,11 @@ def main() -> int:
     parser.add_argument("--correctness-threshold", type=float, default=1e-3)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
+        "--input-distribution",
+        choices=["standard_normal", "uniform"],
+        default="standard_normal",
+    )
+    parser.add_argument(
         "--output-dir",
         type=str,
         default="research/breakthrough_lab/t2_auto_scheduler",
@@ -325,6 +338,7 @@ def main() -> int:
         top_k=args.top_k,
         correctness_threshold=args.correctness_threshold,
         seed=args.seed,
+        input_distribution=args.input_distribution,
     )
 
     repo_root = Path(__file__).resolve().parents[3]

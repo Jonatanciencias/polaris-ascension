@@ -18,7 +18,6 @@ Date: February 5, 2026
 """
 
 import sys
-import os
 import time
 import json
 import csv
@@ -191,7 +190,9 @@ class GEMMAutoTuner:
         kernel_name: str,
         M: int, N: int, K: int,
         runs: int = 10,
-        warmup: int = 2
+        warmup: int = 2,
+        seed: Optional[int] = None,
+        input_distribution: str = "standard_normal",
     ) -> Optional[TuningResult]:
         """
         Benchmark a specific kernel configuration.
@@ -201,6 +202,8 @@ class GEMMAutoTuner:
             M, N, K: Matrix dimensions
             runs: Number of benchmark runs
             warmup: Number of warmup runs
+            seed: Optional deterministic seed
+            input_distribution: Matrix value distribution ('standard_normal' | 'uniform')
         
         Returns:
             TuningResult or None if benchmark failed
@@ -214,9 +217,26 @@ class GEMMAutoTuner:
         local_size = kernel_info['local_size']
         
         try:
-            # Allocate matrices
-            A = np.random.rand(M, K).astype(np.float32)
-            B = np.random.rand(K, N).astype(np.float32)
+            # Allocate matrices with deterministic, canonical-friendly distribution.
+            # This aligns error measurements with the production reproducibility protocol.
+            if input_distribution not in {"standard_normal", "uniform"}:
+                raise ValueError(
+                    f"Unsupported input_distribution '{input_distribution}'. "
+                    "Use 'standard_normal' or 'uniform'."
+                )
+
+            if seed is None:
+                rng = np.random.default_rng()
+            else:
+                rng = np.random.default_rng(seed)
+
+            if input_distribution == "standard_normal":
+                A = rng.standard_normal((M, K), dtype=np.float32)
+                B = rng.standard_normal((K, N), dtype=np.float32)
+            else:
+                A = rng.random((M, K), dtype=np.float32)
+                B = rng.random((K, N), dtype=np.float32)
+
             C = np.zeros((M, N), dtype=np.float32)
             
             # Create OpenCL buffers
