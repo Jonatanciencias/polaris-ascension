@@ -4,6 +4,53 @@
 
 ---
 
+## [1.4.0] - 2026-02-07 ✅ REPAIR ROADMAP PHASES 3-5 CLOSED
+
+### 🎯 Milestone: Cierre técnico de estabilización, reproducibilidad y CI
+
+### ✨ Cambios Principales
+
+#### 📊 Fase 3 - Baseline de rendimiento reproducible
+- Baseline reproducible documentado con protocolo fijo (10 sesiones, 20 iteraciones, seed=42).
+- Nuevo script de benchmark reproducible:
+  - `scripts/benchmark_phase3_reproducible.py`
+- Documento de referencia:
+  - `docs/PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md`
+- README y documentación alineados para separar:
+  - **Reproducible baseline actual** vs
+  - **peak histórico de auto-tuner**.
+
+#### 🧪 Fase 4 - Estabilidad de pruebas y CI por tiers
+- Marcadores de test consolidados:
+  - `unit`, `integration`, `gpu`, `opencl`, `slow`.
+- Clasificación centralizada en:
+  - `tests/conftest.py`
+- Nuevo marcador declarado en:
+  - `pytest.ini` (`opencl`)
+- Script anti-flakiness para pruebas críticas:
+  - `scripts/check_flaky_critical_tests.sh`
+- Nuevo workflow de tiers CPU/GPU:
+  - `.github/workflows/test-tiers.yml`
+- Documentación de workflows actualizada:
+  - `.github/workflows/README.md`
+
+#### 🧹 Fase 5 - Cierre y limpieza (checklist final)
+- Verificación final ejecutada exitosamente:
+  - `./venv/bin/python -m src.cli --help`
+  - `./venv/bin/python scripts/verify_hardware.py`
+  - `./venv/bin/python scripts/diagnostics.py`
+  - `./venv/bin/python test_production_system.py` (4/4 PASS)
+  - `./venv/bin/pytest tests/ -v` (69 passed)
+- Sección de testing actualizada con checklist final en `README.md`.
+
+### 📌 Estado Consolidado (2026-02-07)
+- ✅ CLI funcional y validada
+- ✅ Suite OpenCL operativa sin skips por API faltante
+- ✅ Claims de rendimiento alineadas con medición reproducible
+- ✅ Flujo de pruebas estable para desarrollo local y CI
+
+---
+
 ## [1.3.0] - 2026-02-03 🧠 NEURAL ARCHITECTURE SEARCH (DARTS)
 
 ### 🎉 Milestone: Implementación Completa de DARTS para Búsqueda Automática de Arquitecturas

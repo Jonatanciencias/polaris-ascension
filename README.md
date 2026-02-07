@@ -305,6 +305,21 @@ python test_production_system.py
 ./scripts/check_flaky_critical_tests.sh 3
 ```
 
+### Phase 5 Final Checklist (2026-02-07)
+
+```bash
+./venv/bin/python -m src.cli --help
+./venv/bin/python scripts/verify_hardware.py
+./venv/bin/python scripts/diagnostics.py
+./venv/bin/python test_production_system.py
+./venv/bin/pytest tests/ -v
+```
+
+Validated status:
+- `test_production_system.py`: 4/4 tests passed
+- `pytest tests/ -v`: 69 passed
+- Hardware/OpenCL diagnostics: OK on RX 590 GME
+
 ### Reproduce Benchmark Results
 
 ```bash
