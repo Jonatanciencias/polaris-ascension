@@ -12,6 +12,7 @@ New to this project? Start with these documents in order:
 1. [../README.md](../README.md) - Project overview, quick start, performance results
 2. [EXECUTIVE_SUMMARY.md](../EXECUTIVE_SUMMARY.md) - Complete assessment, novelty analysis, publication recommendations
 3. [REAL_HARDWARE_VALIDATION.md](../REAL_HARDWARE_VALIDATION.md) - Verified performance on real RX 590 hardware
+4. [PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md](PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md) - Reproducible baseline protocol (Feb 7, 2026)
 
 ---
 
@@ -37,6 +38,11 @@ New to this project? Start with these documents in order:
   - Conservative performance claims (750-805 GFLOPS)
   - Comparison: claimed vs actual results
   - Correctness validation (max_error < 0.001)
+
+- [PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md](PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md) ⭐
+  - Fixed protocol: 10 sessions x 20 iterations, seed=42
+  - Reproducible peak baseline: 776.1 GFLOPS @ 1400x1400
+  - Historical discovery separated from reproducible claims
 
 - [test_production_system.py](../test_production_system.py) ⭐
   - Comprehensive validation suite (4 tests)
@@ -108,10 +114,11 @@ New to this project? Start with these documents in order:
 See [REAL_HARDWARE_VALIDATION.md](../REAL_HARDWARE_VALIDATION.md) for complete benchmark results.
 
 **Quick Reference**:
-- Peak: 805 GFLOPS @ 3072×3072 (tile24) 🏆
-- Sweet spot: 778 GFLOPS @ 1400×1400 (tile20)
-- Baseline: 566 GFLOPS (tile16 @ 2048×2048)
-- Improvement: +37-42%
+- Reproducible peak baseline: 776.1 GFLOPS @ 1400x1400 (tile20)
+- Reproducible large-matrix baseline: 774.3 GFLOPS @ 2048x2048 (tile24)
+- Baseline: 566 GFLOPS (tile16 @ 2048x2048)
+- Reproducible improvement: ~+37.1%
+- Historical discovery: 831.2 GFLOPS @ 1300x1300 (auto-tuner archive)
 - Correctness: max_error < 0.001 on all sizes
 
 ### Hardware Used
@@ -211,9 +218,9 @@ python test_production_system.py
 ## 🔍 Quick Lookup
 
 ### Performance Numbers
-- **Peak GFLOPS**: 805 ([REAL_HARDWARE_VALIDATION.md](../REAL_HARDWARE_VALIDATION.md))
-- **Improvement**: +42% ([README.md](../README.md))
-- **Sweet Spot**: 778 GFLOPS @ 1400×1400 ([EXECUTIVE_SUMMARY.md](../EXECUTIVE_SUMMARY.md))
+- **Reproducible peak GFLOPS**: 776.1 ([PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md](PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md))
+- **Reproducible improvement**: ~+37.1% ([../README.md](../README.md))
+- **Historical discovery peak**: 831.2 GFLOPS ([../AUTO_TUNER_COMPLETE_SUMMARY.md](../AUTO_TUNER_COMPLETE_SUMMARY.md))
 
 ### Key Files
 - **Production Selector**: `src/optimization_engines/adaptive_kernel_selector.py`
@@ -242,6 +249,6 @@ python test_production_system.py
 
 ---
 
-**Last Updated**: February 2025  
+**Last Updated**: February 2026  
 **Status**: Production Ready ✅  
 **Documentation Coverage**: Complete 🎯

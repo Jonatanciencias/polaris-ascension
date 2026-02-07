@@ -6,10 +6,10 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Version: 2.2.0](https://img.shields.io/badge/version-2.2.0-brightgreen.svg)]()
 [![Status: Production Ready](https://img.shields.io/badge/status-Production%20Ready-success.svg)]()
-[![Performance: 831 GFLOPS](https://img.shields.io/badge/performance-831%20GFLOPS-brightgreen.svg)]()
-[![Improvement: +47%](https://img.shields.io/badge/improvement-%2B47%25-blue.svg)]()
+[![Performance: 776 GFLOPS](https://img.shields.io/badge/performance-776%20GFLOPS-brightgreen.svg)]()
+[![Improvement: +37%](https://img.shields.io/badge/improvement-%2B37%25-blue.svg)]()
 
-> 🎯 **Systematic Optimization**: From 566 to 831 GFLOPS through methodical kernel optimization + auto-tuner
+> 🎯 **Systematic Optimization**: From 566 to ~776 GFLOPS reproducible peak (Phase 3 baseline, Feb 2026)
 
 > 🧠 **ML-Powered Selection**: Hybrid ML + heuristics kernel selector with 75% accuracy
 
@@ -19,14 +19,14 @@
 
 ## 🎯 Project Overview
 
-**A systematic approach to GEMM (matrix multiplication) optimization on AMD Polaris GPUs, achieving +47% performance improvement through kernel specialization, auto-tuner framework, and intelligent selection.**
+**A systematic approach to GEMM (matrix multiplication) optimization on AMD Polaris GPUs, achieving ~+37% reproducible improvement through kernel specialization, auto-tuner framework, and intelligent selection.**
 
 ### ✅ Verified Results (Real Hardware):
-- 🏆 **Peak Performance**: 831 GFLOPS @ 1300×1300 (tile20 kernel, auto-tuner discovery)
-- ⭐ **Average Performance**: 822-824 GFLOPS @ 1300×1300 (validated, 30+ runs)
-- 📈 **Improvement**: +46.8% vs baseline (566 GFLOPS)
+- 🏆 **Reproducible Peak**: **776.1 GFLOPS mean** @ 1400×1400 (10 sessions, fixed seed, Feb 7 2026)
+- ⭐ **Reproducible Range**: 772.6-781.6 GFLOPS @ 1400×1400 (peak metric)
+- 📈 **Reproducible Improvement**: ~+37% vs baseline (566 GFLOPS)
 - ✅ **Correctness**: max_error < 0.001 across all sizes
-- 🎯 **Consistency**: CV = 1.42% (excellent stability)
+- 🗂️ **Historical Reference**: 831.2 GFLOPS @ 1300×1300 from auto-tuner discovery runs (archived)
 
 ### 🔬 Technical Achievements:
 - **3 Specialized Kernels**: tile16 (baseline), tile20 (sweet spot), tile24 (large matrices)
@@ -54,13 +54,13 @@
 
 🔧 SPECIALIZED KERNELS (3 Optimized)
     ├── tile16: Baseline (256 threads, 566 GFLOPS @ 2048)
-    ├── tile20: Sweet Spot (100 threads, 831 GFLOPS @ 1300) ⭐ AUTO-TUNER DISCOVERY
-    └── tile24: Large Matrix (144 threads, 799 GFLOPS @ 1800)
+    ├── tile20: Sweet Spot (100 threads, 773-782 GFLOPS @ 1400, reproducible baseline)
+    └── tile24: Large Matrix (144 threads, 773-777 GFLOPS @ 2048, reproducible baseline)
 
 📊 PERFORMANCE ACHIEVEMENTS
-    ├── 🏆 Peak: 831 GFLOPS @ 1300×1300 (+46.8% vs baseline) ⭐ NEW RECORD
-    ├── ⭐ Average: 822-824 GFLOPS (validated 30+ runs)
-    └── ✅ Auto-Tuner: Discovered non-obvious optimal (1300 > 1400)
+    ├── 🏆 Reproducible peak mean: 776.1 GFLOPS @ 1400×1400 (+37.1% vs baseline)
+    ├── ⭐ Reproducible large-matrix peak mean: 774.3 GFLOPS @ 2048×2048
+    └── 🗂️ Historical record: 831.2 GFLOPS @ 1300×1300 (auto-tuner archive)
 
 📚 COMPLETE DOCUMENTATION
     ├── 📄 Methodology & Results
@@ -79,8 +79,8 @@ rx590-gemm-optimization/
 │   ├── optimization_engines/        # Kernel selector & optimization
 │   │   └── adaptive_kernel_selector.py  # ML-powered selector ⭐
 │   ├── kernels/                     # OpenCL kernels
-│   │   ├── gemm_tile20_production.cl    # Sweet spot kernel (778 GFLOPS)
-│   │   └── gemm_tile24_production.cl    # Large matrix kernel (805 GFLOPS)
+│   │   ├── gemm_tile20_production.cl    # Sweet spot kernel (~776 GFLOPS reproducible)
+│   │   └── gemm_tile24_production.cl    # Large matrix kernel (~774 GFLOPS reproducible)
 │   └── ml_models/                   # Trained models
 │       ├── kernel_selector_model.pkl    # Gradient Boosting model
 │       └── kernel_selector_dataset.json # Training data (21 samples)
@@ -172,7 +172,8 @@ print(f"Local work size: {recommendation['local_size']}")
 
 # Output:
 # Selected kernel: tile20
-# Expected performance: 831.0 GFLOPS  ⭐ AUTO-TUNER DISCOVERY
+# Expected (model prediction): 831.0 GFLOPS  ⭐ historical auto-tuner target
+# Reproducible baseline (Feb 2026): ~776 GFLOPS mean peak @ 1400×1400
 # Use: src/kernels/gemm_tile20_production.cl
 # Local work size: (10, 10)
 ```
@@ -195,41 +196,38 @@ print(f'Recommended: {rec[\"kernel_key\"]} - {rec[\"predicted_gflops\"]:.1f} GFL
 
 ## 📊 Performance Results
 
-### Verified Performance (Real Hardware - AMD Radeon RX 590 GME)
+### Verified Performance (Reproducible Baseline - AMD Radeon RX 590 GME, Feb 2026)
 
-| Size | Best Kernel | GFLOPS | vs Baseline | Error |
-|------|-------------|--------|-------------|-------|
-| 512 | tile24 | 479.4 | - | < 0.0001 |
-| 1024 | tile24 | 712.0 | +25.8% | < 0.0003 |
-| **1300** | **tile20** | **831.2** | **+46.8%** | **< 0.0001** | 🏆 **AUTO-TUNER DISCOVERY**
-| 1400 | tile20 | 810.0 | +43.1% | < 0.0004 |
-| 1800 | tile24 | 799.2 | +41.2% | < 0.0003 |
-| 2048 | tile24 | 776.4 | +37.2% | < 0.0005 |
-| 3072 | tile24 | 804.7 | +42.2% | < 0.0008 |
+| Size | Best Kernel | Peak GFLOPS (mean [min,max]) | Avg GFLOPS mean | Error |
+|------|-------------|------------------------------|-----------------|-------|
+| 512 | tile24 | 455.6 [436.3, 473.0] | 409.5 | < 0.0001 |
+| **1400** | **tile20** | **776.1 [772.6, 781.6]** | **765.5** | **< 0.0004** |
+| 2048 | tile24 | 774.3 [772.8, 777.2] | 712.8 | < 0.0005 |
 
+**Benchmark protocol**: 10 sessions, 20 iterations per session, seed=42, fixed kernels  
 **Baseline**: 566 GFLOPS (tile16 @ 2048×2048)  
-**Peak**: 831.2 GFLOPS @ 1300×1300 (+46.8% improvement) ⭐ **AUTO-TUNER DISCOVERY**  
-**Average**: 822-824 GFLOPS @ 1300×1300 (validated 30+ runs, CV = 1.2%)
+**Reproducible peak mean**: 776.1 GFLOPS @ 1400×1400 (~+37.1% vs baseline)  
+**Historical peak (archived)**: 831.2 GFLOPS @ 1300×1300 (auto-tuner discovery runs)
 
 **tile20 Kernel** (10×10 workgroup, 20×20 tile):
 - Optimized for: Medium matrices (1200-1900)
-- Peak: **831.2 GFLOPS @ 1300×1300** ⭐ **AUTO-TUNER DISCOVERY**
-- Average: 822-824 GFLOPS (validated 30+ runs)
-- Discovery: Auto-tuner found 1300×1300 superior to manual 1400×1400
+- Reproducible peak mean: **776.1 GFLOPS @ 1400×1400**
+- Reproducible avg mean: 765.5 GFLOPS @ 1400×1400
+- Historical discovery reference: 831.2 GFLOPS @ 1300×1300 (archived runs)
 - Uses: float4 vectorization, 2-element register blocking
 - Degrades: Performance drops at 2048+ due to occupancy
 
 **tile24 Kernel** (12×12 workgroup, 24×24 tile):
 - Optimized for: Large matrices (1800+)
-- Peak: 799.2 GFLOPS @ 1800×1800 (auto-tuner)
-- Previous best: 804.7 GFLOPS @ 3072×3072
+- Reproducible peak mean: 774.3 GFLOPS @ 2048×2048
+- Reproducible avg mean: 712.8 GFLOPS @ 2048×2048
 - Uses: float4 vectorization, aggressive loop unrolling
-- Scales: Maintains 776-805 GFLOPS on large matrices
+- Scales: Maintains ~712-775 GFLOPS on large matrices (baseline protocol)
 
 **Auto-Tuner Framework** ⭐ **NEW IN v2.2.0**:
 - Custom framework: 526 lines, zero external dependencies
 - Search: 42 configurations tested in 2.6 minutes
-- Discovery: Found 1300×1300 optimal (+21 GFLOPS vs manual 1400×1400)
+- Historical discovery: Found 1300×1300 optimal (+21 GFLOPS vs manual 1400×1400)
 - See: [`AUTO_TUNER_COMPLETE_SUMMARY.md`](AUTO_TUNER_COMPLETE_SUMMARY.md)
 
 **ML Selector** (Gradient Boosting):
@@ -243,9 +241,9 @@ print(f'Recommended: {rec[\"kernel_key\"]} - {rec[\"predicted_gflops\"]:.1f} GFL
 | Approach | GFLOPS | Improvement | Notes |
 |----------|--------|-------------|-------|
 | Baseline (tile16) | 566 | - | Standard implementation |
-| Manual tuning (1400×1400) | 810 | +43.1% | Manual intuition |
-| **Auto-tuner (1300×1300)** | **831** | **+46.8%** | ⭐ **Systematic discovery** |
-| tile24 @ 1800 | 799 | +41.2% | Large matrix specialist |
+| Repro baseline (1400×1400, peak mean) | 776 | +37.1% | 10 sessions, fixed seed |
+| Repro baseline (2048×2048, peak mean) | 774 | +36.8% | Large matrix specialist |
+| **Auto-tuner (1300×1300, historical)** | **831** | **+46.8%** | ⭐ **Systematic discovery (archived)** |
 | float8 experiment | 307 | -60% | Failed: register spilling |
 
 See [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) for complete analysis.
@@ -255,14 +253,14 @@ See [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) for complete analysis.
 ## 📚 Documentation
 
 ### Main Documents
-- [AUTO_TUNER_COMPLETE_SUMMARY.md](AUTO_TUNER_COMPLETE_SUMMARY.md) - ⭐ **NEW**: Auto-tuner framework discovery (831 GFLOPS)
+- [AUTO_TUNER_COMPLETE_SUMMARY.md](AUTO_TUNER_COMPLETE_SUMMARY.md) - ⭐ **NEW**: Auto-tuner framework discovery (831 GFLOPS, historical)
 - [COMPETITIVE_ANALYSIS.md](COMPETITIVE_ANALYSIS.md) - **NEW**: Framework positioning vs cuBLAS/PyTorch
 - [INNOVATION_ASSESSMENT.md](INNOVATION_ASSESSMENT.md) - **NEW**: 6 innovations (top 3 rated ⭐⭐⭐⭐⭐)
 - [TESTING_VALIDATION_REPORT.md](TESTING_VALIDATION_REPORT.md) - **NEW**: 6/6 tests passing (100% success)
 - [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) - Complete project assessment & publication recommendations
 - [REAL_HARDWARE_VALIDATION.md](REAL_HARDWARE_VALIDATION.md) - Verified performance on real RX 590 hardware
 - [PROJECT_STATUS_REVIEW_FEB2026.md](PROJECT_STATUS_REVIEW_FEB2026.md) - Complete project review, git status, roadmap assessment
-- [AUTO_TUNER_COMPLETE_SUMMARY.md](AUTO_TUNER_COMPLETE_SUMMARY.md) - Auto-tuner framework validation and discoveries
+- [docs/PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md](docs/PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md) - Reproducible baseline protocol and results (Feb 7, 2026)
 - [test_production_system.py](test_production_system.py) - Comprehensive validation suite (4 tests)
 
 ### Research Journey
@@ -296,6 +294,14 @@ python test_production_system.py
 
 ### Reproduce Benchmark Results
 
+```bash
+# Reproducible Phase 3 baseline (10 sessions x 20 iterations, seed=42)
+./venv/bin/python scripts/benchmark_phase3_reproducible.py \
+  --sessions 10 \
+  --iterations 20 \
+  --output-json /tmp/phase3_reproducible_baseline_feb2026.json
+```
+
 ```python
 import pyopencl as cl
 import numpy as np
@@ -316,7 +322,7 @@ rec = selector.select_kernel(M, N, K)
 print(f"Selected: {rec['kernel_key']} - {rec['predicted_gflops']:.1f} GFLOPS")
 
 # Compile and run kernel from rec['kernel_path']
-# Expected: tile20, ~778 GFLOPS
+# Expected: tile20, ~776 GFLOPS
 ```
 
 ---
@@ -379,7 +385,7 @@ If you use this work in your research or projects, please cite:
   author = {Your Name},
   year = {2025},
   url = {https://github.com/yourusername/rx590-gemm-optimization},
-  note = {Peak: 805 GFLOPS (+42\% improvement) using systematic tile-size optimization and ML-powered kernel selection}
+  note = {Reproducible peak: 776 GFLOPS (+37\% improvement); historical auto-tuner discovery: 831 GFLOPS}
 }
 ```
 
@@ -402,7 +408,7 @@ For questions, feedback, or collaboration:
 ---
 
 **Status**: Production Ready ✅  
-**Last Updated**: February 2025  
+**Last Updated**: February 2026  
 **Verified on**: AMD Radeon RX 590 GME, Mesa Clover, Ubuntu Linux
 # View current status
 python scripts/update_progress.py --summary
@@ -418,7 +424,7 @@ python scripts/update_progress.py --task 1.1.1 --status in-progress
 - 📖 [Project Roadmap](docs/ROADMAP_OPTIMIZATION.md) - Complete project timeline and phases
 - 📚 [Documentation Guide](docs/ROADMAP_README.md) - How to navigate all documentation
 - 🎯 [Project Status](PROJECT_STATUS_REVIEW_FEB2026.md) - Current status and branches
-- ✅ [Auto-Tuner Report](AUTO_TUNER_COMPLETE_SUMMARY.md) - 831 GFLOPS discovery
+- ✅ [Auto-Tuner Report](AUTO_TUNER_COMPLETE_SUMMARY.md) - 831 GFLOPS discovery (historical)
 
 ---
 
