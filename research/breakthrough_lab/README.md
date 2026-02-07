@@ -6,6 +6,8 @@ Rules:
 - no direct production claims from this lane
 - every experiment must include hypothesis, metrics, and stop rule
 - only promoted techniques move to `src/` production paths
+- use canonical baseline from `BASELINE_RUNBOOK.md`
+- promotion decisions must pass `PROMOTION_GATE_CHECKLIST.md`
 
 Suggested track layout:
 - `t1_io_aware/` - communication/roofline guided kernels
@@ -19,3 +21,8 @@ Minimum artifact per experiment:
 - `experiment_card.md` (hypothesis, design, expected gain)
 - `results.json` (machine-readable metrics)
 - `report.md` (decision: promote, iterate, or drop)
+
+Shared standards:
+- `results.schema.json` - canonical results contract
+- `results.template.json` - reusable starting payload
+- `WEEK1_BACKLOG_PHASE0.md` - executable atomic task list

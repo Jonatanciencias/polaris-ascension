@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://radeon-rx580.local/breakthrough/results.schema.json",
+  "title": "Breakthrough Lab Results Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "experiment_id",
+    "track",
+    "title",
+    "status",
+    "owner",
+    "branch",
+    "timestamps",
+    "environment",
+    "baseline_reference",
+    "parameters",
+    "metrics",
+    "validation",
+    "artifacts",
+    "decision"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.0\\.0$"
+    },
+    "experiment_id": {
+      "type": "string",
+      "minLength": 5
+    },
+    "track": {
+      "type": "string",
+      "enum": [
+        "t1_io_aware",
+        "t2_auto_scheduler",
+        "t3_online_control",
+        "t4_approximate_gemm",
+        "t5_reliability_abft",
+        "t6_quantum_offline"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3
+    },
+    "status": {
+      "type": "string",
+      "enum": ["planned", "running", "completed", "aborted"]
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 2
+    },
+    "branch": {
+      "type": "string",
+      "minLength": 2
+    },
+    "commit": {
+      "type": ["string", "null"]
+    },
+    "timestamps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["created_at", "started_at", "ended_at"],
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "started_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "ended_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["os", "python", "opencl_platform", "opencl_device", "driver"],
+      "properties": {
+        "os": {
+          "type": "string"
+        },
+        "python": {
+          "type": "string"
+        },
+        "opencl_platform": {
+          "type": "string"
+        },
+        "opencl_device": {
+          "type": "string"
+        },
+        "driver": {
+          "type": "string"
+        }
+      }
+    },
+    "baseline_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol_doc", "baseline_commit", "sizes"],
+      "properties": {
+        "protocol_doc": {
+          "type": "string"
+        },
+        "baseline_commit": {
+          "type": "string"
+        },
+        "sizes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "peak_gflops_mean",
+        "avg_gflops_mean",
+        "p95_time_ms",
+        "max_error",
+        "cv_peak",
+        "delta_vs_baseline_percent",
+        "reproducibility_score"
+      ],
+      "properties": {
+        "peak_gflops_mean": {
+          "type": "number"
+        },
+        "avg_gflops_mean": {
+          "type": "number"
+        },
+        "p95_time_ms": {
+          "type": "number"
+        },
+        "max_error": {
+          "type": "number"
+        },
+        "cv_peak": {
+          "type": "number",
+          "minimum": 0
+        },
+        "delta_vs_baseline_percent": {
+          "type": "number"
+        },
+        "reproducibility_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "energy_joules": {
+          "type": ["number", "null"]
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["correctness_passed", "stability_passed", "promotion_gate_passed"],
+      "properties": {
+        "correctness_passed": {
+          "type": "boolean"
+        },
+        "stability_passed": {
+          "type": "boolean"
+        },
+        "promotion_gate_passed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["promote", "iterate", "drop", "needs_data"]
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}
