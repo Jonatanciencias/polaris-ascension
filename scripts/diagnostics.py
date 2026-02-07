@@ -8,11 +8,11 @@ Comprehensive system diagnostics for RX 580 AI setup.
 import sys
 import os
 import subprocess
+import psutil
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from src.core.gpu import GPUManager
-from src.core.memory import MemoryManager
+from verify_hardware import detect_amd_gpu, rocm_available
 
 
 def run_command(cmd, description):
@@ -90,13 +90,29 @@ def main():
     print("\n" + "=" * 70)
     print("6. FRAMEWORK STATUS")
     print("=" * 70)
-    
-    gpu_manager = GPUManager()
-    gpu_manager.initialize()
-    
+
+    gpu = detect_amd_gpu()
+    if gpu:
+        print("\n### GPU Detection")
+        print(f"   Name: {gpu.name}")
+        print(f"   Vendor: {gpu.vendor}")
+        print(f"   Driver: {gpu.driver}")
+        print(f"   OpenCL: {gpu.opencl_version}")
+        print(f"   VRAM: {gpu.vram_gb:.1f} GB")
+        print("   Backend: OPENCL")
+    else:
+        print("\n### GPU Detection")
+        print("   ⚠️  No AMD GPU detected via OpenCL")
+        print("   Backend: CPU fallback")
+
+    print("\n### Runtime Availability")
+    print(f"   ROCm available: {'yes' if rocm_available() else 'no'}")
+
     print("\n### Memory Statistics")
-    memory_manager = MemoryManager()
-    memory_manager.print_stats()
+    vm = psutil.virtual_memory()
+    print(f"   Total RAM: {vm.total / (1024**3):.1f} GB")
+    print(f"   Available RAM: {vm.available / (1024**3):.1f} GB")
+    print(f"   RAM utilization: {vm.percent:.1f}%")
     
     # Summary
     print("\n" + "=" * 70)
