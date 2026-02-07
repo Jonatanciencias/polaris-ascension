@@ -19,7 +19,7 @@ Establish the minimum governance and execution baseline for the breakthrough lab
 - [x] `P0-04` to `P0-09` experiment cards created for T1..T6
 - [x] `P0-10` first executable T1 run completed (`t1_io_aware/results.json`, `t1_io_aware/report.md`)
 - [x] `P0-11` first executable T2 dry-run completed (`t2_auto_scheduler/results.json`, `t2_auto_scheduler/report.md`)
-- [ ] `P0-12` week-1 review and kill/continue decisions
+- [x] `P0-12` week-1 review and kill/continue decisions (`ACTA_P0_12_WEEK1_REVIEW_2026-02-07.md`, `week1_review_decisions.json`)
 
 ## Atomic Tasks
 
