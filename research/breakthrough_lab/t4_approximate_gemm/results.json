@@ -1,17 +1,17 @@
 {
   "$schema": "../results.schema.json",
   "schema_version": "1.0.0",
-  "experiment_id": "t4_approximate_gemm-001",
+  "experiment_id": "t4_approximate_gemm-002",
   "track": "t4_approximate_gemm",
-  "title": "Initial experiment scaffold",
-  "status": "planned",
-  "owner": "unassigned",
+  "title": "T4 Week 3 contract-aware approximate GEMM baseline experiment",
+  "status": "completed",
+  "owner": "codex",
   "branch": "feat/breakthrough-roadmap-2026q1",
   "commit": null,
   "timestamps": {
     "created_at": "2026-02-07T00:00:00Z",
-    "started_at": null,
-    "ended_at": null
+    "started_at": "2026-02-07T20:01:18.028258+00:00",
+    "ended_at": "2026-02-07T20:01:18.028258+00:00"
   },
   "environment": {
     "os": "linux",
@@ -23,29 +23,51 @@
   "baseline_reference": {
     "protocol_doc": "docs/PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md",
     "baseline_commit": "57db7b4",
-    "sizes": [1400, 2048, 3072]
+    "sizes": [
+      512,
+      1024,
+      1400
+    ]
   },
   "parameters": {
-    "iterations": 20,
-    "sessions": 10,
+    "campaign": "week3_block2_t4_contract_fallback",
+    "families": [
+      "dense_random",
+      "compressible_lowrank"
+    ],
+    "sizes": [
+      512,
+      1024,
+      1400
+    ],
+    "sessions": 3,
+    "target_rank": 16,
+    "noise_scale": 0.01,
+    "error_budget": 0.005,
+    "precheck_energy_threshold": 0.95,
+    "sample_size": 64,
     "seed": 42
   },
   "metrics": {
-    "peak_gflops_mean": 0.0,
-    "avg_gflops_mean": 0.0,
-    "p95_time_ms": 0.0,
-    "max_error": 0.0,
-    "cv_peak": 0.0,
-    "delta_vs_baseline_percent": 0.0,
+    "peak_gflops_mean": 1147.9280731867884,
+    "avg_gflops_mean": 1147.9280731867884,
+    "p95_time_ms": 13.305789998412365,
+    "max_error": 0.002532395999878645,
+    "cv_peak": 1.0340140568921425,
+    "delta_vs_baseline_percent": 134.48367865706027,
     "reproducibility_score": 0.0,
     "energy_joules": null
   },
   "validation": {
-    "correctness_passed": false,
+    "correctness_passed": true,
     "stability_passed": false,
     "promotion_gate_passed": false
   },
-  "artifacts": [],
-  "decision": "needs_data",
-  "notes": ""
+  "artifacts": [
+    "research/breakthrough_lab/t4_approximate_gemm/week3_t4_contract_run_20260207_200118.json",
+    "research/breakthrough_lab/t4_approximate_gemm/week3_t4_contract_run_20260207_200118.md",
+    "research/breakthrough_lab/t4_approximate_gemm/run_t4_error_contract.py"
+  ],
+  "decision": "iterate",
+  "notes": "Contract enforcement and fallback instrumentation are stable. Speedup is strong only for compressible workloads and requires production-grade factorization path before promotion."
 }
