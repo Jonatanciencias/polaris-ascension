@@ -116,6 +116,26 @@ Workflow para automatizar el proceso de release.
 
 ---
 
+### 5. **test-tiers.yml** - CPU/GPU Test Split (Phase 4)
+Workflow con separación explícita entre pruebas rápidas CPU y validación GPU/OpenCL.
+
+**Triggers:**
+- Push / Pull request: ejecuta solo tier rápido CPU
+- Manual dispatch: permite activar tier GPU/OpenCL
+
+**Jobs:**
+- **cpu-fast**: `pytest -m "not slow and not gpu and not opencl"`
+- **gpu-opencl** (manual): `pytest -m "gpu or opencl"` + bucle anti-flakiness
+
+**Características:**
+- ✅ Feedback rápido en CI estándar
+- ✅ Validación de hardware en runner dedicado
+- ✅ Repetición de pruebas críticas para detectar flakiness
+
+**Duración estimada:** 5-10 min (CPU), 15-45 min (GPU)
+
+---
+
 ## 🔧 Configuración Requerida
 
 ### GitHub Secrets
@@ -150,6 +170,11 @@ Actualiza estos valores en los workflows:
 ### Ejecutar CI manualmente
 ```bash
 gh workflow run ci.yml
+```
+
+### Ejecutar validación GPU/OpenCL manual
+```bash
+gh workflow run test-tiers.yml -f run_gpu=true
 ```
 
 ### Ejecutar build de Docker

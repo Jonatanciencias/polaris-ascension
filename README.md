@@ -292,6 +292,19 @@ python test_production_system.py
 # ✅ Test 4: Novelty Analysis (COMPLETE)
 ```
 
+### Official Test Commands (Phase 4)
+
+```bash
+# Fast local feedback (CPU-only path)
+./venv/bin/pytest tests/ -m "not slow and not gpu and not opencl" -q
+
+# Full hardware validation (OpenCL/GPU included)
+./venv/bin/pytest tests/ -v
+
+# Flakiness check on critical numeric tests
+./scripts/check_flaky_critical_tests.sh 3
+```
+
 ### Reproduce Benchmark Results
 
 ```bash
