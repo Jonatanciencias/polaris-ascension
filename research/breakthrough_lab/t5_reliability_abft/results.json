@@ -1,17 +1,17 @@
 {
   "$schema": "../results.schema.json",
   "schema_version": "1.0.0",
-  "experiment_id": "t5_reliability_abft-001",
+  "experiment_id": "t5_reliability_abft-002",
   "track": "t5_reliability_abft",
-  "title": "Initial experiment scaffold",
-  "status": "planned",
-  "owner": "unassigned",
+  "title": "T5 Week 4 Block 1 ABFT-lite detect-only fault-injection campaign",
+  "status": "completed",
+  "owner": "codex",
   "branch": "feat/breakthrough-roadmap-2026q1",
   "commit": null,
   "timestamps": {
     "created_at": "2026-02-07T00:00:00Z",
-    "started_at": null,
-    "ended_at": null
+    "started_at": "2026-02-07T20:39:36.989171+00:00",
+    "ended_at": "2026-02-07T20:39:36.989171+00:00"
   },
   "environment": {
     "os": "linux",
@@ -23,29 +23,59 @@
   "baseline_reference": {
     "protocol_doc": "docs/PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md",
     "baseline_commit": "57db7b4",
-    "sizes": [1400, 2048, 3072]
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ]
   },
   "parameters": {
-    "iterations": 20,
-    "sessions": 10,
+    "campaign": "week4_block1_t5_abft_detect_only",
+    "sizes": [
+      1400,
+      2048
+    ],
+    "sessions": 4,
+    "iterations": 8,
+    "warmup": 2,
+    "sampling_periods": [
+      1,
+      4
+    ],
+    "recommended_mode": "periodic_4",
+    "row_samples": 16,
+    "col_samples": 16,
+    "fault_models": [
+      "critical_monitored",
+      "uniform_random"
+    ],
+    "faults_per_matrix": 2,
+    "fault_scale": 0.05,
+    "fault_abs_min": 1.0,
+    "correctness_threshold": 0.001,
     "seed": 42
   },
   "metrics": {
-    "peak_gflops_mean": 0.0,
-    "avg_gflops_mean": 0.0,
-    "p95_time_ms": 0.0,
-    "max_error": 0.0,
-    "cv_peak": 0.0,
-    "delta_vs_baseline_percent": 0.0,
-    "reproducibility_score": 0.0,
+    "peak_gflops_mean": 858.6364237555742,
+    "avg_gflops_mean": 847.600083501666,
+    "p95_time_ms": 21.859928,
+    "max_error": 0.0005645751953125,
+    "cv_peak": 0.08446549986813179,
+    "delta_vs_baseline_percent": -1.2853889999982676,
+    "reproducibility_score": 0.9155345001318682,
     "energy_joules": null
   },
   "validation": {
-    "correctness_passed": false,
-    "stability_passed": false,
+    "correctness_passed": true,
+    "stability_passed": true,
     "promotion_gate_passed": false
   },
-  "artifacts": [],
-  "decision": "needs_data",
-  "notes": ""
+  "artifacts": [
+    "research/breakthrough_lab/t5_reliability_abft/week4_t5_abft_detect_only_20260207_203936.json",
+    "research/breakthrough_lab/t5_reliability_abft/week4_t5_abft_detect_only_20260207_203936.md",
+    "research/breakthrough_lab/t5_reliability_abft/run_t5_abft_detect_only.py",
+    "research/breakthrough_lab/t5_reliability_abft/report.md"
+  ],
+  "decision": "iterate",
+  "notes": "ABFT-lite detect-only meets critical fault detection and overhead targets (recommended mode periodic_4), but random fault-space coverage is low under sparse sampling; continue with guardrail refinement before promotion."
 }
