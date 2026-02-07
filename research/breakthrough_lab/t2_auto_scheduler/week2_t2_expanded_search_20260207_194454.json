@@ -1,0 +1,2308 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-07T19:44:54.365298+00:00",
+    "search_space": "expanded",
+    "kernels": [
+      "tile20",
+      "tile24"
+    ],
+    "sizes": [
+      1200,
+      1280,
+      1400,
+      1536,
+      1600,
+      1792,
+      1920,
+      2048
+    ],
+    "runs_per_config": 12,
+    "warmup": 2,
+    "replay_sessions": 5,
+    "replay_runs": 10,
+    "top_k": 4,
+    "correctness_threshold": 0.001,
+    "seed": 42,
+    "input_distribution": "standard_normal",
+    "config_count": 6,
+    "dimensions": {
+      "vector_widths": [
+        4,
+        8
+      ],
+      "unroll_k": [
+        0,
+        4,
+        8,
+        10
+      ],
+      "local_sizes": [
+        "10x10",
+        "12x12",
+        "5x5"
+      ]
+    }
+  },
+  "search": {
+    "configs": [
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "tile_size": 20,
+        "local_size": [
+          10,
+          10
+        ],
+        "vector_width": 4,
+        "unroll_k": 10,
+        "source": "production"
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "tile_size": 24,
+        "local_size": [
+          12,
+          12
+        ],
+        "vector_width": 4,
+        "unroll_k": 0,
+        "source": "production"
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "tile_size": 20,
+        "local_size": [
+          10,
+          10
+        ],
+        "vector_width": 4,
+        "unroll_k": 4,
+        "source": "research"
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "tile_size": 20,
+        "local_size": [
+          10,
+          10
+        ],
+        "vector_width": 4,
+        "unroll_k": 0,
+        "source": "research"
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "tile_size": 20,
+        "local_size": [
+          5,
+          5
+        ],
+        "vector_width": 4,
+        "unroll_k": 0,
+        "source": "research"
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "tile_size": 20,
+        "local_size": [
+          10,
+          10
+        ],
+        "vector_width": 8,
+        "unroll_k": 8,
+        "source": "research"
+      }
+    ],
+    "raw_candidates": [
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1200,
+        "status": "completed",
+        "gflops": 740.1252387846184,
+        "avg_time_ms": 4.66948,
+        "max_error": 0.000244140625,
+        "runs": 12,
+        "seed": 1242
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1280,
+        "status": "completed",
+        "gflops": 632.9763730094533,
+        "avg_time_ms": 6.62632,
+        "max_error": 0.00028228759765625,
+        "runs": 12,
+        "seed": 1322
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 800.1586320320066,
+        "avg_time_ms": 6.8586399999999985,
+        "max_error": 0.0004119873046875,
+        "runs": 12,
+        "seed": 1442
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1536,
+        "status": "completed",
+        "gflops": 382.9470143081573,
+        "avg_time_ms": 18.926266666666663,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 1578
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1600,
+        "status": "completed",
+        "gflops": 745.6057318440636,
+        "avg_time_ms": 10.98704,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 1642
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1792,
+        "status": "completed",
+        "gflops": 571.2382009712247,
+        "avg_time_ms": 20.147759999999998,
+        "max_error": 0.000396728515625,
+        "runs": 12,
+        "seed": 1834
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1920,
+        "status": "completed",
+        "gflops": 703.2379130520029,
+        "avg_time_ms": 20.129426666666664,
+        "max_error": 0.0004730224609375,
+        "runs": 12,
+        "seed": 1962
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 291.013758449288,
+        "avg_time_ms": 59.03456,
+        "max_error": 0.0004730224609375,
+        "runs": 12,
+        "seed": 2090
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1200,
+        "status": "completed",
+        "gflops": 785.1833003144368,
+        "avg_time_ms": 4.40152,
+        "max_error": 0.0002593994140625,
+        "runs": 12,
+        "seed": 2242
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1280,
+        "status": "completed",
+        "gflops": 763.4354166616106,
+        "avg_time_ms": 5.493986666666667,
+        "max_error": 0.0002593994140625,
+        "runs": 12,
+        "seed": 2322
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 769.6277514753069,
+        "avg_time_ms": 7.130719999999999,
+        "max_error": 0.00030517578125,
+        "runs": 12,
+        "seed": 2442
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1536,
+        "status": "completed",
+        "gflops": 795.765435160366,
+        "avg_time_ms": 9.107906666666667,
+        "max_error": 0.0003662109375,
+        "runs": 12,
+        "seed": 2578
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1600,
+        "status": "completed",
+        "gflops": 787.1998032000491,
+        "avg_time_ms": 10.406506666666667,
+        "max_error": 0.000396728515625,
+        "runs": 12,
+        "seed": 2642
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1792,
+        "status": "completed",
+        "gflops": 788.6688130603653,
+        "avg_time_ms": 14.59316,
+        "max_error": 0.0004730224609375,
+        "runs": 12,
+        "seed": 2834
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1920,
+        "status": "completed",
+        "gflops": 801.3314222442616,
+        "avg_time_ms": 17.665319999999998,
+        "max_error": 0.0006561279296875,
+        "runs": 12,
+        "seed": 2962
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 738.7860702359548,
+        "avg_time_ms": 23.254186666666666,
+        "max_error": 0.00049591064453125,
+        "runs": 12,
+        "seed": 3090
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1200,
+        "status": "completed",
+        "gflops": 826.7204205047078,
+        "avg_time_ms": 4.180373333333333,
+        "max_error": 0.000274658203125,
+        "runs": 12,
+        "seed": 3242
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1280,
+        "status": "completed",
+        "gflops": 792.1992102506247,
+        "avg_time_ms": 5.294506666666666,
+        "max_error": 0.0002899169921875,
+        "runs": 12,
+        "seed": 3322
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 839.6744119627082,
+        "avg_time_ms": 6.535866666666667,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 3442
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1536,
+        "status": "completed",
+        "gflops": 506.72656208633657,
+        "avg_time_ms": 14.303093333333335,
+        "max_error": 0.0003509521484375,
+        "runs": 12,
+        "seed": 3578
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1600,
+        "status": "completed",
+        "gflops": 845.8371020167102,
+        "avg_time_ms": 9.685080000000001,
+        "max_error": 0.00032806396484375,
+        "runs": 12,
+        "seed": 3642
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1792,
+        "status": "completed",
+        "gflops": 754.6310658528099,
+        "avg_time_ms": 15.251386666666667,
+        "max_error": 0.0004425048828125,
+        "runs": 12,
+        "seed": 3834
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1920,
+        "status": "completed",
+        "gflops": 840.5124380708996,
+        "avg_time_ms": 16.84184,
+        "max_error": 0.00043487548828125,
+        "runs": 12,
+        "seed": 3962
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 231.5982157904273,
+        "avg_time_ms": 74.17962666666665,
+        "max_error": 0.0005340576171875,
+        "runs": 12,
+        "seed": 4090
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1200,
+        "status": "completed",
+        "gflops": 916.613621896881,
+        "avg_time_ms": 3.7704,
+        "max_error": 0.0002288818359375,
+        "runs": 12,
+        "seed": 4242
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1280,
+        "status": "completed",
+        "gflops": 835.9139247771855,
+        "avg_time_ms": 5.017626666666667,
+        "max_error": 0.00028228759765625,
+        "runs": 12,
+        "seed": 4322
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 931.2638580931265,
+        "avg_time_ms": 5.893066666666666,
+        "max_error": 0.000396728515625,
+        "runs": 12,
+        "seed": 4442
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1536,
+        "status": "completed",
+        "gflops": 615.6427865677558,
+        "avg_time_ms": 11.772666666666666,
+        "max_error": 0.0004119873046875,
+        "runs": 12,
+        "seed": 4578
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1600,
+        "status": "completed",
+        "gflops": 946.0749591943581,
+        "avg_time_ms": 8.658933333333332,
+        "max_error": 0.0003509521484375,
+        "runs": 12,
+        "seed": 4642
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1792,
+        "status": "completed",
+        "gflops": 801.7467061229722,
+        "avg_time_ms": 14.35512,
+        "max_error": 0.0004425048828125,
+        "runs": 12,
+        "seed": 4834
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1920,
+        "status": "completed",
+        "gflops": 920.433478404106,
+        "avg_time_ms": 15.379466666666664,
+        "max_error": 0.000518798828125,
+        "runs": 12,
+        "seed": 4962
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 340.1894115140405,
+        "avg_time_ms": 50.500893333333345,
+        "max_error": 0.000518798828125,
+        "runs": 12,
+        "seed": 5090
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1200,
+        "status": "completed",
+        "gflops": 631.3866390597406,
+        "avg_time_ms": 5.4736666666666665,
+        "max_error": 0.00030517578125,
+        "runs": 12,
+        "seed": 5242
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1280,
+        "status": "completed",
+        "gflops": 620.6832051805682,
+        "avg_time_ms": 6.757559999999999,
+        "max_error": 0.0002899169921875,
+        "runs": 12,
+        "seed": 5322
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 632.059999631452,
+        "avg_time_ms": 8.682719999999998,
+        "max_error": 0.0003204345703125,
+        "runs": 12,
+        "seed": 5442
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1536,
+        "status": "completed",
+        "gflops": 566.5951954537449,
+        "avg_time_ms": 12.791773333333332,
+        "max_error": 0.0003204345703125,
+        "runs": 12,
+        "seed": 5578
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1600,
+        "status": "completed",
+        "gflops": 643.5145277803673,
+        "avg_time_ms": 12.73009333333333,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 5642
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1792,
+        "status": "completed",
+        "gflops": 608.8932426846421,
+        "avg_time_ms": 18.901786666666666,
+        "max_error": 0.000457763671875,
+        "runs": 12,
+        "seed": 5834
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1920,
+        "status": "completed",
+        "gflops": 644.1556676524016,
+        "avg_time_ms": 21.975706666666667,
+        "max_error": 0.0004730224609375,
+        "runs": 12,
+        "seed": 5962
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 434.64319478842486,
+        "avg_time_ms": 39.52637333333333,
+        "max_error": 0.00048828125,
+        "runs": 12,
+        "seed": 6090
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1200,
+        "status": "completed",
+        "gflops": 306.1199182262996,
+        "avg_time_ms": 11.289693333333334,
+        "max_error": 0.00026702880859375,
+        "runs": 12,
+        "seed": 6242
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1280,
+        "status": "completed",
+        "gflops": 304.91433356984163,
+        "avg_time_ms": 13.75568,
+        "max_error": 0.00026702880859375,
+        "runs": 12,
+        "seed": 6322
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 309.50347101074385,
+        "avg_time_ms": 17.731626666666667,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 6442
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1536,
+        "status": "completed",
+        "gflops": 270.74568548119976,
+        "avg_time_ms": 26.769613333333336,
+        "max_error": 0.0003509521484375,
+        "runs": 12,
+        "seed": 6578
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1600,
+        "status": "completed",
+        "gflops": 310.1996304262216,
+        "avg_time_ms": 26.4088,
+        "max_error": 0.0003814697265625,
+        "runs": 12,
+        "seed": 6642
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1792,
+        "status": "completed",
+        "gflops": 304.80579591211216,
+        "avg_time_ms": 37.759026666666664,
+        "max_error": 24.008323669433594,
+        "runs": 12,
+        "seed": 6834
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1920,
+        "status": "completed",
+        "gflops": 311.5284973713176,
+        "avg_time_ms": 45.43974666666666,
+        "max_error": 0.0004119873046875,
+        "runs": 12,
+        "seed": 6962
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 223.4344924096722,
+        "avg_time_ms": 76.88995999999999,
+        "max_error": 20.885696411132812,
+        "runs": 12,
+        "seed": 7090
+      }
+    ],
+    "baseline_by_size": {
+      "1200": 740.1252387846184,
+      "1280": 632.9763730094533,
+      "1400": 800.1586320320066,
+      "1536": 382.9470143081573,
+      "1600": 745.6057318440636,
+      "1792": 571.2382009712247,
+      "1920": 801.3314222442616,
+      "2048": 738.7860702359548
+    },
+    "baseline_config_by_size": {
+      "1200": "t20_prod_v4_u10_l10",
+      "1280": "t20_prod_v4_u10_l10",
+      "1400": "t20_prod_v4_u10_l10",
+      "1536": "t20_prod_v4_u10_l10",
+      "1600": "t20_prod_v4_u10_l10",
+      "1792": "t20_prod_v4_u10_l10",
+      "1920": "t24_prod_v4_u0_l12",
+      "2048": "t24_prod_v4_u0_l12"
+    },
+    "ranked_candidates": [
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1536,
+        "status": "completed",
+        "gflops": 795.765435160366,
+        "avg_time_ms": 9.107906666666667,
+        "max_error": 0.0003662109375,
+        "runs": 12,
+        "seed": 2578,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 107.80040199504309
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1536,
+        "status": "completed",
+        "gflops": 615.6427865677558,
+        "avg_time_ms": 11.772666666666666,
+        "max_error": 0.0004119873046875,
+        "runs": 12,
+        "seed": 4578,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 60.764482700039636
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1536,
+        "status": "completed",
+        "gflops": 566.5951954537449,
+        "avg_time_ms": 12.791773333333332,
+        "max_error": 0.0003204345703125,
+        "runs": 12,
+        "seed": 5578,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 47.95655124178771
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1792,
+        "status": "completed",
+        "gflops": 801.7467061229722,
+        "avg_time_ms": 14.35512,
+        "max_error": 0.0004425048828125,
+        "runs": 12,
+        "seed": 4834,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 40.35243174560712
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1792,
+        "status": "completed",
+        "gflops": 788.6688130603653,
+        "avg_time_ms": 14.59316,
+        "max_error": 0.0004730224609375,
+        "runs": 12,
+        "seed": 2834,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 38.063037751933074
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1536,
+        "status": "completed",
+        "gflops": 506.72656208633657,
+        "avg_time_ms": 14.303093333333335,
+        "max_error": 0.0003509521484375,
+        "runs": 12,
+        "seed": 3578,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 32.32289145844442
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1792,
+        "status": "completed",
+        "gflops": 754.6310658528099,
+        "avg_time_ms": 15.251386666666667,
+        "max_error": 0.0004425048828125,
+        "runs": 12,
+        "seed": 3834,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 32.104446896194766
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1280,
+        "status": "completed",
+        "gflops": 835.9139247771855,
+        "avg_time_ms": 5.017626666666667,
+        "max_error": 0.00028228759765625,
+        "runs": 12,
+        "seed": 4322,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 32.060841513384794
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1600,
+        "status": "completed",
+        "gflops": 946.0749591943581,
+        "avg_time_ms": 8.658933333333332,
+        "max_error": 0.0003509521484375,
+        "runs": 12,
+        "seed": 4642,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 26.88676049397925
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1280,
+        "status": "completed",
+        "gflops": 792.1992102506247,
+        "avg_time_ms": 5.294506666666666,
+        "max_error": 0.0002899169921875,
+        "runs": 12,
+        "seed": 3322,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 25.154625674913383
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1200,
+        "status": "completed",
+        "gflops": 916.613621896881,
+        "avg_time_ms": 3.7704,
+        "max_error": 0.0002288818359375,
+        "runs": 12,
+        "seed": 4242,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 23.84574580946319
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1280,
+        "status": "completed",
+        "gflops": 763.4354166616106,
+        "avg_time_ms": 5.493986666666667,
+        "max_error": 0.0002593994140625,
+        "runs": 12,
+        "seed": 2322,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 20.610412839249687
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 931.2638580931265,
+        "avg_time_ms": 5.893066666666666,
+        "max_error": 0.000396728515625,
+        "runs": 12,
+        "seed": 4442,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 16.384904294311934
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 1920,
+        "status": "completed",
+        "gflops": 920.433478404106,
+        "avg_time_ms": 15.379466666666664,
+        "max_error": 0.000518798828125,
+        "runs": 12,
+        "seed": 4962,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 14.863020824302556
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1600,
+        "status": "completed",
+        "gflops": 845.8371020167102,
+        "avg_time_ms": 9.685080000000001,
+        "max_error": 0.00032806396484375,
+        "runs": 12,
+        "seed": 3642,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 13.442945231221623
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1200,
+        "status": "completed",
+        "gflops": 826.7204205047078,
+        "avg_time_ms": 4.180373333333333,
+        "max_error": 0.000274658203125,
+        "runs": 12,
+        "seed": 3242,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 11.700071444974624
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1792,
+        "status": "completed",
+        "gflops": 608.8932426846421,
+        "avg_time_ms": 18.901786666666666,
+        "max_error": 0.000457763671875,
+        "runs": 12,
+        "seed": 5834,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 6.5918283562611775
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1200,
+        "status": "completed",
+        "gflops": 785.1833003144368,
+        "avg_time_ms": 4.40152,
+        "max_error": 0.0002593994140625,
+        "runs": 12,
+        "seed": 2242,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 6.087896908340747
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1600,
+        "status": "completed",
+        "gflops": 787.1998032000491,
+        "avg_time_ms": 10.406506666666667,
+        "max_error": 0.000396728515625,
+        "runs": 12,
+        "seed": 2642,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 5.578561105359707
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 839.6744119627082,
+        "avg_time_ms": 6.535866666666667,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 3442,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 4.938493237316088
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 1920,
+        "status": "completed",
+        "gflops": 840.5124380708996,
+        "avg_time_ms": 16.84184,
+        "max_error": 0.00043487548828125,
+        "runs": 12,
+        "seed": 3962,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 4.889489509459781
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1920,
+        "status": "completed",
+        "gflops": 801.3314222442616,
+        "avg_time_ms": 17.665319999999998,
+        "max_error": 0.0006561279296875,
+        "runs": 12,
+        "seed": 2962,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 800.1586320320066,
+        "avg_time_ms": 6.8586399999999985,
+        "max_error": 0.0004119873046875,
+        "runs": 12,
+        "seed": 1442,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1600,
+        "status": "completed",
+        "gflops": 745.6057318440636,
+        "avg_time_ms": 10.98704,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 1642,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1200,
+        "status": "completed",
+        "gflops": 740.1252387846184,
+        "avg_time_ms": 4.66948,
+        "max_error": 0.000244140625,
+        "runs": 12,
+        "seed": 1242,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 738.7860702359548,
+        "avg_time_ms": 23.254186666666666,
+        "max_error": 0.00049591064453125,
+        "runs": 12,
+        "seed": 3090,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1280,
+        "status": "completed",
+        "gflops": 632.9763730094533,
+        "avg_time_ms": 6.62632,
+        "max_error": 0.00028228759765625,
+        "runs": 12,
+        "seed": 1322,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1792,
+        "status": "completed",
+        "gflops": 571.2382009712247,
+        "avg_time_ms": 20.147759999999998,
+        "max_error": 0.000396728515625,
+        "runs": 12,
+        "seed": 1834,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1536,
+        "status": "completed",
+        "gflops": 382.9470143081573,
+        "avg_time_ms": 18.926266666666663,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 1578,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": 0.0
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1280,
+        "status": "completed",
+        "gflops": 620.6832051805682,
+        "avg_time_ms": 6.757559999999999,
+        "max_error": 0.0002899169921875,
+        "runs": 12,
+        "seed": 5322,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -1.94212112064118
+      },
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "kernel_file": "src/kernels/gemm_tile24_production.cl",
+        "kernel_name": "gemm_tile24_vectorized",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 769.6277514753069,
+        "avg_time_ms": 7.130719999999999,
+        "max_error": 0.00030517578125,
+        "runs": 12,
+        "seed": 2442,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -3.81560347342206
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 1920,
+        "status": "completed",
+        "gflops": 703.2379130520029,
+        "avg_time_ms": 20.129426666666664,
+        "max_error": 0.0004730224609375,
+        "runs": 12,
+        "seed": 1962,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -12.24131569900648
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1600,
+        "status": "completed",
+        "gflops": 643.5145277803673,
+        "avg_time_ms": 12.73009333333333,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 5642,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -13.692384554394454
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1200,
+        "status": "completed",
+        "gflops": 631.3866390597406,
+        "avg_time_ms": 5.4736666666666665,
+        "max_error": 0.00030517578125,
+        "runs": 12,
+        "seed": 5242,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -14.691918884355404
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1920,
+        "status": "completed",
+        "gflops": 644.1556676524016,
+        "avg_time_ms": 21.975706666666667,
+        "max_error": 0.0004730224609375,
+        "runs": 12,
+        "seed": 5962,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -19.614325637158124
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 632.059999631452,
+        "avg_time_ms": 8.682719999999998,
+        "max_error": 0.0003204345703125,
+        "runs": 12,
+        "seed": 5442,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -21.008163340520035
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1536,
+        "status": "completed",
+        "gflops": 270.74568548119976,
+        "avg_time_ms": 26.769613333333336,
+        "max_error": 0.0003509521484375,
+        "runs": 12,
+        "seed": 6578,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -29.299439513757164
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_5_optimized.cl",
+        "kernel_name": "gemm_tile20_register_blocking",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 434.64319478842486,
+        "avg_time_ms": 39.52637333333333,
+        "max_error": 0.00048828125,
+        "runs": 12,
+        "seed": 6090,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -41.16792231212376
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1280,
+        "status": "completed",
+        "gflops": 304.91433356984163,
+        "avg_time_ms": 13.75568,
+        "max_error": 0.00026702880859375,
+        "runs": 12,
+        "seed": 6322,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -51.828481034743476
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/approach_2_v3_vectorized.cl",
+        "kernel_name": "gemm_tile20_vectorized",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 340.1894115140405,
+        "avg_time_ms": 50.500893333333345,
+        "max_error": 0.000518798828125,
+        "runs": 12,
+        "seed": 5090,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -53.952920172765275
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1600,
+        "status": "completed",
+        "gflops": 310.1996304262216,
+        "avg_time_ms": 26.4088,
+        "max_error": 0.0003814697265625,
+        "runs": 12,
+        "seed": 6642,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -58.39629214504256
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1200,
+        "status": "completed",
+        "gflops": 306.1199182262996,
+        "avg_time_ms": 11.289693333333334,
+        "max_error": 0.00026702880859375,
+        "runs": 12,
+        "seed": 6242,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -58.639443409741276
+      },
+      {
+        "config_id": "t20_prod_v4_u10_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 10,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "src/kernels/gemm_tile20_production.cl",
+        "kernel_name": "gemm_tile20_optimized",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 291.013758449288,
+        "avg_time_ms": 59.03456,
+        "max_error": 0.0004730224609375,
+        "runs": 12,
+        "seed": 2090,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -60.60919795681266
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1920,
+        "status": "completed",
+        "gflops": 311.5284973713176,
+        "avg_time_ms": 45.43974666666666,
+        "max_error": 0.0004119873046875,
+        "runs": 12,
+        "seed": 6962,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -61.123638893526675
+      },
+      {
+        "config_id": "t20_float8_v8_u8_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 8,
+        "unroll_k": 8,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_float8.cl",
+        "kernel_name": "gemm_tile20_float8",
+        "size": 1400,
+        "status": "completed",
+        "gflops": 309.50347101074385,
+        "avg_time_ms": 17.731626666666667,
+        "max_error": 0.000335693359375,
+        "runs": 12,
+        "seed": 6442,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -61.31973603474622
+      },
+      {
+        "config_id": "t20_prefetch_v4_u4_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 4,
+        "local_size": [
+          10,
+          10
+        ],
+        "kernel_file": "research/tile_20_investigation/kernels/tile20_prefetch.cl",
+        "kernel_name": "gemm_tile20_prefetch",
+        "size": 2048,
+        "status": "completed",
+        "gflops": 231.5982157904273,
+        "avg_time_ms": 74.17962666666665,
+        "max_error": 0.0005340576171875,
+        "runs": 12,
+        "seed": 4090,
+        "correctness_passed": true,
+        "delta_vs_baseline_percent": -68.651518332437
+      }
+    ],
+    "valid_count": 46,
+    "completed_count": 48
+  },
+  "replay": {
+    "candidates": [
+      {
+        "config_id": "t24_prod_v4_u0_l12",
+        "family": "tile24",
+        "tile_size": 24,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          12,
+          12
+        ],
+        "size": 1536,
+        "status": "completed",
+        "gflops": {
+          "mean": 795.8275190420969,
+          "std": 0.21371711862430098,
+          "min": 795.4610351524773,
+          "p50": 795.8006180398056,
+          "p95": 796.062141807605,
+          "max": 796.0775296518054
+        },
+        "avg_time_ms": {
+          "mean": 9.1071968,
+          "std": 0.0024460938984424484,
+          "min": 9.104336,
+          "p50": 9.107503999999999,
+          "p95": 9.1106208,
+          "max": 9.111391999999999
+        },
+        "max_error": {
+          "mean": 0.0003662109375,
+          "std": 2.1579186437577746e-05,
+          "min": 0.000335693359375,
+          "p50": 0.0003662109375,
+          "p95": 0.0003936767578125,
+          "max": 0.000396728515625
+        },
+        "cv_peak": 0.00026854703250466004,
+        "mean_delta_vs_baseline_percent": 107.81661412868331,
+        "correctness_passed": true,
+        "stability_passed": true,
+        "promotion_gate_passed": true
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "size": 1536,
+        "status": "completed",
+        "gflops": {
+          "mean": 614.3107836526157,
+          "std": 1.4192393976999826,
+          "min": 612.9865923299683,
+          "p50": 613.7423713197934,
+          "p95": 616.4743476715535,
+          "max": 617.0354228332545
+        },
+        "avg_time_ms": {
+          "mean": 11.798255999999999,
+          "std": 0.02718155798330905,
+          "min": 11.746096,
+          "p50": 11.80912,
+          "p95": 11.821472,
+          "max": 11.82368
+        },
+        "max_error": {
+          "mean": 0.00034942626953125,
+          "std": 3.6237616232415524e-05,
+          "min": 0.00031280517578125,
+          "p50": 0.000335693359375,
+          "p95": 0.00040283203125,
+          "max": 0.0004119873046875
+        },
+        "cv_peak": 0.0023102954326495156,
+        "mean_delta_vs_baseline_percent": 60.41665313997723,
+        "correctness_passed": true,
+        "stability_passed": true,
+        "promotion_gate_passed": true
+      },
+      {
+        "config_id": "t20_regblock_v4_u0_l5",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          5,
+          5
+        ],
+        "size": 1536,
+        "status": "completed",
+        "gflops": {
+          "mean": 565.3959641794679,
+          "std": 1.0980539100111135,
+          "min": 564.0790783162236,
+          "p50": 565.5297830689946,
+          "p95": 566.8904231116877,
+          "max": 567.1604742271398
+        },
+        "avg_time_ms": {
+          "mean": 12.818953599999997,
+          "std": 0.02487900005707737,
+          "min": 12.779023999999998,
+          "p50": 12.815871999999999,
+          "p95": 12.8473696,
+          "max": 12.848832000000002
+        },
+        "max_error": {
+          "mean": 0.0003753662109375,
+          "std": 3.9319148946304706e-05,
+          "min": 0.000335693359375,
+          "p50": 0.0003509521484375,
+          "p95": 0.000433349609375,
+          "max": 0.0004425048828125
+        },
+        "cv_peak": 0.0019420971842355943,
+        "mean_delta_vs_baseline_percent": 47.6433927030161,
+        "correctness_passed": true,
+        "stability_passed": true,
+        "promotion_gate_passed": true
+      },
+      {
+        "config_id": "t20_v3vec_v4_u0_l10",
+        "family": "tile20",
+        "tile_size": 20,
+        "vector_width": 4,
+        "unroll_k": 0,
+        "local_size": [
+          10,
+          10
+        ],
+        "size": 1792,
+        "status": "completed",
+        "gflops": {
+          "mean": 797.0514151347463,
+          "std": 2.832408826005085,
+          "min": 793.2360807700748,
+          "p50": 797.336977931779,
+          "p95": 800.9343995097827,
+          "max": 801.7851333999143
+        },
+        "avg_time_ms": {
+          "mean": 14.439865600000001,
+          "std": 0.051241129080457234,
+          "min": 14.354432,
+          "p50": 14.434512000000002,
+          "p95": 14.501360000000002,
+          "max": 14.509136000000002
+        },
+        "max_error": {
+          "mean": 0.000445556640625,
+          "std": 4.5674528647142836e-05,
+          "min": 0.0003814697265625,
+          "p50": 0.0004425048828125,
+          "p95": 0.00050048828125,
+          "max": 0.0005035400390625
+        },
+        "cv_peak": 0.0035536086784642984,
+        "mean_delta_vs_baseline_percent": 39.53048199150403,
+        "correctness_passed": true,
+        "stability_passed": true,
+        "promotion_gate_passed": true
+      }
+    ]
+  },
+  "summary": {
+    "decision_hint": "promote",
+    "decision_rationale": "At least one replayed candidate passed performance, correctness and stability gates."
+  }
+}
