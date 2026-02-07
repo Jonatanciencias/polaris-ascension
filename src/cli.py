@@ -343,7 +343,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     bench.add_argument(
         "--kernel",
-        choices=["auto", "tile20", "tile24"],
+        choices=["auto", "tile20", "tile20_v3_1400", "tile24"],
         default="auto",
         help="Kernel mode for --mode production",
     )

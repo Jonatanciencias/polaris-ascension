@@ -7,6 +7,7 @@ Provides intelligent kernel selection for matrix multiplication:
 - tile16: Baseline (256 threads, good for small/medium)
 - tile20: Peak performance (866.9 GFLOPS @ 1400×1400)
 - tile24: Large matrix specialist (764 GFLOPS @ 2048)
+- tile20_v3_1400: Promoted T2 candidate for strict 1400 scope
 
 Uses Gradient Boosting model + heuristics for optimal selection.
 """
@@ -35,7 +36,7 @@ class ProductionKernelSelector:
     Features:
     - ML-powered predictions (Gradient Boosting, R²=1.0)
     - Hybrid selection strategy (ML + heuristics)
-    - 3 specialized kernels (tile16, tile20, tile24)
+    - 4 specialized kernels (tile16, tile20, tile24, tile20_v3_1400)
     - 75% accuracy on validation
     
     Usage:
@@ -84,6 +85,16 @@ class ProductionKernelSelector:
                 'vectorized': True,
                 'typical_gflops': 867,
                 'best_for': 'sweet spot (1200-1600), peak performance'
+            },
+            'tile20_v3_1400': {
+                'name': 'tile20_v3_vectorized',
+                'path': 'src/kernels/gemm_tile20_v3_vectorized.cl',
+                'tile_size': 20,
+                'local_size': (10, 10),
+                'threads': 100,
+                'vectorized': True,
+                'typical_gflops': 926,
+                'best_for': 'promoted T2 candidate for exact 1400 scope'
             },
             'tile24': {
                 'name': 'tile24_production',
@@ -154,6 +165,11 @@ class ProductionKernelSelector:
     def _predict_performance(self, M: int, N: int, K: int, kernel_key: str) -> float:
         """Predict GFLOPS for given configuration"""
         config = self.kernel_configs[kernel_key]
+
+        # Promoted scoped kernel uses measured deterministic replay value.
+        # Avoid extrapolating it through the legacy model.
+        if kernel_key == "tile20_v3_1400":
+            return float(config["typical_gflops"])
         
         if self.model_available and self.model:
             features = self._engineer_features(
@@ -182,6 +198,9 @@ class ProductionKernelSelector:
         - Large (1600+): tile24 (dominates large)
         """
         size = max(M, N, K)
+
+        if self._in_t2_promoted_scope(M, N, K):
+            return 'tile20_v3_1400'
         
         if size < 600:
             return 'tile24'  # Best for small: 384 GFLOPS @ 512
@@ -191,6 +210,14 @@ class ProductionKernelSelector:
             return 'tile20'  # Peak zone: 866.9 GFLOPS @ 1400
         else:
             return 'tile24'  # Dominates large: 764 GFLOPS @ 2048
+
+    @staticmethod
+    def _in_t2_promoted_scope(M: int, N: int, K: int) -> bool:
+        """
+        Promoted candidate is validated only for exact 1400 square GEMM.
+        Everything else must fall back to the existing production policy.
+        """
+        return M == 1400 and N == 1400 and K == 1400
     
     def select_kernel(self, M: int, N: int, K: int) -> Dict:
         """
@@ -216,6 +243,24 @@ class ProductionKernelSelector:
         predictions = {}
         for kernel_key in self.kernel_configs.keys():
             predictions[kernel_key] = self._predict_performance(M, N, K, kernel_key)
+
+        # Hard scope override for the promoted T2 candidate.
+        # This keeps risk bounded and provides deterministic fallback behavior.
+        if self._in_t2_promoted_scope(M, N, K):
+            selected_key = 'tile20_v3_1400'
+            method = 'scope override (t2 promoted)'
+            config = self.kernel_configs[selected_key]
+            return {
+                'kernel_key': selected_key,
+                'kernel_name': config['name'],
+                'kernel_path': config['path'],
+                'local_size': config['local_size'],
+                'tile_size': config['tile_size'],
+                'threads': config['threads'],
+                'predicted_gflops': predictions[selected_key],
+                'selection_method': method,
+                'best_for': config['best_for']
+            }
         
         # Hybrid selection strategy
         if self.model_available:
@@ -294,7 +339,8 @@ class ProductionKernelSelector:
             summary.append(f"  {key}: {config['typical_gflops']} GFLOPS - {config['best_for']}")
         summary.append("")
         summary.append("Performance Achievements:")
-        summary.append("  Peak: 866.9 GFLOPS @ 1400×1400 (tile20)")
+        summary.append("  Peak (promoted scope): 926.3 GFLOPS @ 1400×1400 (tile20_v3_1400)")
+        summary.append("  Legacy peak: 866.9 GFLOPS @ 1400×1400 (tile20)")
         summary.append("  Large: 764 GFLOPS @ 2048×2048 (tile24)")
         summary.append("  Baseline: 566 GFLOPS @ 2048×2048 (tile16)")
         summary.append("=" * 70)

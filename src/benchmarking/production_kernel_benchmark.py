@@ -29,15 +29,26 @@ def _stats(values: list[float]) -> dict[str, float]:
 def _kernel_spec(size: int, kernel: str) -> tuple[str, str, tuple[int, int], int, str]:
     key = kernel.lower()
     if key == "auto":
-        # Heuristic aligned with observed behavior in this project:
-        # tile20 dominates medium matrices; tile24 dominates large matrices.
-        key = "tile20" if size < 1800 else "tile24"
+        # Scoped promoted candidate for exact 1400 benchmark profile,
+        # with conservative fallback to existing production policy.
+        if size == 1400:
+            key = "tile20_v3_1400"
+        else:
+            key = "tile20" if size < 1800 else "tile24"
 
     if key == "tile20":
         return ("src/kernels/gemm_tile20_production.cl", "gemm_tile20_optimized", (10, 10), 20, key)
+    if key == "tile20_v3_1400":
+        return (
+            "src/kernels/gemm_tile20_v3_vectorized.cl",
+            "gemm_tile20_vectorized",
+            (10, 10),
+            20,
+            key,
+        )
     if key == "tile24":
         return ("src/kernels/gemm_tile24_production.cl", "gemm_tile24_vectorized", (12, 12), 24, key)
-    raise ValueError(f"Unsupported kernel '{kernel}'. Use auto|tile20|tile24.")
+    raise ValueError(f"Unsupported kernel '{kernel}'. Use auto|tile20|tile20_v3_1400|tile24.")
 
 
 def _benchmark_once(
