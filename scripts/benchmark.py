@@ -9,15 +9,46 @@ import sys
 import os
 import time
 import argparse
+from typing import Dict, List
+
+import psutil
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from src.core.gpu import GPUManager
-from src.core.memory import MemoryManager
-from src.core.profiler import Profiler
+from verify_hardware import detect_amd_gpu
 
 
-def benchmark_memory_bandwidth(memory_manager, profiler, size_mb=100):
+class Profiler:
+    """Minimal local profiler for script-level benchmarks."""
+
+    def __init__(self):
+        self._active: Dict[str, float] = {}
+        self._samples: Dict[str, List[float]] = {}
+
+    def start(self, name: str) -> None:
+        self._active[name] = time.perf_counter()
+
+    def end(self, name: str) -> None:
+        start = self._active.pop(name, None)
+        if start is None:
+            return
+        elapsed_ms = (time.perf_counter() - start) * 1000
+        self._samples.setdefault(name, []).append(elapsed_ms)
+
+    def print_summary(self) -> None:
+        if not self._samples:
+            print("No profiling samples collected.")
+            return
+
+        print(f"{'Metric':<25} {'Calls':<8} {'Avg (ms)':<12} {'Total (ms)':<12}")
+        print("-" * 60)
+        for name, values in sorted(self._samples.items()):
+            total = sum(values)
+            avg = total / len(values)
+            print(f"{name:<25} {len(values):<8} {avg:<12.2f} {total:<12.2f}")
+
+
+def benchmark_memory_bandwidth(profiler, size_mb=100):
     """Benchmark memory operations"""
     print(f"\nBenchmarking memory bandwidth ({size_mb} MB)...")
     
@@ -48,6 +79,14 @@ def benchmark_compute():
     print("   Will include: matrix multiply, convolution, etc.")
 
 
+def print_memory_stats() -> None:
+    """Print host memory statistics."""
+    vm = psutil.virtual_memory()
+    print(f"System RAM total:     {vm.total / (1024**3):.1f} GB")
+    print(f"System RAM available: {vm.available / (1024**3):.1f} GB")
+    print(f"System RAM used:      {vm.percent:.1f}%")
+
+
 def main():
     """Main benchmark function"""
     parser = argparse.ArgumentParser(description='RX 580 AI Framework Benchmarks')
@@ -65,17 +104,20 @@ def main():
     print("=" * 60)
     
     # Initialize
-    gpu_manager = GPUManager()
-    if not gpu_manager.initialize():
-        print("Failed to initialize GPU")
-        return 1
-    
-    memory_manager = MemoryManager()
+    gpu = detect_amd_gpu()
+    if gpu is None:
+        print("⚠️  No AMD GPU detected through OpenCL.")
+        print("   Running CPU/memory-only benchmark.")
+    else:
+        print(f"✅ GPU detected: {gpu.name}")
+        print(f"   OpenCL runtime: {gpu.opencl_version}")
+        print(f"   VRAM: {gpu.vram_gb:.1f} GB")
+
     profiler = Profiler()
     
     # Run benchmarks
     if args.all or args.memory:
-        benchmark_memory_bandwidth(memory_manager, profiler)
+        benchmark_memory_bandwidth(profiler)
     
     if args.all or args.compute:
         benchmark_compute()
@@ -85,7 +127,7 @@ def main():
     print("Benchmark Results")
     print("=" * 60)
     profiler.print_summary()
-    memory_manager.print_stats()
+    print_memory_stats()
     
     return 0
 
