@@ -1,420 +1,157 @@
-# Radeon RX 580 Breakthrough Optimization System - .gitignore
-# Sistema de Optimización Matrix Completamente Automatizado
+# Radeon RX 580 - Repository Hygiene
 
 # ==========================================
-# Python
+# Python bytecode and caches
 # ==========================================
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
+
+# ==========================================
+# Build and packaging artifacts
+# ==========================================
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
 *.egg-info/
-.installed.cfg
+.eggs/
 *.egg
+pip-wheel-metadata/
 MANIFEST
 
+# Native binaries / objects
+*.so
+*.o
+*.a
+
+# ==========================================
 # Virtual environments
+# ==========================================
+.venv/
 venv/
 env/
 ENV/
 env.bak/
 venv.bak/
-.venv/
 .conda/
-conda_env/
-miniconda/
-anaconda/
-mamba/
 
 # ==========================================
-# Machine Learning & Data Science
-# ==========================================
-# Model files
-models/
-*.pth
-*.pt
-*.onnx
-*.h5
-*.hdf5
-*.pb
-*.pkl
-*.pickle
-*.joblib
-*.safetensors
-*.ckpt
-*.model
-*.weights
-
-# Datasets and data
-data/
-datasets/
-*.csv
-*.tsv
-*.parquet
-*.feather
-*.npy
-*.npz
-*.mat
-*.bin
-*.dat
-*.data
-
-# ML training artifacts
-checkpoints/
-tensorboard/
-wandb/
-mlruns/
-lightning_logs/
-cometml/
-aim/
-
-# Jupyter notebooks (optional - comment out if you want to track)
-.ipynb_checkpoints
-*/.ipynb_checkpoints/*
-
-# ==========================================
-# GPU & OpenCL
-# ==========================================
-# OpenCL kernels compiled
-*.cl.bin
-*.cl.o
-*.cl.so
-
-# GPU profiling and debug
-*.prof
-*.nvprof
-
-# ==========================================
-# Security & Secrets
-# ==========================================
-# API keys and sensitive configuration
-configs/*.json
-configs/api_keys.json
-*.key
-*.pem
-*.crt
-*.env
-.env.*
-!.env.example
-
-# Secrets
-secrets/
-*.secret
-*.nsight
-gpu_debug.log
-
-# AMD specific
-*.hsaco
-*.isa
-*.elf
-
-# ==========================================
-# Performance & Benchmarks
-# ==========================================
-# Benchmark results
-benchmarks/results/
-performance_results/
-benchmark_*.json
-benchmark_*.csv
-benchmark_*.npz
-comprehensive_*.npz
-fast_integrated_*.npz
-*_results.npz
-*_results.csv
-
-# Profiling data
-*.prof
-profile_results/
-profiling/
-*.lprof
-
-# ==========================================
-# Testing & Coverage
+# Test / type-check / lint caches
 # ==========================================
 .pytest_cache/
+.mypy_cache/
+.tox/
+.nox/
+.hypothesis/
+.ruff_cache/
+.cache/
+
+# Coverage artifacts
 .coverage
 .coverage.*
 htmlcov/
-.tox/
-.nox/
-.cache/
-nosetests.xml
 coverage.xml
-*.cover
-.hypothesis/
-
-# Test artifacts
-test_results/
-test_data/
-test_models/
-test_outputs/
 
 # ==========================================
-# Documentation
-# ==========================================
-# Sphinx documentation
-docs/_build/
-docs/build/
-*.doctree
-
-# MkDocs
-site/
-
-# ==========================================
-# IDEs & Editors
-# ==========================================
-# PyCharm
-.idea/
-*.iml
-*.ipr
-*.iws
-
-# VS Code
-.vscode/
-*.code-workspace
-.history/
-
-# Vim
-*.swp
-*.swo
-*~
-
-# Emacs
-*~
-\#*\#
-/.emacs.desktop
-/.emacs.desktop.lock
-*.elc
-auto-save-list
-tramp
-.\#*
-
-# Sublime Text
-*.tmlanguage.cache
-*.tmPreferences.cache
-*.stTheme.cache
-*.sublime-workspace
-*.sublime-project
-
-# ==========================================
-# OS Generated Files
-# ==========================================
-# macOS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-
-# Linux
-*~
-.fuse_hidden*
-.directory
-.Trash-*
-.nfs*
-
-# ==========================================
-# Logs & Temporary Files
+# Logs and temporary files
 # ==========================================
 logs/
 *.log
 *.log.*
-log.txt
-debug.log
-error.log
-access.log
-
-# Temporary files
 tmp/
 temp/
 *.tmp
 *.temp
-.cache/
-.tmp/
 
 # ==========================================
-# Docker & Containers
+# IDEs and editors
 # ==========================================
-.dockerignore
-docker-compose.override.yml
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# ==========================================
+# OS-generated files
+# ==========================================
+.DS_Store
+.DS_Store?
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Spotlight-V100/
+.Trashes/
+._*
+
+# ==========================================
+# Secrets and local credentials
+# ==========================================
 .env
-.env.local
-.env.*.local
-
-# Docker volumes
-volumes/
-docker/volumes/
-
-# ==========================================
-# CI/CD & Deployment
-# ==========================================
-# GitHub Actions
-.github/workflows/*.log
-
-# GitLab CI
-.gitlab-ci.yml
-
-# Jenkins
-jenkins/
-
-# Build artifacts
-build/
-dist/
-*.tar.gz
-*.whl
-*.deb
-*.rpm
-
-# ==========================================
-# Secrets & Credentials
-# ==========================================
-# API keys, passwords, secrets
+.env.*
+!.env.example
 secrets/
-.env
-.env.local
-.env.*.local
+configs/api_keys.json
+config/secrets.*
+credentials.*
+auth.json
 *.key
 *.pem
 *.crt
 *.cer
 *.p12
 *.pfx
-config/secrets.*
-credentials.*
-auth.json
 
 # ==========================================
-# Database
+# Containers
 # ==========================================
-*.db
-*.sqlite
-*.sqlite3
-*.sql
+docker-compose.override.yml
+volumes/
+docker/volumes/
 
 # ==========================================
-# Package Managers
+# Generated benchmark/results artifacts
 # ==========================================
-# Node.js (if any JS components)
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Poetry
-poetry.lock
-
-# Pipenv
-Pipfile.lock
-
-# Conda
-environment.yml
-environment.yaml
-
-# ==========================================
-# Backup & Archive Files
-# ==========================================
-*.bak
-*.backup
-*.old
-*.orig
-*.rej
-*~
-
-# ==========================================
-# Project Specific - Radeon RX 580
-# ==========================================
-# Fase directories (development phases)
-fase_*/
-fase_*/**/*
-
-# Results and outputs
 results/
+benchmark_data/
+scripts/results/
+
+# ML training outputs (not source-controlled)
 models/
-*.pkl
-*.pickle
+checkpoints/
+tensorboard/
+wandb/
+mlruns/
+lightning_logs/
 
-# OpenCL kernels (keep in src/kernels/)
-# *.cl (uncomment if you want to ignore all .cl files)
+# Profiling and GPU artifacts
+*.prof
+*.lprof
+*.nvprof
+*.cl.bin
+*.cl.o
+*.cl.so
+*.hsaco
+*.isa
+*.elf
 
-# Docker/Prometheus configs (keep in root for deployment)
-# alertmanager.yml
-# prometheus.yml
-
-# Build artifacts
-build/
-pytorch_build/
-*.so
-*.o
-
-# IDE and editor files
-.vscode/settings.json
-.idea/
-
-# OS specific
-.DS_Store
-Thumbs.db
-
-# Temporary and debug files
-debug_*.py
-test_*.py
-*_debug.py
-*_test.py
-
-# Jupyter notebook checkpoints
-.ipynb_checkpoints/
-
-# Coverage reports
-htmlcov/
-.coverage
-coverage.xml
-
-# Sphinx documentation
-docs/_build/
-docs/build/
-
-# Node modules (if any JS components)
-node_modules/
-
-# Backup files
-*.bak
-*.backup
-*.old
-*.orig
-
-# Large data files
-*.npz
-*.csv
-*.json
+# ==========================================
+# Optional large binaries
+# ==========================================
+*.pt
+*.pth
+*.onnx
 *.h5
 *.hdf5
+*.safetensors
+*.ckpt
+*.weights
+*.whl
 
-# ==========================================
-# Large Files (Git LFS candidates)
-# ==========================================
-# Consider using Git LFS for these if needed
+# Archives / installers
 *.zip
 *.tar.gz
 *.7z
@@ -427,25 +164,27 @@ node_modules/
 *.rpm
 *.pkg
 
-# Video files
-*.mp4
-*.avi
-*.mkv
-*.mov
-*.wmv
+# ==========================================
+# Documentation build artifacts
+# ==========================================
+docs/_build/
+docs/build/
+site/
+*.doctree
 
 # ==========================================
-# Custom Ignores (uncomment as needed)
+# Local project-only files
 # ==========================================
-# Uncomment to ignore specific files/directories
-# results/
-# experiments/
-# private/
-# local_config.py
-
-# Local planning files (do not upload)
+fase_*/
 ROADMAP_REPARACION_LOCAL.md
 
-# ==========================================
-# End of .gitignore
-# ==========================================
+# Legacy / exploratory local artifacts (keep main tree visible)
+tests/legacy/test_*.py
+scripts/test_*.py
+research/tile_20_investigation/*.json
+research/tile_20_investigation/*.csv
+research/tile_20_investigation/*.pkl
+research/tile_20_investigation/*_test.py
+research/tile_20_investigation/test_*.py
+research/tile_20_investigation/experiments/*_test.py
+infrastructure/grafana/dashboards/

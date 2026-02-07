@@ -20,6 +20,7 @@ import pyopencl as cl
 # Make project root importable when invoked as script.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from src.benchmarking.reporting import markdown_table, report_paths, save_markdown_report
 from test_production_system import benchmark_kernel
 
 
@@ -107,13 +108,29 @@ def main() -> None:
     parser.add_argument(
         "--output-json",
         type=str,
-        default="results/phase3_reproducible_baseline.json",
-        help="Path to write JSON report",
+        default="",
+        help="Path to write JSON report (optional). If omitted, auto timestamp path is used.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        default="results/benchmark_reports",
+        help="Output directory when --output-json is omitted",
+    )
+    parser.add_argument(
+        "--prefix",
+        type=str,
+        default="phase3_reproducible_baseline",
+        help="Filename prefix when --output-json is omitted",
     )
     args = parser.parse_args()
 
     report = run(sessions=args.sessions, iterations=args.iterations)
-    output_path = Path(args.output_json)
+    if args.output_json:
+        output_path = Path(args.output_json)
+        md_path = output_path.with_suffix(".md")
+    else:
+        output_path, md_path = report_paths(prefix=args.prefix, output_dir=args.output_dir)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(report, indent=2))
 
@@ -126,6 +143,30 @@ def main() -> None:
             f"[{peak['min']:.1f}, {peak['max']:.1f}] | avg mean {avg['mean']:.1f}"
         )
     print(f"\nJSON report written to: {output_path}")
+
+    md_rows = []
+    for name, data in report["summary"].items():
+        peak = data["peak"]
+        avg = data["avg"]
+        md_rows.append(
+            (
+                name,
+                f"{peak['mean']:.1f}",
+                f"[{peak['min']:.1f}, {peak['max']:.1f}]",
+                f"{avg['mean']:.1f}",
+                f"{data['time_ms']['mean']:.3f}",
+            )
+        )
+    md = (
+        "# Phase 3 Reproducible Benchmark Report\n\n"
+        + markdown_table(
+            headers=["Size", "Peak mean GFLOPS", "Peak range", "Avg mean GFLOPS", "Kernel ms mean"],
+            rows=md_rows,
+        )
+        + "\n"
+    )
+    save_markdown_report(md_path, md)
+    print(f"Markdown report written to: {md_path}")
 
 
 if __name__ == "__main__":

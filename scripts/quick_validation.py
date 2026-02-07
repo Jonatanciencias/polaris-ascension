@@ -1,296 +1,223 @@
 #!/usr/bin/env python3
 """
-Task 1.1.2.2 - Quick Functional Validation Script
+Quick functional validation for current OpenCL GEMM API.
 
-Validates that the hybrid GEMM kernel produces correct results on basic tests.
+Validates:
+  1) correctness on 128x128
+  2) correctness on 512x512
+  3) alpha/beta semantics
 
-Tests:
-  1. Small matrix (128×128)
-  2. Medium matrix (512×512)
-  3. Alpha/Beta parameters
-  4. Different parameter combinations
+Persists JSON+Markdown reports into results/benchmark_reports.
 """
 
-import sys
-import numpy as np
+from __future__ import annotations
+
+import argparse
 import logging
+import os
 from pathlib import Path
-import json
+import sys
 import time
 
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+import numpy as np
 
-# Add src to path
+# Workaround for pyopencl cache warning in specific runtime versions.
+os.environ.setdefault("PYOPENCL_NO_CACHE", "1")
+
+# Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.opencl.hybrid_gemm import HybridGEMMExecutor
+from src.benchmarking.reporting import markdown_table, report_paths, save_json_report, save_markdown_report
+from src.opencl import CLContext, gemm
+
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
 
 class QuickValidator:
-    """Quick functional validation for hybrid GEMM kernel."""
-    
-    def __init__(self):
-        """Initialize validator and executor."""
+    """Quick functional validator for OpenCL GEMM compatibility API."""
+
+    def __init__(self, seed: int = 42) -> None:
         logger.info("Initializing Quick Validator...")
-        self.executor = HybridGEMMExecutor()
-        self.results = {
-            'timestamp': time.time(),
-            'tests': {},
-            'summary': {}
+        self.seed = seed
+        self.context = CLContext()
+        self.results: dict[str, object] = {
+            "metadata": {
+                "timestamp": time.time(),
+                "seed": seed,
+                "validator": "scripts/quick_validation.py",
+            },
+            "tests": {},
+            "summary": {},
         }
-        
-    def test_small_matrix(self):
-        """Test with small matrix 128×128."""
-        logger.info("\n" + "="*80)
-        logger.info("TEST 1: Small Matrix (128×128)")
-        logger.info("="*80)
-        
-        test_name = "small_matrix_128"
+
+    def _run_case(self, name: str, size: int, seed: int) -> bool:
+        logger.info("%s", "=" * 80)
+        logger.info("TEST: %s (%dx%d)", name, size, size)
+        logger.info("%s", "=" * 80)
+
         try:
-            n = 128
-            np.random.seed(42)
-            A = np.random.randn(n, n).astype(np.float32)
-            B = np.random.randn(n, n).astype(np.float32)
-            
-            # Execute GPU GEMM
+            np.random.seed(seed)
+            A = np.random.randn(size, size).astype(np.float32)
+            B = np.random.randn(size, size).astype(np.float32)
+
+            # Warmup to avoid counting first-launch overhead in measured GFLOPS.
+            _ = gemm(self.context, A, B)
+
             start = time.perf_counter()
-            C_gpu = self.executor(A, B)
-            gpu_time = (time.perf_counter() - start) * 1000
-            
-            # CPU reference
+            C_gpu = gemm(self.context, A, B)
+            elapsed_ms = (time.perf_counter() - start) * 1000.0
+
             C_ref = A @ B
-            
-            # Calculate error
-            error_abs = np.linalg.norm(C_gpu - C_ref)
-            error_rel = error_abs / np.linalg.norm(C_ref)
-            
-            # GFLOPS
-            flops = 2 * n**3
-            gflops = flops / (gpu_time / 1000) / 1e9
-            
+            error_rel = float(np.linalg.norm(C_gpu - C_ref) / np.linalg.norm(C_ref))
+            gflops = float((2 * size**3) / (elapsed_ms / 1000.0) / 1e9)
             passed = error_rel < 1e-4
-            status = "✅ PASS" if passed else "❌ FAIL"
-            
-            logger.info(f"Matrix size: {n}×{n}")
-            logger.info(f"GPU time: {gpu_time:.3f} ms")
-            logger.info(f"GFLOPS: {gflops:.1f}")
-            logger.info(f"Error (relative): {error_rel:.2e}")
-            logger.info(f"Status: {status}")
-            
-            self.results['tests'][test_name] = {
-                'size': n,
-                'gpu_time_ms': gpu_time,
-                'gflops': gflops,
-                'error_rel': float(error_rel),
-                'passed': passed
+
+            logger.info("GPU time: %.3f ms", elapsed_ms)
+            logger.info("GFLOPS: %.1f", gflops)
+            logger.info("Error (relative): %.2e", error_rel)
+            logger.info("Status: %s", "PASS" if passed else "FAIL")
+
+            self.results["tests"][name] = {
+                "size": size,
+                "gpu_time_ms": elapsed_ms,
+                "gflops": gflops,
+                "error_rel": error_rel,
+                "passed": passed,
             }
-            
             return passed
-            
-        except Exception as e:
-            logger.error(f"Test failed with error: {e}", exc_info=True)
-            self.results['tests'][test_name] = {'passed': False, 'error': str(e)}
+        except Exception as exc:
+            logger.exception("Test %s crashed: %s", name, exc)
+            self.results["tests"][name] = {"passed": False, "error": str(exc)}
             return False
-    
-    def test_medium_matrix(self):
-        """Test with medium matrix 512×512."""
-        logger.info("\n" + "="*80)
-        logger.info("TEST 2: Medium Matrix (512×512)")
-        logger.info("="*80)
-        
-        test_name = "medium_matrix_512"
-        try:
-            n = 512
-            np.random.seed(43)
-            A = np.random.randn(n, n).astype(np.float32)
-            B = np.random.randn(n, n).astype(np.float32)
-            
-            # Execute GPU GEMM
-            start = time.perf_counter()
-            C_gpu = self.executor(A, B)
-            gpu_time = (time.perf_counter() - start) * 1000
-            
-            # CPU reference
-            C_ref = A @ B
-            
-            # Calculate error
-            error_abs = np.linalg.norm(C_gpu - C_ref)
-            error_rel = error_abs / np.linalg.norm(C_ref)
-            
-            # GFLOPS
-            flops = 2 * n**3
-            gflops = flops / (gpu_time / 1000) / 1e9
-            
+
+    def test_alpha_beta(self, size: int = 256, seed: int = 44) -> bool:
+        logger.info("%s", "=" * 80)
+        logger.info("TEST: alpha/beta semantics (%dx%d)", size, size)
+        logger.info("%s", "=" * 80)
+
+        np.random.seed(seed)
+        A = np.random.randn(size, size).astype(np.float32)
+        B = np.random.randn(size, size).astype(np.float32)
+        C = np.random.randn(size, size).astype(np.float32)
+
+        cases = [
+            (1.0, 0.0, "alpha=1.0,beta=0.0"),
+            (2.5, 0.0, "alpha=2.5,beta=0.0"),
+            (1.0, 1.0, "alpha=1.0,beta=1.0"),
+            (2.5, 0.5, "alpha=2.5,beta=0.5"),
+        ]
+
+        sub = {}
+        all_passed = True
+        for alpha, beta, label in cases:
+            C_gpu = gemm(self.context, A, B, C=C.copy(), alpha=alpha, beta=beta)
+            C_ref = alpha * (A @ B) + beta * C
+            error_rel = float(np.linalg.norm(C_gpu - C_ref) / np.linalg.norm(C_ref))
             passed = error_rel < 1e-4
-            status = "✅ PASS" if passed else "❌ FAIL"
-            
-            logger.info(f"Matrix size: {n}×{n}")
-            logger.info(f"GPU time: {gpu_time:.3f} ms")
-            logger.info(f"GFLOPS: {gflops:.1f}")
-            logger.info(f"Error (relative): {error_rel:.2e}")
-            logger.info(f"Status: {status}")
-            
-            self.results['tests'][test_name] = {
-                'size': n,
-                'gpu_time_ms': gpu_time,
-                'gflops': gflops,
-                'error_rel': float(error_rel),
-                'passed': passed
-            }
-            
-            return passed
-            
-        except Exception as e:
-            logger.error(f"Test failed with error: {e}", exc_info=True)
-            self.results['tests'][test_name] = {'passed': False, 'error': str(e)}
-            return False
-    
-    def test_alpha_beta(self):
-        """Test alpha and beta parameters."""
-        logger.info("\n" + "="*80)
-        logger.info("TEST 3: Alpha/Beta Parameters")
-        logger.info("="*80)
-        
-        test_name = "alpha_beta_params"
-        try:
-            n = 256
-            np.random.seed(44)
-            A = np.random.randn(n, n).astype(np.float32)
-            B = np.random.randn(n, n).astype(np.float32)
-            C = np.random.randn(n, n).astype(np.float32)
-            
-            test_cases = [
-                (1.0, 0.0, "alpha=1.0, beta=0.0"),
-                (2.5, 0.0, "alpha=2.5, beta=0.0"),
-                (1.0, 1.0, "alpha=1.0, beta=1.0"),
-                (2.5, 0.5, "alpha=2.5, beta=0.5"),
-            ]
-            
-            all_passed = True
-            sub_results = {}
-            
-            for alpha, beta, desc in test_cases:
-                logger.info(f"\n  Testing: {desc}")
-                
-                # GPU result
-                C_gpu = self.executor(A, B, C=C.copy(), alpha=alpha, beta=beta)
-                
-                # CPU reference
-                C_ref = alpha * (A @ B) + beta * C
-                
-                # Error
-                error_rel = np.linalg.norm(C_gpu - C_ref) / np.linalg.norm(C_ref)
-                passed = error_rel < 1e-4
-                
-                status = "✅" if passed else "❌"
-                logger.info(f"    {status} Error: {error_rel:.2e}")
-                
-                sub_results[desc] = {
-                    'error_rel': float(error_rel),
-                    'passed': passed
-                }
-                
-                all_passed = all_passed and passed
-            
-            self.results['tests'][test_name] = {
-                'sub_tests': sub_results,
-                'passed': all_passed
-            }
-            
-            return all_passed
-            
-        except Exception as e:
-            logger.error(f"Test failed with error: {e}", exc_info=True)
-            self.results['tests'][test_name] = {'passed': False, 'error': str(e)}
-            return False
-    
-    def run_all_tests(self):
-        """Run all validation tests."""
-        logger.info("\n" + "="*80)
-        logger.info("QUICK FUNCTIONAL VALIDATION - TASK 1.1.2.2")
-        logger.info("="*80)
-        
-        results = []
-        
-        # Test 1: Small matrix
-        try:
-            result1 = self.test_small_matrix()
-            results.append(result1)
-        except Exception as e:
-            logger.error(f"Test 1 failed: {e}")
-            results.append(False)
-        
-        # Test 2: Medium matrix
-        try:
-            result2 = self.test_medium_matrix()
-            results.append(result2)
-        except Exception as e:
-            logger.error(f"Test 2 failed: {e}")
-            results.append(False)
-        
-        # Test 3: Alpha/Beta
-        try:
-            result3 = self.test_alpha_beta()
-            results.append(result3)
-        except Exception as e:
-            logger.error(f"Test 3 failed: {e}")
-            results.append(False)
-        
-        # Summary
-        logger.info("\n" + "="*80)
-        logger.info("SUMMARY")
-        logger.info("="*80)
-        
-        total = len(results)
-        passed = sum(results)
-        
-        logger.info(f"Tests Passed: {passed}/{total}")
-        logger.info(f"Status: {'✅ ALL PASS' if all(results) else '❌ SOME FAILED'}")
-        
-        self.results['summary'] = {
-            'total_tests': total,
-            'passed': passed,
-            'failed': total - passed,
-            'all_passed': all(results)
+            sub[label] = {"error_rel": error_rel, "passed": passed}
+            all_passed = all_passed and passed
+            logger.info("%s -> %s (error %.2e)", label, "PASS" if passed else "FAIL", error_rel)
+
+        self.results["tests"]["alpha_beta_params"] = {
+            "sub_tests": sub,
+            "passed": all_passed,
         }
-        
-        return all(results)
-    
-    def save_results(self, output_file='results/quick_validation.json'):
-        """Save results to JSON file."""
-        output_path = Path(output_file)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        
-        with open(output_path, 'w') as f:
-            json.dump(self.results, f, indent=2)
-        
-        logger.info(f"\nResults saved to {output_file}")
+        return all_passed
+
+    def run_all(self) -> bool:
+        outcomes = [
+            self._run_case("small_matrix_128", 128, self.seed),
+            self._run_case("medium_matrix_512", 512, self.seed + 1),
+            self.test_alpha_beta(),
+        ]
+
+        total = len(outcomes)
+        passed = int(sum(outcomes))
+        all_passed = all(outcomes)
+
+        self.results["summary"] = {
+            "total_tests": total,
+            "passed": passed,
+            "failed": total - passed,
+            "all_passed": all_passed,
+        }
+
+        logger.info("%s", "=" * 80)
+        logger.info("SUMMARY: %d/%d passed", passed, total)
+        logger.info("STATUS: %s", "ALL PASS" if all_passed else "FAILED")
+        logger.info("%s", "=" * 80)
+        return all_passed
 
 
-def main():
-    """Main entry point."""
-    validator = QuickValidator()
-    
-    try:
-        success = validator.run_all_tests()
-        validator.save_results()
-        
-        if success:
-            logger.info("\n✅ QUICK VALIDATION COMPLETED SUCCESSFULLY")
-            return 0
-        else:
-            logger.error("\n❌ QUICK VALIDATION FAILED")
-            return 1
-            
-    except Exception as e:
-        logger.error(f"\nCritical error: {e}", exc_info=True)
-        return 2
+def _build_markdown(results: dict[str, object]) -> str:
+    tests = results.get("tests", {})
+    rows = []
+    for key in ["small_matrix_128", "medium_matrix_512"]:
+        test = tests.get(key, {}) if isinstance(tests, dict) else {}
+        rows.append(
+            (
+                key,
+                test.get("size", "-"),
+                f"{test.get('gflops', 0.0):.1f}" if isinstance(test.get("gflops"), (int, float)) else "-",
+                f"{test.get('error_rel', 0.0):.2e}" if isinstance(test.get("error_rel"), (int, float)) else "-",
+                "PASS" if test.get("passed") else "FAIL",
+            )
+        )
+
+    alpha = tests.get("alpha_beta_params", {}) if isinstance(tests, dict) else {}
+    rows.append(
+        (
+            "alpha_beta_params",
+            "256",
+            "-",
+            "-",
+            "PASS" if alpha.get("passed") else "FAIL",
+        )
+    )
+
+    summary = results.get("summary", {}) if isinstance(results.get("summary"), dict) else {}
+    return (
+        "# Quick Validation Report\n\n"
+        + markdown_table(
+            headers=["Test", "Size", "GFLOPS", "Rel Error", "Status"],
+            rows=rows,
+        )
+        + "\n\n"
+        + markdown_table(
+            headers=["Metric", "Value"],
+            rows=[
+                ("Total tests", summary.get("total_tests", "-")),
+                ("Passed", summary.get("passed", "-")),
+                ("Failed", summary.get("failed", "-")),
+                ("All passed", summary.get("all_passed", "-")),
+            ],
+        )
+        + "\n"
+    )
 
 
-if __name__ == '__main__':
-    sys.exit(main())
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Quick OpenCL GEMM functional validation")
+    parser.add_argument(
+        "--output-dir",
+        default="results/benchmark_reports",
+        help="Directory where report artifacts are written",
+    )
+    args = parser.parse_args()
+
+    validator = QuickValidator(seed=42)
+    success = validator.run_all()
+
+    json_path, md_path = report_paths(prefix="quick_validation", output_dir=args.output_dir)
+    save_json_report(json_path, validator.results)
+    save_markdown_report(md_path, _build_markdown(validator.results))
+
+    logger.info("JSON report: %s", json_path)
+    logger.info("MD report:   %s", md_path)
+    return 0 if success else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

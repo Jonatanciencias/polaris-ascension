@@ -1,41 +1,40 @@
-# Benchmarking Package
-# Performance evaluation and benchmarking tools
+"""Benchmarking package with lazy optional imports."""
 
-try:
-    from .fast_integrated_benchmark import FastIntegratedBenchmark
-except ImportError:
-    FastIntegratedBenchmark = None
+from __future__ import annotations
 
-try:
-    from .integrated_breakthrough_benchmark import IntegratedBreakthroughBenchmark
-except ImportError:
-    IntegratedBreakthroughBenchmark = None
+from importlib import import_module
+from typing import Any
 
-try:
-    from .gemm_progress_report import GEMMProgressReport
-except ImportError:
-    GEMMProgressReport = None
+_EXPORT_MAP = {
+    "FastIntegratedBenchmark": (".fast_integrated_benchmark", "FastIntegratedBenchmark"),
+    "IntegratedBreakthroughBenchmark": (
+        ".integrated_breakthrough_benchmark",
+        "IntegratedBreakthroughBenchmark",
+    ),
+    "GEMMProgressReport": (".gemm_progress_report", "GEMMProgressReport"),
+    "PerformanceSummary": (".performance_summary", "PerformanceSummary"),
+    "PolarisBreakthroughBenchmark": (".polaris_breakthrough_benchmark", "PolarisBreakthroughBenchmark"),
+    "ComprehensiveBreakthroughBenchmark": (
+        ".comprehensive_breakthrough_benchmark",
+        "ComprehensiveBreakthroughBenchmark",
+    ),
+    "run_production_benchmark": (".production_kernel_benchmark", "run_production_benchmark"),
+}
 
-try:
-    from .performance_summary import PerformanceSummary
-except ImportError:
-    PerformanceSummary = None
+__all__ = list(_EXPORT_MAP.keys())
 
-try:
-    from .polaris_breakthrough_benchmark import PolarisBreakthroughBenchmark
-except ImportError:
-    PolarisBreakthroughBenchmark = None
 
-try:
-    from .comprehensive_breakthrough_benchmark import ComprehensiveBreakthroughBenchmark
-except ImportError:
-    ComprehensiveBreakthroughBenchmark = None
+def __getattr__(name: str) -> Any:
+    """Lazy-load optional benchmarking symbols and cache the result."""
+    if name not in _EXPORT_MAP:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
-__all__ = [
-    'FastIntegratedBenchmark',
-    'IntegratedBreakthroughBenchmark',
-    'GEMMProgressReport',
-    'PerformanceSummary',
-    'PolarisBreakthroughBenchmark',
-    'ComprehensiveBreakthroughBenchmark'
-]
+    module_name, attr_name = _EXPORT_MAP[name]
+    try:
+        module = import_module(module_name, __name__)
+        value = getattr(module, attr_name)
+    except ImportError:
+        value = None
+
+    globals()[name] = value
+    return value

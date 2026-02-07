@@ -184,6 +184,12 @@ print(f"Local work size: {recommendation['local_size']}")
 # Run production system validation
 python test_production_system.py
 
+# Quick engine benchmark (general path)
+python -m src.cli benchmark --size 1024 --iterations 20
+
+# Production benchmark (tile20/tile24, reproducible-style metrics)
+python -m src.cli benchmark --mode production --kernel auto --size 1400 --sessions 10 --iterations 20
+
 # Test specific size
 python -c "
 from src.optimization_engines.adaptive_kernel_selector import select_optimal_kernel
@@ -191,6 +197,8 @@ rec = select_optimal_kernel(2048, 2048, 2048)
 print(f'Recommended: {rec[\"kernel_key\"]} - {rec[\"predicted_gflops\"]:.1f} GFLOPS')
 "
 ```
+
+`benchmark` now persists JSON+Markdown reports in `results/benchmark_reports/` by default (disable with `--no-report`).
 
 ---
 
