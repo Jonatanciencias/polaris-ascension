@@ -16,7 +16,7 @@ import numpy as np
 import json
 import pickle
 from pathlib import Path
-from typing import Dict, Tuple, Optional
+from typing import Any, Dict, Tuple, Optional
 import warnings
 
 # Suppress sklearn warnings
@@ -49,7 +49,14 @@ class ProductionKernelSelector:
         expected_gflops = recommendation['predicted_gflops']
     """
     
-    def __init__(self, model_path: Optional[str] = None):
+    def __init__(
+        self,
+        model_path: Optional[str] = None,
+        *,
+        enable_t3_controlled: bool = False,
+        t3_policy_path: Optional[str] = None,
+        t3_policy_seed: int = 42,
+    ):
         """
         Initialize production kernel selector
         
@@ -111,6 +118,8 @@ class ProductionKernelSelector:
         # Load ML model
         self.model = None
         self.model_available = False
+        self.t3_policy = None
+        self.t3_controlled_enabled = bool(enable_t3_controlled)
         
         if self.model_path.exists():
             try:
@@ -129,6 +138,19 @@ class ProductionKernelSelector:
         else:
             print(f"⚠️  Model not found: {self.model_path}")
             print("   Using heuristic-only selection")
+
+        if self.t3_controlled_enabled:
+            try:
+                from .t3_controlled_policy import ControlledT3Policy
+
+                self.t3_policy = ControlledT3Policy.from_policy_file(
+                    policy_path=t3_policy_path,
+                    seed=t3_policy_seed,
+                )
+            except Exception as exc:
+                print(f"⚠️  Could not enable T3 controlled policy: {exc}")
+                self.t3_policy = None
+                self.t3_controlled_enabled = False
     
     def _engineer_features(self, M: int, N: int, K: int, 
                           tile_size: int, threads: int, vectorized: bool) -> np.ndarray:
@@ -231,6 +253,26 @@ class ProductionKernelSelector:
         if self._in_t2_promoted_scope(M, N, K):
             return base_keys
         return [key for key in base_keys if key != "tile20_v3_1400"]
+
+    def _select_static_kernel(
+        self,
+        *,
+        M: int,
+        N: int,
+        K: int,
+        predictions: dict[str, float],
+    ) -> tuple[str, str]:
+        if self._in_t2_promoted_scope(M, N, K):
+            return "tile20_v3_1400", "scope override (t2 promoted)"
+
+        if self.model_available:
+            ml_choice = max(predictions, key=predictions.get)
+            heuristic_choice = self._heuristic_selection(M, N, K)
+            if max(M, N, K) > 2500:
+                return heuristic_choice, "hybrid (heuristic override)"
+            return ml_choice, "hybrid (ml primary)"
+
+        return self._heuristic_selection(M, N, K), "heuristic"
     
     def select_kernel(self, M: int, N: int, K: int) -> Dict:
         """
@@ -258,50 +300,33 @@ class ProductionKernelSelector:
         predictions = {}
         for kernel_key in eligible_keys:
             predictions[kernel_key] = self._predict_performance(M, N, K, kernel_key)
+        static_key, static_method = self._select_static_kernel(
+            M=M,
+            N=N,
+            K=K,
+            predictions=predictions,
+        )
+        selected_key = static_key
+        method = static_method
+        policy_meta: dict[str, Any] | None = None
 
-        # Hard scope override for the promoted T2 candidate.
-        # This keeps risk bounded and provides deterministic fallback behavior.
-        if self._in_t2_promoted_scope(M, N, K):
-            selected_key = 'tile20_v3_1400'
-            method = 'scope override (t2 promoted)'
-            config = self.kernel_configs[selected_key]
-            return {
-                'kernel_key': selected_key,
-                'kernel_name': config['name'],
-                'kernel_path': config['path'],
-                'local_size': config['local_size'],
-                'tile_size': config['tile_size'],
-                'threads': config['threads'],
-                'predicted_gflops': predictions[selected_key],
-                'selection_method': method,
-                'best_for': config['best_for']
-            }
-        
-        # Hybrid selection strategy
-        if self.model_available:
-            # ML-based: choose kernel with highest predicted GFLOPS
-            ml_choice = max(predictions, key=predictions.get)
-            
-            # Heuristic-based: use expert rules
-            heuristic_choice = self._heuristic_selection(M, N, K)
-            
-            # Hybrid: use ML, but override for extreme cases
-            if max(M, N, K) > 2500:
-                # Very large: heuristic knows tile24 is better
-                selected_key = heuristic_choice
-                method = 'hybrid (heuristic override)'
-            else:
-                # Normal case: trust ML
-                selected_key = ml_choice
-                method = 'hybrid (ml primary)'
-        else:
-            # No ML model: pure heuristic
-            selected_key = self._heuristic_selection(M, N, K)
-            method = 'heuristic'
-        
-        # Build recommendation
+        if self.t3_policy is not None and selected_key in eligible_keys:
+            size = max(M, N, K)
+            policy_meta = self.t3_policy.select(
+                size=size,
+                static_arm=static_key,
+                eligible_arms=eligible_keys,
+            )
+            selected_key = str(policy_meta["online_arm"])
+            method = f"t3_controlled ({policy_meta['selection_reason']})"
+
+        if selected_key not in predictions:
+            selected_key = static_key
+            method = static_method
+            policy_meta = None
+
         config = self.kernel_configs[selected_key]
-        
+
         return {
             'kernel_key': selected_key,
             'kernel_name': config['name'],
@@ -311,7 +336,10 @@ class ProductionKernelSelector:
             'threads': config['threads'],
             'predicted_gflops': predictions[selected_key],
             'selection_method': method,
-            'best_for': config['best_for']
+            'best_for': config['best_for'],
+            'static_kernel_key': static_key,
+            'static_selection_method': static_method,
+            'policy': policy_meta,
         }
     
     def get_all_predictions(self, M: int, N: int, K: int) -> Dict:
@@ -364,6 +392,46 @@ class ProductionKernelSelector:
         summary.append("=" * 70)
         
         return "\n".join(summary)
+
+    def record_runtime_feedback(
+        self,
+        *,
+        M: int,
+        N: int,
+        K: int,
+        static_arm: str,
+        online_arm: str,
+        online_gflops: float,
+        static_gflops: float,
+        online_max_error: float,
+    ) -> dict[str, Any]:
+        if self.t3_policy is None:
+            return {
+                "policy_enabled": False,
+                "fallback_triggered": False,
+                "executed_arm": online_arm,
+                "executed_gflops": float(online_gflops),
+                "disable_signal": False,
+                "disable_reason": None,
+                "fallback_rate": 0.0,
+            }
+
+        size = max(M, N, K)
+        feedback = self.t3_policy.record_feedback(
+            size=size,
+            static_arm=static_arm,
+            online_arm=online_arm,
+            online_gflops=online_gflops,
+            static_gflops=static_gflops,
+            online_max_error=online_max_error,
+        )
+        feedback["policy_enabled"] = True
+        return feedback
+
+    def get_t3_policy_snapshot(self) -> dict[str, Any] | None:
+        if self.t3_policy is None:
+            return None
+        return self.t3_policy.snapshot()
 
 
 # Convenience function for quick usage
