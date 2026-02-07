@@ -149,3 +149,29 @@ Estado actual del proyecto: **operativo y estable** en el camino principal de va
 - `/tmp/gemm_multisize_sweep_20260207.json`
 - `/tmp/optimized_engine_sweep_20260207.json`
 
+## 8) Addendum de Cierre Roadmap Breakthrough (Week 5-6)
+
+Actualización al 7 de febrero de 2026 (cierre formal de roadmap `2026Q1` en rama `feat/breakthrough-roadmap-2026q1`):
+
+- Week 5 - Block 3 (T5 wiring productivo + auto-disable): **promote**
+- Week 5 - Block 4 (compatibilidad Rusticl/ROCm): **refine**
+- Week 6 - Suite final y cierre de roadmap: **promote**
+
+### Resultado de suite final Week 6
+- `test_production_system.py`: **PASS (4/4)**
+- `pytest -q tests/`: **74 passed**
+- `scripts/validate_breakthrough_results.py`: **6/6 válidos**
+- Benchmark productivo (1400, 5x10):
+  - `auto`: **900.233 GFLOPS** peak mean
+  - `auto_t3_controlled`: **899.357 GFLOPS** peak mean, fallback `0.0`
+  - `auto_t5_guarded`: **918.557 GFLOPS** peak mean, overhead ABFT `2.493%`, disable events `0`
+
+### Deuda residual (no bloqueante de cierre)
+1. Tests legacy fuera de `tests/` rompen `pytest -q` global por colección.
+2. Hardening de selección explícita de plataforma para canary Rusticl (evitar dependencia de `cl.get_platforms()[0]`).
+3. Alinear `scripts/verify_drivers.py` con señales reales de `pyopencl`/`clinfo`.
+
+### Evidencia de cierre
+- `research/breakthrough_lab/week5_block4_platform_compatibility_decision.json`
+- `research/breakthrough_lab/week6_final_closure_decision.json`
+- `research/breakthrough_lab/ACTA_WEEK6_FINAL_CLOSURE_2026-02-07.md`

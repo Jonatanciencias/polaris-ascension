@@ -1,0 +1,179 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-07T23:53:32.249434+00:00",
+    "branch": "feat/breakthrough-roadmap-2026q1",
+    "size": 1400,
+    "sessions": 5,
+    "iterations": 10,
+    "seed": 42
+  },
+  "commands": {
+    "test_production_system": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "test_production_system.py"
+      ],
+      "returncode": 0,
+      "stdout": "================================================================================\n               PRODUCTION SYSTEM VALIDATION - COMPLETE TEST SUITE               \n                    RX 590 Hardware - Phase 2.1 Integration                     \n================================================================================\n\n================================================================================\n                       TEST 1: Production Kernel Selector                       \n================================================================================\n\n\u2713 Model loaded: R\u00b2=1.0000, MAE=0.0 GFLOPS\n\u2705 Selector imported successfully\n   Model available: True\n\nKernel Selections:\nSize       Category        Selected        Predicted GFLOPS    \n----------------------------------------------------------------------\n512        small           tile24          384.6               \n1024       medium          tile24          658.1               \n1400       sweet spot      tile20_v3_1400  926.0               \n2048       large           tile24          764.7               \n3072       very large      tile24          693.6               \n\n\u2705 Selector test PASSED\n\n================================================================================\n                         TEST 2: Kernel File Integrity                          \n================================================================================\n\n\u2705 src/kernels/gemm_tile20_production.cl                    6009 bytes\n\u2705 src/kernels/gemm_tile20_v3_vectorized.cl                 7100 bytes\n\u2705 src/kernels/gemm_tile24_production.cl                    9260 bytes\n\u2705 src/ml_models/kernel_selector_model.pkl                213638 bytes\n\u2705 src/ml_models/kernel_selector_dataset.json               4687 bytes\n\n\u2705 All files exist\n\n================================================================================\n                       TEST 3: Real Hardware Performance                        \n================================================================================\n\nPlatform: Clover\nDevice: AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)\n\nSize       Kernel               GFLOPS       Error        Status    \n--------------------------------------------------------------------------------\n1400       gemm_tile20_vectorized 892.0        0.000320     \u2705 PASS    \n2048       gemm_tile24_vectorized 774.6        0.000458     \u2705 PASS    \n512        gemm_tile24_vectorized 453.8        0.000095     \u2705 PASS    \n\nSweet Spot (1400\u00d71400) Verification:\n  Reference (Phase 3, reproducible): 776.1 GFLOPS mean [772.6, 781.6]\n  Historical auto-tuner peak (archive): 831.2 GFLOPS @ 1300\u00d71300\n  Actual run: 892.0 GFLOPS\n  Delta vs reference mean: +115.9 GFLOPS\n  \u2705 Above reproducible baseline range\n\n================================================================================\n                    TEST 4: Novelty & Contribution Analysis                     \n================================================================================\n\n\ud83d\udcca Technical Achievements:\n--------------------------------------------------------------------------------\n1. Sweet Spot Discovery (1400\u00d71400)\n   Novelty:     \u2b50\u2b50\u2b50 (3/5)\n   Impact:      Medium\n   Publishable: Maybe\n   Notes:       Hardware-specific, but methodology is reusable\n\n2. Kernel Specialization (tile16/20/24)\n   Novelty:     \u2b50\u2b50 (2/5)\n   Impact:      Medium\n   Publishable: No\n   Notes:       Well-known technique, good implementation\n\n3. ML-Powered Kernel Selection\n   Novelty:     \u2b50\u2b50\u2b50 (3/5)\n   Impact:      Medium-High\n   Publishable: Yes\n   Notes:       Hybrid ML+heuristics is interesting approach\n\n4. float8 Failure Analysis\n   Novelty:     \u2b50\u2b50 (2/5)\n   Impact:      Low-Medium\n   Publishable: No\n   Notes:       Negative result, but valuable for practitioners\n\n5. ~+37% Reproducible Performance Improvement\n   Novelty:     \u2b50\u2b50\u2b50\u2b50 (4/5)\n   Impact:      High\n   Publishable: Yes\n   Notes:       Stable gain via systematic optimization under fixed protocol\n\n6. Systematic Optimization Methodology\n   Novelty:     \u2b50\u2b50\u2b50\u2b50 (4/5)\n   Impact:      High\n   Publishable: Yes\n   Notes:       Research\u2192Validate\u2192Integrate pipeline is solid\n\n\ud83d\udcdd Publication Potential:\n--------------------------------------------------------------------------------\n\nWORKSHOP PAPER (\u2705 VIABLE):\n  Title: 'Systematic GEMM Optimization for AMD Polaris GPUs'\n  Focus: Methodology + ML-based kernel selection\n  Venues: IWOCL, GPGPU workshops, performance engineering conferences\n  Strength: Practical, reproducible, measurable results\n\nBLOG POST (\u2705 HIGHLY RECOMMENDED):\n  Title: 'From 566 to 776 GFLOPS (reproducible) on RX 590'\n  Platform: Medium, personal blog, GPU computing communities\n  Strength: Great story, educational, practical value\n\nGITHUB SHOWCASE (\u2705 EXCELLENT):\n  Value: Open-source implementation with full documentation\n  Audience: GPU developers, optimization enthusiasts\n  Impact: Reference implementation for Polaris optimization\n\nFULL RESEARCH PAPER (\u26a0\ufe0f MARGINAL):\n  Challenge: Incremental improvement, not breakthrough\n  Possible: If combined with broader GPU optimization study\n\n\ud83c\udfc6 Overall Assessment:\n--------------------------------------------------------------------------------\n\n\u2705 Strong engineering contribution\n\u2705 Excellent documentation and methodology\n\u2705 Reproducible and practical\n\u26a0\ufe0f  Not groundbreaking research, but solid applied work\n\u2705 Definitely worth sharing (blog/workshop/GitHub)\n\n\n================================================================================\n                                 FINAL SUMMARY                                  \n================================================================================\n\nTest Results:\n  Production Selector:           \u2705 PASS\n  File Integrity:                \u2705 PASS\n  Hardware Performance:          \u2705 PASS\n  Novelty Analysis:              \u2705 COMPLETE\n\nOverall: 4/4 tests passed\n\n\ud83c\udf89 ALL TESTS PASSED - System ready for production!\n\nRecommendations:\n  1. \u2705 Deploy to production\n  2. \u2705 Write blog post about journey\n  3. \u2705 Submit to IWOCL/GPGPU workshop\n  4. \u2705 Share on GitHub as reference implementation\n",
+      "stderr": "2026-02-07 18:53:04,591 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 18:53:05,276 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.46 s)\n2026-02-07 18:53:06,305 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.46 s)\n",
+      "summary": {
+        "pass_lines": [
+          "\u2705 Selector test PASSED",
+          "1400       gemm_tile20_vectorized 892.0        0.000320     \u2705 PASS",
+          "2048       gemm_tile24_vectorized 774.6        0.000458     \u2705 PASS",
+          "512        gemm_tile24_vectorized 453.8        0.000095     \u2705 PASS",
+          "Production Selector:           \u2705 PASS",
+          "File Integrity:                \u2705 PASS",
+          "Hardware Performance:          \u2705 PASS",
+          "Overall: 4/4 tests passed",
+          "\ud83c\udf89 ALL TESTS PASSED - System ready for production!"
+        ],
+        "pass_count": 9
+      }
+    },
+    "pytest_core": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/"
+      ],
+      "returncode": 0,
+      "stdout": "........................................................................ [ 97%]\n..                                                                       [100%]\n74 passed in 11.17s\n",
+      "stderr": "",
+      "passed_count": 74
+    },
+    "pytest_repo_discovery": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "returncode": 2,
+      "stdout": "\n==================================== ERRORS ====================================\n_ ERROR collecting research/phases/fase_10_tensor_core_simulation/test_performance.py _\nImportError while importing test module '/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/phases/fase_10_tensor_core_simulation/test_performance.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/usr/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nresearch/phases/fase_10_tensor_core_simulation/test_performance.py:13: in <module>\n    from src.tensor_core_emulator import TensorCoreEmulator\nE   ModuleNotFoundError: No module named 'src.tensor_core_emulator'\n____ ERROR collecting research/tile_20_investigation/test_step1_prefetch.py ____\nresearch/tile_20_investigation/test_step1_prefetch.py:21: in <module>\n    with open('kernels/approach_2_v3_vectorized.cl', 'r') as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   FileNotFoundError: [Errno 2] No such file or directory: 'kernels/approach_2_v3_vectorized.cl'\n------------------------------- Captured stdout --------------------------------\nLoading kernels...\n_______ ERROR collecting research/tile_20_investigation/test_step1_v2.py _______\nresearch/tile_20_investigation/test_step1_v2.py:19: in <module>\n    with open('kernels/approach_2_v3_vectorized.cl', 'r') as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   FileNotFoundError: [Errno 2] No such file or directory: 'kernels/approach_2_v3_vectorized.cl'\n------------------------------- Captured stdout --------------------------------\nLoading kernels...\n___________________ ERROR collecting scripts/test_gemm_64.py ___________________\nImportError while importing test module '/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/scripts/test_gemm_64.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/usr/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nscripts/test_gemm_64.py:2: in <module>\n    from opencl.gemm_recursive_wrapper import RecursiveGEMMExecutor, RecursiveConfig\nsrc/opencl/__init__.py:12: in <module>\n    from ..optimization_engines.optimized_kernel_engine import KernelType, OptimizedKernelEngine\nE   ImportError: attempted relative import beyond top-level package\n________________ ERROR collecting scripts/test_gemm_compare.py _________________\nImportError while importing test module '/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/scripts/test_gemm_compare.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/usr/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nscripts/test_gemm_compare.py:2: in <module>\n    from opencl.gemm_recursive_wrapper import RecursiveGEMMExecutor, RecursiveConfig\nsrc/opencl/__init__.py:12: in <module>\n    from ..optimization_engines.optimized_kernel_engine import KernelType, OptimizedKernelEngine\nE   ImportError: attempted relative import beyond top-level package\n_________________ ERROR collecting scripts/test_gemm_small.py __________________\nImportError while importing test module '/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/scripts/test_gemm_small.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/usr/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nscripts/test_gemm_small.py:2: in <module>\n    from opencl.gemm_recursive_wrapper import RecursiveGEMMExecutor, RecursiveConfig\nsrc/opencl/__init__.py:12: in <module>\n    from ..optimization_engines.optimized_kernel_engine import KernelType, OptimizedKernelEngine\nE   ImportError: attempted relative import beyond top-level package\n=========================== short test summary info ============================\nERROR research/phases/fase_10_tensor_core_simulation/test_performance.py\nERROR research/tile_20_investigation/test_step1_prefetch.py - FileNotFoundErr...\nERROR research/tile_20_investigation/test_step1_v2.py - FileNotFoundError: [E...\nERROR scripts/test_gemm_64.py\nERROR scripts/test_gemm_compare.py\nERROR scripts/test_gemm_small.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 6 errors during collection !!!!!!!!!!!!!!!!!!!!\n6 errors in 5.60s\n",
+      "stderr": ""
+    },
+    "validate_results_schema": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "scripts/validate_breakthrough_results.py"
+      ],
+      "returncode": 0,
+      "stdout": "Schema: research/breakthrough_lab/results.schema.json\nValidated: 6 files\nPassed: 6\nFailed: 0\n\nAll breakthrough results contracts are valid.\n",
+      "stderr": ""
+    }
+  },
+  "benchmarks": [
+    {
+      "kernel": "auto",
+      "size": 1400,
+      "sessions": 5,
+      "iterations": 10,
+      "peak_mean_gflops": 900.2327087512425,
+      "avg_mean_gflops": 886.6621135829186,
+      "p95_time_ms": 6.1647473979974166,
+      "max_error_mean": 0.00029754638671875,
+      "max_error_max": 0.00029754638671875,
+      "platform": "Clover",
+      "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)"
+    },
+    {
+      "kernel": "auto_t3_controlled",
+      "size": 1400,
+      "sessions": 5,
+      "iterations": 10,
+      "peak_mean_gflops": 899.3567362877654,
+      "avg_mean_gflops": 884.5563111561239,
+      "p95_time_ms": 6.186473404522985,
+      "max_error_mean": 0.000321197509765625,
+      "max_error_max": 0.0003662109375,
+      "platform": "Clover",
+      "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+      "fallback_rate": 0.0,
+      "correctness_failure_count": 0,
+      "disable_events": 0,
+      "policy_disabled": false,
+      "delta_vs_static_percent": 0.0
+    },
+    {
+      "kernel": "auto_t5_guarded",
+      "size": 1400,
+      "sessions": 5,
+      "iterations": 10,
+      "peak_mean_gflops": 918.5573206043113,
+      "avg_mean_gflops": 906.311943819003,
+      "p95_time_ms": 5.988724995404482,
+      "max_error_mean": 0.00033111572265625,
+      "max_error_max": 0.0003662109375,
+      "platform": "Clover",
+      "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+      "abft_effective_overhead_percent": 2.492922157905146,
+      "abft_false_positive_rate": 0.0,
+      "abft_disable_events": 0,
+      "abft_state_path": ""
+    }
+  ],
+  "evaluation": {
+    "checks": {
+      "test_production_system_green": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "pytest_suite_green": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "pytest_repo_discovery_non_blocking": {
+        "observed": 2,
+        "required": "informational",
+        "pass": true
+      },
+      "results_schema_green": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "benchmark_correctness_max_error": {
+        "observed": 0.0003662109375,
+        "required_max": 0.001,
+        "pass": true
+      },
+      "auto_peak_mean_gflops": {
+        "observed": 900.2327087512425,
+        "required_min": 700.0,
+        "pass": true
+      },
+      "t3_guardrails": {
+        "observed": {
+          "fallback_rate": 0.0,
+          "correctness_failure_count": 0
+        },
+        "required": {
+          "fallback_rate_max": 0.1,
+          "correctness_failure_count": 0
+        },
+        "pass": true
+      },
+      "t5_guardrails": {
+        "observed": {
+          "abft_disable_events": 0,
+          "abft_false_positive_rate": 0.0,
+          "abft_effective_overhead_percent": 2.492922157905146
+        },
+        "required": {
+          "abft_disable_events": 0,
+          "abft_false_positive_rate_max": 0.05,
+          "abft_effective_overhead_percent_max": 3.0
+        },
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Final suite is green across functional tests, schema validation and production guardrails."
+  }
+}
