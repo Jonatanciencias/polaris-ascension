@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, dataclass
-from typing import Any
+from typing import Any, Literal
 
 try:
     import t2_rust_sidecar as _native  # type: ignore
@@ -100,9 +100,13 @@ def native_available() -> bool:
     return _NATIVE_AVAILABLE
 
 
-def sidecar_info() -> dict[str, Any]:
-    if _NATIVE_AVAILABLE:
+def sidecar_info(*, backend: Literal["auto", "rust", "python"] = "auto") -> dict[str, Any]:
+    if backend not in {"auto", "rust", "python"}:
+        raise ValueError(f"Unsupported backend: {backend}")
+    if backend in {"auto", "rust"} and _NATIVE_AVAILABLE:
         return json.loads(_native.sidecar_info_json())
+    if backend == "rust" and not _NATIVE_AVAILABLE:
+        raise RuntimeError("Rust sidecar backend requested but native module is not available")
     return {
         "sidecar_name": "t2_rust_sidecar_python_fallback",
         "version": "0.1.0-fallback",
@@ -110,10 +114,18 @@ def sidecar_info() -> dict[str, Any]:
     }
 
 
-def enumerate_candidates(request: SearchRequest | dict[str, Any]) -> list[dict[str, Any]]:
+def enumerate_candidates(
+    request: SearchRequest | dict[str, Any],
+    *,
+    backend: Literal["auto", "rust", "python"] = "auto",
+) -> list[dict[str, Any]]:
+    if backend not in {"auto", "rust", "python"}:
+        raise ValueError(f"Unsupported backend: {backend}")
     req_dict = asdict(request) if isinstance(request, SearchRequest) else request
-    if _NATIVE_AVAILABLE:
+    if backend in {"auto", "rust"} and _NATIVE_AVAILABLE:
         return json.loads(_native.enumerate_candidates_json(json.dumps(req_dict)))
+    if backend == "rust" and not _NATIVE_AVAILABLE:
+        raise RuntimeError("Rust sidecar backend requested but native module is not available")
     return _enumerate_python(req_dict)
 
 
@@ -123,7 +135,14 @@ def build_replay_plan(
     sessions: int = 5,
     runs: int = 10,
     base_seed: int = 42,
+    backend: Literal["auto", "rust", "python"] = "auto",
 ) -> list[dict[str, Any]]:
-    if _NATIVE_AVAILABLE:
-        return json.loads(_native.build_replay_plan_json(json.dumps(candidates), sessions, runs, base_seed))
+    if backend not in {"auto", "rust", "python"}:
+        raise ValueError(f"Unsupported backend: {backend}")
+    if backend in {"auto", "rust"} and _NATIVE_AVAILABLE:
+        return json.loads(
+            _native.build_replay_plan_json(json.dumps(candidates), sessions, runs, base_seed)
+        )
+    if backend == "rust" and not _NATIVE_AVAILABLE:
+        raise RuntimeError("Rust sidecar backend requested but native module is not available")
     return _build_replay_plan_python(candidates, sessions=sessions, runs=runs, base_seed=base_seed)

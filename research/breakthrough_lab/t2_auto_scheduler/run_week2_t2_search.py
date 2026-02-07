@@ -18,8 +18,26 @@ from typing import Any
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+_SIDECAR_DIR = Path(__file__).resolve().parent / "rust_sidecar"
+if str(_SIDECAR_DIR) not in sys.path:
+    sys.path.insert(0, str(_SIDECAR_DIR))
 
 from research.auto_tuner.gemm_auto_tuner import GEMMAutoTuner
+
+_SIDECAR_IMPORT_ERROR: str | None = None
+try:
+    from python_client import (  # type: ignore
+        build_replay_plan as sidecar_build_replay_plan,
+        enumerate_candidates as sidecar_enumerate_candidates,
+        native_available as sidecar_native_available,
+        sidecar_info as sidecar_info,
+    )
+except Exception as exc:
+    _SIDECAR_IMPORT_ERROR = str(exc)
+    sidecar_build_replay_plan = None  # type: ignore
+    sidecar_enumerate_candidates = None  # type: ignore
+    sidecar_native_available = None  # type: ignore
+    sidecar_info = None  # type: ignore
 
 
 def _stats(values: list[float]) -> dict[str, float]:
@@ -114,6 +132,100 @@ def _baseline_config_for_size(size: int) -> str:
     return "t20_prod_v4_u10_l10" if size < 1800 else "t24_prod_v4_u0_l12"
 
 
+def _first_mismatch(a: list[dict[str, Any]], b: list[dict[str, Any]]) -> dict[str, Any] | None:
+    if len(a) != len(b):
+        return {"reason": "length_mismatch", "rust_len": len(a), "python_len": len(b)}
+    for idx, (left, right) in enumerate(zip(a, b)):
+        if left != right:
+            return {
+                "reason": "element_mismatch",
+                "index": idx,
+                "rust": left,
+                "python": right,
+            }
+    return None
+
+
+def _run_sidecar_shadow_compare(
+    *,
+    configs: list[dict[str, Any]],
+    top_k: int,
+    replay_sessions: int,
+    replay_runs: int,
+    seed: int,
+) -> dict[str, Any]:
+    out: dict[str, Any] = {
+        "enabled": True,
+        "status": "skipped",
+        "reason": None,
+    }
+    if not configs:
+        out["reason"] = "no_configs_for_shadow_compare"
+        return out
+    if _SIDECAR_IMPORT_ERROR is not None:
+        out["reason"] = f"sidecar_client_import_failed: {_SIDECAR_IMPORT_ERROR}"
+        return out
+    if sidecar_native_available is None or not sidecar_native_available():
+        out["reason"] = "native_rust_sidecar_not_available"
+        out["python_backend_info"] = sidecar_info(backend="python")
+        return out
+
+    kernels = sorted({str(cfg["config_id"]) for cfg in configs})
+    vector_widths = sorted({int(cfg["vector_width"]) for cfg in configs})
+    unroll_k_values = sorted({int(cfg["unroll_k"]) for cfg in configs})
+    local_sizes = sorted(
+        [[int(cfg["local_size"][0]), int(cfg["local_size"][1])] for cfg in configs],
+        key=lambda x: (x[0], x[1]),
+    )
+    request = {
+        "kernels": kernels,
+        "vector_widths": vector_widths,
+        "unroll_k_values": unroll_k_values,
+        "local_sizes": local_sizes,
+        "top_k": int(max(1, top_k)),
+    }
+
+    rust_candidates = sidecar_enumerate_candidates(request, backend="rust")
+    python_candidates = sidecar_enumerate_candidates(request, backend="python")
+    candidates_equal = rust_candidates == python_candidates
+    candidate_diff = _first_mismatch(rust_candidates, python_candidates)
+
+    rust_plan = sidecar_build_replay_plan(
+        rust_candidates,
+        sessions=replay_sessions,
+        runs=replay_runs,
+        base_seed=seed,
+        backend="rust",
+    )
+    python_plan = sidecar_build_replay_plan(
+        python_candidates,
+        sessions=replay_sessions,
+        runs=replay_runs,
+        base_seed=seed,
+        backend="python",
+    )
+    replay_plan_equal = rust_plan == python_plan
+    replay_diff = _first_mismatch(rust_plan, python_plan)
+
+    out.update(
+        {
+            "status": "passed" if candidates_equal and replay_plan_equal else "failed",
+            "reason": "ok" if candidates_equal and replay_plan_equal else "mismatch_detected",
+            "native_available": True,
+            "rust_backend_info": sidecar_info(backend="rust"),
+            "python_backend_info": sidecar_info(backend="python"),
+            "request": request,
+            "candidate_count": len(rust_candidates),
+            "replay_entry_count": len(rust_plan),
+            "candidates_equal": bool(candidates_equal),
+            "replay_plan_equal": bool(replay_plan_equal),
+            "candidate_diff": candidate_diff,
+            "replay_diff": replay_diff,
+        }
+    )
+    return out
+
+
 def _markdown_report(report: dict[str, Any]) -> str:
     lines: list[str] = []
     lines.append("# T2 Week 2 Search (Deterministic + Strict)")
@@ -127,7 +239,24 @@ def _markdown_report(report: dict[str, Any]) -> str:
     )
     lines.append(f"- Input distribution: {report['metadata']['input_distribution']}")
     lines.append(f"- Correctness threshold: {report['metadata']['correctness_threshold']}")
+    if report.get("sidecar_shadow") is not None:
+        shadow = report["sidecar_shadow"]
+        lines.append(
+            f"- Sidecar shadow: `{shadow['status']}` ({shadow.get('reason', 'n/a')})"
+        )
     lines.append("")
+    if report.get("sidecar_shadow") is not None:
+        shadow = report["sidecar_shadow"]
+        lines.append("## Sidecar Shadow (Rust vs Python)")
+        lines.append("")
+        lines.append(f"- Status: `{shadow['status']}`")
+        lines.append(f"- Reason: `{shadow.get('reason', 'n/a')}`")
+        if shadow["status"] != "skipped":
+            lines.append(f"- Candidate parity: `{shadow.get('candidates_equal')}`")
+            lines.append(f"- Replay plan parity: `{shadow.get('replay_plan_equal')}`")
+            lines.append(f"- Candidate count: `{shadow.get('candidate_count')}`")
+            lines.append(f"- Replay entries: `{shadow.get('replay_entry_count')}`")
+        lines.append("")
     lines.append("## Search Results")
     lines.append("")
     lines.append(
@@ -189,10 +318,29 @@ def run_search(
     correctness_threshold: float,
     seed: int,
     input_distribution: str,
+    sidecar_shadow: bool,
+    sidecar_shadow_strict: bool,
 ) -> dict[str, Any]:
     tuner = GEMMAutoTuner(output_dir="results/auto_tuner", verbose=False)
     configs = _build_search_configs(kernels=kernels, search_space=search_space)
     raw_candidates: list[dict[str, Any]] = []
+    shadow_report = (
+        _run_sidecar_shadow_compare(
+            configs=configs,
+            top_k=top_k,
+            replay_sessions=replay_sessions,
+            replay_runs=replay_runs,
+            seed=seed,
+        )
+        if sidecar_shadow
+        else None
+    )
+    if sidecar_shadow_strict and (
+        shadow_report is None or shadow_report.get("status") != "passed"
+    ):
+        reason = "shadow_not_executed" if shadow_report is None else shadow_report.get("reason")
+        raise RuntimeError(f"Sidecar shadow strict mode failed: {reason}")
+
     if not configs:
         return {
             "metadata": {
@@ -218,6 +366,7 @@ def run_search(
                 "completed_count": 0,
             },
             "replay": {"candidates": []},
+            "sidecar_shadow": shadow_report,
             "summary": {
                 "decision_hint": "refine",
                 "decision_rationale": "No valid configurations selected for this search space.",
@@ -449,6 +598,7 @@ def run_search(
         "replay": {
             "candidates": replay_candidates,
         },
+        "sidecar_shadow": shadow_report,
         "summary": {
             "decision_hint": decision_hint,
             "decision_rationale": rationale,
@@ -478,6 +628,16 @@ def main() -> int:
         default="standard_normal",
     )
     parser.add_argument(
+        "--sidecar-shadow",
+        action="store_true",
+        help="Run Rust-vs-Python sidecar parity comparison in shadow mode.",
+    )
+    parser.add_argument(
+        "--sidecar-shadow-strict",
+        action="store_true",
+        help="Fail execution if sidecar shadow is not available or parity mismatches.",
+    )
+    parser.add_argument(
         "--output-dir",
         type=str,
         default="research/breakthrough_lab/t2_auto_scheduler",
@@ -496,6 +656,8 @@ def main() -> int:
         correctness_threshold=args.correctness_threshold,
         seed=args.seed,
         input_distribution=args.input_distribution,
+        sidecar_shadow=args.sidecar_shadow,
+        sidecar_shadow_strict=args.sidecar_shadow_strict,
     )
 
     repo_root = Path(__file__).resolve().parents[3]
@@ -512,6 +674,11 @@ def main() -> int:
 
     print(f"T2 search JSON: {json_path}")
     print(f"T2 search MD:   {md_path}")
+    if report.get("sidecar_shadow") is not None:
+        print(
+            f"Sidecar shadow: {report['sidecar_shadow']['status']} "
+            f"({report['sidecar_shadow'].get('reason', 'n/a')})"
+        )
     print(f"Decision hint:  {report['summary']['decision_hint']}")
     return 0
 

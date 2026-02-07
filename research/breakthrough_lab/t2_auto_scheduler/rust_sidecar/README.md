@@ -45,3 +45,34 @@ python research/breakthrough_lab/t2_auto_scheduler/rust_sidecar/smoke_test.py
 ```
 
 The smoke test is deterministic and validates API shape/cardinality.
+
+## Shadow Integration (T2 Runner)
+
+`run_week2_t2_search.py` now supports sidecar parity checks:
+
+```bash
+python research/breakthrough_lab/t2_auto_scheduler/run_week2_t2_search.py \
+  --search-space basic \
+  --sizes 512 \
+  --runs-per-config 1 \
+  --warmup 0 \
+  --replay-sessions 1 \
+  --replay-runs 1 \
+  --top-k 1 \
+  --sidecar-shadow
+```
+
+Strict mode (fails run if parity is not `passed`):
+
+```bash
+python research/breakthrough_lab/t2_auto_scheduler/run_week2_t2_search.py \
+  --search-space basic \
+  --sizes 512 \
+  --runs-per-config 1 \
+  --warmup 0 \
+  --replay-sessions 1 \
+  --replay-runs 1 \
+  --top-k 1 \
+  --sidecar-shadow \
+  --sidecar-shadow-strict
+```
