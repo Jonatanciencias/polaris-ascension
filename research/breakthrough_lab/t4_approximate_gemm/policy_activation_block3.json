@@ -1,0 +1,39 @@
+{
+  "policy_id": "t4-approx-gating-block3-2026-02-07",
+  "status": "candidate_scoped_promotion",
+  "scope": {
+    "families_tested": [
+      "dense_random",
+      "compressible_lowrank"
+    ],
+    "sizes": [
+      512,
+      1024,
+      1400
+    ],
+    "activation_mode": "compressibility_energy_gate"
+  },
+  "activation_policy": {
+    "precheck_energy_threshold_exact_route": 0.95,
+    "target_rank": 16,
+    "error_budget": 0.005,
+    "sample_size": 64
+  },
+  "runtime_guardrails": {
+    "disable_if_post_fallback_violation_rate_gt": 0.01,
+    "disable_if_contract_compliance_rate_lt": 0.99,
+    "disable_if_fallback_rate_gt": 0.1,
+    "disable_if_compressible_speedup_lt": 2.0
+  },
+  "evidence": {
+    "artifact_json": "research/breakthrough_lab/t4_approximate_gemm/week4_t4_policy_gating_20260207_224256.json",
+    "artifact_md": "research/breakthrough_lab/t4_approximate_gemm/week4_t4_policy_gating_20260207_224256.md",
+    "contract_compliance_rate": 1.0,
+    "post_fallback_violation_rate": 0.0,
+    "fallback_rate": 0.0,
+    "policy_exact_route_rate": 0.5,
+    "compressible_speedup_vs_exact_mean": 3.0218479138301535,
+    "decision_hint": "promote"
+  },
+  "next_gate": "scoped_production_shadow_canary"
+}

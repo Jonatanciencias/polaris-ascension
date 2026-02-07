@@ -1,17 +1,17 @@
 {
   "$schema": "../results.schema.json",
   "schema_version": "1.0.0",
-  "experiment_id": "t4_approximate_gemm-002",
+  "experiment_id": "t4_approximate_gemm-003",
   "track": "t4_approximate_gemm",
-  "title": "T4 Week 3 contract-aware approximate GEMM baseline experiment",
+  "title": "T4 Week 4 Block 3 compressibility-gated activation policy refinement",
   "status": "completed",
   "owner": "codex",
   "branch": "feat/breakthrough-roadmap-2026q1",
   "commit": null,
   "timestamps": {
     "created_at": "2026-02-07T00:00:00Z",
-    "started_at": "2026-02-07T20:01:18.028258+00:00",
-    "ended_at": "2026-02-07T20:01:18.028258+00:00"
+    "started_at": "2026-02-07T22:42:56.404813+00:00",
+    "ended_at": "2026-02-07T22:42:56.404813+00:00"
   },
   "environment": {
     "os": "linux",
@@ -30,7 +30,7 @@
     ]
   },
   "parameters": {
-    "campaign": "week3_block2_t4_contract_fallback",
+    "campaign": "week4_block3_t4_policy_gating",
     "families": [
       "dense_random",
       "compressible_lowrank"
@@ -40,34 +40,40 @@
       1024,
       1400
     ],
-    "sessions": 3,
+    "sessions": 6,
     "target_rank": 16,
     "noise_scale": 0.01,
     "error_budget": 0.005,
     "precheck_energy_threshold": 0.95,
     "sample_size": 64,
-    "seed": 42
+    "seed": 42,
+    "activation_mode": "compressibility_energy_gate",
+    "policy_exact_route_for_low_compressibility": true,
+    "fallback_semantics": "fallback_only_after_postcheck_contract_violation",
+    "policy_artifact": "research/breakthrough_lab/t4_approximate_gemm/policy_activation_block3.json"
   },
   "metrics": {
-    "peak_gflops_mean": 1147.9280731867884,
-    "avg_gflops_mean": 1147.9280731867884,
-    "p95_time_ms": 13.305789998412365,
+    "peak_gflops_mean": 1148.7044549623188,
+    "avg_gflops_mean": 1148.7044549623188,
+    "p95_time_ms": 7.84294499680982,
     "max_error": 0.002532395999878645,
-    "cv_peak": 1.0340140568921425,
-    "delta_vs_baseline_percent": 134.48367865706027,
-    "reproducibility_score": 0.0,
+    "cv_peak": 0.36392142335706357,
+    "delta_vs_baseline_percent": 107.72694790392204,
+    "reproducibility_score": 0.8400146718391643,
     "energy_joules": null
   },
   "validation": {
     "correctness_passed": true,
-    "stability_passed": false,
-    "promotion_gate_passed": false
+    "stability_passed": true,
+    "promotion_gate_passed": true
   },
   "artifacts": [
-    "research/breakthrough_lab/t4_approximate_gemm/week3_t4_contract_run_20260207_200118.json",
-    "research/breakthrough_lab/t4_approximate_gemm/week3_t4_contract_run_20260207_200118.md",
-    "research/breakthrough_lab/t4_approximate_gemm/run_t4_error_contract.py"
+    "research/breakthrough_lab/t4_approximate_gemm/week4_t4_policy_gating_20260207_224256.json",
+    "research/breakthrough_lab/t4_approximate_gemm/week4_t4_policy_gating_20260207_224256.md",
+    "research/breakthrough_lab/t4_approximate_gemm/policy_activation_block3.json",
+    "research/breakthrough_lab/t4_approximate_gemm/run_t4_policy_gating.py",
+    "research/breakthrough_lab/t4_approximate_gemm/report.md"
   ],
-  "decision": "iterate",
-  "notes": "Contract enforcement and fallback instrumentation are stable. Speedup is strong only for compressible workloads and requires production-grade factorization path before promotion."
+  "decision": "promote",
+  "notes": "Block 3 policy gating reduced fallback to zero by routing low-compressibility workloads directly to exact path while preserving contract safety. Compressible workloads keep strong speedup (3.022x) with full contract compliance, enabling scoped promotion gate passage."
 }
