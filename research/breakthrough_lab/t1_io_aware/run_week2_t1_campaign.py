@@ -2,7 +2,7 @@
 """
 Week 2 T1 campaign runner.
 
-Runs baseline + two IO-aware variants with 10x20 protocol on sizes
+Runs baseline + three IO-aware variants with 10x20 protocol on sizes
 1400/2048/3072 and writes JSON + Markdown evidence artifacts.
 """
 
@@ -29,6 +29,13 @@ class KernelSpec:
     local_size: tuple[int, int]
     tile_size: int
     category: str
+
+
+DEFAULT_SIZE_WEIGHTS: dict[int, float] = {
+    1400: 0.2,
+    2048: 0.4,
+    3072: 0.4,
+}
 
 
 def _stats(values: list[float]) -> dict[str, float]:
@@ -136,7 +143,29 @@ def _baseline_for_size(size: int) -> KernelSpec:
     )
 
 
-def _variants() -> list[KernelSpec]:
+def _hybrid_variant_for_size(size: int) -> KernelSpec:
+    # Large-size strategy: keep IO prefetch at 1400 and switch to tile24 path
+    # for 2048/3072 to avoid known large-size regressions.
+    if size < 1800:
+        return KernelSpec(
+            name="io_hybrid_sizeaware_v1",
+            kernel_file="research/breakthrough_lab/t1_io_aware/kernels/gemm_tile20_io_prefetch.cl",
+            kernel_name="gemm_tile20_io_prefetch",
+            local_size=(10, 10),
+            tile_size=20,
+            category="variant",
+        )
+    return KernelSpec(
+        name="io_hybrid_sizeaware_v1",
+        kernel_file="src/kernels/gemm_tile24_production.cl",
+        kernel_name="gemm_tile24_vectorized",
+        local_size=(12, 12),
+        tile_size=24,
+        category="variant",
+    )
+
+
+def _variants_for_size(size: int) -> list[KernelSpec]:
     return [
         KernelSpec(
             name="io_prefetch_v1",
@@ -154,6 +183,7 @@ def _variants() -> list[KernelSpec]:
             tile_size=20,
             category="variant",
         ),
+        _hybrid_variant_for_size(size),
     ]
 
 
@@ -166,6 +196,9 @@ def _markdown_report(report: dict[str, Any]) -> str:
     )
     lines.append(
         f"- Protocol: sessions={report['metadata']['sessions']}, iterations={report['metadata']['iterations']}, seed={report['metadata']['seed']}"
+    )
+    lines.append(
+        f"- Weighted objective: {report['summary']['size_weights']}"
     )
     lines.append(
         f"- Device: {report['environment']['platform']} / {report['environment']['device']}"
@@ -194,11 +227,20 @@ def _markdown_report(report: dict[str, Any]) -> str:
     if best is None:
         lines.append("- No valid variant completed all required runs.")
     else:
-        lines.append(f"- Best variant by mean delta: `{best['name']}` ({best['mean_delta_percent']:+.3f}%).")
+        lines.append(
+            f"- Best variant by weighted delta: `{best['name']}` ({best['weighted_delta_percent']:+.3f}%)."
+        )
+        lines.append(
+            f"- Mean delta (unweighted): `{best['mean_delta_percent']:+.3f}%`."
+        )
         lines.append(
             f"- Correctness pass (<=1e-3) on all sizes: `{best['correctness_all_sizes']}`."
         )
         lines.append(f"- Stability pass (cv<=0.03) on all sizes: `{best['stability_all_sizes']}`.")
+    stop_rule = report["summary"]["stop_rule"]
+    lines.append(
+        f"- Stop rule triggered: `{stop_rule['triggered']}` (min +5% on 1400 or 2048 after 3 variants)."
+    )
     return "\n".join(lines) + "\n"
 
 
@@ -209,6 +251,7 @@ def run_campaign(
     sessions: int,
     iterations: int,
     seed: int,
+    size_weights: dict[int, float] | None = None,
 ) -> dict[str, Any]:
     platform = cl.get_platforms()[0]
     device = platform.get_devices()[0]
@@ -216,11 +259,20 @@ def run_campaign(
     queue = cl.CommandQueue(ctx)
 
     results: dict[str, Any] = {}
-    variants = _variants()
+    weights = {
+        size: float(DEFAULT_SIZE_WEIGHTS.get(size, 1.0))
+        for size in sizes
+    }
+    if size_weights:
+        for size in sizes:
+            if size in size_weights:
+                weights[size] = float(size_weights[size])
+
     variant_summary: dict[str, dict[str, Any]] = {}
 
     for size in sizes:
         baseline_spec = _baseline_for_size(size)
+        variants = _variants_for_size(size)
         specs = [baseline_spec] + variants
         per_size: dict[str, Any] = {"baseline": {}, "candidates": []}
 
@@ -339,10 +391,42 @@ def run_campaign(
             continue
         deltas = list(variant["size_deltas"].values())
         variant["mean_delta_percent"] = float(np.mean(deltas))
+        weighted_sum = 0.0
+        weight_sum = 0.0
+        for size in sizes:
+            size_key = str(size)
+            if size_key not in variant["size_deltas"]:
+                continue
+            w = float(weights.get(size, 1.0))
+            weighted_sum += variant["size_deltas"][size_key] * w
+            weight_sum += w
+        if weight_sum > 0:
+            variant["weighted_delta_percent"] = float(weighted_sum / weight_sum)
+        else:
+            variant["weighted_delta_percent"] = variant["mean_delta_percent"]
         ranked_variants.append(variant)
 
-    ranked_variants.sort(key=lambda item: item["mean_delta_percent"], reverse=True)
+    ranked_variants.sort(
+        key=lambda item: (
+            item["weighted_delta_percent"],
+            item["mean_delta_percent"],
+        ),
+        reverse=True,
+    )
     best_variant = ranked_variants[0] if ranked_variants else None
+
+    stop_rule_hits: list[dict[str, Any]] = []
+    for variant in ranked_variants:
+        for target_size in (1400, 2048):
+            size_delta = variant["size_deltas"].get(str(target_size))
+            if size_delta is not None and size_delta >= 5.0:
+                stop_rule_hits.append(
+                    {
+                        "variant": variant["name"],
+                        "size": target_size,
+                        "delta_percent": float(size_delta),
+                    }
+                )
 
     return {
         "metadata": {
@@ -362,6 +446,14 @@ def run_campaign(
         "summary": {
             "best_variant": best_variant,
             "ranked_variants": ranked_variants,
+            "size_weights": {str(size): float(weights[size]) for size in sizes},
+            "stop_rule": {
+                "required_variants": 3,
+                "target_sizes": [1400, 2048],
+                "min_delta_percent": 5.0,
+                "triggered": len(ranked_variants) >= 3 and len(stop_rule_hits) == 0,
+                "hits": stop_rule_hits,
+            },
         },
     }
 
@@ -405,8 +497,12 @@ def main() -> int:
         print(
             "Best variant:",
             best["name"],
-            f"(mean delta {best['mean_delta_percent']:+.3f}%)",
+            f"(weighted delta {best['weighted_delta_percent']:+.3f}%)",
         )
+    if report["summary"]["stop_rule"]["triggered"]:
+        print("Stop rule: TRIGGERED")
+    else:
+        print("Stop rule: not triggered")
     return 0
 
 
