@@ -39,6 +39,10 @@ jobs:
           pip install -e .
           pip install pytest pytest-cov
 
+      - name: Validate breakthrough results contract
+        run: |
+          python scripts/validate_breakthrough_results.py
+
       - name: Run fast test tier
         run: |
           set +e

@@ -26,3 +26,7 @@ Shared standards:
 - `results.schema.json` - canonical results contract
 - `results.template.json` - reusable starting payload
 - `WEEK1_BACKLOG_PHASE0.md` - executable atomic task list
+
+Contract validation:
+- Local: `python scripts/validate_breakthrough_results.py`
+- CI: enforced in `.github/workflows/test-tiers.yml` (`cpu-fast` job)
