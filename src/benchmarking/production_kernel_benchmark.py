@@ -14,6 +14,11 @@ import numpy as np
 import pyopencl as cl
 
 from src.optimization_engines.adaptive_kernel_selector import ProductionKernelSelector
+from src.optimization_engines.t5_abft_guardrails import (
+    DEFAULT_POLICY_PATH as T5_DEFAULT_POLICY_PATH,
+    DEFAULT_STATE_PATH as T5_DEFAULT_STATE_PATH,
+    T5ABFTAutoDisableGuard,
+)
 
 
 KERNEL_IMPLS: dict[str, dict[str, Any]] = {
@@ -61,7 +66,8 @@ def _resolve_static_auto_key(size: int) -> str:
 def _kernel_spec_from_key(key: str) -> tuple[str, str, tuple[int, int], int, str]:
     if key not in KERNEL_IMPLS:
         raise ValueError(
-            f"Unsupported kernel '{key}'. Use auto|auto_t3_controlled|tile20|tile20_v3_1400|tile24."
+            "Unsupported kernel "
+            f"'{key}'. Use auto|auto_t3_controlled|auto_t5_guarded|tile20|tile20_v3_1400|tile24."
         )
     spec = KERNEL_IMPLS[key]
     return (
@@ -165,6 +171,424 @@ def _build_kernel_cache(
             kernel_name,
         )
     return cache
+
+
+def _select_indices(size: int, sample_count: int) -> np.ndarray:
+    if sample_count >= size:
+        return np.arange(size, dtype=np.int32)
+    idx = np.linspace(0, size - 1, num=sample_count, dtype=np.int32)
+    return np.unique(idx)
+
+
+def _prepare_abft_expectations(
+    *,
+    a: np.ndarray,
+    b: np.ndarray,
+    row_indices: np.ndarray,
+    col_indices: np.ndarray,
+) -> dict[str, Any]:
+    ones_n = np.ones((b.shape[1],), dtype=np.float32)
+    b_colsum = b @ ones_n
+    expected_rows = a[row_indices, :] @ b_colsum
+
+    a_rowsum = np.sum(a, axis=0)
+    expected_cols = a_rowsum @ b[:, col_indices]
+    return {
+        "row_indices": row_indices,
+        "col_indices": col_indices,
+        "expected_rows": expected_rows.astype(np.float32),
+        "expected_cols": expected_cols.astype(np.float32),
+    }
+
+
+def _abft_residuals(c: np.ndarray, abft: dict[str, Any]) -> tuple[float, float]:
+    row_indices = abft["row_indices"]
+    col_indices = abft["col_indices"]
+    expected_rows = abft["expected_rows"]
+    expected_cols = abft["expected_cols"]
+
+    observed_rows = np.sum(c[row_indices, :], axis=1)
+    observed_cols = np.sum(c[:, col_indices], axis=0)
+    row_residual = float(np.max(np.abs(observed_rows - expected_rows)))
+    col_residual = float(np.max(np.abs(observed_cols - expected_cols)))
+    return row_residual, col_residual
+
+
+def _prepare_projection_bank(
+    *,
+    a: np.ndarray,
+    b: np.ndarray,
+    seed: int,
+    projection_count: int,
+) -> dict[str, Any]:
+    rng = np.random.default_rng(seed)
+    size = a.shape[0]
+    u = rng.choice(np.array([-1.0, 1.0], dtype=np.float32), size=(projection_count, size))
+    v = rng.choice(np.array([-1.0, 1.0], dtype=np.float32), size=(size, projection_count))
+
+    left = u @ a
+    right = b @ v
+    expected = np.sum(left * right.T, axis=1).astype(np.float32)
+    return {"u": u, "v": v, "expected": expected}
+
+
+def _projection_residuals(c: np.ndarray, projection: dict[str, Any]) -> np.ndarray:
+    observed = np.sum(projection["u"] * (c @ projection["v"]).T, axis=1).astype(np.float32)
+    return np.abs(observed - projection["expected"]).astype(np.float32)
+
+
+def _run_kernel_with_copy(
+    *,
+    queue: cl.CommandQueue,
+    kernel: cl.Kernel,
+    global_size: tuple[int, int],
+    local_size: tuple[int, int],
+    c_buf: cl.Buffer,
+    c_host: np.ndarray,
+) -> tuple[float, np.ndarray]:
+    start = time.perf_counter()
+    cl.enqueue_nd_range_kernel(queue, kernel, global_size, local_size)
+    queue.finish()
+    elapsed_ms = float((time.perf_counter() - start) * 1000.0)
+    cl.enqueue_copy(queue, c_host, c_buf).wait()
+    return elapsed_ms, c_host.copy()
+
+
+def _benchmark_once_with_t5_guard(
+    *,
+    queue: cl.CommandQueue,
+    kernel: cl.Kernel,
+    size: int,
+    tile_size: int,
+    local_size: tuple[int, int],
+    iterations: int,
+    seed: int,
+    sampling_period: int,
+    row_samples: int,
+    col_samples: int,
+    projection_count: int,
+    residual_scale: float,
+    residual_margin: float,
+    residual_floor: float,
+) -> dict[str, Any]:
+    rng = np.random.default_rng(seed)
+    a = rng.standard_normal((size, size), dtype=np.float32)
+    b = rng.standard_normal((size, size), dtype=np.float32)
+    c_host = np.zeros((size, size), dtype=np.float32)
+
+    row_indices = _select_indices(size, row_samples)
+    col_indices = _select_indices(size, col_samples)
+    abft = _prepare_abft_expectations(
+        a=a,
+        b=b,
+        row_indices=row_indices,
+        col_indices=col_indices,
+    )
+    projection = _prepare_projection_bank(
+        a=a,
+        b=b,
+        seed=seed + 9001,
+        projection_count=projection_count,
+    )
+
+    mf = cl.mem_flags
+    ctx = queue.context
+    a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=a)
+    b_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=b)
+    c_buf = cl.Buffer(ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=c_host)
+
+    global_size = (
+        ((size + tile_size - 1) // tile_size) * local_size[0],
+        ((size + tile_size - 1) // tile_size) * local_size[1],
+    )
+
+    kernel.set_args(
+        np.int32(size),
+        np.int32(size),
+        np.int32(size),
+        np.float32(1.0),
+        a_buf,
+        b_buf,
+        np.float32(0.0),
+        c_buf,
+    )
+
+    for _ in range(2):
+        cl.enqueue_nd_range_kernel(queue, kernel, global_size, local_size)
+        queue.finish()
+
+    cal_ms, c_cal = _run_kernel_with_copy(
+        queue=queue,
+        kernel=kernel,
+        global_size=global_size,
+        local_size=local_size,
+        c_buf=c_buf,
+        c_host=c_host,
+    )
+    _ = cal_ms
+    cal_row_res, cal_col_res = _abft_residuals(c_cal, abft)
+    cal_proj_residuals = _projection_residuals(c_cal, projection)
+    row_threshold = max(residual_floor, cal_row_res * residual_scale + residual_margin)
+    col_threshold = max(residual_floor, cal_col_res * residual_scale + residual_margin)
+    proj_thresholds = np.maximum(
+        residual_floor,
+        cal_proj_residuals * residual_scale + residual_margin,
+    ).astype(np.float32)
+
+    times_kernel_ms: list[float] = []
+    times_verify_ms: list[float] = []
+    anomalies = 0
+    checked_runs = 0
+    last_c = c_cal
+
+    for step in range(iterations):
+        kernel_ms, c = _run_kernel_with_copy(
+            queue=queue,
+            kernel=kernel,
+            global_size=global_size,
+            local_size=local_size,
+            c_buf=c_buf,
+            c_host=c_host,
+        )
+        times_kernel_ms.append(kernel_ms)
+        last_c = c
+
+        if step % max(1, sampling_period) != 0:
+            continue
+
+        checked_runs += 1
+        verify_start = time.perf_counter()
+        row_res, col_res = _abft_residuals(c, abft)
+        proj_residuals = _projection_residuals(c, projection)
+        verify_ms = float((time.perf_counter() - verify_start) * 1000.0)
+        times_verify_ms.append(verify_ms)
+
+        anomaly = (
+            row_res > row_threshold
+            or col_res > col_threshold
+            or bool(np.any(proj_residuals > proj_thresholds))
+        )
+        if anomaly:
+            anomalies += 1
+
+    c_ref = a @ b
+    max_error = float(np.max(np.abs(last_c - c_ref)))
+    flops = float(2 * size * size * size)
+    kernel_total_ms = float(np.sum(times_kernel_ms)) if times_kernel_ms else 0.0
+    verify_total_ms = float(np.sum(times_verify_ms)) if times_verify_ms else 0.0
+    effective_total_ms = kernel_total_ms + verify_total_ms
+
+    a_buf.release()
+    b_buf.release()
+    c_buf.release()
+
+    peak_ms = float(np.min(times_kernel_ms)) if times_kernel_ms else 1.0
+    avg_ms = float(np.mean(times_kernel_ms)) if times_kernel_ms else 1.0
+
+    return {
+        "peak_gflops": flops / (peak_ms * 1e6),
+        "avg_gflops": flops / (avg_ms * 1e6),
+        "time_ms": peak_ms,
+        "max_error": max_error,
+        "t5_abft": {
+            "sampling_period": int(sampling_period),
+            "checked_runs": int(checked_runs),
+            "total_runs": int(iterations),
+            "sampling_coverage": float(checked_runs / max(1, iterations)),
+            "false_positive_count": int(anomalies),
+            "false_positive_rate": float(anomalies / max(1, checked_runs)),
+            "effective_overhead_percent": (
+                float(verify_total_ms / kernel_total_ms * 100.0)
+                if kernel_total_ms > 0
+                else 0.0
+            ),
+            "kernel_time_total_ms": kernel_total_ms,
+            "verify_time_total_ms": verify_total_ms,
+            "effective_gflops": (
+                float(flops * iterations / (effective_total_ms * 1e6))
+                if effective_total_ms > 0
+                else 0.0
+            ),
+            "max_error": max_error,
+        },
+    }
+
+
+def _run_t5_guarded_benchmark(
+    *,
+    size: int,
+    iterations: int,
+    sessions: int,
+    seed: int,
+    t5_policy_path: str,
+    t5_state_path: str,
+) -> dict[str, Any]:
+    selector = ProductionKernelSelector()
+    guard = T5ABFTAutoDisableGuard(policy_path=t5_policy_path, state_path=t5_state_path)
+
+    platform = cl.get_platforms()[0]
+    device = platform.get_devices()[0]
+    ctx = cl.Context([device])
+    queue = cl.CommandQueue(ctx)
+    kernel_cache = _build_kernel_cache(ctx)
+
+    peak_vals: list[float] = []
+    avg_vals: list[float] = []
+    time_vals: list[float] = []
+    err_vals: list[float] = []
+
+    checked_runs_total = 0
+    total_runs_total = 0
+    false_positive_total = 0
+    kernel_time_total_ms = 0.0
+    verify_time_total_ms = 0.0
+    guardrails_all_passed = True
+
+    session_details: list[dict[str, Any]] = []
+
+    static_rec = selector.select_kernel(size, size, size)
+    kernel_key = str(static_rec["kernel_key"])
+    kernel_obj, local_size, tile_size, kernel_file, kernel_name = kernel_cache[kernel_key]
+
+    for session_idx in range(sessions):
+        session_seed = seed + session_idx * 1000
+        if guard.enabled:
+            result = _benchmark_once_with_t5_guard(
+                queue=queue,
+                kernel=kernel_obj,
+                size=size,
+                tile_size=tile_size,
+                local_size=local_size,
+                iterations=iterations,
+                seed=session_seed,
+                sampling_period=guard.sampling.sampling_period,
+                row_samples=guard.sampling.row_samples,
+                col_samples=guard.sampling.col_samples,
+                projection_count=guard.sampling.projection_count,
+                residual_scale=guard.sampling.residual_scale,
+                residual_margin=guard.sampling.residual_margin,
+                residual_floor=guard.sampling.residual_floor,
+            )
+            t5_metrics = result["t5_abft"]
+            eval_result = guard.evaluate_session(
+                session_id=session_idx,
+                metrics={
+                    "false_positive_rate": float(t5_metrics["false_positive_rate"]),
+                    "effective_overhead_percent": float(
+                        t5_metrics["effective_overhead_percent"]
+                    ),
+                    "max_error": float(t5_metrics["max_error"]),
+                },
+            )
+            guardrails_all_passed = guardrails_all_passed and bool(eval_result["all_passed"])
+
+            checked_runs_total += int(t5_metrics["checked_runs"])
+            total_runs_total += int(t5_metrics["total_runs"])
+            false_positive_total += int(t5_metrics["false_positive_count"])
+            kernel_time_total_ms += float(t5_metrics["kernel_time_total_ms"])
+            verify_time_total_ms += float(t5_metrics["verify_time_total_ms"])
+            abft_enabled = True
+        else:
+            result = _benchmark_once(
+                queue=queue,
+                kernel=kernel_obj,
+                size=size,
+                tile_size=tile_size,
+                local_size=local_size,
+                iterations=iterations,
+                seed=session_seed,
+            )
+            t5_metrics = {
+                "checked_runs": 0,
+                "total_runs": int(iterations),
+                "sampling_coverage": 0.0,
+                "false_positive_count": 0,
+                "false_positive_rate": 0.0,
+                "effective_overhead_percent": 0.0,
+                "kernel_time_total_ms": 0.0,
+                "verify_time_total_ms": 0.0,
+                "effective_gflops": float(result["avg_gflops"]),
+                "max_error": float(result["max_error"]),
+            }
+            eval_result = {
+                "all_passed": True,
+                "disable_signal": False,
+                "failed_guardrails": [],
+                "enabled_after_eval": False,
+                "disable_reason": guard.disable_reason,
+                "fallback_action": "abft_already_disabled_runtime_plain_path",
+            }
+            total_runs_total += int(iterations)
+            abft_enabled = False
+
+        peak_vals.append(float(result["peak_gflops"]))
+        avg_vals.append(float(result["avg_gflops"]))
+        time_vals.append(float(result["time_ms"]))
+        err_vals.append(float(result["max_error"]))
+
+        session_details.append(
+            {
+                "session": int(session_idx),
+                "seed": int(session_seed),
+                "kernel_key": kernel_key,
+                "kernel_name": kernel_name,
+                "abft_enabled": abft_enabled,
+                "runtime_metrics": t5_metrics,
+                "guardrail_eval": eval_result,
+            }
+        )
+
+    false_positive_rate = float(false_positive_total / max(1, checked_runs_total))
+    effective_overhead_percent = (
+        float(verify_time_total_ms / kernel_time_total_ms * 100.0)
+        if kernel_time_total_ms > 0.0
+        else 0.0
+    )
+
+    policy_evidence = guard.policy.get("stress_evidence", {})
+    critical_recall = float(policy_evidence.get("critical_recall", 0.0))
+    uniform_recall = float(policy_evidence.get("uniform_recall", 0.0))
+
+    return {
+        "metadata": {
+            "size": size,
+            "iterations_per_session": iterations,
+            "sessions": sessions,
+            "seed": seed,
+            "kernel_mode_requested": "auto_t5_guarded",
+            "kernel_mode_resolved": "auto_t5_guarded",
+            "kernel_name": kernel_name,
+            "kernel_file": kernel_file,
+            "tile_size": tile_size,
+            "local_size": list(local_size),
+            "platform": platform.name,
+            "device": device.name,
+            "t5_policy_path": t5_policy_path,
+            "t5_state_path": t5_state_path,
+            "t5_policy_id": guard.policy["policy_id"],
+        },
+        "summary": {
+            "peak_gflops": _stats(peak_vals),
+            "avg_gflops": _stats(avg_vals),
+            "time_ms": _stats(time_vals),
+            "max_error": _stats(err_vals),
+            "t5_abft": {
+                "guardrails_all_passed": bool(guardrails_all_passed),
+                "enabled_final": bool(guard.enabled),
+                "disable_events": int(guard.disable_events),
+                "disable_reason": guard.disable_reason,
+                "checked_runs": int(checked_runs_total),
+                "total_runs": int(total_runs_total),
+                "sampling_coverage": float(checked_runs_total / max(1, total_runs_total)),
+                "false_positive_rate": false_positive_rate,
+                "effective_overhead_percent": effective_overhead_percent,
+                "critical_recall_reference": critical_recall,
+                "uniform_recall_reference": uniform_recall,
+            },
+        },
+        "sessions": session_details,
+        "guard_state": guard.state_snapshot(),
+    }
 
 
 def _run_t3_controlled_benchmark(
@@ -390,6 +814,8 @@ def run_production_benchmark(
     kernel: str = "auto",
     seed: int = 42,
     t3_policy_path: str | None = None,
+    t5_policy_path: str = T5_DEFAULT_POLICY_PATH,
+    t5_state_path: str = T5_DEFAULT_STATE_PATH,
 ) -> dict[str, Any]:
     """
     Run multi-session benchmark on production kernels and return aggregate stats.
@@ -401,6 +827,15 @@ def run_production_benchmark(
             sessions=sessions,
             seed=seed,
             t3_policy_path=t3_policy_path,
+        )
+    if kernel.lower() == "auto_t5_guarded":
+        return _run_t5_guarded_benchmark(
+            size=size,
+            iterations=iterations,
+            sessions=sessions,
+            seed=seed,
+            t5_policy_path=t5_policy_path,
+            t5_state_path=t5_state_path,
         )
 
     kernel_file, kernel_name, local_size, tile_size, resolved_kernel = _kernel_spec(size=size, kernel=kernel)
