@@ -281,6 +281,7 @@ See [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) for complete analysis.
 - [docs/KERNEL_CACHE.md](docs/KERNEL_CACHE.md) - Kernel compilation caching
 - [docs/optimization.md](docs/optimization.md) - Optimization techniques
 - [docs/ROADMAP_OPTIMIZATION.md](docs/ROADMAP_OPTIMIZATION.md) - Complete optimization roadmap (Phases 0-6)
+- [docs/ROADMAP_BREAKTHROUGH_2026Q1.md](docs/ROADMAP_BREAKTHROUGH_2026Q1.md) - Updated breakthrough roadmap and language strategy
 - [docs/ROADMAP_README.md](docs/ROADMAP_README.md) - Documentation navigation guide
 
 ---
