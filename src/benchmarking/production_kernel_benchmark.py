@@ -4,6 +4,7 @@ Production kernel benchmarking helpers for tile20/tile24 GEMM kernels.
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import time
 from typing import Any
@@ -41,6 +42,129 @@ KERNEL_IMPLS: dict[str, dict[str, Any]] = {
         "tile_size": 24,
     },
 }
+
+ENV_OPENCL_PLATFORM = "RX580_OPENCL_PLATFORM"
+ENV_OPENCL_DEVICE = "RX580_OPENCL_DEVICE"
+
+
+def _normalize_selector(value: str | None) -> str:
+    if value is None:
+        return "auto"
+    normalized = str(value).strip()
+    return normalized if normalized else "auto"
+
+
+def _matches_selector(candidates: list[str], selector: str) -> bool:
+    normalized = _normalize_selector(selector)
+    if normalized == "auto":
+        return True
+    needle = normalized.lower()
+    return any(needle in str(candidate).lower() for candidate in candidates if candidate is not None)
+
+
+def _is_amd_device(device: cl.Device) -> bool:
+    text = f"{getattr(device, 'name', '')} {getattr(device, 'vendor', '')}".lower()
+    return "amd" in text or "radeon" in text or "advanced micro devices" in text
+
+
+def _select_opencl_runtime(
+    *,
+    opencl_platform: str | None,
+    opencl_device: str | None,
+) -> tuple[cl.Platform, cl.Device, dict[str, Any]]:
+    platform_from_env = opencl_platform is None and os.getenv(ENV_OPENCL_PLATFORM) is not None
+    device_from_env = opencl_device is None and os.getenv(ENV_OPENCL_DEVICE) is not None
+
+    platform_selector = _normalize_selector(
+        opencl_platform if opencl_platform is not None else os.getenv(ENV_OPENCL_PLATFORM)
+    )
+    device_selector = _normalize_selector(
+        opencl_device if opencl_device is not None else os.getenv(ENV_OPENCL_DEVICE)
+    )
+
+    platforms = cl.get_platforms()
+    if not platforms:
+        raise RuntimeError("No OpenCL platforms detected.")
+
+    matching_platforms = [
+        p
+        for p in platforms
+        if _matches_selector([str(p.name), str(p.vendor), str(p.version)], platform_selector)
+    ]
+    if not matching_platforms:
+        available = [str(p.name) for p in platforms]
+        raise ValueError(
+            f"OpenCL platform selector '{platform_selector}' matched none. "
+            f"Available platforms: {available}"
+        )
+
+    candidates: list[tuple[cl.Platform, cl.Device]] = []
+    for platform in matching_platforms:
+        try:
+            gpu_devices = platform.get_devices(device_type=cl.device_type.GPU)
+        except cl.RuntimeError:
+            gpu_devices = []
+        for device in gpu_devices:
+            if _matches_selector(
+                [
+                    str(device.name),
+                    str(device.vendor),
+                    str(device.version),
+                    str(device.driver_version),
+                ],
+                device_selector,
+            ):
+                candidates.append((platform, device))
+
+    if not candidates:
+        details: list[dict[str, Any]] = []
+        for platform in matching_platforms:
+            try:
+                gpu_names = [str(dev.name) for dev in platform.get_devices(device_type=cl.device_type.GPU)]
+            except cl.RuntimeError:
+                gpu_names = []
+            details.append({"platform": str(platform.name), "gpu_devices": gpu_names})
+        hint = ""
+        if platform_selector.lower() == "rusticl":
+            hint = (
+                " Hint: if using Rusticl canary, export RUSTICL_ENABLE=radeonsi before process startup "
+                "or use CLI --rusticl-enable with fresh process."
+            )
+        raise ValueError(
+            f"OpenCL device selector '{device_selector}' matched none in selected platforms. "
+            f"Platform GPU inventory: {details}.{hint}"
+        )
+
+    def _score(item: tuple[cl.Platform, cl.Device]) -> tuple[int, int, int]:
+        platform, device = item
+        platform_exact = int(
+            platform_selector != "auto" and str(platform.name).lower() == platform_selector.lower()
+        )
+        device_exact = int(
+            device_selector != "auto" and str(device.name).lower() == device_selector.lower()
+        )
+        amd_priority = int(_is_amd_device(device))
+        return (platform_exact, device_exact, amd_priority)
+
+    best_platform, best_device = candidates[0]
+    best_score = _score(candidates[0])
+    for platform, device in candidates[1:]:
+        score = _score((platform, device))
+        if score > best_score:
+            best_platform, best_device = platform, device
+            best_score = score
+
+    selection = {
+        "platform_selector": platform_selector,
+        "device_selector": device_selector,
+        "platform_selector_from_env": platform_from_env,
+        "device_selector_from_env": device_from_env,
+        "selected_platform": str(best_platform.name),
+        "selected_device": str(best_device.name),
+        "candidate_count": int(len(candidates)),
+        "available_platforms": [str(p.name) for p in platforms],
+    }
+    return best_platform, best_device, selection
 
 
 def _stats(values: list[float]) -> dict[str, float]:
@@ -422,12 +546,13 @@ def _run_t5_guarded_benchmark(
     seed: int,
     t5_policy_path: str,
     t5_state_path: str,
+    platform: cl.Platform,
+    device: cl.Device,
+    platform_selection: dict[str, Any],
 ) -> dict[str, Any]:
     selector = ProductionKernelSelector()
     guard = T5ABFTAutoDisableGuard(policy_path=t5_policy_path, state_path=t5_state_path)
 
-    platform = cl.get_platforms()[0]
-    device = platform.get_devices()[0]
     ctx = cl.Context([device])
     queue = cl.CommandQueue(ctx)
     kernel_cache = _build_kernel_cache(ctx)
@@ -563,6 +688,7 @@ def _run_t5_guarded_benchmark(
             "local_size": list(local_size),
             "platform": platform.name,
             "device": device.name,
+            "platform_selection": platform_selection,
             "t5_policy_path": t5_policy_path,
             "t5_state_path": t5_state_path,
             "t5_policy_id": guard.policy["policy_id"],
@@ -598,6 +724,9 @@ def _run_t3_controlled_benchmark(
     sessions: int,
     seed: int,
     t3_policy_path: str | None,
+    platform: cl.Platform,
+    device: cl.Device,
+    platform_selection: dict[str, Any],
 ) -> dict[str, Any]:
     static_selector = ProductionKernelSelector()
     controlled_selector = ProductionKernelSelector(
@@ -606,8 +735,6 @@ def _run_t3_controlled_benchmark(
         t3_policy_seed=seed,
     )
 
-    platform = cl.get_platforms()[0]
-    device = platform.get_devices()[0]
     ctx = cl.Context([device])
     queue = cl.CommandQueue(ctx)
     kernel_cache = _build_kernel_cache(ctx)
@@ -789,6 +916,7 @@ def _run_t3_controlled_benchmark(
             ),
             "platform": platform.name,
             "device": device.name,
+            "platform_selection": platform_selection,
         },
         "summary": {
             "peak_gflops": controlled_summary["peak_gflops"],
@@ -816,10 +944,21 @@ def run_production_benchmark(
     t3_policy_path: str | None = None,
     t5_policy_path: str = T5_DEFAULT_POLICY_PATH,
     t5_state_path: str = T5_DEFAULT_STATE_PATH,
+    opencl_platform: str | None = None,
+    opencl_device: str | None = None,
+    rusticl_enable: str | None = None,
 ) -> dict[str, Any]:
     """
     Run multi-session benchmark on production kernels and return aggregate stats.
     """
+    if rusticl_enable is not None:
+        os.environ["RUSTICL_ENABLE"] = str(rusticl_enable)
+
+    platform, device, platform_selection = _select_opencl_runtime(
+        opencl_platform=opencl_platform,
+        opencl_device=opencl_device,
+    )
+
     if kernel.lower() == "auto_t3_controlled":
         return _run_t3_controlled_benchmark(
             size=size,
@@ -827,6 +966,9 @@ def run_production_benchmark(
             sessions=sessions,
             seed=seed,
             t3_policy_path=t3_policy_path,
+            platform=platform,
+            device=device,
+            platform_selection=platform_selection,
         )
     if kernel.lower() == "auto_t5_guarded":
         return _run_t5_guarded_benchmark(
@@ -836,12 +978,12 @@ def run_production_benchmark(
             seed=seed,
             t5_policy_path=t5_policy_path,
             t5_state_path=t5_state_path,
+            platform=platform,
+            device=device,
+            platform_selection=platform_selection,
         )
 
     kernel_file, kernel_name, local_size, tile_size, resolved_kernel = _kernel_spec(size=size, kernel=kernel)
-
-    platform = cl.get_platforms()[0]
-    device = platform.get_devices()[0]
     ctx = cl.Context([device])
     queue = cl.CommandQueue(ctx)
     source = Path(kernel_file).read_text()
@@ -882,6 +1024,7 @@ def run_production_benchmark(
             "local_size": list(local_size),
             "platform": platform.name,
             "device": device.name,
+            "platform_selection": platform_selection,
         },
         "summary": {
             "peak_gflops": _stats(peak),

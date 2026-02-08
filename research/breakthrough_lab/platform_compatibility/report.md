@@ -31,3 +31,15 @@
 - research/breakthrough_lab/platform_compatibility/week5_platform_compatibility_20260207_234905.json
 - research/breakthrough_lab/platform_compatibility/week5_platform_compatibility_20260207_234905.md
 - research/breakthrough_lab/ACTA_WEEK5_BLOCK4_PLATFORM_COMPATIBILITY_2026-02-07.md
+
+## Week 7 Block 1 - Explicit Selector Hardening
+
+Status: completed  
+Decision: promote
+
+- Added explicit OpenCL platform/device selectors to production benchmark path and CLI.
+- Verified canary path on Rusticl with `RUSTICL_ENABLE=radeonsi` and explicit `opencl_platform='rusticl'`.
+- Evidence:
+  - `research/breakthrough_lab/platform_compatibility/week7_platform_selector_hardening_20260208_000425.json`
+  - `research/breakthrough_lab/platform_compatibility/week7_platform_selector_hardening_20260208_000425.md`
+  - `research/breakthrough_lab/ACTA_WEEK7_BLOCK1_PLATFORM_SELECTOR_HARDENING_2026-02-08.md`
