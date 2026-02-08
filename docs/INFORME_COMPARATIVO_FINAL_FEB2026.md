@@ -287,3 +287,21 @@ Fuentes:
 Mejora aplicada:
 - Cadena activa ahora visible como `block2 -> block3 -> block4 -> block5 -> block6 -> block10`.
 - Se agrega tracking de drift por transicion de bloque para T3/T5.
+
+### 11.3 Block 1.1 (hardening T5) - cierre de la deuda de disable events
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week10_block1_1_controlled_rollout_20260208_161153.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_161219.json`
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_161230.json`
+
+Resultado:
+- Decision Block 1.1: **promote**
+- Rollout rerun: **4/4 snapshots** completados
+- T5 disable events: **0**
+- Rollback automatico: **no activado**
+- Overhead T5 max: **1.9597%**
+- Gate canonico previo a promocion: **promote**
+
+Lectura:
+- El hardening T5 elimina el problema detectado en Week10 Block1 sin sacrificar correctness ni guardrails duros.
+- El proyecto queda nuevamente en banda de despliegue controlado estable para pruebas reales progresivas.

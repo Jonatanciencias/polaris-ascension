@@ -122,9 +122,18 @@ Advance from roadmap closure to continuous, low-risk production improvement:
   - Key finding: rollout scope stayed safe (rollback automatico exitoso), but T5 disable event in snapshot 2 prevents promotion.
 - Week 10 - Block 2 (Comparative dashboard extension with explicit Block6 + weekly drift): **promote**
   - Artifact:
-    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_160146.json`
-    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_160146.md`
-  - Key finding: active chain now tracked as `block2 -> block3 -> block4 -> block5 -> block6 -> block10` with transition-level drift metrics.
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_161230.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_161230.md`
+  - Key finding: active chain `block2 -> block3 -> block4 -> block5 -> block6 -> block10` tracked with transition-level drift metrics and global state `promote`.
+- Week 10 - Block 1.1 (T5 hardening + >=4 snapshot rerun): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK1_1_T5_HARDENING_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block1_1_t5_hardening_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block1_1.json`
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_1_controlled_rollout_20260208_161153.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_161219.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_161230.json`
+  - Key finding: rerun complete `4/4` snapshots with no rollback and `disable_events=0`; canonical gate before promotion remained `promote`.
 
 ## Governance Rules
 
@@ -201,6 +210,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 10 - Block 1.1: harden T5 rollout profile (reduce disable events under low-scope pressure) and rerun controlled rollout to target `promote`.
-2. Week 10 - Block 1.2: once stable, expand rollout horizon (>=4 snapshots) keeping rollback SLA binding and canonical gate mandatory.
+1. Week 10 - Block 1.2: expand rollout horizon (>=6 snapshots) at low/medium scope and keep rollback SLA binding.
+2. Week 10 - Block 1.3: widen size coverage (`1400`, `2048`) under the hardened T5 policy and validate no disable events.
 3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure and before each production-scope increase.
