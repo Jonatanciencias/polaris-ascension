@@ -78,6 +78,19 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/platform_compatibility/week9_block3_robustness_replay_20260208_033111.md`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_033147.json`
   - Key finding: no post-hardening regressions in T5; split Clover/rusticl passed with min ratio 0.9209.
+- Week 9 - Block 4 (Short stress replay with queue pulses + platform split): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK9_BLOCK4_STRESS_SPLIT_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week9_block4_stress_split_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week9_block4_stress_split_20260208_033946.json`
+    - `research/breakthrough_lab/platform_compatibility/week9_block4_stress_split_20260208_033946.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_034047.json`
+  - Key finding: stress with queue pulses preserved correctness and guardrails (T5 disable events=0).
+- Week 9 - Comparative Dashboard (T3/T4/T5 with Week9 deltas): **promote**
+  - Artifact:
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_034022.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_034022.md`
+  - Key finding: Block1 iterate is superseded by Block2 hardening; active chain Block2/3/4 remains promote.
 
 ## Governance Rules
 
@@ -154,6 +167,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Add comparative dashboard artifact (single JSON/MD) to track drift deltas over time for T3/T4/T5 (including Week9 Block1/2/3 deltas).
-2. Execute Week 9 - Block 4 short stress replay (queue-pressure pulses + platform split) to extend confidence horizon after Block 3.
+1. Execute Week 9 - Block 5: controlled pre-production pilot on RX 590 (extended burn-in window + hourly evidence snapshots).
+2. Define and execute mirrored rusticl pilot profile with explicit environment bootstrap and rollback script.
 3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure.
