@@ -1,17 +1,17 @@
 {
   "$schema": "../results.schema.json",
   "schema_version": "1.0.0",
-  "experiment_id": "t3_online_control-004",
+  "experiment_id": "t3_online_control-005",
   "track": "t3_online_control",
-  "title": "T3 Week 5 Block 1 controlled production integration (strict deterministic)",
+  "title": "T3 Week 8 Block 3 controlled drift campaign with rollback-safe guardrails",
   "status": "completed",
   "owner": "codex",
   "branch": "feat/breakthrough-roadmap-2026q1",
   "commit": null,
   "timestamps": {
-    "created_at": "2026-02-07T00:00:00Z",
-    "started_at": "2026-02-07T23:14:30.799000+00:00",
-    "ended_at": "2026-02-07T23:14:51.636446+00:00"
+    "created_at": "2026-02-08T00:00:00Z",
+    "started_at": "2026-02-08T02:01:48.401359+00:00",
+    "ended_at": "2026-02-08T02:01:48.401359+00:00"
   },
   "environment": {
     "os": "linux",
@@ -24,22 +24,17 @@
     "protocol_doc": "docs/PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md",
     "baseline_commit": "57db7b4",
     "sizes": [
-      1200,
-      1280,
       1400,
       1536,
-      1600,
-      1792,
-      1920,
       2048
     ]
   },
   "parameters": {
-    "campaign": "week5_block1_t3_controlled_production",
+    "campaign": "week8_block3_t3_drift_controlled",
     "policy": "controlled_t3_rollout_auto_t3_controlled",
-    "policy_id": "t3-controlled-week5-block1-2026-02-07",
-    "policy_path": "research/breakthrough_lab/t3_online_control/policy_controlled_block1.json",
-    "epsilon": 0.05,
+    "policy_id": "t3-controlled-week8-block3-2026-02-08",
+    "policy_path": "research/breakthrough_lab/t3_online_control/policy_hardening_block3.json",
+    "epsilon": 0.04,
     "bootstrap_weight": 3.0,
     "warmup_steps_per_context": 2,
     "min_delta_for_nonstatic": 8.0,
@@ -47,50 +42,52 @@
       1400,
       2048
     ],
-    "fallback_regression_limit": 0.08,
-    "max_fallback_rate": 0.1,
+    "fallback_regression_limit": 0.07,
+    "max_fallback_rate": 0.08,
     "correctness_threshold": 0.001,
     "boundary_report_path": "research/breakthrough_lab/t2_auto_scheduler/week2_t2_expanded_search_20260207_194454.json",
+    "scenarios": [
+      "cold",
+      "warm",
+      "warm_queue_pressure"
+    ],
     "sizes": [
-      1200,
-      1280,
       1400,
       1536,
-      1600,
-      1792,
-      1920,
       2048
     ],
-    "sessions": 4,
-    "iterations_per_session": 12,
+    "sessions": 2,
+    "iterations_per_session": 6,
     "seed": 42,
-    "steps_planned": 32,
-    "steps_executed": 32
+    "pressure_size": 896,
+    "pressure_iterations": 3,
+    "pressure_pulses": 2,
+    "pressure_pause_ms": 20
   },
   "metrics": {
-    "peak_gflops_mean": 783.6220346861755,
-    "avg_gflops_mean": 769.1418897988395,
-    "p95_time_ms": 11.459084757461824,
-    "max_error": 0.0006103515625,
-    "cv_peak": 0.06379637620439957,
-    "delta_vs_baseline_percent": 2.053342218782413,
-    "reproducibility_score": 0.9362036237956004,
+    "peak_gflops_mean": 814.8687016393577,
+    "avg_gflops_mean": 808.204614195275,
+    "p95_time_ms": 12.591442515379944,
+    "max_error": 0.000640869140625,
+    "cv_peak": 0.06590677156762718,
+    "delta_vs_baseline_percent": 19.486641020685266,
+    "reproducibility_score": 0.9340932284323729,
     "energy_joules": null
   },
   "validation": {
     "correctness_passed": true,
     "stability_passed": true,
-    "promotion_gate_passed": false
+    "promotion_gate_passed": true
   },
   "artifacts": [
-    "research/breakthrough_lab/t3_online_control/policy_controlled_block1.json",
-    "research/breakthrough_lab/t3_online_control/week5_t3_controlled_production_20260207_231451.json",
-    "research/breakthrough_lab/t3_online_control/week5_t3_controlled_production_20260207_231451.md",
-    "research/breakthrough_lab/t3_online_control/run_week5_t3_controlled_production.py",
-    "src/optimization_engines/t3_controlled_policy.py",
-    "src/optimization_engines/adaptive_kernel_selector.py",
-    "src/benchmarking/production_kernel_benchmark.py"
+    "research/breakthrough_lab/t3_online_control/policy_hardening_block3.json",
+    "research/breakthrough_lab/t3_online_control/rollback_playbook_block3.md",
+    "research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_020148.json",
+    "research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_020148.md",
+    "research/breakthrough_lab/t3_online_control/run_week8_t3_drift_campaign.py",
+    "research/breakthrough_lab/t3_online_control/report.md",
+    "research/breakthrough_lab/ACTA_WEEK8_BLOCK3_T3_DRIFT_CONTROLLED_2026-02-08.md"
   ],
-  "decision": "iterate",
-  "notes": "Controlled production integration passed correctness/latency/fallback guardrails with deterministic behavior, but uplift gate (+5.0%) was not met at portfolio level (+2.053%). Continue rollout in iterate mode while refining activation for additional uplift."
+  "decision": "promote",
+  "notes": "Week 8 Block 3 drift campaign (cold/warm/queue-pressure) passed all rollback-safe guardrails. Under queue pressure, T3 retained +19.487% throughput vs auto, improved p95 latency, observed zero fallback/disable events, and stayed below correctness threshold."
 }

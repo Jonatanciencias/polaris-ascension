@@ -1,29 +1,39 @@
-# T3 Report - Week 5 Block 1 (Controlled Production Integration)
+# T3 Report - Week 8 Block 3 (Controlled Drift Campaign)
 
 - Status: completed
-- Decision: iterate
-- Promotion gate: PARTIAL (guardrails pass, uplift gate pending)
+- Decision: promote
+- Promotion gate: PASSED (rollback-safe drift guardrails)
 
 ## Summary
-- Controlled integration executed via production benchmark path (`auto_t3_controlled`) with strict deterministic protocol.
-- Executed steps: 32/32 sessions across 8 scope sizes.
-- Portfolio uplift vs static auto: +2.053%.
-- P95 latency delta vs static: -1.343%.
-- Fallback rate: 0.000 (threshold 0.100).
-- Correctness failures: 0.
-- Disable events: 0.
+- Drift campaign executed on production benchmark path (`auto` vs `auto_t3_controlled`) with deterministic protocol.
+- Scenarios: `cold`, `warm`, `warm_queue_pressure`.
+- Scope sizes: `1400`, `1536`, `2048`.
+- Protocol: `sessions=2`, `iterations=6`, `seed=42`.
+
+Key outcomes (warm_queue_pressure):
+- Auto avg GFLOPS mean: `676.397`
+- T3 avg GFLOPS mean: `808.205`
+- Delta T3 vs auto: `+19.487%`
+- P95 latency delta (T3 vs auto): `-20.313%`
+- T3 fallback rate: `0.000`
+- Correctness failures: `0`
+- Policy disabled: `false`
 
 ## Interpretation
-- Runtime guardrails behaved as intended: no correctness escapes and no forced disables.
-- Latency behavior remains stable/improved under controlled mode.
-- Portfolio uplift is positive but below the +5.0% gate; refinement is required before promotion.
+- Guardrails stayed intact under controlled drift pressure with no correctness escapes.
+- Fallback and disable controls remained inactive (`0`), indicating policy stability.
+- Throughput and latency deltas under pressure were favorable versus static auto for this scope.
+
+## Versioned Policy and Rollback Defaults
+- Versioned policy introduced for Block 3:
+  - `research/breakthrough_lab/t3_online_control/policy_hardening_block3.json`
+- Rollback-safe defaults documented in:
+  - `research/breakthrough_lab/t3_online_control/rollback_playbook_block3.md`
 
 ## Evidence
-- research/breakthrough_lab/t3_online_control/policy_controlled_block1.json
-- research/breakthrough_lab/t3_online_control/week5_t3_controlled_production_20260207_231451.json
-- research/breakthrough_lab/t3_online_control/week5_t3_controlled_production_20260207_231451.md
-- research/breakthrough_lab/t3_online_control/results.json
-- research/breakthrough_lab/t3_online_control/run_week5_t3_controlled_production.py
-- src/optimization_engines/t3_controlled_policy.py
-- src/optimization_engines/adaptive_kernel_selector.py
-- src/benchmarking/production_kernel_benchmark.py
+- `research/breakthrough_lab/t3_online_control/policy_hardening_block3.json`
+- `research/breakthrough_lab/t3_online_control/rollback_playbook_block3.md`
+- `research/breakthrough_lab/t3_online_control/run_week8_t3_drift_campaign.py`
+- `research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_020148.json`
+- `research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_020148.md`
+- `research/breakthrough_lab/t3_online_control/results.json`

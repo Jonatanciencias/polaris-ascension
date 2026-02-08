@@ -25,6 +25,12 @@ Advance from roadmap closure to continuous, low-risk production improvement:
   - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK2_LOCAL_CI_PARITY_2026-02-08.md`
   - Decision: `research/breakthrough_lab/week8_block2_local_ci_parity_decision.json`
   - Key changes: `ci.yml` primary gate + runner unit tests
+- Week 8 - Block 3 (T3 drift robustness under controlled pressure): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK3_T3_DRIFT_CONTROLLED_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block3_t3_drift_controlled_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_020148.json`
+    - `research/breakthrough_lab/t3_online_control/policy_hardening_block3.json`
 
 ## Governance Rules
 
@@ -101,6 +107,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Start Week 8 - Block 3 (drift robustness) with controlled warm/cold and queue-pressure scenarios for `auto`/`auto_t3_controlled`.
-2. Define calibrated thresholds and rollback-safe defaults in T3 guardrails policy.
-3. Register Block 3 evidence artifacts + acta + formal decision.
+1. Start Week 8 - Block 4 (T4 operational envelope) refining activation policy to reduce unnecessary fallback while preserving contract guarantees.
+2. Run mixed-workload contract campaign and register `promote|iterate|refine|stop` with evidence artifacts.
+3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before Block 4 closure.
