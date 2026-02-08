@@ -45,6 +45,14 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/t5_reliability_abft/week8_t5_maturation_20260208_022633.json`
     - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_block5.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_022835.json`
+- Week 8 - Block 6 (Integrated consolidation + interaction + critical canary): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK6_CONSOLIDATION_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block6_consolidation_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week8_block6_integrated_consolidation_20260208_024445.json`
+    - `research/breakthrough_lab/week8_block6_t4_t5_interaction_20260208_024510.json`
+    - `research/breakthrough_lab/platform_compatibility/week8_platform_canary_critical_20260208_024625.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_024700.json`
 
 ## Governance Rules
 
@@ -121,6 +129,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Start Week 8 - Block 6 (Q2 consolidation pre-close) with `week6_final_suite` rerun and refreshed comparative report.
-2. Verify promotion gates across T3/T4/T5 artifacts after Block 5 policy updates.
+1. Open Week 9 cycle: longer mixed canary (24h-equivalent batches) for `auto_t3_controlled` + `auto_t5_guarded` under realistic queue pressure.
+2. Add comparative dashboard artifact (single JSON/MD) to track drift deltas over time for T3/T4/T5.
 3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure.

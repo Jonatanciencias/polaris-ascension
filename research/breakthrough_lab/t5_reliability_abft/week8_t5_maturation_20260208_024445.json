@@ -1,0 +1,1253 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-08T02:44:45.656187+00:00",
+    "baseline_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_block3.json",
+    "baseline_policy_id": "t5-abft-detect-only-block3-2026-02-07",
+    "candidate_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_block5.json",
+    "candidate_policy_id": "t5-abft-maturation-week8-block5-2026-02-08",
+    "sizes": [
+      1400,
+      2048
+    ],
+    "sessions": 10,
+    "iterations": 24,
+    "warmup": 2,
+    "seed": 42,
+    "fault_scale": 0.05,
+    "fault_abs_min": 1.0
+  },
+  "baseline_mode": {
+    "mode": "periodic_8",
+    "sampling_period": 8,
+    "total_runs": 480,
+    "checked_runs": 60,
+    "sampling_coverage": 0.125,
+    "kernel_time_ms": {
+      "mean": 13.878986333333334,
+      "std": 7.975336032046124,
+      "min": 5.83296,
+      "p50": 13.91808,
+      "p95": 21.867528,
+      "max": 22.0432
+    },
+    "verify_time_ms": {
+      "mean": 1.4863247667866137,
+      "std": 1.1574030080807265,
+      "min": 0.7048940024105832,
+      "p50": 1.5329100024246145,
+      "p95": 2.1014029985963134,
+      "max": 9.304383005655836
+    },
+    "kernel_gflops": {
+      "mean": 857.8606360281473,
+      "std": 71.82398320755544,
+      "min": 779.3727400740364,
+      "p50": 850.7052099110074,
+      "p95": 935.5761704889504,
+      "max": 940.8602150537635
+    },
+    "effective_gflops": {
+      "mean": 845.5349428127969,
+      "std": 78.994775707887,
+      "min": 360.3986264899455,
+      "p50": 786.6672704578475,
+      "p95": 935.4766572498688,
+      "max": 940.8602150537635
+    },
+    "effective_overhead_percent": 1.3386467238036768,
+    "false_positive_count": 0,
+    "false_positive_rate": 0.0,
+    "max_error": 0.0005645751953125,
+    "correctness_passed": true,
+    "by_fault_model": {
+      "critical_monitored": {
+        "trials": 60,
+        "detected": 60,
+        "misses": 0,
+        "recall": 1.0
+      },
+      "uniform_random": {
+        "trials": 60,
+        "detected": 58,
+        "misses": 2,
+        "recall": 0.9666666666666667
+      }
+    },
+    "critical_recall": 1.0,
+    "uniform_recall": 0.9666666666666667,
+    "critical_misses": 0,
+    "mode_pass": true,
+    "stop_rule_triggered": false,
+    "per_size": {
+      "1400": {
+        "kernel_key": "tile20_v3_1400",
+        "kernel_name": "gemm_tile20_vectorized",
+        "runs": 240,
+        "checked_runs": 30,
+        "sampling_coverage": 0.125,
+        "kernel_time_ms": {
+          "mean": 5.903687333333333,
+          "std": 0.02893813630641906,
+          "min": 5.83296,
+          "p50": 5.89976,
+          "p95": 5.949552,
+          "max": 6.00016
+        },
+        "verify_time_ms": {
+          "mean": 1.2179539002924382,
+          "std": 1.5834127780469616,
+          "min": 0.7048940024105832,
+          "p50": 0.7518849961343221,
+          "p95": 2.7394876473408623,
+          "max": 9.304383005655836
+        },
+        "kernel_gflops": {
+          "mean": 929.610848819323,
+          "std": 4.55439971949941,
+          "min": 914.6422762059678,
+          "p50": 930.2073347436146,
+          "p95": 936.5277227093411,
+          "max": 940.8602150537635
+        },
+        "effective_gflops": {
+          "mean": 912.2562236377574,
+          "std": 56.55809247669964,
+          "min": 360.3986264899455,
+          "p50": 928.7716130728163,
+          "p95": 936.4459014364885,
+          "max": 940.8602150537635
+        },
+        "effective_overhead_percent": 2.5787991290960663,
+        "false_positives_clean": 0,
+        "max_error": 0.0003662109375,
+        "by_fault_model": {
+          "critical_monitored": {
+            "trials": 30,
+            "detected": 30,
+            "misses": 0,
+            "recall": 1.0
+          },
+          "uniform_random": {
+            "trials": 30,
+            "detected": 29,
+            "misses": 1,
+            "recall": 0.9666666666666667
+          }
+        }
+      },
+      "2048": {
+        "kernel_key": "tile24",
+        "kernel_name": "gemm_tile24_vectorized",
+        "runs": 240,
+        "checked_runs": 30,
+        "sampling_coverage": 0.125,
+        "kernel_time_ms": {
+          "mean": 21.854285333333333,
+          "std": 0.018545985321776665,
+          "min": 21.836,
+          "p50": 21.85088,
+          "p95": 21.87312,
+          "max": 22.0432
+        },
+        "verify_time_ms": {
+          "mean": 1.7546956332807895,
+          "std": 0.16709750620689012,
+          "min": 1.3362809986574575,
+          "p50": 1.7960635013878345,
+          "p95": 1.9086245018115733,
+          "max": 2.1481049989233725
+        },
+        "kernel_gflops": {
+          "mean": 786.1104232369715,
+          "std": 0.6637014655974548,
+          "min": 779.3727400740364,
+          "p50": 786.2323706871302,
+          "p95": 786.5903358900988,
+          "max": 786.7681436160469
+        },
+        "effective_gflops": {
+          "mean": 778.8136619878363,
+          "std": 19.44409226035834,
+          "min": 715.6529949981178,
+          "p50": 786.1978297479754,
+          "p95": 786.5785233022765,
+          "max": 786.7681436160469
+        },
+        "effective_overhead_percent": 1.0036336160833141,
+        "false_positives_clean": 0,
+        "max_error": 0.0005645751953125,
+        "by_fault_model": {
+          "critical_monitored": {
+            "trials": 30,
+            "detected": 30,
+            "misses": 0,
+            "recall": 1.0
+          },
+          "uniform_random": {
+            "trials": 30,
+            "detected": 29,
+            "misses": 1,
+            "recall": 0.9666666666666667
+          }
+        }
+      }
+    }
+  },
+  "candidate_mode": {
+    "mode": "periodic_8",
+    "sampling_period": 8,
+    "total_runs": 480,
+    "checked_runs": 60,
+    "sampling_coverage": 0.125,
+    "kernel_time_ms": {
+      "mean": 13.879445666666665,
+      "std": 7.973463720173804,
+      "min": 5.82768,
+      "p50": 13.91176,
+      "p95": 21.86768,
+      "max": 21.91376
+    },
+    "verify_time_ms": {
+      "mean": 1.4237815836774341,
+      "std": 0.7037645119754046,
+      "min": 0.7428509998135269,
+      "p50": 1.5925014995445963,
+      "p95": 1.9829109514830614,
+      "max": 4.81144999503158
+    },
+    "kernel_gflops": {
+      "mean": 857.7042823121405,
+      "std": 71.62772763332434,
+      "min": 783.9763319485108,
+      "p50": 851.8018053043954,
+      "p95": 935.498343819151,
+      "max": 941.7126540921945
+    },
+    "effective_gflops": {
+      "mean": 845.7172707036766,
+      "std": 77.06303189302267,
+      "min": 510.92940204488247,
+      "p50": 786.6499804972851,
+      "p95": 935.2483665270067,
+      "max": 941.7126540921945
+    },
+    "effective_overhead_percent": 1.2822752596460272,
+    "false_positive_count": 0,
+    "false_positive_rate": 0.0,
+    "max_error": 0.0005645751953125,
+    "correctness_passed": true,
+    "by_fault_model": {
+      "critical_monitored": {
+        "trials": 60,
+        "detected": 60,
+        "misses": 0,
+        "recall": 1.0
+      },
+      "uniform_random": {
+        "trials": 60,
+        "detected": 59,
+        "misses": 1,
+        "recall": 0.9833333333333333
+      }
+    },
+    "critical_recall": 1.0,
+    "uniform_recall": 0.9833333333333333,
+    "critical_misses": 0,
+    "mode_pass": true,
+    "stop_rule_triggered": false,
+    "per_size": {
+      "1400": {
+        "kernel_key": "tile20_v3_1400",
+        "kernel_name": "gemm_tile20_vectorized",
+        "runs": 240,
+        "checked_runs": 30,
+        "sampling_coverage": 0.125,
+        "kernel_time_ms": {
+          "mean": 5.906015999999999,
+          "std": 0.03111406901494351,
+          "min": 5.82768,
+          "p50": 5.9068,
+          "p95": 5.9561839999999995,
+          "max": 5.9852799999999995
+        },
+        "verify_time_ms": {
+          "mean": 1.0465379663704273,
+          "std": 0.8165823513754272,
+          "min": 0.7428509998135269,
+          "p50": 0.7748280004307162,
+          "p95": 2.1779948005132552,
+          "max": 4.81144999503158
+        },
+        "kernel_gflops": {
+          "mean": 929.2477888067572,
+          "std": 4.895264306167994,
+          "min": 916.9161676646708,
+          "p50": 929.0986674781745,
+          "p95": 936.9408777087064,
+          "max": 941.7126540921945
+        },
+        "effective_gflops": {
+          "mean": 912.7494591322367,
+          "std": 49.946345568634484,
+          "min": 510.92940204488247,
+          "p50": 928.3317094294684,
+          "p95": 936.757917981954,
+          "max": 941.7126540921945
+        },
+        "effective_overhead_percent": 2.2149829224354187,
+        "false_positives_clean": 0,
+        "max_error": 0.0003662109375,
+        "by_fault_model": {
+          "critical_monitored": {
+            "trials": 30,
+            "detected": 30,
+            "misses": 0,
+            "recall": 1.0
+          },
+          "uniform_random": {
+            "trials": 30,
+            "detected": 29,
+            "misses": 1,
+            "recall": 0.9666666666666667
+          }
+        }
+      },
+      "2048": {
+        "kernel_key": "tile24",
+        "kernel_name": "gemm_tile24_vectorized",
+        "runs": 240,
+        "checked_runs": 30,
+        "sampling_coverage": 0.125,
+        "kernel_time_ms": {
+          "mean": 21.85287533333333,
+          "std": 0.010863240993777442,
+          "min": 21.83824,
+          "p50": 21.8504,
+          "p95": 21.87128,
+          "max": 21.91376
+        },
+        "verify_time_ms": {
+          "mean": 1.8010252009844407,
+          "std": 0.19783009492083542,
+          "min": 1.494318996265065,
+          "p50": 1.8137485021725297,
+          "p95": 1.9425893031439045,
+          "max": 2.621917999931611
+        },
+        "kernel_gflops": {
+          "mean": 786.1607758175239,
+          "std": 0.3904818941284152,
+          "min": 783.9763319485108,
+          "p50": 786.2496422948778,
+          "p95": 786.6125214282574,
+          "max": 786.68744294412
+        },
+        "effective_gflops": {
+          "mean": 778.6850822751165,
+          "std": 19.903662034526263,
+          "min": 702.0077486247209,
+          "p50": 786.2093430571421,
+          "p95": 786.6009963078005,
+          "max": 786.68744294412
+        },
+        "effective_overhead_percent": 1.030199214927362,
+        "false_positives_clean": 0,
+        "max_error": 0.0005645751953125,
+        "by_fault_model": {
+          "critical_monitored": {
+            "trials": 30,
+            "detected": 30,
+            "misses": 0,
+            "recall": 1.0
+          },
+          "uniform_random": {
+            "trials": 30,
+            "detected": 30,
+            "misses": 0,
+            "recall": 1.0
+          }
+        }
+      }
+    }
+  },
+  "evaluation": {
+    "baseline": {
+      "sampling_coverage": 0.125,
+      "effective_overhead_percent": 1.3386467238036768,
+      "critical_recall": 1.0,
+      "uniform_recall": 0.9666666666666667,
+      "critical_misses": 0.0,
+      "false_positive_rate": 0.0,
+      "max_error": 0.0005645751953125,
+      "kernel_gflops_mean": 857.8606360281473,
+      "effective_gflops_mean": 845.5349428127969,
+      "effective_gflops_std": 78.994775707887,
+      "effective_gflops_max": 940.8602150537635,
+      "kernel_time_p95_ms": 21.867528
+    },
+    "candidate": {
+      "sampling_coverage": 0.125,
+      "effective_overhead_percent": 1.2822752596460272,
+      "critical_recall": 1.0,
+      "uniform_recall": 0.9833333333333333,
+      "critical_misses": 0.0,
+      "false_positive_rate": 0.0,
+      "max_error": 0.0005645751953125,
+      "kernel_gflops_mean": 857.7042823121405,
+      "effective_gflops_mean": 845.7172707036766,
+      "effective_gflops_std": 77.06303189302267,
+      "effective_gflops_max": 941.7126540921945,
+      "kernel_time_p95_ms": 21.86768
+    },
+    "uniform_recall_delta_vs_baseline": 0.016666666666666607,
+    "overhead_delta_vs_baseline_percent": -0.0563714641576496,
+    "checks": {
+      "candidate_correctness": {
+        "observed": 0.0005645751953125,
+        "threshold_max": 0.001,
+        "comparator": "<=",
+        "pass": true
+      },
+      "candidate_false_positive_rate": {
+        "observed": 0.0,
+        "threshold_max": 0.05,
+        "comparator": "<=",
+        "pass": true
+      },
+      "candidate_effective_overhead_percent": {
+        "observed": 1.2822752596460272,
+        "threshold_max": 2.5,
+        "comparator": "<=",
+        "pass": true
+      },
+      "candidate_critical_recall": {
+        "observed": 1.0,
+        "threshold_min": 0.99,
+        "comparator": ">=",
+        "pass": true
+      },
+      "candidate_uniform_recall": {
+        "observed": 0.9833333333333333,
+        "threshold_min": 0.97,
+        "comparator": ">=",
+        "pass": true
+      },
+      "uniform_recall_delta_vs_baseline": {
+        "observed": 0.016666666666666607,
+        "threshold_min": 0.01,
+        "comparator": ">=",
+        "pass": true
+      },
+      "overhead_delta_vs_baseline": {
+        "observed": -0.0563714641576496,
+        "threshold_max": 0.2,
+        "comparator": "<=",
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "all_passed": true
+  },
+  "baseline_source_report": {
+    "metadata": {
+      "timestamp_utc": "2026-02-08T02:44:31.131011+00:00",
+      "sizes": [
+        1400,
+        2048
+      ],
+      "sessions": 10,
+      "iterations": 24,
+      "warmup": 2,
+      "sampling_periods": [
+        8
+      ],
+      "row_samples": 16,
+      "col_samples": 16,
+      "faults_per_matrix": 2,
+      "fault_scale": 0.05,
+      "fault_abs_min": 1.0,
+      "fault_models": [
+        "critical_monitored",
+        "uniform_random"
+      ],
+      "residual_scale": 5.0,
+      "residual_margin": 0.01,
+      "residual_floor": 0.05,
+      "projection_count": 4,
+      "correctness_threshold": 0.001,
+      "seed": 42,
+      "opencl_platform": "Clover",
+      "opencl_device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)"
+    },
+    "modes": [
+      {
+        "mode": "periodic_8",
+        "sampling_period": 8,
+        "total_runs": 480,
+        "checked_runs": 60,
+        "sampling_coverage": 0.125,
+        "kernel_time_ms": {
+          "mean": 13.878986333333334,
+          "std": 7.975336032046124,
+          "min": 5.83296,
+          "p50": 13.91808,
+          "p95": 21.867528,
+          "max": 22.0432
+        },
+        "verify_time_ms": {
+          "mean": 1.4863247667866137,
+          "std": 1.1574030080807265,
+          "min": 0.7048940024105832,
+          "p50": 1.5329100024246145,
+          "p95": 2.1014029985963134,
+          "max": 9.304383005655836
+        },
+        "kernel_gflops": {
+          "mean": 857.8606360281473,
+          "std": 71.82398320755544,
+          "min": 779.3727400740364,
+          "p50": 850.7052099110074,
+          "p95": 935.5761704889504,
+          "max": 940.8602150537635
+        },
+        "effective_gflops": {
+          "mean": 845.5349428127969,
+          "std": 78.994775707887,
+          "min": 360.3986264899455,
+          "p50": 786.6672704578475,
+          "p95": 935.4766572498688,
+          "max": 940.8602150537635
+        },
+        "effective_overhead_percent": 1.3386467238036768,
+        "false_positive_count": 0,
+        "false_positive_rate": 0.0,
+        "max_error": 0.0005645751953125,
+        "correctness_passed": true,
+        "by_fault_model": {
+          "critical_monitored": {
+            "trials": 60,
+            "detected": 60,
+            "misses": 0,
+            "recall": 1.0
+          },
+          "uniform_random": {
+            "trials": 60,
+            "detected": 58,
+            "misses": 2,
+            "recall": 0.9666666666666667
+          }
+        },
+        "critical_recall": 1.0,
+        "uniform_recall": 0.9666666666666667,
+        "critical_misses": 0,
+        "mode_pass": true,
+        "stop_rule_triggered": false,
+        "per_size": {
+          "1400": {
+            "kernel_key": "tile20_v3_1400",
+            "kernel_name": "gemm_tile20_vectorized",
+            "runs": 240,
+            "checked_runs": 30,
+            "sampling_coverage": 0.125,
+            "kernel_time_ms": {
+              "mean": 5.903687333333333,
+              "std": 0.02893813630641906,
+              "min": 5.83296,
+              "p50": 5.89976,
+              "p95": 5.949552,
+              "max": 6.00016
+            },
+            "verify_time_ms": {
+              "mean": 1.2179539002924382,
+              "std": 1.5834127780469616,
+              "min": 0.7048940024105832,
+              "p50": 0.7518849961343221,
+              "p95": 2.7394876473408623,
+              "max": 9.304383005655836
+            },
+            "kernel_gflops": {
+              "mean": 929.610848819323,
+              "std": 4.55439971949941,
+              "min": 914.6422762059678,
+              "p50": 930.2073347436146,
+              "p95": 936.5277227093411,
+              "max": 940.8602150537635
+            },
+            "effective_gflops": {
+              "mean": 912.2562236377574,
+              "std": 56.55809247669964,
+              "min": 360.3986264899455,
+              "p50": 928.7716130728163,
+              "p95": 936.4459014364885,
+              "max": 940.8602150537635
+            },
+            "effective_overhead_percent": 2.5787991290960663,
+            "false_positives_clean": 0,
+            "max_error": 0.0003662109375,
+            "by_fault_model": {
+              "critical_monitored": {
+                "trials": 30,
+                "detected": 30,
+                "misses": 0,
+                "recall": 1.0
+              },
+              "uniform_random": {
+                "trials": 30,
+                "detected": 29,
+                "misses": 1,
+                "recall": 0.9666666666666667
+              }
+            }
+          },
+          "2048": {
+            "kernel_key": "tile24",
+            "kernel_name": "gemm_tile24_vectorized",
+            "runs": 240,
+            "checked_runs": 30,
+            "sampling_coverage": 0.125,
+            "kernel_time_ms": {
+              "mean": 21.854285333333333,
+              "std": 0.018545985321776665,
+              "min": 21.836,
+              "p50": 21.85088,
+              "p95": 21.87312,
+              "max": 22.0432
+            },
+            "verify_time_ms": {
+              "mean": 1.7546956332807895,
+              "std": 0.16709750620689012,
+              "min": 1.3362809986574575,
+              "p50": 1.7960635013878345,
+              "p95": 1.9086245018115733,
+              "max": 2.1481049989233725
+            },
+            "kernel_gflops": {
+              "mean": 786.1104232369715,
+              "std": 0.6637014655974548,
+              "min": 779.3727400740364,
+              "p50": 786.2323706871302,
+              "p95": 786.5903358900988,
+              "max": 786.7681436160469
+            },
+            "effective_gflops": {
+              "mean": 778.8136619878363,
+              "std": 19.44409226035834,
+              "min": 715.6529949981178,
+              "p50": 786.1978297479754,
+              "p95": 786.5785233022765,
+              "max": 786.7681436160469
+            },
+            "effective_overhead_percent": 1.0036336160833141,
+            "false_positives_clean": 0,
+            "max_error": 0.0005645751953125,
+            "by_fault_model": {
+              "critical_monitored": {
+                "trials": 30,
+                "detected": 30,
+                "misses": 0,
+                "recall": 1.0
+              },
+              "uniform_random": {
+                "trials": 30,
+                "detected": 29,
+                "misses": 1,
+                "recall": 0.9666666666666667
+              }
+            }
+          }
+        }
+      }
+    ],
+    "summary": {
+      "recommended_mode": "periodic_8",
+      "recommended_mode_details": {
+        "mode": "periodic_8",
+        "sampling_period": 8,
+        "total_runs": 480,
+        "checked_runs": 60,
+        "sampling_coverage": 0.125,
+        "kernel_time_ms": {
+          "mean": 13.878986333333334,
+          "std": 7.975336032046124,
+          "min": 5.83296,
+          "p50": 13.91808,
+          "p95": 21.867528,
+          "max": 22.0432
+        },
+        "verify_time_ms": {
+          "mean": 1.4863247667866137,
+          "std": 1.1574030080807265,
+          "min": 0.7048940024105832,
+          "p50": 1.5329100024246145,
+          "p95": 2.1014029985963134,
+          "max": 9.304383005655836
+        },
+        "kernel_gflops": {
+          "mean": 857.8606360281473,
+          "std": 71.82398320755544,
+          "min": 779.3727400740364,
+          "p50": 850.7052099110074,
+          "p95": 935.5761704889504,
+          "max": 940.8602150537635
+        },
+        "effective_gflops": {
+          "mean": 845.5349428127969,
+          "std": 78.994775707887,
+          "min": 360.3986264899455,
+          "p50": 786.6672704578475,
+          "p95": 935.4766572498688,
+          "max": 940.8602150537635
+        },
+        "effective_overhead_percent": 1.3386467238036768,
+        "false_positive_count": 0,
+        "false_positive_rate": 0.0,
+        "max_error": 0.0005645751953125,
+        "correctness_passed": true,
+        "by_fault_model": {
+          "critical_monitored": {
+            "trials": 60,
+            "detected": 60,
+            "misses": 0,
+            "recall": 1.0
+          },
+          "uniform_random": {
+            "trials": 60,
+            "detected": 58,
+            "misses": 2,
+            "recall": 0.9666666666666667
+          }
+        },
+        "critical_recall": 1.0,
+        "uniform_recall": 0.9666666666666667,
+        "critical_misses": 0,
+        "mode_pass": true,
+        "stop_rule_triggered": false,
+        "per_size": {
+          "1400": {
+            "kernel_key": "tile20_v3_1400",
+            "kernel_name": "gemm_tile20_vectorized",
+            "runs": 240,
+            "checked_runs": 30,
+            "sampling_coverage": 0.125,
+            "kernel_time_ms": {
+              "mean": 5.903687333333333,
+              "std": 0.02893813630641906,
+              "min": 5.83296,
+              "p50": 5.89976,
+              "p95": 5.949552,
+              "max": 6.00016
+            },
+            "verify_time_ms": {
+              "mean": 1.2179539002924382,
+              "std": 1.5834127780469616,
+              "min": 0.7048940024105832,
+              "p50": 0.7518849961343221,
+              "p95": 2.7394876473408623,
+              "max": 9.304383005655836
+            },
+            "kernel_gflops": {
+              "mean": 929.610848819323,
+              "std": 4.55439971949941,
+              "min": 914.6422762059678,
+              "p50": 930.2073347436146,
+              "p95": 936.5277227093411,
+              "max": 940.8602150537635
+            },
+            "effective_gflops": {
+              "mean": 912.2562236377574,
+              "std": 56.55809247669964,
+              "min": 360.3986264899455,
+              "p50": 928.7716130728163,
+              "p95": 936.4459014364885,
+              "max": 940.8602150537635
+            },
+            "effective_overhead_percent": 2.5787991290960663,
+            "false_positives_clean": 0,
+            "max_error": 0.0003662109375,
+            "by_fault_model": {
+              "critical_monitored": {
+                "trials": 30,
+                "detected": 30,
+                "misses": 0,
+                "recall": 1.0
+              },
+              "uniform_random": {
+                "trials": 30,
+                "detected": 29,
+                "misses": 1,
+                "recall": 0.9666666666666667
+              }
+            }
+          },
+          "2048": {
+            "kernel_key": "tile24",
+            "kernel_name": "gemm_tile24_vectorized",
+            "runs": 240,
+            "checked_runs": 30,
+            "sampling_coverage": 0.125,
+            "kernel_time_ms": {
+              "mean": 21.854285333333333,
+              "std": 0.018545985321776665,
+              "min": 21.836,
+              "p50": 21.85088,
+              "p95": 21.87312,
+              "max": 22.0432
+            },
+            "verify_time_ms": {
+              "mean": 1.7546956332807895,
+              "std": 0.16709750620689012,
+              "min": 1.3362809986574575,
+              "p50": 1.7960635013878345,
+              "p95": 1.9086245018115733,
+              "max": 2.1481049989233725
+            },
+            "kernel_gflops": {
+              "mean": 786.1104232369715,
+              "std": 0.6637014655974548,
+              "min": 779.3727400740364,
+              "p50": 786.2323706871302,
+              "p95": 786.5903358900988,
+              "max": 786.7681436160469
+            },
+            "effective_gflops": {
+              "mean": 778.8136619878363,
+              "std": 19.44409226035834,
+              "min": 715.6529949981178,
+              "p50": 786.1978297479754,
+              "p95": 786.5785233022765,
+              "max": 786.7681436160469
+            },
+            "effective_overhead_percent": 1.0036336160833141,
+            "false_positives_clean": 0,
+            "max_error": 0.0005645751953125,
+            "by_fault_model": {
+              "critical_monitored": {
+                "trials": 30,
+                "detected": 30,
+                "misses": 0,
+                "recall": 1.0
+              },
+              "uniform_random": {
+                "trials": 30,
+                "detected": 29,
+                "misses": 1,
+                "recall": 0.9666666666666667
+              }
+            }
+          }
+        }
+      },
+      "any_mode_passed": true,
+      "passed_modes": [
+        "periodic_8"
+      ],
+      "stop_rule_triggered": false,
+      "stop_rule_reason": "not_triggered",
+      "decision_hint": "iterate",
+      "decision_rationale": "ABFT-lite detect-only achieves critical and uniform recall targets with low overhead in validated periodic mode; continue toward integration hardening."
+    }
+  },
+  "candidate_source_report": {
+    "metadata": {
+      "timestamp_utc": "2026-02-08T02:44:45.655750+00:00",
+      "sizes": [
+        1400,
+        2048
+      ],
+      "sessions": 10,
+      "iterations": 24,
+      "warmup": 2,
+      "sampling_periods": [
+        8
+      ],
+      "row_samples": 16,
+      "col_samples": 16,
+      "faults_per_matrix": 2,
+      "fault_scale": 0.05,
+      "fault_abs_min": 1.0,
+      "fault_models": [
+        "critical_monitored",
+        "uniform_random"
+      ],
+      "residual_scale": 5.0,
+      "residual_margin": 0.01,
+      "residual_floor": 0.05,
+      "projection_count": 6,
+      "correctness_threshold": 0.001,
+      "seed": 42,
+      "opencl_platform": "Clover",
+      "opencl_device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)"
+    },
+    "modes": [
+      {
+        "mode": "periodic_8",
+        "sampling_period": 8,
+        "total_runs": 480,
+        "checked_runs": 60,
+        "sampling_coverage": 0.125,
+        "kernel_time_ms": {
+          "mean": 13.879445666666665,
+          "std": 7.973463720173804,
+          "min": 5.82768,
+          "p50": 13.91176,
+          "p95": 21.86768,
+          "max": 21.91376
+        },
+        "verify_time_ms": {
+          "mean": 1.4237815836774341,
+          "std": 0.7037645119754046,
+          "min": 0.7428509998135269,
+          "p50": 1.5925014995445963,
+          "p95": 1.9829109514830614,
+          "max": 4.81144999503158
+        },
+        "kernel_gflops": {
+          "mean": 857.7042823121405,
+          "std": 71.62772763332434,
+          "min": 783.9763319485108,
+          "p50": 851.8018053043954,
+          "p95": 935.498343819151,
+          "max": 941.7126540921945
+        },
+        "effective_gflops": {
+          "mean": 845.7172707036766,
+          "std": 77.06303189302267,
+          "min": 510.92940204488247,
+          "p50": 786.6499804972851,
+          "p95": 935.2483665270067,
+          "max": 941.7126540921945
+        },
+        "effective_overhead_percent": 1.2822752596460272,
+        "false_positive_count": 0,
+        "false_positive_rate": 0.0,
+        "max_error": 0.0005645751953125,
+        "correctness_passed": true,
+        "by_fault_model": {
+          "critical_monitored": {
+            "trials": 60,
+            "detected": 60,
+            "misses": 0,
+            "recall": 1.0
+          },
+          "uniform_random": {
+            "trials": 60,
+            "detected": 59,
+            "misses": 1,
+            "recall": 0.9833333333333333
+          }
+        },
+        "critical_recall": 1.0,
+        "uniform_recall": 0.9833333333333333,
+        "critical_misses": 0,
+        "mode_pass": true,
+        "stop_rule_triggered": false,
+        "per_size": {
+          "1400": {
+            "kernel_key": "tile20_v3_1400",
+            "kernel_name": "gemm_tile20_vectorized",
+            "runs": 240,
+            "checked_runs": 30,
+            "sampling_coverage": 0.125,
+            "kernel_time_ms": {
+              "mean": 5.906015999999999,
+              "std": 0.03111406901494351,
+              "min": 5.82768,
+              "p50": 5.9068,
+              "p95": 5.9561839999999995,
+              "max": 5.9852799999999995
+            },
+            "verify_time_ms": {
+              "mean": 1.0465379663704273,
+              "std": 0.8165823513754272,
+              "min": 0.7428509998135269,
+              "p50": 0.7748280004307162,
+              "p95": 2.1779948005132552,
+              "max": 4.81144999503158
+            },
+            "kernel_gflops": {
+              "mean": 929.2477888067572,
+              "std": 4.895264306167994,
+              "min": 916.9161676646708,
+              "p50": 929.0986674781745,
+              "p95": 936.9408777087064,
+              "max": 941.7126540921945
+            },
+            "effective_gflops": {
+              "mean": 912.7494591322367,
+              "std": 49.946345568634484,
+              "min": 510.92940204488247,
+              "p50": 928.3317094294684,
+              "p95": 936.757917981954,
+              "max": 941.7126540921945
+            },
+            "effective_overhead_percent": 2.2149829224354187,
+            "false_positives_clean": 0,
+            "max_error": 0.0003662109375,
+            "by_fault_model": {
+              "critical_monitored": {
+                "trials": 30,
+                "detected": 30,
+                "misses": 0,
+                "recall": 1.0
+              },
+              "uniform_random": {
+                "trials": 30,
+                "detected": 29,
+                "misses": 1,
+                "recall": 0.9666666666666667
+              }
+            }
+          },
+          "2048": {
+            "kernel_key": "tile24",
+            "kernel_name": "gemm_tile24_vectorized",
+            "runs": 240,
+            "checked_runs": 30,
+            "sampling_coverage": 0.125,
+            "kernel_time_ms": {
+              "mean": 21.85287533333333,
+              "std": 0.010863240993777442,
+              "min": 21.83824,
+              "p50": 21.8504,
+              "p95": 21.87128,
+              "max": 21.91376
+            },
+            "verify_time_ms": {
+              "mean": 1.8010252009844407,
+              "std": 0.19783009492083542,
+              "min": 1.494318996265065,
+              "p50": 1.8137485021725297,
+              "p95": 1.9425893031439045,
+              "max": 2.621917999931611
+            },
+            "kernel_gflops": {
+              "mean": 786.1607758175239,
+              "std": 0.3904818941284152,
+              "min": 783.9763319485108,
+              "p50": 786.2496422948778,
+              "p95": 786.6125214282574,
+              "max": 786.68744294412
+            },
+            "effective_gflops": {
+              "mean": 778.6850822751165,
+              "std": 19.903662034526263,
+              "min": 702.0077486247209,
+              "p50": 786.2093430571421,
+              "p95": 786.6009963078005,
+              "max": 786.68744294412
+            },
+            "effective_overhead_percent": 1.030199214927362,
+            "false_positives_clean": 0,
+            "max_error": 0.0005645751953125,
+            "by_fault_model": {
+              "critical_monitored": {
+                "trials": 30,
+                "detected": 30,
+                "misses": 0,
+                "recall": 1.0
+              },
+              "uniform_random": {
+                "trials": 30,
+                "detected": 30,
+                "misses": 0,
+                "recall": 1.0
+              }
+            }
+          }
+        }
+      }
+    ],
+    "summary": {
+      "recommended_mode": "periodic_8",
+      "recommended_mode_details": {
+        "mode": "periodic_8",
+        "sampling_period": 8,
+        "total_runs": 480,
+        "checked_runs": 60,
+        "sampling_coverage": 0.125,
+        "kernel_time_ms": {
+          "mean": 13.879445666666665,
+          "std": 7.973463720173804,
+          "min": 5.82768,
+          "p50": 13.91176,
+          "p95": 21.86768,
+          "max": 21.91376
+        },
+        "verify_time_ms": {
+          "mean": 1.4237815836774341,
+          "std": 0.7037645119754046,
+          "min": 0.7428509998135269,
+          "p50": 1.5925014995445963,
+          "p95": 1.9829109514830614,
+          "max": 4.81144999503158
+        },
+        "kernel_gflops": {
+          "mean": 857.7042823121405,
+          "std": 71.62772763332434,
+          "min": 783.9763319485108,
+          "p50": 851.8018053043954,
+          "p95": 935.498343819151,
+          "max": 941.7126540921945
+        },
+        "effective_gflops": {
+          "mean": 845.7172707036766,
+          "std": 77.06303189302267,
+          "min": 510.92940204488247,
+          "p50": 786.6499804972851,
+          "p95": 935.2483665270067,
+          "max": 941.7126540921945
+        },
+        "effective_overhead_percent": 1.2822752596460272,
+        "false_positive_count": 0,
+        "false_positive_rate": 0.0,
+        "max_error": 0.0005645751953125,
+        "correctness_passed": true,
+        "by_fault_model": {
+          "critical_monitored": {
+            "trials": 60,
+            "detected": 60,
+            "misses": 0,
+            "recall": 1.0
+          },
+          "uniform_random": {
+            "trials": 60,
+            "detected": 59,
+            "misses": 1,
+            "recall": 0.9833333333333333
+          }
+        },
+        "critical_recall": 1.0,
+        "uniform_recall": 0.9833333333333333,
+        "critical_misses": 0,
+        "mode_pass": true,
+        "stop_rule_triggered": false,
+        "per_size": {
+          "1400": {
+            "kernel_key": "tile20_v3_1400",
+            "kernel_name": "gemm_tile20_vectorized",
+            "runs": 240,
+            "checked_runs": 30,
+            "sampling_coverage": 0.125,
+            "kernel_time_ms": {
+              "mean": 5.906015999999999,
+              "std": 0.03111406901494351,
+              "min": 5.82768,
+              "p50": 5.9068,
+              "p95": 5.9561839999999995,
+              "max": 5.9852799999999995
+            },
+            "verify_time_ms": {
+              "mean": 1.0465379663704273,
+              "std": 0.8165823513754272,
+              "min": 0.7428509998135269,
+              "p50": 0.7748280004307162,
+              "p95": 2.1779948005132552,
+              "max": 4.81144999503158
+            },
+            "kernel_gflops": {
+              "mean": 929.2477888067572,
+              "std": 4.895264306167994,
+              "min": 916.9161676646708,
+              "p50": 929.0986674781745,
+              "p95": 936.9408777087064,
+              "max": 941.7126540921945
+            },
+            "effective_gflops": {
+              "mean": 912.7494591322367,
+              "std": 49.946345568634484,
+              "min": 510.92940204488247,
+              "p50": 928.3317094294684,
+              "p95": 936.757917981954,
+              "max": 941.7126540921945
+            },
+            "effective_overhead_percent": 2.2149829224354187,
+            "false_positives_clean": 0,
+            "max_error": 0.0003662109375,
+            "by_fault_model": {
+              "critical_monitored": {
+                "trials": 30,
+                "detected": 30,
+                "misses": 0,
+                "recall": 1.0
+              },
+              "uniform_random": {
+                "trials": 30,
+                "detected": 29,
+                "misses": 1,
+                "recall": 0.9666666666666667
+              }
+            }
+          },
+          "2048": {
+            "kernel_key": "tile24",
+            "kernel_name": "gemm_tile24_vectorized",
+            "runs": 240,
+            "checked_runs": 30,
+            "sampling_coverage": 0.125,
+            "kernel_time_ms": {
+              "mean": 21.85287533333333,
+              "std": 0.010863240993777442,
+              "min": 21.83824,
+              "p50": 21.8504,
+              "p95": 21.87128,
+              "max": 21.91376
+            },
+            "verify_time_ms": {
+              "mean": 1.8010252009844407,
+              "std": 0.19783009492083542,
+              "min": 1.494318996265065,
+              "p50": 1.8137485021725297,
+              "p95": 1.9425893031439045,
+              "max": 2.621917999931611
+            },
+            "kernel_gflops": {
+              "mean": 786.1607758175239,
+              "std": 0.3904818941284152,
+              "min": 783.9763319485108,
+              "p50": 786.2496422948778,
+              "p95": 786.6125214282574,
+              "max": 786.68744294412
+            },
+            "effective_gflops": {
+              "mean": 778.6850822751165,
+              "std": 19.903662034526263,
+              "min": 702.0077486247209,
+              "p50": 786.2093430571421,
+              "p95": 786.6009963078005,
+              "max": 786.68744294412
+            },
+            "effective_overhead_percent": 1.030199214927362,
+            "false_positives_clean": 0,
+            "max_error": 0.0005645751953125,
+            "by_fault_model": {
+              "critical_monitored": {
+                "trials": 30,
+                "detected": 30,
+                "misses": 0,
+                "recall": 1.0
+              },
+              "uniform_random": {
+                "trials": 30,
+                "detected": 30,
+                "misses": 0,
+                "recall": 1.0
+              }
+            }
+          }
+        }
+      },
+      "any_mode_passed": true,
+      "passed_modes": [
+        "periodic_8"
+      ],
+      "stop_rule_triggered": false,
+      "stop_rule_reason": "not_triggered",
+      "decision_hint": "iterate",
+      "decision_rationale": "ABFT-lite detect-only achieves critical and uniform recall targets with low overhead in validated periodic mode; continue toward integration hardening."
+    }
+  },
+  "decision": {
+    "decision": "promote",
+    "rationale": "Candidate policy improved uniform recall while maintaining low overhead and full safety guards."
+  }
+}

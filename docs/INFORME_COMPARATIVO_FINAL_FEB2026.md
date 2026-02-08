@@ -175,3 +175,66 @@ Actualización al 7 de febrero de 2026 (cierre formal de roadmap `2026Q1` en ram
 - `research/breakthrough_lab/week5_block4_platform_compatibility_decision.json`
 - `research/breakthrough_lab/week6_final_closure_decision.json`
 - `research/breakthrough_lab/ACTA_WEEK6_FINAL_CLOSURE_2026-02-07.md`
+
+## 9) Addendum Week 8 - Bloques 3/4/5/6 (Actualizacion al 8 de febrero de 2026)
+
+### 9.1 Consolidacion integrada T3/T4/T5 (Block 6)
+Fuente: `research/breakthrough_lab/week8_block6_integrated_consolidation_20260208_024445.json`
+
+- Decision global: **promote**
+- Week6 suite: **promote**
+- T3 drift: **promote** (delta bajo presion `+19.445%`)
+- T4 mixed policy: **promote** (reduccion de fallback `0.194`)
+- T5 maturation: **promote** (delta uniform recall `+0.017`)
+- Auto peak mean en rerun integrado: **901.896 GFLOPS**
+
+### 9.2 Prueba combinada realista T4+T5 (efecto cruzado)
+Fuente: `research/breakthrough_lab/week8_block6_t4_t5_interaction_20260208_024510.json`
+
+- Decision: **promote**
+- T5 baseline vs combinado:
+  - avg GFLOPS: `841.470 -> 843.509` (`+0.242%`)
+  - p95 latencia: `13.995 ms -> 13.973 ms` (`-0.159%`)
+  - overhead ABFT: `1.143% -> 1.212%` (`+0.069%`)
+- T4 en perfil combinado:
+  - contract compliance: `1.000`
+  - post-fallback violations: `0.000`
+  - fallback rate: `0.000`
+
+Lectura:
+- No se observa regresion cruzada relevante de latencia/rendimiento en el perfil probado.
+- El costo incremental de overhead es pequeno y dentro de guardrails.
+
+### 9.3 Canary corto por plataforma (Clover vs rusticl) en tamanos criticos
+Fuente: `research/breakthrough_lab/platform_compatibility/week8_platform_canary_critical_20260208_024625.json`
+
+- Scope:
+  - tamanos: `1400`, `2048`
+  - kernels: `auto`, `auto_t3_controlled`, `auto_t5_guarded`
+- Decision: **promote**
+- Correctness max global: `0.0006104` (`<= 1e-3`)
+- Ratio minimo rusticl/clover (peak): `0.9229`
+- Guardrails T3/T5 en ambas plataformas: pass
+
+Ratios rusticl/clover destacados:
+- 1400:
+  - auto: `1.009`
+  - auto_t3_controlled: `1.012`
+  - auto_t5_guarded: `1.013`
+- 2048:
+  - auto: `0.924`
+  - auto_t3_controlled: `0.928`
+  - auto_t5_guarded: `0.923`
+
+### 9.4 Gate canonico obligatorio previo al cierre
+Fuente: `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_024700.json`
+
+- Decision: **promote**
+- `pytest tests`: **83 passed**
+- schema validation: **green**
+- driver smoke JSON: **good**
+
+### 9.5 Conclusión operativa post-Week 8
+- El stack de optimizacion (T3/T4/T5) se mantiene estable y promovible con evidencia fresca.
+- T4+T5 puede ejecutarse en perfil combinado sin degradacion significativa.
+- rusticl se mantiene apto para canary controlado en tamanos criticos, con guardrails activos.
