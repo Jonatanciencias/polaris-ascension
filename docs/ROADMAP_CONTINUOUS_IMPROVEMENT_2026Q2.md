@@ -70,6 +70,14 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week9_block2_long_canary_rerun_20260208_032017.md`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_032043.json`
   - Key finding: strict rerun closed Block 1 debt (`t5_disable_events_zero` now pass, observed=0).
+- Week 9 - Block 3 (Robustness replay with alternate seeds + short platform split): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK9_BLOCK3_ROBUSTNESS_REPLAY_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week9_block3_robustness_replay_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week9_block3_robustness_replay_20260208_033111.json`
+    - `research/breakthrough_lab/platform_compatibility/week9_block3_robustness_replay_20260208_033111.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_033147.json`
+  - Key finding: no post-hardening regressions in T5; split Clover/rusticl passed with min ratio 0.9209.
 
 ## Governance Rules
 
@@ -146,6 +154,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Add comparative dashboard artifact (single JSON/MD) to track drift deltas over time for T3/T4/T5.
-2. Run Week 9 - Block 3 focused on robustness replay (alternate seeds + short platform split) to confirm no regressions after hardening.
+1. Add comparative dashboard artifact (single JSON/MD) to track drift deltas over time for T3/T4/T5 (including Week9 Block1/2/3 deltas).
+2. Execute Week 9 - Block 4 short stress replay (queue-pressure pulses + platform split) to extend confidence horizon after Block 3.
 3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure.
