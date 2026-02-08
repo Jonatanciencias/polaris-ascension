@@ -61,6 +61,15 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week9_block1_long_canary_20260208_030816.md`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_030950.json`
   - Key finding: all checks passed except `t5_disable_events_zero` (1 auto-disable event in T5 path).
+- Week 9 - Block 2 (T5 hardening + strict rerun of long canary): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK9_BLOCK2_T5_HARDENING_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week9_block2_t5_hardening_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_week9_block2.json`
+    - `research/breakthrough_lab/week9_block2_long_canary_rerun_20260208_032017.json`
+    - `research/breakthrough_lab/week9_block2_long_canary_rerun_20260208_032017.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_032043.json`
+  - Key finding: strict rerun closed Block 1 debt (`t5_disable_events_zero` now pass, observed=0).
 
 ## Governance Rules
 
@@ -137,7 +146,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Execute Week 9 - Block 2: T5 hardening to remove long-horizon auto-disable events (policy hysteresis/threshold tuning + strict rerun).
-2. Add comparative dashboard artifact (single JSON/MD) to track drift deltas over time for T3/T4/T5.
-3. Execute Week 9 - Block 3: rerun long mixed canary after T5 hardening and seek promotion closure.
-4. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure.
+1. Add comparative dashboard artifact (single JSON/MD) to track drift deltas over time for T3/T4/T5.
+2. Run Week 9 - Block 3 focused on robustness replay (alternate seeds + short platform split) to confirm no regressions after hardening.
+3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure.

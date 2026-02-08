@@ -53,6 +53,24 @@ class T5ABFTAutoDisableGuard:
         self.disable_reason: str | None = None
         self.disable_events = 0
         self.evaluations: list[dict[str, Any]] = []
+        self.violation_streaks: dict[str, int] = {
+            "false_positive_rate": 0,
+            "effective_overhead_percent": 0,
+        }
+        self.disable_after_consecutive_false_positive_violations = max(
+            1,
+            int(self.guardrails.get("disable_after_consecutive_false_positive_violations", 1)),
+        )
+        self.disable_after_consecutive_overhead_violations = max(
+            1,
+            int(self.guardrails.get("disable_after_consecutive_overhead_violations", 1)),
+        )
+        hard = self.guardrails.get("disable_if_effective_overhead_percent_gt_hard")
+        self.disable_if_effective_overhead_percent_gt_hard = (
+            float(hard) if hard is not None else None
+        )
+        self.stateful_hysteresis = bool(self.guardrails.get("stateful_hysteresis", False))
+        self._restore_hysteresis_state()
         self._persist_state()
 
     @staticmethod
@@ -92,21 +110,69 @@ class T5ABFTAutoDisableGuard:
             payload["pass"] = bool(payload["observed"] <= payload["threshold"])
 
         failed = [name for name, payload in checks.items() if not payload["pass"]]
-        disable_signal = len(failed) > 0
+
+        if checks["false_positive_rate"]["pass"]:
+            self.violation_streaks["false_positive_rate"] = 0
+        else:
+            self.violation_streaks["false_positive_rate"] += 1
+
+        if checks["effective_overhead_percent"]["pass"]:
+            self.violation_streaks["effective_overhead_percent"] = 0
+        else:
+            self.violation_streaks["effective_overhead_percent"] += 1
+
+        disable_reasons: list[str] = []
+        if not checks["correctness_error"]["pass"]:
+            disable_reasons.append("correctness_error")
+        if (
+            self.disable_if_effective_overhead_percent_gt_hard is not None
+            and float(checks["effective_overhead_percent"]["observed"])
+            > self.disable_if_effective_overhead_percent_gt_hard
+        ):
+            disable_reasons.append("effective_overhead_percent_hard")
+        if (
+            not checks["false_positive_rate"]["pass"]
+            and self.violation_streaks["false_positive_rate"]
+            >= self.disable_after_consecutive_false_positive_violations
+        ):
+            disable_reasons.append("false_positive_rate")
+        if (
+            not checks["effective_overhead_percent"]["pass"]
+            and self.violation_streaks["effective_overhead_percent"]
+            >= self.disable_after_consecutive_overhead_violations
+        ):
+            disable_reasons.append("effective_overhead_percent")
+
+        disable_signal = len(disable_reasons) > 0
         if disable_signal and self.enabled:
             self.enabled = False
             self.disable_events += 1
-            self.disable_reason = f"guardrail_violation:{','.join(failed)}"
+            self.disable_reason = f"guardrail_violation:{','.join(disable_reasons)}"
 
         entry = {
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),
             "session_id": int(session_id),
             "checks": checks,
             "failed_guardrails": failed,
+            "disable_reasons": disable_reasons,
             "all_passed": len(failed) == 0,
             "disable_signal": disable_signal,
             "enabled_after_eval": self.enabled,
             "disable_reason": self.disable_reason,
+            "violation_streaks": dict(self.violation_streaks),
+            "disable_thresholds": {
+                "false_positive_rate": int(
+                    self.disable_after_consecutive_false_positive_violations
+                ),
+                "effective_overhead_percent": int(
+                    self.disable_after_consecutive_overhead_violations
+                ),
+                "effective_overhead_percent_hard": (
+                    None
+                    if self.disable_if_effective_overhead_percent_gt_hard is None
+                    else float(self.disable_if_effective_overhead_percent_gt_hard)
+                ),
+            },
             "fallback_action": (
                 "auto_disable_abft_runtime"
                 if disable_signal
@@ -124,6 +190,19 @@ class T5ABFTAutoDisableGuard:
             "enabled": self.enabled,
             "disable_reason": self.disable_reason,
             "disable_events": int(self.disable_events),
+            "violation_streaks": dict(self.violation_streaks),
+            "stateful_hysteresis": bool(self.stateful_hysteresis),
+            "disable_after_consecutive_false_positive_violations": int(
+                self.disable_after_consecutive_false_positive_violations
+            ),
+            "disable_after_consecutive_overhead_violations": int(
+                self.disable_after_consecutive_overhead_violations
+            ),
+            "disable_if_effective_overhead_percent_gt_hard": (
+                None
+                if self.disable_if_effective_overhead_percent_gt_hard is None
+                else float(self.disable_if_effective_overhead_percent_gt_hard)
+            ),
             "sampling": {
                 "sampling_period": self.sampling.sampling_period,
                 "row_samples": self.sampling.row_samples,
@@ -143,3 +222,23 @@ class T5ABFTAutoDisableGuard:
         payload = self.state_snapshot()
         payload["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
         path.write_text(json.dumps(payload, indent=2))
+
+    def _restore_hysteresis_state(self) -> None:
+        if not self.stateful_hysteresis:
+            return
+        path = Path(self.state_path)
+        if not path.exists():
+            return
+        try:
+            previous = json.loads(path.read_text())
+        except Exception:
+            return
+        if previous.get("policy_id") != self.policy.get("policy_id"):
+            return
+        streaks = previous.get("violation_streaks")
+        if not isinstance(streaks, dict):
+            return
+        for key in self.violation_streaks:
+            value = streaks.get(key)
+            if isinstance(value, int) and value >= 0:
+                self.violation_streaks[key] = value

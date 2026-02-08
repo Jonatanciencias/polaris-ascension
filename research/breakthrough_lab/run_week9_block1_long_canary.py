@@ -268,6 +268,8 @@ def run_campaign(
     pressure_size: int,
     pressure_iterations: int,
     pressure_pulses_per_batch: int,
+    t5_policy_path: str | None,
+    t5_state_path: str | None,
 ) -> dict[str, Any]:
     kernels = ["auto_t3_controlled", "auto_t5_guarded"]
     rows: list[dict[str, Any]] = []
@@ -291,12 +293,19 @@ def run_campaign(
         for k_idx, kernel in enumerate(kernels):
             for s_idx, size in enumerate(sizes):
                 run_seed = int(seed + batch * 100_000 + k_idx * 10_000 + s_idx * 100)
+                extra: dict[str, Any] = {}
+                if t5_policy_path not in (None, ""):
+                    extra["t5_policy_path"] = str(t5_policy_path)
+                if t5_state_path not in (None, ""):
+                    extra["t5_state_path"] = str(t5_state_path)
+
                 run = _run_silent_benchmark(
                     size=int(size),
                     iterations=int(iterations_per_session),
                     sessions=int(sessions_per_batch),
                     kernel=str(kernel),
                     seed=run_seed,
+                    **extra,
                 )
                 summary = run["summary"]
                 row: dict[str, Any] = {
@@ -317,6 +326,7 @@ def run_campaign(
                     row["t5_overhead_percent"] = float(t5.get("effective_overhead_percent", 0.0))
                     row["t5_false_positive_rate"] = float(t5.get("false_positive_rate", 0.0))
                     row["t5_disable_events"] = int(t5.get("disable_events", 0))
+                    row["t5_disable_reason"] = t5.get("disable_reason")
                 rows.append(row)
 
     groups: list[dict[str, Any]] = []
@@ -343,6 +353,8 @@ def run_campaign(
                 "iterations": int(pressure_iterations),
                 "pulses_per_batch": int(pressure_pulses_per_batch),
             },
+            "t5_policy_path": None if t5_policy_path in (None, "") else str(t5_policy_path),
+            "t5_state_path": None if t5_state_path in (None, "") else str(t5_state_path),
             "horizon_label": "24h_equivalent_batches",
         },
         "rows": rows,
@@ -371,6 +383,21 @@ def main() -> int:
     parser.add_argument("--pressure-iterations", type=int, default=3)
     parser.add_argument("--pressure-pulses-per-batch", type=int, default=2)
     parser.add_argument("--output-dir", default="research/breakthrough_lab")
+    parser.add_argument(
+        "--output-prefix",
+        default="week9_block1_long_canary",
+        help="Artifact prefix for output JSON/MD files.",
+    )
+    parser.add_argument(
+        "--t5-policy-path",
+        default=None,
+        help="Optional T5 policy path passed to auto_t5_guarded runs.",
+    )
+    parser.add_argument(
+        "--t5-state-path",
+        default=None,
+        help="Optional T5 runtime state path passed to auto_t5_guarded runs.",
+    )
     args = parser.parse_args()
 
     output_dir = (REPO_ROOT / args.output_dir).resolve()
@@ -385,11 +412,13 @@ def main() -> int:
         pressure_size=int(args.pressure_size),
         pressure_iterations=int(args.pressure_iterations),
         pressure_pulses_per_batch=int(args.pressure_pulses_per_batch),
+        t5_policy_path=args.t5_policy_path,
+        t5_state_path=args.t5_state_path,
     )
 
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-    json_path = output_dir / f"week9_block1_long_canary_{timestamp}.json"
-    md_path = output_dir / f"week9_block1_long_canary_{timestamp}.md"
+    json_path = output_dir / f"{args.output_prefix}_{timestamp}.json"
+    md_path = output_dir / f"{args.output_prefix}_{timestamp}.md"
     json_path.write_text(json.dumps(report, indent=2) + "\n")
     md_path.write_text(_markdown(report))
 

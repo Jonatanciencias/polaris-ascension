@@ -1,0 +1,43 @@
+{
+  "review_id": "week9-block2-t5-hardening-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "t5_long_horizon_auto_disable_hardening_and_strict_rerun",
+  "tracks": [
+    {
+      "track": "t5_hardening_block2",
+      "decision": "promote",
+      "evidence": [
+        "src/optimization_engines/t5_abft_guardrails.py",
+        "tests/test_t5_abft_guardrails.py",
+        "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week9_block2.json"
+      ],
+      "rationale": "Runtime hardening adds configurable stateful hysteresis and hard-threshold semantics, preventing isolated overhead spikes from triggering immediate disable while keeping correctness guard strict."
+    },
+    {
+      "track": "week9_long_mixed_canary_strict_rerun",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/run_week9_block1_long_canary.py",
+        "research/breakthrough_lab/week9_block2_long_canary_rerun_20260208_032017.json",
+        "research/breakthrough_lab/week9_block2_long_canary_rerun_20260208_032017.md",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_032043.json"
+      ],
+      "rationale": "Strict rerun of the same long mixed canary passed all checks with zero T5 disable events and canonical validation gate in promote state."
+    }
+  ],
+  "summary": {
+    "promote": 2,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "T5 hardening resolved the only failing Week 9 Block 1 guardrail and strict rerun achieved full promote outcome.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK9_BLOCK2_T5_HARDENING_2026-02-08.md",
+  "required_gate": {
+    "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_032043.json",
+    "decision": "promote"
+  },
+  "supersedes": "research/breakthrough_lab/week9_block1_long_mixed_canary_decision.json"
+}
