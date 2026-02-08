@@ -31,6 +31,13 @@ Advance from roadmap closure to continuous, low-risk production improvement:
   - Evidence:
     - `research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_020148.json`
     - `research/breakthrough_lab/t3_online_control/policy_hardening_block3.json`
+- Week 8 - Block 4 (T4 mixed activation refinement): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK4_T4_MIXED_POLICY_REFINEMENT_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block4_t4_mixed_policy_refinement_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/t4_approximate_gemm/week8_t4_mixed_campaign_20260208_021541.json`
+    - `research/breakthrough_lab/t4_approximate_gemm/policy_activation_block4.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_021724.json`
 
 ## Governance Rules
 
@@ -107,6 +114,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Start Week 8 - Block 4 (T4 operational envelope) refining activation policy to reduce unnecessary fallback while preserving contract guarantees.
-2. Run mixed-workload contract campaign and register `promote|iterate|refine|stop` with evidence artifacts.
-3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before Block 4 closure.
+1. Start Week 8 - Block 5 (T5 reliability maturation) tuning ABFT-lite thresholds with controlled fault-injection replay.
+2. Validate overhead/recall tradeoff under canonical gate and register decision with evidence.
+3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure.
