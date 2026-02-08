@@ -323,3 +323,21 @@ Resultado:
 Lectura:
 - El perfil endurecido mantiene estabilidad temporal y de cobertura sin degradar guardrails.
 - Estado actual: listo para continuar con una ventana controlada mas larga antes de escalar alcance operativo.
+
+### 11.5 Block 1.4 + 1.5 (ventana larga + split Clover/rusticl)
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week10_block1_4_long_window_20260208_165345.json`
+- `research/breakthrough_lab/platform_compatibility/week10_block1_5_platform_split_20260208_165631.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165410.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165700.json`
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_165707.json`
+
+Resultado:
+- Block 1.4: **promote** (`>=45 min` equivalente, `1400+2048`, rollback `false`)
+- Block 1.5: **promote** (split `Clover/rusticl`, ratio minimo `0.9206`)
+- Disable events T5 en ambos bloques: **0**
+- Gates canonicos antes de promocion: **promote** en ambos bloques
+
+Lectura:
+- El sistema mantiene estabilidad bajo ventana larga y split de plataforma con guardrails sanos.
+- Se consolida el estado de candidato fuerte para pruebas reales controladas de mayor alcance.

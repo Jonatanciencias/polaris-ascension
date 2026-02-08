@@ -144,6 +144,16 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163857.json`
     - `research/breakthrough_lab/week9_comparative_dashboard_20260208_163903.json`
   - Key finding: horizon `6/6` snapshots and size expansion (`1400+2048`) pass with rollback `false`, disable events `0`, and mandatory gates in `promote`.
+- Week 10 - Block 1.4 + 1.5 (long window + Clover/rusticl split): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK1_4_1_5_LONGWINDOW_SPLIT_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block1_4_1_5_longwindow_split_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_4_long_window_20260208_165345.json`
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_5_platform_split_20260208_165631.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165410.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165700.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_165707.json`
+  - Key finding: long-window equivalent (`>=45 min`) and split canary pass with `disable_events=0`, rollback inactive, and ratio rusticl/clover healthy.
 
 ## Governance Rules
 
@@ -220,6 +230,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 10 - Block 1.4: run extended wall-clock controlled rollout (>=45 min equivalent) with `1400+2048` and drift cap enforcement.
-2. Week 10 - Block 1.5: canary split corto Clover/rusticl con policy endurecida y rollback SLA activo.
+1. Week 10 - Block 1.6: extended split canary (mayor horizonte) con politicas actuales y control de drift por plataforma.
+2. Week 10 - Block 2.1: pre-produccion escalada (aumentar iteraciones/sesiones) manteniendo rollback SLA activo.
 3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure and before each production-scope increase.
