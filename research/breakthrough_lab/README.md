@@ -29,4 +29,5 @@ Shared standards:
 
 Contract validation:
 - Local: `python scripts/validate_breakthrough_results.py`
-- CI: enforced in `.github/workflows/test-tiers.yml` (`cpu-fast` job)
+- Unified local/CI runner: `python scripts/run_validation_suite.py --tier canonical --driver-smoke`
+- CI: enforced in `.github/workflows/test-tiers.yml` (`cpu-fast` job via `scripts/run_validation_suite.py`)

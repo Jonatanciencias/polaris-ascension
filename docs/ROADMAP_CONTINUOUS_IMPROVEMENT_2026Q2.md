@@ -15,6 +15,13 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 - Canonical suite: `pytest -q` green (`78 passed`)
 - Primary production evidence: `research/breakthrough_lab/week6_final_suite_20260208_011347.json`
 
+## Execution Status
+
+- Week 8 - Block 1 (Validation Discipline Hardening): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK1_VALIDATION_DISCIPLINE_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block1_validation_discipline_decision.json`
+  - Evidence dir: `research/breakthrough_lab/week8_validation_discipline/`
+
 ## Governance Rules
 
 1. No promotion claim without machine-readable artifact.

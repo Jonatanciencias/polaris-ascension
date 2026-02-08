@@ -654,7 +654,7 @@ def print_driver_report(report: DriverReport, verbose: bool = False) -> None:
     print("=" * 70)
 
 
-def check_driver_health() -> DriverReport:
+def check_driver_health(*, show_progress: bool = True) -> DriverReport:
     """
     Perform comprehensive driver health check.
     
@@ -664,7 +664,8 @@ def check_driver_health() -> DriverReport:
     report = DriverReport()
     
     # Perform all checks
-    print("Running driver diagnostics...\n")
+    if show_progress:
+        print("Running driver diagnostics...\n")
     
     report.kernel_driver = check_amdgpu_kernel()
     report.mesa_version = check_mesa_version()
@@ -710,7 +711,7 @@ For setup instructions, see: docs/guides/DRIVER_SETUP_RX580.md
     
     # Run checks
     try:
-        report = check_driver_health()
+        report = check_driver_health(show_progress=not args.json)
         
         if args.json:
             # Output as JSON
