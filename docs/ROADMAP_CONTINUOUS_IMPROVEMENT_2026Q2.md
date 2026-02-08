@@ -100,6 +100,17 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260208_035258.md`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_035317.json`
   - Key finding: extended pilot and mirrored rusticl pass; rollback path is explicit and validated.
+- Week 9 - Block 6 (Final pre-production sign-off + long wall-clock canary): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK9_BLOCK6_PREPROD_SIGNOFF_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week9_block6_preprod_signoff_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week9_block6_wallclock_canary_20260208_043949.json`
+    - `research/breakthrough_lab/platform_compatibility/week9_block6_wallclock_canary_20260208_043949.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_044015.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_PREPROD_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_GO_NO_GO_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_ROLLBACK_SLA.md`
+  - Key finding: long-horizon wall-clock canary passed all checks (48/48 runs, max error `5.6458e-4`, T5 disable events `0`, rusticl/clover min ratio `0.9197`), and canonical gate remained `promote`.
 
 ## Governance Rules
 
@@ -176,6 +187,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Execute Week 9 - Block 6: final pre-production sign-off package (runbook + go/no-go checklist + rollback SLA).
-2. Run 1 long-horizon real-time canary window (wall-clock) before production recommendation.
-3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure.
+1. Week 10 - Block 1: controlled production rollout (small scope) with hourly snapshots and automatic rollback trigger binding to `WEEK9_BLOCK6_ROLLBACK_SLA.md`.
+2. Week 10 - Block 2: extend comparative dashboard to include explicit Block6 stage and publish weekly delta report (`Block2..6` active chain).
+3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure and before each production-scope increase.

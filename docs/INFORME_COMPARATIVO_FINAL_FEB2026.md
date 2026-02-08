@@ -238,3 +238,25 @@ Fuente: `research/breakthrough_lab/week8_validation_discipline/validation_suite_
 - El stack de optimizacion (T3/T4/T5) se mantiene estable y promovible con evidencia fresca.
 - T4+T5 puede ejecutarse en perfil combinado sin degradacion significativa.
 - rusticl se mantiene apto para canary controlado en tamanos criticos, con guardrails activos.
+
+## 10) Addendum Week 9 - Sign-Off Preproduccion (8 de febrero de 2026)
+
+### 10.1 Block 6 - Canary largo de pared + cierre formal
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week9_block6_wallclock_canary_20260208_043949.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_044015.json`
+- `research/breakthrough_lab/ACTA_WEEK9_BLOCK6_PREPROD_SIGNOFF_2026-02-08.md`
+
+Resultado:
+- Decision Block 6: **promote**
+- Wall-clock: **30.0 min** reales (objetivo cumplido)
+- Runs OK: **48/48**
+- Correctness max: **0.0005646** (`<= 1e-3`)
+- Guardrails T3/T5: **pass** (disable T5 = `0`, fallback T3 max = `0.0`)
+- Ratio minimo rusticl/clover (peak): **0.9197** (`>= 0.80`)
+- Gate canonico posterior: **promote** (`pytest tests` = **85 passed**, smoke drivers JSON = `good`)
+
+### 10.2 Estado comparativo vs baseline original
+
+- Frente al estado base inicial del informe (7-feb), el proyecto pasa de "estable para pruebas controladas" a **candidato de despliegue controlado**, con sign-off formal preproduccion completado.
+- La cadena activa Week 9 (Block2..6) queda consolidada en `promote` sin deuda bloqueante para iniciar rollout controlado.

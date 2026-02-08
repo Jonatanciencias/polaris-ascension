@@ -1,0 +1,57 @@
+{
+  "review_id": "week9-block6-preprod-signoff-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "final_preproduction_signoff_with_long_wallclock_canary_and_canonical_gate",
+  "tracks": [
+    {
+      "track": "week9_block6_long_wallclock_canary",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/run_week9_block6_wallclock_canary.py",
+        "research/breakthrough_lab/platform_compatibility/week9_block6_wallclock_canary_20260208_043949.json",
+        "research/breakthrough_lab/platform_compatibility/week9_block6_wallclock_canary_20260208_043949.md"
+      ],
+      "rationale": "Long wall-clock campaign (30m) passed all checks: correctness, T3/T5 guardrails, drift, pressure resilience, split ratio, and regression checks."
+    },
+    {
+      "track": "week9_block6_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "scripts/run_validation_suite.py",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_044015.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_044015.md"
+      ],
+      "rationale": "Canonical gate remained promote with schema validation green, pytest full green (85 passed), and verify_drivers JSON smoke good."
+    },
+    {
+      "track": "week9_block6_preprod_signoff_package",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_PREPROD_RUNBOOK.md",
+        "research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_GO_NO_GO_CHECKLIST.md",
+        "research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_ROLLBACK_SLA.md",
+        "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh",
+        "research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260208_035258.md"
+      ],
+      "rationale": "Sign-off package includes execution runbook, go/no-go checklist, rollback SLA, and validated rollback drill evidence from Week9 Block5."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Pre-production sign-off package is complete and long-horizon wall-clock canary confirms readiness for controlled production rollout.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK9_BLOCK6_PREPROD_SIGNOFF_2026-02-08.md",
+  "required_gate": {
+    "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_044015.json",
+    "decision": "promote"
+  },
+  "depends_on": [
+    "research/breakthrough_lab/week9_block5_preprod_pilot_decision.json"
+  ]
+}
+
