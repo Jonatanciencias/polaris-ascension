@@ -168,6 +168,7 @@ def _build_deltas(stages: dict[str, dict[str, Any]], track: str) -> dict[str, An
 
 
 def _markdown(report: dict[str, Any]) -> str:
+    stage_order = [s for s in ["block1", "block2", "block3", "block4", "block5"] if s in report["stages"]]
     lines: list[str] = []
     lines.append("# Week 9 Comparative Dashboard - T3/T4/T5")
     lines.append("")
@@ -178,17 +179,15 @@ def _markdown(report: dict[str, Any]) -> str:
     lines.append("")
     lines.append("| Stage | Decision |")
     lines.append("| --- | --- |")
-    for stage in ["block1", "block2", "block3"]:
+    for stage in stage_order:
         lines.append(f"| {stage} | {report['stages'][stage]['decision']} |")
-    if "block4" in report["stages"]:
-        lines.append(f"| block4 | {report['stages']['block4']['decision']} |")
     lines.append("")
     lines.append("## T3/T5 Aggregates (Clover-normalized for block3/4)")
     lines.append("")
     lines.append("| Track | Stage | Avg GFLOPS | P95 ms | Max error | Extra |")
     lines.append("| --- | --- | ---: | ---: | ---: | --- |")
     for track in ["t3", "t5"]:
-        for stage in ["block1", "block2", "block3"]:
+        for stage in stage_order:
             s = report["stages"][stage][track]
             extra = "-"
             if track == "t3":
@@ -197,16 +196,6 @@ def _markdown(report: dict[str, Any]) -> str:
                 extra = f"overhead={s['overhead_mean_percent']:.3f}%, disable={s['disable_events_total']}"
             lines.append(
                 f"| {track} | {stage} | {s['avg_gflops_mean']:.3f} | {s['p95_time_ms_mean']:.3f} | {s['max_error_max']:.7f} | {extra} |"
-            )
-        if "block4" in report["stages"]:
-            s = report["stages"]["block4"][track]
-            extra = (
-                f"fallback={s['fallback_rate_mean']:.4f}, disabled={s['policy_disabled_total']}"
-                if track == "t3"
-                else f"overhead={s['overhead_mean_percent']:.3f}%, disable={s['disable_events_total']}"
-            )
-            lines.append(
-                f"| {track} | block4 | {s['avg_gflops_mean']:.3f} | {s['p95_time_ms_mean']:.3f} | {s['max_error_max']:.7f} | {extra} |"
             )
     lines.append("")
     lines.append("## Week9 Deltas (Block1/2/3)")
@@ -248,6 +237,7 @@ def build_dashboard(
     block3_path: str,
     t4_reference_path: str,
     block4_path: str | None = None,
+    block5_path: str | None = None,
 ) -> dict[str, Any]:
     stages: dict[str, dict[str, Any]] = {
         "block1": _summarize_block12((REPO_ROOT / block1_path).resolve()),
@@ -256,6 +246,8 @@ def build_dashboard(
     }
     if block4_path:
         stages["block4"] = _summarize_block3_or_4((REPO_ROOT / block4_path).resolve())
+    if block5_path:
+        stages["block5"] = _summarize_block3_or_4((REPO_ROOT / block5_path).resolve())
 
     deltas = {
         "t3": _build_deltas(stages, "t3"),
@@ -264,12 +256,11 @@ def build_dashboard(
     t4_reference = _summarize_t4_reference((REPO_ROOT / t4_reference_path).resolve())
 
     block1_decision = str(stages["block1"].get("decision"))
-    active_stage_decisions = [
-        str(stages["block2"].get("decision")),
-        str(stages["block3"].get("decision")),
-    ]
+    active_stage_decisions = [str(stages["block2"].get("decision")), str(stages["block3"].get("decision"))]
     if "block4" in stages:
         active_stage_decisions.append(str(stages["block4"].get("decision")))
+    if "block5" in stages:
+        active_stage_decisions.append(str(stages["block5"].get("decision")))
     active_chain_promote = all(d == "promote" for d in active_stage_decisions)
 
     if active_chain_promote:
@@ -299,6 +290,7 @@ def build_dashboard(
                 "block2_path": block2_path,
                 "block3_path": block3_path,
                 "block4_path": block4_path,
+                "block5_path": block5_path,
                 "t4_reference_path": t4_reference_path,
             },
         },
@@ -316,6 +308,7 @@ def main() -> int:
     parser.add_argument("--block2-path", default=DEFAULT_BLOCK2)
     parser.add_argument("--block3-path", default=DEFAULT_BLOCK3)
     parser.add_argument("--block4-path", default=None)
+    parser.add_argument("--block5-path", default=None)
     parser.add_argument("--t4-reference-path", default=DEFAULT_T4_REFERENCE)
     parser.add_argument("--output-dir", default="research/breakthrough_lab")
     parser.add_argument("--output-prefix", default="week9_comparative_dashboard")
@@ -328,6 +321,7 @@ def main() -> int:
         block2_path=str(args.block2_path),
         block3_path=str(args.block3_path),
         block4_path=args.block4_path,
+        block5_path=args.block5_path,
         t4_reference_path=str(args.t4_reference_path),
     )
 

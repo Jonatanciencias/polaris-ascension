@@ -88,9 +88,18 @@ Advance from roadmap closure to continuous, low-risk production improvement:
   - Key finding: stress with queue pulses preserved correctness and guardrails (T5 disable events=0).
 - Week 9 - Comparative Dashboard (T3/T4/T5 with Week9 deltas): **promote**
   - Artifact:
-    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_034022.json`
-    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_034022.md`
-  - Key finding: Block1 iterate is superseded by Block2 hardening; active chain Block2/3/4 remains promote.
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_035352.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_035352.md`
+  - Key finding: Block1 iterate is superseded by Block2 hardening; active chain Block2/3/4/5 remains promote.
+- Week 9 - Block 5 (Controlled pre-production pilot RX590 + mirrored rusticl + rollback drill): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK9_BLOCK5_PREPROD_PILOT_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week9_block5_preprod_pilot_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week9_block5_preprod_pilot_20260208_035240.json`
+    - `research/breakthrough_lab/platform_compatibility/week9_block5_preprod_pilot_20260208_035240.md`
+    - `research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260208_035258.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_035317.json`
+  - Key finding: extended pilot and mirrored rusticl pass; rollback path is explicit and validated.
 
 ## Governance Rules
 
@@ -167,6 +176,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Execute Week 9 - Block 5: controlled pre-production pilot on RX 590 (extended burn-in window + hourly evidence snapshots).
-2. Define and execute mirrored rusticl pilot profile with explicit environment bootstrap and rollback script.
+1. Execute Week 9 - Block 6: final pre-production sign-off package (runbook + go/no-go checklist + rollback SLA).
+2. Run 1 long-horizon real-time canary window (wall-clock) before production recommendation.
 3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure.

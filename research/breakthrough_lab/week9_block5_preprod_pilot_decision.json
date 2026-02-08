@@ -1,0 +1,54 @@
+{
+  "review_id": "week9-block5-preprod-pilot-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "controlled_preproduction_pilot_rx590_with_mirrored_rusticl_and_explicit_rollback",
+  "tracks": [
+    {
+      "track": "week9_block5_preprod_burnin",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/run_week9_block5_preprod_pilot.py",
+        "research/breakthrough_lab/platform_compatibility/week9_block5_preprod_pilot_20260208_035240.json",
+        "research/breakthrough_lab/platform_compatibility/week9_block5_preprod_pilot_20260208_035240.md"
+      ],
+      "rationale": "Extended burn-in pilot (6 hourly logical snapshots) passed correctness, pressure, drift, and guardrails with no T5 disable events."
+    },
+    {
+      "track": "week9_block5_rusticl_mirror",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week9_block5_preprod_pilot_20260208_035240.json",
+        "research/breakthrough_lab/platform_compatibility/week9_block5_preprod_pilot_20260208_035240.md"
+      ],
+      "rationale": "Mirrored rusticl path remained within ratio threshold and preserved guardrail compliance across all snapshots."
+    },
+    {
+      "track": "week9_block5_rollback_operability",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh",
+        "research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260208_035258.md",
+        "results/runtime_states/week9_block5_runtime_env.sh",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_035317.json"
+      ],
+      "rationale": "Rollback script was executed in apply mode and post-rollback canonical validation remained promote."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Pre-production pilot and mirrored rusticl run passed; rollback path is explicit and validated.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK9_BLOCK5_PREPROD_PILOT_2026-02-08.md",
+  "required_gate": {
+    "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_035317.json",
+    "decision": "promote"
+  },
+  "depends_on": [
+    "research/breakthrough_lab/week9_block4_stress_split_decision.json"
+  ]
+}
