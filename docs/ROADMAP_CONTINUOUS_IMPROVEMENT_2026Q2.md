@@ -38,6 +38,13 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/t4_approximate_gemm/week8_t4_mixed_campaign_20260208_021541.json`
     - `research/breakthrough_lab/t4_approximate_gemm/policy_activation_block4.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_021724.json`
+- Week 8 - Block 5 (T5 reliability maturation with fault-injection tuning): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK5_T5_RELIABILITY_MATURATION_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block5_t5_reliability_maturation_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/t5_reliability_abft/week8_t5_maturation_20260208_022633.json`
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_block5.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_022835.json`
 
 ## Governance Rules
 
@@ -114,6 +121,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Start Week 8 - Block 5 (T5 reliability maturation) tuning ABFT-lite thresholds with controlled fault-injection replay.
-2. Validate overhead/recall tradeoff under canonical gate and register decision with evidence.
+1. Start Week 8 - Block 6 (Q2 consolidation pre-close) with `week6_final_suite` rerun and refreshed comparative report.
+2. Verify promotion gates across T3/T4/T5 artifacts after Block 5 policy updates.
 3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure.
