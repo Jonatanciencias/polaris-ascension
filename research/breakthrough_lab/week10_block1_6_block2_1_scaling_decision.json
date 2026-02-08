@@ -1,0 +1,69 @@
+{
+  "review_id": "week10-block1-6-block2-1-scaling-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "extended_split_canary_and_scaled_preproduction_with_mandatory_canonical_gates",
+  "tracks": [
+    {
+      "track": "week10_block1_6_platform_split_extended",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week10_block1_6_platform_split_extended_20260208_171552.json",
+        "research/breakthrough_lab/platform_compatibility/week10_block1_6_platform_split_extended_20260208_171552.md",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171618.json"
+      ],
+      "rationale": "Extended split canary (8 snapshots) passed all checks with healthy rusticl/clover ratio and no T5 disable events."
+    },
+    {
+      "track": "week10_block2_1_preproduction_scaled",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week10_block2_1_preprod_scaled_20260208_171024.json",
+        "research/breakthrough_lab/platform_compatibility/week10_block2_1_preprod_scaled_20260208_171024.md",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171051.json"
+      ],
+      "rationale": "Scaled preproduction profile (sessions=2, iterations=10) passed with no rollback and no disable events after baseline alignment."
+    },
+    {
+      "track": "week10_block1_6_and_2_1_mandatory_canonical_gates",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171618.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171051.json"
+      ],
+      "rationale": "Canonical gate executed before each promotion and both runs remained promote."
+    },
+    {
+      "track": "week10_block2_dashboard_refresh_post_scaling",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week9_comparative_dashboard_20260208_171111.json",
+        "research/breakthrough_lab/week9_comparative_dashboard_20260208_171111.md"
+      ],
+      "rationale": "Comparative dashboard chain stays promote with Block10 sourced from scaled preproduction artifact."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Both requested blocks passed with mandatory canonical gates and stable guardrails.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK10_BLOCK1_6_BLOCK2_1_SCALING_2026-02-08.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171618.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171051.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week10_block1_4_1_5_longwindow_split_decision.json"
+  ]
+}
+

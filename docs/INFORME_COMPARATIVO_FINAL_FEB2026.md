@@ -341,3 +341,44 @@ Resultado:
 Lectura:
 - El sistema mantiene estabilidad bajo ventana larga y split de plataforma con guardrails sanos.
 - Se consolida el estado de candidato fuerte para pruebas reales controladas de mayor alcance.
+
+### 11.6 Block 1.6 + 2.1 (split extendido + preproduccion escalada)
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week10_block1_6_platform_split_extended_20260208_171552.json`
+- `research/breakthrough_lab/platform_compatibility/week10_block2_1_preprod_scaled_20260208_171024.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171618.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171051.json`
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_171111.json`
+
+Resultado:
+- Block 1.6: **promote** (split `Clover/rusticl`, `8` snapshots, ratio minimo `0.9200`)
+- Block 2.1: **promote** (preproduccion escalada con `sessions=2`, `iterations=10`)
+- T5 disable events en ambos bloques: **0**
+- Gates canonicos antes de promocion: **promote** en ambos bloques
+
+Lectura:
+- La estabilidad se sostiene incluso al incrementar horizonte split y carga preproductiva.
+- El proyecto queda en fase de consolidacion final para recomendacion de produccion controlada.
+
+### 11.7 Block 2.2 + 2.3 (ventana larga escalada + paquete final de recomendacion)
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week10_block2_2_preprod_scaled_long_20260208_173314.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173343.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173514.json`
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_173522.json`
+- `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_OPERATIONS_RUNBOOK.md`
+- `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_ROLLBACK_HOT_THRESHOLDS.json`
+- `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_GO_NO_GO_CHECKLIST.md`
+
+Resultado:
+- Block 2.2: **promote** (`8/8` snapshots, rollback `false`, drift `<=0.6525%`)
+- Correctness max Block 2.2: `0.000579833984375`
+- T5 overhead Block 2.2: max `1.1988%`, mean `0.8480%`
+- T5 disable events Block 2.2: **0**
+- Block 2.3: **completed/promote** (runbook operativo + umbrales rollback hot + checklist go/no-go versionados)
+- Gates canonicos antes de promocion/cierre: **promote** en ambos hitos (`173343`, `173514`)
+- Dashboard comparativo actualizado: **promote**
+
+Lectura:
+- Se completa la evidencia de preproduccion escalada en horizonte largo sin degradar guardrails.
+- El paquete de recomendacion de produccion controlada queda formalizado y listo para uso operativo.

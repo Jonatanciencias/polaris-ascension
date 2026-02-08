@@ -154,6 +154,28 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165700.json`
     - `research/breakthrough_lab/week9_comparative_dashboard_20260208_165707.json`
   - Key finding: long-window equivalent (`>=45 min`) and split canary pass with `disable_events=0`, rollback inactive, and ratio rusticl/clover healthy.
+- Week 10 - Block 1.6 + 2.1 (extended split + scaled preproduction): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK1_6_BLOCK2_1_SCALING_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block1_6_block2_1_scaling_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_6_platform_split_extended_20260208_171552.json`
+    - `research/breakthrough_lab/platform_compatibility/week10_block2_1_preprod_scaled_20260208_171024.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171618.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171051.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_171111.json`
+  - Key finding: split extendido (8 snapshots) y preproduccion escalada pasan con `disable_events=0`, rollback `false`, y gates obligatorios en `promote`.
+- Week 10 - Block 2.2 + 2.3 (long-horizon scaled preprod + final controlled-production package): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK2_2_2_3_PREPROD_SIGNOFF_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block2_2_2_3_preprod_signoff_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week10_block2_2_preprod_scaled_long_20260208_173314.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_OPERATIONS_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_ROLLBACK_HOT_THRESHOLDS.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_GO_NO_GO_CHECKLIST.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173343.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173514.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_173522.json`
+  - Key finding: ventana larga escalada `8/8` pasa con `disable_events=0`, rollback `false`, drift acotado, y se cierra el paquete operativo formal de recomendacion controlada.
 
 ## Governance Rules
 
@@ -230,6 +252,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 10 - Block 1.6: extended split canary (mayor horizonte) con politicas actuales y control de drift por plataforma.
-2. Week 10 - Block 2.1: pre-produccion escalada (aumentar iteraciones/sesiones) manteniendo rollback SLA activo.
+1. Commit tecnico limpio de Week 10 Block 2.2/2.3 (acta + decision + evidencia + docs) y push de rama.
+2. Ejecutar siguiente bloque de rollout controlado con runbook Week 10 (canary de pared mas largo + seguimiento por snapshot).
 3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure and before each production-scope increase.
