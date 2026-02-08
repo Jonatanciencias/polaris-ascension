@@ -111,6 +111,20 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_GO_NO_GO_CHECKLIST.md`
     - `research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_ROLLBACK_SLA.md`
   - Key finding: long-horizon wall-clock canary passed all checks (48/48 runs, max error `5.6458e-4`, T5 disable events `0`, rusticl/clover min ratio `0.9197`), and canonical gate remained `promote`.
+- Week 10 - Block 1 (Controlled low-scope rollout + auto rollback guardrails): **iterate**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK1_CONTROLLED_ROLLOUT_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block1_controlled_rollout_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_controlled_rollout_20260208_160122.json`
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_controlled_rollout_20260208_160122.md`
+    - `research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260208_160103.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_160122.json`
+  - Key finding: rollout scope stayed safe (rollback automatico exitoso), but T5 disable event in snapshot 2 prevents promotion.
+- Week 10 - Block 2 (Comparative dashboard extension with explicit Block6 + weekly drift): **promote**
+  - Artifact:
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_160146.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_160146.md`
+  - Key finding: active chain now tracked as `block2 -> block3 -> block4 -> block5 -> block6 -> block10` with transition-level drift metrics.
 
 ## Governance Rules
 
@@ -187,6 +201,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 10 - Block 1: controlled production rollout (small scope) with hourly snapshots and automatic rollback trigger binding to `WEEK9_BLOCK6_ROLLBACK_SLA.md`.
-2. Week 10 - Block 2: extend comparative dashboard to include explicit Block6 stage and publish weekly delta report (`Block2..6` active chain).
+1. Week 10 - Block 1.1: harden T5 rollout profile (reduce disable events under low-scope pressure) and rerun controlled rollout to target `promote`.
+2. Week 10 - Block 1.2: once stable, expand rollout horizon (>=4 snapshots) keeping rollback SLA binding and canonical gate mandatory.
 3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure and before each production-scope increase.

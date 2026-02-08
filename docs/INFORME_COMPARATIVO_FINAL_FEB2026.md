@@ -260,3 +260,30 @@ Resultado:
 
 - Frente al estado base inicial del informe (7-feb), el proyecto pasa de "estable para pruebas controladas" a **candidato de despliegue controlado**, con sign-off formal preproduccion completado.
 - La cadena activa Week 9 (Block2..6) queda consolidada en `promote` sin deuda bloqueante para iniciar rollout controlado.
+
+## 11) Addendum Week 10 - Arranque de Rollout Controlado (8 de febrero de 2026)
+
+### 11.1 Block 1 (scope bajo con rollback automatico)
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week10_block1_controlled_rollout_20260208_160122.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_160122.json`
+- `research/breakthrough_lab/ACTA_WEEK10_BLOCK1_CONTROLLED_ROLLOUT_2026-02-08.md`
+
+Resultado:
+- Decision Block 1: **iterate**
+- Snapshots ejecutados: **2/3** (detenido por guardrail)
+- Trigger de rollback: **T5 hard guardrail** (disable event en snapshot 2)
+- Rollback: **exitoso** y gate canonico posterior **promote**
+
+Lectura:
+- El marco de seguridad operacional funciona como se esperaba (deteccion + rollback + validacion).
+- Para promover el rollout, queda trabajo puntual de hardening T5 en perfil de bajo alcance.
+
+### 11.2 Dashboard extendido (Block 6 explicito + drift semanal)
+Fuentes:
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_160146.json`
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_160146.md`
+
+Mejora aplicada:
+- Cadena activa ahora visible como `block2 -> block3 -> block4 -> block5 -> block6 -> block10`.
+- Se agrega tracking de drift por transicion de bloque para T3/T5.
