@@ -14,6 +14,7 @@ New to this project? Start with these documents in order:
 3. [REAL_HARDWARE_VALIDATION.md](../REAL_HARDWARE_VALIDATION.md) - Verified performance on real RX 590 hardware
 4. [PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md](PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md) - Reproducible baseline protocol (Feb 7, 2026)
 5. [ROADMAP_BREAKTHROUGH_2026Q1.md](ROADMAP_BREAKTHROUGH_2026Q1.md) - New breakthrough roadmap (math/physics/CS/quantum + language strategy)
+6. [ROADMAP_CONTINUOUS_IMPROVEMENT_2026Q2.md](ROADMAP_CONTINUOUS_IMPROVEMENT_2026Q2.md) - Continuous-improvement roadmap after 2026Q1 closure
 
 ---
 
@@ -58,6 +59,10 @@ New to this project? Start with these documents in order:
   - Track-based innovation plan with promotion gates
   - Language adoption matrix (Python/OpenCL/Rust/C/C++/ASM)
   - Phased execution plan with measurable exit criteria
+- [ROADMAP_CONTINUOUS_IMPROVEMENT_2026Q2.md](ROADMAP_CONTINUOUS_IMPROVEMENT_2026Q2.md) ⭐
+  - Post-closure execution blocks for reliability and maintainability
+  - Explicit exit gates by week
+  - Immediate actionable backlog for Week 8 kickoff
 
 ---
 
