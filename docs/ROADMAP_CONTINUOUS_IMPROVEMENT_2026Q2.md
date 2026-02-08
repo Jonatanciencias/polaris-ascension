@@ -12,7 +12,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 - 2026Q1 closure status: **promote**
 - Week6 final strict rerun: **promote**
-- Canonical suite: `pytest -q` green (`78 passed`)
+- Canonical suite: `pytest -q` green (`83 passed`)
 - Primary production evidence: `research/breakthrough_lab/week6_final_suite_20260208_011347.json`
 
 ## Execution Status
@@ -21,6 +21,10 @@ Advance from roadmap closure to continuous, low-risk production improvement:
   - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK1_VALIDATION_DISCIPLINE_2026-02-08.md`
   - Decision: `research/breakthrough_lab/week8_block1_validation_discipline_decision.json`
   - Evidence dir: `research/breakthrough_lab/week8_validation_discipline/`
+- Week 8 - Block 2 (Local/CI parity hardening): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK2_LOCAL_CI_PARITY_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block2_local_ci_parity_decision.json`
+  - Key changes: `ci.yml` primary gate + runner unit tests
 
 ## Governance Rules
 
@@ -97,7 +101,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Create `research/breakthrough_lab/week8_validation_discipline/` scaffold.
-2. Add CI-facing smoke test for `scripts/verify_drivers.py --json`.
-3. Pin and document validation command matrix (`tests`, full repo, schema).
-4. Register first Week 8 acta/decision template.
+1. Start Week 8 - Block 3 (drift robustness) with controlled warm/cold and queue-pressure scenarios for `auto`/`auto_t3_controlled`.
+2. Define calibrated thresholds and rollback-safe defaults in T3 guardrails policy.
+3. Register Block 3 evidence artifacts + acta + formal decision.

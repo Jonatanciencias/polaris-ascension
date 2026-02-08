@@ -1,0 +1,28 @@
+{
+  "review_id": "week8-block2-local-ci-parity-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "local_ci_parity_hardening_with_unified_validation_runner",
+  "tracks": [
+    {
+      "track": "validation_discipline",
+      "decision": "promote",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "tests/test_run_validation_suite.py",
+        "scripts/run_validation_suite.py",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_cpu-fast_20260208_012828.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_012835.json",
+        "research/breakthrough_lab/ACTA_WEEK8_BLOCK2_LOCAL_CI_PARITY_2026-02-08.md"
+      ],
+      "rationale": "The unified validation runner is now enforced in the primary CI job and covered by unit tests for JSON smoke parsing and pytest rc=5 handling; formal evidence is green in cpu-fast and canonical tiers."
+    }
+  ],
+  "summary": {
+    "promote": 1,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK8_BLOCK2_LOCAL_CI_PARITY_2026-02-08.md"
+}

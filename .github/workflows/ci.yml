@@ -143,7 +143,7 @@ jobs:
           pip install -r requirements.txt
           pip install -e ".[dev]"
           pip install pytest pytest-cov pytest-xdist pytest-timeout
-      
+
       - name: Run tests with coverage
         timeout-minutes: 10
         run: |
@@ -196,6 +196,12 @@ jobs:
           pip install -r requirements.txt
           pip install -e ".[dev]"
           pip install pytest pytest-cov pytest-xdist pytest-timeout
+
+      - name: Unified validation gate (canonical + driver smoke)
+        run: |
+          python scripts/run_validation_suite.py \
+            --tier canonical \
+            --driver-smoke
       
       - name: Run tests with coverage
         timeout-minutes: 10

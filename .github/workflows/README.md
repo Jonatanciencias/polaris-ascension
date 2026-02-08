@@ -25,6 +25,7 @@ Workflow principal para testing y code quality.
 
 **Características:**
 - ✅ Multi-version Python testing (3.8-3.11)
+- ✅ Unified validation gate en job primario (`scripts/run_validation_suite.py --tier canonical --driver-smoke`)
 - ✅ Parallel test execution con pytest-xdist
 - ✅ Coverage reporting con comentarios en PRs
 - ✅ Timeouts para evitar jobs colgados

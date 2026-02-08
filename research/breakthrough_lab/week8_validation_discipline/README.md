@@ -22,3 +22,10 @@ Canonical local tier:
 - `decision_template.json`
 
 Use these templates for every subsequent Week 8+ block to keep governance consistent.
+
+## Status
+
+- Week 8 Block 1: `promote`
+- Week 8 Block 2: `promote`
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK2_LOCAL_CI_PARITY_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block2_local_ci_parity_decision.json`
