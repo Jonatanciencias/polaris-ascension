@@ -1,0 +1,69 @@
+{
+  "review_id": "week10-block2-2-block2-3-preprod-signoff-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "scaled_preproduction_long_horizon_and_controlled_production_recommendation_package",
+  "tracks": [
+    {
+      "track": "week10_block2_2_preprod_scaled_long",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week10_block2_2_preprod_scaled_long_20260208_173314.json",
+        "research/breakthrough_lab/platform_compatibility/week10_block2_2_preprod_scaled_long_20260208_173314.md",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173343.json"
+      ],
+      "rationale": "Long-horizon scaled preproduction (8 snapshots, sessions=2, iterations=10) passed with no rollback, no disable events, and bounded drift."
+    },
+    {
+      "track": "week10_block2_3_preprod_signoff_package",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_OPERATIONS_RUNBOOK.md",
+        "research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_ROLLBACK_HOT_THRESHOLDS.json",
+        "research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_GO_NO_GO_CHECKLIST.md",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173514.json"
+      ],
+      "rationale": "Operational closure package is versioned and validated with canonical gate before closure."
+    },
+    {
+      "track": "week10_block2_2_and_2_3_mandatory_canonical_gates",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173343.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173514.json"
+      ],
+      "rationale": "Mandatory canonical gates executed before each promotion and both remained promote."
+    },
+    {
+      "track": "week10_block2_dashboard_refresh_post_signoff",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week9_comparative_dashboard_20260208_173522.json",
+        "research/breakthrough_lab/week9_comparative_dashboard_20260208_173522.md"
+      ],
+      "rationale": "Comparative dashboard chain remains promote after rebasing Block10 on Block2.2 long-horizon artifact."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Block 2.2 and 2.3 closed with stable evidence, mandatory gates, and operational signoff package.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK10_BLOCK2_2_2_3_PREPROD_SIGNOFF_2026-02-08.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173343.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173514.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week10_block1_6_block2_1_scaling_decision.json"
+  ]
+}

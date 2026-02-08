@@ -1,0 +1,50 @@
+{
+  "profile_id": "week10-block2-3-hot-rollback-thresholds-2026-02-08",
+  "scope": {
+    "sizes": [
+      1400,
+      2048
+    ],
+    "kernel_modes": [
+      "auto_t3_controlled",
+      "auto_t5_guarded"
+    ],
+    "platforms": [
+      "Clover",
+      "rusticl"
+    ]
+  },
+  "hard_thresholds": {
+    "correctness_error_max": 0.001,
+    "t5_disable_events_max": 0,
+    "t5_false_positive_rate_max": 0.05,
+    "t5_overhead_hard_max_percent": 5.0,
+    "t3_fallback_rate_max": 0.08,
+    "queue_pressure_failures_max": 0
+  },
+  "soft_thresholds": {
+    "t5_overhead_soft_max_percent": 3.0,
+    "t5_overhead_soft_consecutive_limit": 3,
+    "drift_abs_percent_max": 12.0,
+    "rusticl_clover_peak_ratio_min": 0.8
+  },
+  "mandatory_gates": {
+    "canonical_validation_required": true,
+    "canonical_validation_command": "./venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline"
+  },
+  "rollback_action": {
+    "mode": "automatic_or_manual_immediate",
+    "script_path": "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh",
+    "script_args": [
+      "apply"
+    ],
+    "post_rollback_gate_required": true
+  },
+  "service_levels": {
+    "detection_to_decision_minutes_max": 10,
+    "decision_to_rollback_minutes_max": 5,
+    "rollback_to_gate_start_minutes_max": 10,
+    "rollback_to_stabilization_minutes_max": 30
+  }
+}
+
