@@ -1,0 +1,41 @@
+{
+  "review_id": "week9-block1-long-mixed-canary-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "week9_long_mixed_canary_t3_t5_under_queue_pressure",
+  "tracks": [
+    {
+      "track": "t3_long_canary",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/run_week9_block1_long_canary.py",
+        "research/breakthrough_lab/week9_block1_long_canary_20260208_030816.json",
+        "research/breakthrough_lab/week9_block1_long_canary_20260208_030816.md"
+      ],
+      "rationale": "T3 held correctness, zero fallback, zero policy disable events, and drift/latency remained within configured guardrails across 24 batches."
+    },
+    {
+      "track": "t5_long_canary",
+      "decision": "iterate",
+      "evidence": [
+        "research/breakthrough_lab/run_week9_block1_long_canary.py",
+        "research/breakthrough_lab/week9_block1_long_canary_20260208_030816.json",
+        "research/breakthrough_lab/week9_block1_long_canary_20260208_030816.md"
+      ],
+      "rationale": "T5 met correctness/overhead/drift limits but triggered one auto-disable event, failing strict no-disable guardrail in long canary mode."
+    }
+  ],
+  "summary": {
+    "promote": 1,
+    "iterate": 1,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "iterate",
+  "block_rationale": "Long mixed canary is operational and stable except for one T5 disable event; follow-up hardening is required before promotion.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK9_BLOCK1_LONG_MIXED_CANARY_2026-02-08.md",
+  "required_gate": {
+    "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_030950.json",
+    "decision": "promote"
+  }
+}

@@ -53,6 +53,14 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_block6_t4_t5_interaction_20260208_024510.json`
     - `research/breakthrough_lab/platform_compatibility/week8_platform_canary_critical_20260208_024625.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_024700.json`
+- Week 9 - Block 1 (Long mixed canary under queue pressure): **iterate**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK9_BLOCK1_LONG_MIXED_CANARY_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week9_block1_long_mixed_canary_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week9_block1_long_canary_20260208_030816.json`
+    - `research/breakthrough_lab/week9_block1_long_canary_20260208_030816.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_030950.json`
+  - Key finding: all checks passed except `t5_disable_events_zero` (1 auto-disable event in T5 path).
 
 ## Governance Rules
 
@@ -129,6 +137,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Open Week 9 cycle: longer mixed canary (24h-equivalent batches) for `auto_t3_controlled` + `auto_t5_guarded` under realistic queue pressure.
+1. Execute Week 9 - Block 2: T5 hardening to remove long-horizon auto-disable events (policy hysteresis/threshold tuning + strict rerun).
 2. Add comparative dashboard artifact (single JSON/MD) to track drift deltas over time for T3/T4/T5.
-3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure.
+3. Execute Week 9 - Block 3: rerun long mixed canary after T5 hardening and seek promotion closure.
+4. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure.
