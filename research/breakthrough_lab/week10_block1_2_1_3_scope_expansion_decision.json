@@ -1,0 +1,70 @@
+{
+  "review_id": "week10-block1-2-1-3-scope-expansion-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "extend_horizon_to_6_snapshots_in_1400_and_expand_scope_to_2048_with_mandatory_canonical_gates",
+  "tracks": [
+    {
+      "track": "week10_block1_2_horizon_expansion_1400",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week10_block1_2_controlled_rollout_20260208_163545.json",
+        "research/breakthrough_lab/platform_compatibility/week10_block1_2_controlled_rollout_20260208_163545.md",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163611.json"
+      ],
+      "rationale": "6-snapshot horizon in size 1400 completed with zero rollback and zero T5 disable events."
+    },
+    {
+      "track": "week10_block1_3_scope_expansion_1400_2048",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block1_3.json",
+        "research/breakthrough_lab/platform_compatibility/week10_block1_3_controlled_rollout_20260208_163829.json",
+        "research/breakthrough_lab/platform_compatibility/week10_block1_3_controlled_rollout_20260208_163829.md",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163857.json"
+      ],
+      "rationale": "Scope expansion to 1400+2048 completed 6/6 snapshots without rollback and without T5 disable events."
+    },
+    {
+      "track": "week10_block1_2_and_1_3_mandatory_canonical_gates",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163611.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163857.json"
+      ],
+      "rationale": "Mandatory canonical gate executed before each promotion and passed in both blocks."
+    },
+    {
+      "track": "week10_block2_dashboard_refresh_post_scope_expansion",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week9_comparative_dashboard_20260208_163903.json",
+        "research/breakthrough_lab/week9_comparative_dashboard_20260208_163903.md"
+      ],
+      "rationale": "Dashboard chain remains promote with Block10 sourced from expanded-scope artifact."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Extended horizon and scope expansion passed with stable guardrails and mandatory canonical gates in promote state.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK10_BLOCK1_2_1_3_SCOPE_EXPANSION_2026-02-08.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163611.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163857.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week10_block1_1_t5_hardening_decision.json"
+  ]
+}
+

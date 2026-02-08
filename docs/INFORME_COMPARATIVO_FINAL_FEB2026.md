@@ -305,3 +305,21 @@ Resultado:
 Lectura:
 - El hardening T5 elimina el problema detectado en Week10 Block1 sin sacrificar correctness ni guardrails duros.
 - El proyecto queda nuevamente en banda de despliegue controlado estable para pruebas reales progresivas.
+
+### 11.4 Block 1.2 + 1.3 (horizonte extendido y cobertura 2048)
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week10_block1_2_controlled_rollout_20260208_163545.json`
+- `research/breakthrough_lab/platform_compatibility/week10_block1_3_controlled_rollout_20260208_163829.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163611.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163857.json`
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_163903.json`
+
+Resultado:
+- Block 1.2: **promote** (`6/6` snapshots, `1400`, rollback `false`, T5 disable `0`)
+- Block 1.3: **promote** (`6/6` snapshots, `1400+2048`, rollback `false`, T5 disable `0`)
+- Gates canonicos previos a promocion: **promote** en ambos bloques
+- Dashboard integrado: **promote** con cadena activa estable
+
+Lectura:
+- El perfil endurecido mantiene estabilidad temporal y de cobertura sin degradar guardrails.
+- Estado actual: listo para continuar con una ventana controlada mas larga antes de escalar alcance operativo.
