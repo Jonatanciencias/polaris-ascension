@@ -176,6 +176,32 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173514.json`
     - `research/breakthrough_lab/week9_comparative_dashboard_20260208_173522.json`
   - Key finding: ventana larga escalada `8/8` pasa con `disable_events=0`, rollback `false`, drift acotado, y se cierra el paquete operativo formal de recomendacion controlada.
+- Week 10 - Block 2.4 (final wall-clock canary): **iterate / no-go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK2_4_WALLCLOCK_FINAL_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block2_4_wallclock_final_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week10_block2_4_wallclock_final_20260208_183529.json`
+    - `research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260208_183535.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_183620.json`
+  - Key finding: canary de 40 min completo, pero con breach en `t5_guardrails_all_runs` (disable events + overhead hard spike), por lo que se activó cierre `NO-GO`.
+- Week 10 - Block 2.4.1 (T5 long-horizon hardening + rerun): **promote / go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK2_4_T5_HARDENING_RERUN_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block2_4_t5_hardening_rerun_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block2_4_long_horizon.json`
+    - `research/breakthrough_lab/platform_compatibility/week10_block2_4_wallclock_hardening_rerun_20260208_201448.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_201518.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_201655.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_GO_NO_GO_CHECKLIST.md`
+  - Key finding: tras hardening T5, el rerun de 40 min cierra en `promote` con `disable_events=0` y `t5_overhead_max=1.2389%` (`<=5%`), habilitando `GO`.
+- Week 11 - Block 1 (continuous monitoring baseline + GFLOPS probe): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK11_BLOCK1_CONTINUOUS_MONITORING_BASELINE_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week11_block1_continuous_monitoring_baseline_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week11_controlled_rollout/week11_t5_effect_probe_20260209_003453.json`
+    - `research/breakthrough_lab/week11_controlled_rollout/week11_t5_effect_probe_rusticl_20260209_003557.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_003401.json`
+  - Key finding: baseline continuo confirma guardrails sanos (`disable_events=0`) y throughput estable; impacto GFLOPS de policy nueva es pequeño y mixto por size/plataforma (sin regresión global relevante).
 
 ## Governance Rules
 
@@ -252,6 +278,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Commit tecnico limpio de Week 10 Block 2.2/2.3 (acta + decision + evidencia + docs) y push de rama.
-2. Ejecutar siguiente bloque de rollout controlado con runbook Week 10 (canary de pared mas largo + seguimiento por snapshot).
-3. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure and before each production-scope increase.
+1. Week 11 - Block 2: ejecutar canary operativo continuo (horizonte medio) con snapshots horarios y alertas de drift T3/T5.
+2. Week 11 - Block 3: definir umbrales de alerta semanales (SLO de GFLOPS/p95/overhead) y versionar policy de monitoreo.
+3. Week 11 - Block 4: cerrar acta semanal de estabilidad + decision formal (`promote|iterate`) y preparar paquete de push/PR.
+4. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure and before each production-scope increase.
