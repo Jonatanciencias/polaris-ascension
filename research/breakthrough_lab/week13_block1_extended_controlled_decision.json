@@ -1,0 +1,72 @@
+{
+  "review_id": "week13-block1-extended-controlled-2026-02-09",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "expanded_controlled_production_with_extended_snapshots_and_biweekly_comparative_report",
+  "tracks": [
+    {
+      "track": "week13_block1_extended_controlled_execution",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block1_extended_controlled_20260209_014026.json",
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block1_extended_controlled_canary_20260209_014522.json"
+      ],
+      "rationale": "Extended controlled run completed 8 snapshots with stable guardrails and no rollback."
+    },
+    {
+      "track": "week13_block1_policy_eval_extended_horizon",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block1_extended_controlled_eval_20260209_014522.json",
+        "research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json"
+      ],
+      "rationale": "Policy evaluation remains promote in extended horizon with added size 3072 in run scope."
+    },
+    {
+      "track": "week13_block1_biweekly_comparative_report",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week13_controlled_rollout/build_week13_biweekly_comparative_report.py",
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block1_biweekly_comparative_20260209_014733.json",
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block1_biweekly_comparative_20260209_014733.md"
+      ],
+      "rationale": "Biweekly comparative report confirms bounded deltas and no new guardrail regressions."
+    },
+    {
+      "track": "week13_block1_mandatory_canonical_gates",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014046.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014541.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014803.json"
+      ],
+      "rationale": "Canonical validation remained promote across pre, post, and final closure gates."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Extended controlled production and biweekly comparison are both stable and ready for next expansion cycle.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK13_BLOCK1_EXTENDED_CONTROLLED_2026-02-09.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014046.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014541.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014803.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week12_block5_weekly_runbook_decision.json"
+  ]
+}

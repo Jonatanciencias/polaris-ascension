@@ -24,6 +24,7 @@ def _evaluate(
     policy: dict[str, Any],
     *,
     min_rusticl_ratio: float,
+    required_sizes: list[int] | None,
 ) -> dict[str, Any]:
     runs = [r for r in split_report.get("runs", []) if r.get("status") == "ok"]
     clover = [r for r in runs if str(r.get("platform_selector", "")).lower() == "clover"]
@@ -119,8 +120,14 @@ def _evaluate(
         "pass": all(bool(r["pass"]) for r in clover_row_checks) and len(clover_row_checks) > 0,
     }
 
+    observed_row_keys = sorted(
+        {
+            _key(str(run["kernel"]), int(run["size"]))
+            for run in runs
+        }
+    )
     ratio_rows: list[dict[str, Any]] = []
-    for row_key in sorted(per_policy):
+    for row_key in observed_row_keys:
         c_entries = grouped.get(("clover", row_key), [])
         r_entries = grouped.get(("rusticl", row_key), [])
         if not c_entries or not r_entries:
@@ -150,6 +157,27 @@ def _evaluate(
     checks["rusticl_ratio_vs_clover"] = {
         "rows": ratio_rows,
         "pass": all(bool(r["pass"]) for r in ratio_rows) and len(ratio_rows) > 0,
+    }
+
+    required_size_failures: list[dict[str, Any]] = []
+    if required_sizes:
+        for size in sorted(set(int(s) for s in required_sizes)):
+            for kernel in ("auto_t3_controlled", "auto_t5_guarded"):
+                row_key = _key(kernel, size)
+                c_entries = grouped.get(("clover", row_key), [])
+                r_entries = grouped.get(("rusticl", row_key), [])
+                if not c_entries or not r_entries:
+                    required_size_failures.append(
+                        {
+                            "key": row_key,
+                            "clover_present": bool(c_entries),
+                            "rusticl_present": bool(r_entries),
+                        }
+                    )
+    checks["required_sizes_present_on_split"] = {
+        "required_sizes": [] if not required_sizes else [int(s) for s in required_sizes],
+        "missing": required_size_failures,
+        "pass": len(required_size_failures) == 0,
     }
 
     failed_checks = [name for name, info in checks.items() if not bool(info.get("pass"))]
@@ -202,6 +230,13 @@ def main() -> int:
         default="research/breakthrough_lab/week12_controlled_rollout",
     )
     parser.add_argument("--output-prefix", default="week12_block2_platform_split_eval")
+    parser.add_argument(
+        "--required-sizes",
+        nargs="+",
+        type=int,
+        default=None,
+        help="Sizes that must be present on both Clover and rusticl for both kernels.",
+    )
     args = parser.parse_args()
 
     split_path = Path(args.split_artifact).resolve()
@@ -211,7 +246,12 @@ def main() -> int:
 
     split_report = _read_json(split_path)
     policy = _read_json(policy_path)
-    evaluation = _evaluate(split_report, policy, min_rusticl_ratio=float(args.min_rusticl_ratio))
+    evaluation = _evaluate(
+        split_report,
+        policy,
+        min_rusticl_ratio=float(args.min_rusticl_ratio),
+        required_sizes=list(args.required_sizes) if args.required_sizes else None,
+    )
 
     payload = {
         "metadata": {

@@ -258,6 +258,34 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_eval_20260209_012745.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012804.json`
   - Key finding: expansión a `3072` mantiene estabilidad (`rollback=false`, `disable_events=0`, `t5_overhead_max=1.8956%`) y cierra en `promote`.
+- Week 12 - Block 4 (combined canary split Clover/rusticl + 3072): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK12_BLOCK4_COMBINED_CANARY_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week12_block4_combined_canary_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block4_combined_split_3072_20260209_013814.json`
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block4_combined_split_3072_eval_20260209_013824.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_013850.json`
+  - Key finding: canary combinado y evaluación formal cumplen guardrails y split-ratio con tamaños `1400/2048/3072` (ratio mínimo observado `0.9242`).
+- Week 12 - Block 5 (definitive weekly operations runbook): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK12_BLOCK5_WEEKLY_RUNBOOK_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week12_block5_weekly_runbook_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/preprod_signoff/WEEK12_WEEKLY_OPERATIONS_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK12_WEEKLY_ALERT_SLA.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK12_WEEKLY_ESCALATION_MATRIX.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014015.json`
+  - Key finding: modelo operativo semanal queda formalizado con SLA/escalamiento/rollback explícito y cierre canónico `promote`.
+- Week 13 - Block 1 (expanded controlled production + biweekly comparative): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK13_BLOCK1_EXTENDED_CONTROLLED_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week13_block1_extended_controlled_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block1_extended_controlled_canary_20260209_014522.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block1_extended_controlled_eval_20260209_014522.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block1_biweekly_comparative_20260209_014733.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014046.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014541.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014803.json`
+  - Key finding: horizonte extendido (`8 snapshots`) mantiene guardrails estables (`disable_events=0`, `rollback=false`) y comparativo quincenal sin regresión material.
 
 ## Governance Rules
 
@@ -334,7 +362,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 12 - Block 4: ejecutar canary combinado (split Clover/rusticl + tamaño 3072) con policy semanal y cierre formal de compatibilidad ampliada.
-2. Week 12 - Block 5: formalizar runbook operativo semanal definitivo (SLA de alertas/drift, matriz de escalamiento, y rollback operativo).
-3. Week 13 - Block 1: iniciar fase de producción controlada ampliada con snapshoting extendido y reporte comparativo quincenal.
-4. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure and before each production-scope increase.
+1. Week 13 - Block 2: replay semanal automatizado post-Block1 sobre `1400/2048/3072` con split Clover/rusticl y cierre formal por policy semanal.
+2. Week 13 - Block 3: revisar drift quincenal y recalibrar thresholds solo si existe evidencia estadística sostenida (sin relajar correctness/disable-events).
+3. Week 13 - Block 4: consolidar paquete operativo quincenal (dashboard comparativo + acta ejecutiva + decisión promote|iterate).
+4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.

@@ -1,0 +1,54 @@
+{
+  "review_id": "week12-block4-combined-canary-2026-02-09",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "combined_split_clover_rusticl_with_size_3072_under_same_policy",
+  "tracks": [
+    {
+      "track": "week12_block4_combined_split_execution",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block4_combined_split_3072_20260209_013814.json",
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block4_combined_split_3072_20260209_013814.md"
+      ],
+      "rationale": "Combined split run finished with promote and no failed checks."
+    },
+    {
+      "track": "week12_block4_combined_split_policy_eval",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week12_controlled_rollout/evaluate_week12_platform_split_policy.py",
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block4_combined_split_3072_eval_20260209_013824.json",
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block4_combined_split_3072_eval_20260209_013824.md"
+      ],
+      "rationale": "Policy evaluation passed for required sizes 1400/2048/3072 and ratio guardrails."
+    },
+    {
+      "track": "week12_block4_mandatory_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_013850.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_013850.md"
+      ],
+      "rationale": "Canonical gate remained promote at combined canary closure."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Combined weekly canary for split+3072 is stable and policy-compliant.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK12_BLOCK4_COMBINED_CANARY_2026-02-09.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_013850.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week12_block3_size3072_expansion_decision.json"
+  ]
+}
