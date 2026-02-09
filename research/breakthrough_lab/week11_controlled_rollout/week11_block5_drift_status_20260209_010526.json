@@ -1,0 +1,95 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-09T01:05:26.488206+00:00",
+    "block4_eval_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/week11_block4_weekly_replay_eval_20260209_010454.json"
+  },
+  "checks": {
+    "minimum_snapshots": {
+      "observed": 6,
+      "required_min": 6,
+      "pass": true
+    },
+    "correctness_error_bound": {
+      "observed_max": 0.00054931640625,
+      "required_max": 0.001,
+      "pass": true
+    },
+    "t3_fallback_bound": {
+      "observed_max": 0.0,
+      "required_max": 0.08,
+      "pass": true
+    },
+    "t5_disable_events_total_bound": {
+      "observed": 0,
+      "required_max": 0,
+      "pass": true
+    },
+    "t5_overhead_bound": {
+      "observed_max": 1.8521513250373205,
+      "required_max": 3.0,
+      "pass": true
+    },
+    "all_policy_rows_present": {
+      "missing_rows": [],
+      "pass": true
+    },
+    "per_kernel_size_slo": {
+      "rows": [
+        {
+          "key": "auto_t3_controlled:1400",
+          "observed_avg_gflops": 883.1845062745915,
+          "required_min_avg_gflops": 838.53369520755,
+          "avg_pass": true,
+          "observed_p95_time_ms": 6.149906983227993,
+          "required_max_p95_time_ms": 6.607722621,
+          "p95_pass": true,
+          "pass": true
+        },
+        {
+          "key": "auto_t3_controlled:2048",
+          "observed_avg_gflops": 773.0461698663954,
+          "required_min_avg_gflops": 734.362551143711,
+          "avg_pass": true,
+          "observed_p95_time_ms": 22.187657007149635,
+          "required_max_p95_time_ms": 23.9542948803,
+          "p95_pass": true,
+          "pass": true
+        },
+        {
+          "key": "auto_t5_guarded:1400",
+          "observed_avg_gflops": 905.8806708322197,
+          "required_min_avg_gflops": 861.45373533445,
+          "avg_pass": true,
+          "observed_p95_time_ms": 5.999281123331457,
+          "required_max_p95_time_ms": 6.47939053952,
+          "p95_pass": true,
+          "pass": true
+        },
+        {
+          "key": "auto_t5_guarded:2048",
+          "observed_avg_gflops": 777.0396099770473,
+          "required_min_avg_gflops": 738.647517126106,
+          "avg_pass": true,
+          "observed_p95_time_ms": 21.995310965818742,
+          "required_max_p95_time_ms": 23.7647097615,
+          "p95_pass": true,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    "throughput_drift_abs_bound": {
+      "observed_max_abs_percent": 1.0149750206684238,
+      "required_max_abs_percent": 3.0,
+      "pass": true
+    },
+    "p95_drift_bound": {
+      "observed_max_percent": 0.5907853711448262,
+      "required_max_percent": 8.0,
+      "pass": true
+    }
+  },
+  "failed_checks": [],
+  "decision": "promote",
+  "rationale": "Weekly replay satisfies all global guardrails, per-kernel SLO rows, and drift bounds."
+}

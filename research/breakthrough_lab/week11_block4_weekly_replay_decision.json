@@ -1,0 +1,54 @@
+{
+  "review_id": "week11-block4-weekly-replay-2026-02-09",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "weekly_replay_against_formal_slo_policy",
+  "tracks": [
+    {
+      "track": "week11_block4_weekly_replay_execution",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week11_controlled_rollout/week11_block4_weekly_replay_canary_20260209_010447.json",
+        "research/breakthrough_lab/week11_controlled_rollout/week11_block4_weekly_replay_canary_20260209_010447.md"
+      ],
+      "rationale": "Weekly replay completed 6/6 snapshots with no rollback trigger and no failed canary checks."
+    },
+    {
+      "track": "week11_block4_policy_slo_evaluation",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+        "research/breakthrough_lab/week11_controlled_rollout/week11_block4_weekly_replay_eval_20260209_010454.json",
+        "research/breakthrough_lab/week11_controlled_rollout/week11_block4_weekly_replay_eval_20260209_010454.md"
+      ],
+      "rationale": "Formal SLO evaluation passed all checks (global guardrails, per-kernel-size SLO, drift bounds)."
+    },
+    {
+      "track": "week11_block4_mandatory_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_010519.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_010519.md"
+      ],
+      "rationale": "Canonical validation gate remained promote at Block 4 closure."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Weekly replay confirms stable operation and full compliance with versioned weekly SLO policy.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK11_BLOCK4_WEEKLY_REPLAY_2026-02-09.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_010519.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week11_block3_weekly_slo_policy_decision.json"
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-09T01:05:26.488222+00:00",
+    "block2_canary_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/week11_block2_continuous_canary_20260209_005442.json",
+    "block4_canary_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/week11_block4_weekly_replay_canary_20260209_010447.json",
+    "block4_eval_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/week11_block4_weekly_replay_eval_20260209_010454.json"
+  },
+  "blocks": {
+    "block2": {
+      "decision": "promote",
+      "executed_snapshots": 6,
+      "rollback_triggered": false,
+      "failed_checks": [],
+      "correctness_max": 0.000579833984375,
+      "t3_fallback_max": 0.0,
+      "t5_overhead_max": 2.8981581238930296,
+      "t5_disable_events_total": 0
+    },
+    "block4": {
+      "decision": "promote",
+      "executed_snapshots": 6,
+      "rollback_triggered": false,
+      "failed_checks": [],
+      "correctness_max": 0.00054931640625,
+      "t3_fallback_max": 0.0,
+      "t5_overhead_max": 1.8521513250373205,
+      "t5_disable_events_total": 0
+    }
+  },
+  "comparison_rows": [
+    {
+      "key": "auto_t3_controlled:1400",
+      "block2_avg_gflops": 882.6670475868948,
+      "block4_avg_gflops": 883.1845062745915,
+      "avg_gflops_delta_percent": 0.058624448381911,
+      "block2_p95_ms": 6.118261685999944,
+      "block4_p95_ms": 6.149906983227993,
+      "p95_delta_percent": 0.5172269322912519
+    },
+    {
+      "key": "auto_t3_controlled:2048",
+      "block2_avg_gflops": 773.0132117302221,
+      "block4_avg_gflops": 773.0461698663954,
+      "avg_gflops_delta_percent": 0.004263592869200334,
+      "block2_p95_ms": 22.179902666903217,
+      "block4_p95_ms": 22.187657007149635,
+      "p95_delta_percent": 0.03496111034783291
+    },
+    {
+      "key": "auto_t5_guarded:1400",
+      "block2_avg_gflops": 906.7934056152105,
+      "block4_avg_gflops": 905.8806708322197,
+      "avg_gflops_delta_percent": -0.10065520738668902,
+      "block2_p95_ms": 5.999435684740699,
+      "block4_p95_ms": 5.999281123331457,
+      "p95_delta_percent": -0.0025762657917158993
+    },
+    {
+      "key": "auto_t5_guarded:2048",
+      "block2_avg_gflops": 777.5237022380061,
+      "block4_avg_gflops": 777.0396099770473,
+      "avg_gflops_delta_percent": -0.06226077218808025,
+      "block2_p95_ms": 22.00436089030215,
+      "block4_p95_ms": 21.995310965818742,
+      "p95_delta_percent": -0.041127867919103604
+    }
+  ],
+  "drift_status": {
+    "decision": "promote",
+    "failed_checks": [],
+    "rationale": "Weekly replay satisfies all global guardrails, per-kernel SLO rows, and drift bounds."
+  },
+  "package_decision": "promote",
+  "package_rationale": "Week 11 package keeps operational canary and policy replay in promote with healthy drift status."
+}
