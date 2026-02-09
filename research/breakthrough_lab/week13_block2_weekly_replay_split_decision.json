@@ -1,0 +1,74 @@
+{
+  "review_id": "week13-block2-weekly-replay-split-2026-02-09",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "weekly_replay_automation_plus_platform_split_post_block1",
+  "tracks": [
+    {
+      "track": "week13_block2_weekly_replay_automation",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block2_weekly_replay_20260209_015702.json",
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block2_weekly_replay_20260209_015702.md",
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block2_weekly_replay_canary_20260209_020049.json",
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block2_weekly_replay_eval_20260209_020050.json"
+      ],
+      "rationale": "Automated weekly replay completed with promote on pre/post canonical gates and policy evaluation."
+    },
+    {
+      "track": "week13_block2_platform_split_execution",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block2_platform_split_20260209_020302.json",
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block2_platform_split_20260209_020302.md"
+      ],
+      "rationale": "Split stress run Clover/rusticl completed in promote without guardrail failures."
+    },
+    {
+      "track": "week13_block2_platform_split_policy_eval",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week12_controlled_rollout/evaluate_week12_platform_split_policy.py",
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block2_platform_split_eval_20260209_020309.json",
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block2_platform_split_eval_20260209_020309.md"
+      ],
+      "rationale": "Formal split evaluation passed all checks including required sizes and min rusticl/clover ratio."
+    },
+    {
+      "track": "week13_block2_mandatory_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_015722.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_020109.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_020335.json"
+      ],
+      "rationale": "Canonical validation remained promote before, during, and at formal closure of the block."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Week 13 Block 2 meets weekly policy guardrails and platform split requirements in a stable way.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK13_BLOCK2_WEEKLY_REPLAY_SPLIT_2026-02-09.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_015722.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_020109.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_020335.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week13_block1_extended_controlled_decision.json"
+  ]
+}

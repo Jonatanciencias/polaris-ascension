@@ -286,6 +286,18 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014541.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014803.json`
   - Key finding: horizonte extendido (`8 snapshots`) mantiene guardrails estables (`disable_events=0`, `rollback=false`) y comparativo quincenal sin regresión material.
+- Week 13 - Block 2 (weekly replay post-Block1 + Clover/rusticl split): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK13_BLOCK2_WEEKLY_REPLAY_SPLIT_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week13_block2_weekly_replay_split_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block2_weekly_replay_20260209_015702.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block2_weekly_replay_eval_20260209_020050.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block2_platform_split_20260209_020302.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block2_platform_split_eval_20260209_020309.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_015722.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_020109.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_020335.json`
+  - Key finding: replay semanal y split post-Block1 cierran en `promote`, con `disable_events=0`, `max_error=0.0008697509765625` y ratio rusticl/clover mínimo `0.9227649050049238`.
 
 ## Governance Rules
 
@@ -362,7 +374,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 13 - Block 2: replay semanal automatizado post-Block1 sobre `1400/2048/3072` con split Clover/rusticl y cierre formal por policy semanal.
-2. Week 13 - Block 3: revisar drift quincenal y recalibrar thresholds solo si existe evidencia estadística sostenida (sin relajar correctness/disable-events).
-3. Week 13 - Block 4: consolidar paquete operativo quincenal (dashboard comparativo + acta ejecutiva + decisión promote|iterate).
+1. Week 13 - Block 3: revisar drift quincenal y recalibrar thresholds solo si existe evidencia estadística sostenida (sin relajar correctness/disable-events).
+2. Week 13 - Block 4: consolidar paquete operativo quincenal (dashboard comparativo + acta ejecutiva + decisión promote|iterate).
+3. Week 13 - Block 5: preparar paquete de continuidad operativa (cadencia semanal fija + ventana de auditoría mensual + matriz de deuda viva).
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
