@@ -1,0 +1,61 @@
+{
+  "review_id": "week14-block2-extended-horizon-2026-02-09",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "policy_v2_extended_horizon_with_platform_split_and_canonical_gate",
+  "tracks": [
+    {
+      "track": "week14_block2_extended_horizon_replay",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block2_extended_horizon_20260209_131849.json",
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block2_extended_horizon_canary_20260209_132519.json",
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block2_extended_horizon_eval_20260209_132519.json"
+      ],
+      "rationale": "Extended replay completed with promote across pre-validation, canary, policy evaluation, and post-validation."
+    },
+    {
+      "track": "week14_block2_platform_split_stress",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block2_platform_split_20260209_132747.json"
+      ],
+      "rationale": "Stress split completed successfully on Clover and rusticl with queue-pressure pulses and no guardrail violations."
+    },
+    {
+      "track": "week14_block2_platform_split_eval",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block2_platform_split_eval_20260209_132755.json"
+      ],
+      "rationale": "Formal split evaluation stayed within correctness, fallback, overhead, disable-events, and ratio bounds."
+    },
+    {
+      "track": "week14_block2_mandatory_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_132820.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_132820.md"
+      ],
+      "rationale": "Mandatory canonical validation gate remained promote at formal closure time."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Week14 Block2 confirms policy v2 stability under extended horizon and platform split without disabling T5 or triggering rollback.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK14_BLOCK2_EXTENDED_HORIZON_2026-02-09.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_132820.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week14_block1_policy_v2_extended_cycle_decision.json"
+  ]
+}

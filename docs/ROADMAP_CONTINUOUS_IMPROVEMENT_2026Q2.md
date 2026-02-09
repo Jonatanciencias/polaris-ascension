@@ -338,6 +338,16 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week14_controlled_rollout/week14_block1_platform_split_eval_20260209_024704.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_024728.json`
   - Key finding: el primer intento detectó spike T5 (iterate), se aplicó hardening low-overhead y el rerun cerró en `promote` con `disable_events=0`, `t5_overhead_max=1.3479%` y split ratio mínimo `0.9220`.
+- Week 14 - Block 2 (extended horizon + policy v2 threshold tune check): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK14_BLOCK2_EXTENDED_HORIZON_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week14_block2_extended_horizon_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block2_extended_horizon_20260209_131849.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block2_extended_horizon_eval_20260209_132519.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block2_platform_split_20260209_132747.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block2_platform_split_eval_20260209_132755.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_132820.json`
+  - Key finding: bajo horizonte extendido (`10 snapshots`) y split Clover/rusticl, el bloque cierra en `promote` con `disable_events=0`, `t5_overhead_max=1.4280%`, `max_abs_drift=1.3759%` y ratio rusticl/clover mínimo `0.9199`.
 
 ## Governance Rules
 
@@ -414,7 +424,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 14 - Block 2: verificar ajuste fino de thresholds v2 bajo mayor horizonte (sin relajar correctness/fallback/disable-events).
-2. Week 14 - Block 3: ejecutar primera simulación de auditoría mensual y ajustar matriz de deuda viva con hallazgos.
-3. Week 14 - Block 4: preparar paquete pre-release para pruebas reales RX590 (runbook de habilitación + checklist de plugins/proyectos base).
+1. Week 14 - Block 3: ejecutar primera simulación de auditoría mensual y ajustar matriz de deuda viva con hallazgos.
+2. Week 14 - Block 4: preparar paquete pre-release para pruebas reales RX590 (runbook de habilitación + checklist de plugins/proyectos base).
+3. Week 14 - Block 5: correr dry-run de pre-release RX590 (scope bajo) con cierre formal go/no-go y SLA de rollback activo.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
