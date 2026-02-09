@@ -1,0 +1,10 @@
+/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t2_auto_scheduler/rust_sidecar/target/release/deps/autocfg-751c322a99f5c3d5.d: /home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/lib.rs /home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/error.rs /home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/rustc.rs /home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/version.rs
+
+/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t2_auto_scheduler/rust_sidecar/target/release/deps/libautocfg-751c322a99f5c3d5.rlib: /home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/lib.rs /home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/error.rs /home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/rustc.rs /home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/version.rs
+
+/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t2_auto_scheduler/rust_sidecar/target/release/deps/libautocfg-751c322a99f5c3d5.rmeta: /home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/lib.rs /home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/error.rs /home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/rustc.rs /home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/version.rs
+
+/home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/lib.rs:
+/home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/error.rs:
+/home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/rustc.rs:
+/home/jonatanciencias/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/version.rs:
