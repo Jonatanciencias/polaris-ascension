@@ -327,6 +327,17 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/preprod_signoff/WEEK13_BLOCK5_LIVE_DEBT_MATRIX.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_022841.json`
   - Key finding: continuidad operativa formalizada en `promote` (cadencia semanal + auditoría mensual + deuda viva) con gate canónico `promote`.
+- Week 14 - Block 1 (first full biweekly cycle on policy v2): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK14_BLOCK1_POLICY_V2_EXTENDED_CYCLE_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week14_block1_policy_v2_extended_cycle_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_20260209_023353.json`
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_week14_block1_low_overhead.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_rerun_20260209_023945.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_rerun_eval_20260209_024440.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block1_platform_split_eval_20260209_024704.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_024728.json`
+  - Key finding: el primer intento detectó spike T5 (iterate), se aplicó hardening low-overhead y el rerun cerró en `promote` con `disable_events=0`, `t5_overhead_max=1.3479%` y split ratio mínimo `0.9220`.
 
 ## Governance Rules
 
@@ -403,7 +414,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 14 - Block 1: primer ciclo quincenal completo sobre policy v2 con replay/split y validación de estabilidad extendida.
-2. Week 14 - Block 2: verificar ajuste fino de thresholds v2 bajo mayor horizonte (sin relajar correctness/fallback/disable-events).
-3. Week 14 - Block 3: ejecutar primera simulación de auditoría mensual y ajustar matriz de deuda viva con hallazgos.
+1. Week 14 - Block 2: verificar ajuste fino de thresholds v2 bajo mayor horizonte (sin relajar correctness/fallback/disable-events).
+2. Week 14 - Block 3: ejecutar primera simulación de auditoría mensual y ajustar matriz de deuda viva con hallazgos.
+3. Week 14 - Block 4: preparar paquete pre-release para pruebas reales RX590 (runbook de habilitación + checklist de plugins/proyectos base).
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
