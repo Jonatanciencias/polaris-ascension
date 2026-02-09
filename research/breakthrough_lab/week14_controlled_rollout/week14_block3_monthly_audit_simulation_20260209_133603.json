@@ -1,0 +1,67 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-09T13:36:03.923128+00:00",
+    "cadence_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK13_BLOCK5_WEEKLY_CADENCE.json",
+    "monthly_audit_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK13_BLOCK5_MONTHLY_AUDIT_WINDOW.md",
+    "base_debt_matrix_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK13_BLOCK5_LIVE_DEBT_MATRIX.json",
+    "block2_decision_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week14_block2_extended_horizon_decision.json",
+    "canonical_gate_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_133556.json"
+  },
+  "artifacts": {
+    "updated_debt_matrix_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK3_LIVE_DEBT_MATRIX_V2.json"
+  },
+  "debt_transitions": [
+    {
+      "debt_id": "ops_push_authentication_pending",
+      "from_status": "open",
+      "to_status": "closed"
+    },
+    {
+      "debt_id": "policy_v2_extended_horizon_confirmation",
+      "from_status": "open",
+      "to_status": "closed"
+    },
+    {
+      "debt_id": "monthly_audit_first_dry_run",
+      "from_status": "open",
+      "to_status": "closed"
+    }
+  ],
+  "evaluation": {
+    "checks": {
+      "weekly_cadence_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "monthly_audit_template_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "block2_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "canonical_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "all_known_debts_closed": {
+        "observed_open": 0,
+        "required_open": 0,
+        "pass": true
+      },
+      "no_high_critical_open_debt": {
+        "observed": 0,
+        "required_max": 0,
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Monthly audit simulation completed with canonical gate green and debt matrix fully closed."
+  }
+}
