@@ -298,6 +298,15 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_020109.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_020335.json`
   - Key finding: replay semanal y split post-Block1 cierran en `promote`, con `disable_events=0`, `max_error=0.0008697509765625` y ratio rusticl/clover mínimo `0.9227649050049238`.
+- Week 13 - Block 3 (biweekly drift review + sustained-evidence recalibration): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK13_BLOCK3_DRIFT_RECALIBRATION_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week13_block3_drift_recalibration_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block3_drift_recalibration_20260209_021232.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/policy_week13_block3_weekly_slo_v2.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block3_recalibrated_policy_eval_20260209_021320.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_021311.json`
+  - Key finding: se aplicó endurecimiento conservador con evidencia sostenida (3 ventanas `promote`) y validación posterior en `promote` bajo policy v2.
 
 ## Governance Rules
 
@@ -374,7 +383,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 13 - Block 3: revisar drift quincenal y recalibrar thresholds solo si existe evidencia estadística sostenida (sin relajar correctness/disable-events).
-2. Week 13 - Block 4: consolidar paquete operativo quincenal (dashboard comparativo + acta ejecutiva + decisión promote|iterate).
-3. Week 13 - Block 5: preparar paquete de continuidad operativa (cadencia semanal fija + ventana de auditoría mensual + matriz de deuda viva).
+1. Week 13 - Block 4: consolidar paquete operativo quincenal (dashboard comparativo + estado de drift v2 + acta ejecutiva + decisión promote|iterate).
+2. Week 13 - Block 5: preparar paquete de continuidad operativa (cadencia semanal fija + ventana de auditoría mensual + matriz de deuda viva).
+3. Week 14 - Block 1: primer ciclo quincenal completo sobre policy v2 con replay/split y validación de estabilidad extendida.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
