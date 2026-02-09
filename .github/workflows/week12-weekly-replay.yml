@@ -1,0 +1,118 @@
+name: Week12 - Weekly Replay Automation
+
+on:
+  schedule:
+    # Monday 04:00 UTC
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      run_gpu:
+        description: "Run GPU weekly replay automation on self-hosted runner"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  weekly-policy-smoke:
+    name: Weekly Policy Smoke (CI)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-minimal.txt
+          pip install -e .
+          pip install pytest
+
+      - name: Validate weekly policy JSON + evaluators
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json")
+          payload = json.loads(path.read_text())
+          assert payload["policy_id"].startswith("week11-block3-weekly-slo-v1")
+          assert "weekly_slo" in payload
+          assert payload["weekly_slo"]["global_guardrails"]["minimum_snapshots"] >= 6
+          print("Policy weekly SLO JSON OK")
+          PY
+          python -m py_compile \
+            research/breakthrough_lab/week12_controlled_rollout/run_week12_weekly_replay_automation.py \
+            research/breakthrough_lab/week12_controlled_rollout/evaluate_week12_platform_split_policy.py \
+            research/breakthrough_lab/week11_controlled_rollout/evaluate_week11_weekly_replay.py
+
+      - name: Unified validation suite (CPU fast + driver smoke)
+        run: |
+          python scripts/run_validation_suite.py \
+            --tier cpu-fast \
+            --allow-no-tests \
+            --driver-smoke \
+            --report-dir research/breakthrough_lab/week8_validation_discipline
+
+  weekly-replay-gpu:
+    name: Weekly Replay GPU (scheduled/manual)
+    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.run_gpu == true) }}
+    runs-on: [self-hosted, linux, gpu, opencl]
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+          pip install pytest
+
+      - name: Run week12 weekly automation
+        run: |
+          python research/breakthrough_lab/week12_controlled_rollout/run_week12_weekly_replay_automation.py \
+            --mode ci \
+            --policy-path research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json \
+            --t5-policy-path research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block2_4_long_horizon.json \
+            --baseline-path research/breakthrough_lab/week11_controlled_rollout/week11_block2_continuous_canary_20260209_005442.json \
+            --sizes 1400 2048 \
+            --snapshots 6 \
+            --sessions 2 \
+            --iterations 8 \
+            --pressure-size 896 \
+            --pressure-iterations 3 \
+            --pressure-pulses-per-snapshot 3 \
+            --seed 12011 \
+            --output-dir research/breakthrough_lab/week12_controlled_rollout \
+            --output-prefix week12_block1_weekly_automation_ci
+
+      - name: Upload weekly replay artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: week12-weekly-replay
+          path: |
+            research/breakthrough_lab/week12_controlled_rollout/*.json
+            research/breakthrough_lab/week12_controlled_rollout/*.md
+            research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_*.json
+            research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_*.md
+          retention-days: 30

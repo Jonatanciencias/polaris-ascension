@@ -1,0 +1,54 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-09T01:28:04.955686+00:00",
+    "mode": "local",
+    "policy_path": "research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+    "t5_policy_path": "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block2_4_long_horizon.json",
+    "baseline_path": "research/breakthrough_lab/week11_controlled_rollout/week11_block2_continuous_canary_20260209_005442.json",
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ],
+    "snapshots": 6,
+    "seed": 12307,
+    "output_dir": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week12_controlled_rollout"
+  },
+  "steps": {
+    "pre_validation": {
+      "returncode": 0,
+      "decision": "promote",
+      "command": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline",
+      "report_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012424.json"
+    },
+    "canary_run": {
+      "returncode": 0,
+      "decision": "promote",
+      "command": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python research/breakthrough_lab/platform_compatibility/run_week10_block1_controlled_rollout.py --snapshots 6 --snapshot-interval-minutes 60.0 --sleep-between-snapshots-seconds 0 --sizes 1400 2048 3072 --kernels auto_t3_controlled auto_t5_guarded --sessions 2 --iterations 6 --pressure-size 896 --pressure-iterations 3 --pressure-pulses-per-snapshot 3 --seed 12307 --t5-policy-path research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block2_4_long_horizon.json --baseline-block6-path research/breakthrough_lab/week11_controlled_rollout/week11_block2_continuous_canary_20260209_005442.json --output-dir research/breakthrough_lab/week12_controlled_rollout --output-prefix week12_block3_size3072_pilot_canary"
+    },
+    "policy_eval": {
+      "returncode": 0,
+      "decision": "promote",
+      "command": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python research/breakthrough_lab/week11_controlled_rollout/evaluate_week11_weekly_replay.py --canary-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_canary_20260209_012745.json --policy-path research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json --output-dir research/breakthrough_lab/week12_controlled_rollout --output-prefix week12_block3_size3072_pilot_eval"
+    },
+    "post_validation": {
+      "returncode": 0,
+      "decision": "promote",
+      "command": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline",
+      "report_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012804.json"
+    }
+  },
+  "artifacts": {
+    "canary_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_canary_20260209_012745.json",
+    "canary_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_canary_20260209_012745.md",
+    "eval_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_eval_20260209_012745.json",
+    "eval_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_eval_20260209_012745.md",
+    "pre_validation_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012424.json",
+    "post_validation_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012804.json"
+  },
+  "evaluation": {
+    "decision": "promote",
+    "failed_checks": [],
+    "rationale": "Automated weekly replay completed with promote in canary, policy evaluation, and both canonical gates."
+  }
+}

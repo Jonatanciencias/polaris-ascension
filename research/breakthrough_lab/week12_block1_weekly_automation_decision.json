@@ -1,0 +1,58 @@
+{
+  "review_id": "week12-block1-weekly-automation-2026-02-09",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "scheduled_weekly_replay_automation_local_ci",
+  "tracks": [
+    {
+      "track": "week12_block1_automation_stack_local_ci",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week12_controlled_rollout/run_week12_weekly_replay_automation.py",
+        ".github/workflows/week12-weekly-replay.yml"
+      ],
+      "rationale": "Automation entrypoint and scheduled CI workflow are implemented for weekly replay operations."
+    },
+    {
+      "track": "week12_block1_automated_weekly_replay_run",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block1_weekly_automation_20260209_011907.json",
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block1_weekly_automation_canary_20260209_012142.json",
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block1_weekly_automation_eval_20260209_012142.json"
+      ],
+      "rationale": "Automated weekly replay run completed with promote in both canary and policy evaluation."
+    },
+    {
+      "track": "week12_block1_mandatory_canonical_gates",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_011926.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012201.json"
+      ],
+      "rationale": "Canonical gate passed before and after automated replay execution."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Weekly replay is automated and validated end-to-end with policy-driven decisioning and mandatory gates.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK12_BLOCK1_WEEKLY_AUTOMATION_2026-02-09.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_011926.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012201.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week11_block5_operational_package_decision.json"
+  ]
+}

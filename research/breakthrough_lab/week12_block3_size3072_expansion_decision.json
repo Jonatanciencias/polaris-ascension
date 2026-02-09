@@ -1,0 +1,57 @@
+{
+  "review_id": "week12-block3-size3072-expansion-2026-02-09",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "pilot_scope_expansion_to_size_3072_under_same_guardrails",
+  "tracks": [
+    {
+      "track": "week12_block3_size3072_pilot_execution",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_20260209_012404.json",
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_canary_20260209_012745.json"
+      ],
+      "rationale": "Expanded pilot to 3072 completed successfully with stable guardrails and no rollback events."
+    },
+    {
+      "track": "week12_block3_size3072_policy_eval",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_eval_20260209_012745.json",
+        "research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json"
+      ],
+      "rationale": "Policy evaluation remained promote while adding size 3072 into the same guarded operational profile."
+    },
+    {
+      "track": "week12_block3_mandatory_canonical_gates",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012424.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012804.json"
+      ],
+      "rationale": "Canonical validation stayed promote before and after the expanded 3072 pilot."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Scope expansion to size 3072 is validated and stable under existing operational guardrails.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK12_BLOCK3_SIZE3072_EXPANSION_2026-02-09.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012424.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012804.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week12_block2_platform_split_policy_decision.json"
+  ]
+}

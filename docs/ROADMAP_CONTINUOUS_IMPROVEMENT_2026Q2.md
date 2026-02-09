@@ -233,6 +233,31 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week11_controlled_rollout/week11_block5_drift_status_20260209_010526.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_010551.json`
   - Key finding: paquete operativo semanal consolidado en `promote`, con drift sano y deltas acotados frente al baseline de Block 2.
+- Week 12 - Block 1 (weekly replay automation local/CI): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK12_BLOCK1_WEEKLY_AUTOMATION_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week12_block1_weekly_automation_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week12_controlled_rollout/run_week12_weekly_replay_automation.py`
+    - `.github/workflows/week12-weekly-replay.yml`
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block1_weekly_automation_20260209_011907.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012201.json`
+  - Key finding: replay semanal queda automatizado para local/CI con ejecución formal `promote` y gates canónicos pre/post.
+- Week 12 - Block 2 (weekly Clover/rusticl split against formal policy): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK12_BLOCK2_PLATFORM_SPLIT_POLICY_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week12_block2_platform_split_policy_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block2_platform_split_20260209_012324.json`
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block2_platform_split_eval_20260209_012330.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012354.json`
+  - Key finding: split semanal pasa en ambos entornos con `ratio rusticl/clover min = 0.9231`, guardrails sanos y decisión `promote`.
+- Week 12 - Block 3 (pilot expansion to size 3072): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK12_BLOCK3_SIZE3072_EXPANSION_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week12_block3_size3072_expansion_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_20260209_012404.json`
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_eval_20260209_012745.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012804.json`
+  - Key finding: expansión a `3072` mantiene estabilidad (`rollback=false`, `disable_events=0`, `t5_overhead_max=1.8956%`) y cierra en `promote`.
 
 ## Governance Rules
 
@@ -309,7 +334,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 12 - Block 1: automatizar replay semanal (job programado local/CI) usando `policy_week11_block3_weekly_slo_v1.json` y publicación automática de acta corta.
-2. Week 12 - Block 2: ejecutar split semanal Clover/rusticl contra el mismo policy formal para validar portabilidad operativa sin drift extra.
-3. Week 12 - Block 3: ampliar piloto operativo a tamaño `3072` bajo mismas guardrails y cerrar recomendación de expansión de alcance.
+1. Week 12 - Block 4: ejecutar canary combinado (split Clover/rusticl + tamaño 3072) con policy semanal y cierre formal de compatibilidad ampliada.
+2. Week 12 - Block 5: formalizar runbook operativo semanal definitivo (SLA de alertas/drift, matriz de escalamiento, y rollback operativo).
+3. Week 13 - Block 1: iniciar fase de producción controlada ampliada con snapshoting extendido y reporte comparativo quincenal.
 4. Keep `scripts/run_validation_suite.py --tier canonical --driver-smoke` as required gate before each block closure and before each production-scope increase.
