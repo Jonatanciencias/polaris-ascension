@@ -1,0 +1,49 @@
+{
+  "policy_id": "t5-abft-week14-block1-low-overhead-2026-02-09",
+  "status": "candidate_week14_block1_low_overhead",
+  "inherits_from": "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block2_4_long_horizon.json",
+  "scope": {
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ],
+    "kernel_selector_mode": "auto_t5_guarded",
+    "campaign": "week14_block1_policy_v2_extended_cycle"
+  },
+  "abft_mode": {
+    "sampling_period": 12,
+    "row_samples": 6,
+    "col_samples": 6,
+    "projection_count": 2,
+    "faults_per_matrix_modelled": 2,
+    "residual_scale": 5.0,
+    "residual_margin": 0.01,
+    "residual_floor": 0.05
+  },
+  "runtime_guardrails": {
+    "disable_if_false_positive_rate_gt": 0.05,
+    "disable_if_effective_overhead_percent_gt": 3.5,
+    "disable_if_effective_overhead_percent_gt_hard": 5.0,
+    "disable_if_correctness_error_gt": 0.001,
+    "disable_if_uniform_recall_lt": 0.97,
+    "disable_if_critical_recall_lt": 0.99,
+    "require_uniform_recall_delta_vs_baseline_ge": 0.01,
+    "max_overhead_delta_vs_baseline_percent": 0.2,
+    "disable_after_consecutive_false_positive_violations": 1,
+    "disable_after_consecutive_overhead_violations": 3,
+    "stateful_hysteresis": true
+  },
+  "stress_evidence": {
+    "artifact_json": "research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_canary_20260209_023800.json",
+    "known_issue": "isolated_overhead_spike_on_size_1400_triggered_disable_and_iterate",
+    "target": "keep_t5_overhead_max_le_3_percent_and_disable_events_zero_on_extended_cycle",
+    "effective_overhead_percent_reference": 1.3788347389875628,
+    "false_positive_rate_reference": 0.0
+  },
+  "rollback_defaults": {
+    "default_policy_path": "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block2_4_long_horizon.json",
+    "fallback_mode": "auto_t5_guarded_week10_block2_4_long_horizon",
+    "auto_disable_on_guardrail_breach": true
+  }
+}
