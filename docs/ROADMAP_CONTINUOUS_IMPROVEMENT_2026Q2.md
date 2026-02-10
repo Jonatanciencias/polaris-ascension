@@ -392,6 +392,39 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_COMPATIBILITY_MATRIX.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_004747.json`
   - Key finding: handoff base queda consolidado con contratos explícitos y matriz de compatibilidad mínima para equipos de extensión.
+- Week 15 - Block 1 (expanded pilot 1400/2048/3072 with same gate/rollback): **promote / go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK15_BLOCK1_EXPANDED_PILOT_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week15_block1_expanded_pilot_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week15_controlled_rollout/week15_block1_expanded_pilot_20260210_011240.json`
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_week15_block1_expanded_sizes.json`
+    - `research/breakthrough_lab/week15_controlled_rollout/week15_block1_expanded_pilot_rerun_20260210_011756.json`
+    - `research/breakthrough_lab/week15_controlled_rollout/week15_block1_expanded_pilot_rerun_canary_20260210_011736.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_011336.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_011756.json`
+  - Key finding: el intento inicial fue `no-go` por spike T5; tras hardening específico para tamaños ampliados, el rerun cerró en `go` con `disable_events=0`.
+- Week 15 - Block 2 (first real plugin pilot via Week14 template): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK15_BLOCK2_PLUGIN_PILOT_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week15_block2_plugin_pilot_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week15_controlled_rollout/run_week15_block2_plugin_pilot.py`
+    - `research/breakthrough_lab/week15_controlled_rollout/week15_block2_plugin_pilot_rerun_20260210_012358.json`
+    - `research/breakthrough_lab/week15_controlled_rollout/week15_block2_plugin_pilot_results.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_012323.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_012358.json`
+  - Key finding: primer plugin piloto real cerrado en `promote` con `results.json` schema-compatible y guardrails T3/T5 en verde.
+- Week 15 - Block 3 (framework RC package for dependent-project adoption): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK15_BLOCK3_FRAMEWORK_RC_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week15_block3_framework_rc_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week15_controlled_rollout/build_week15_block3_framework_rc.py`
+    - `research/breakthrough_lab/week15_controlled_rollout/week15_block3_framework_rc_20260210_012522.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK15_BLOCK3_FRAMEWORK_RC_RELEASE_NOTES.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK15_BLOCK3_FRAMEWORK_RC_ADOPTION_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK15_BLOCK3_DEPENDENT_PROJECTS_ONBOARDING.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK15_BLOCK3_FRAMEWORK_RC_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_012516.json`
+  - Key finding: RC `v0.15.0-rc1` publicado con dependencias técnicas en verde (`Block1=go`, `Block2=promote`) y checklist de adopción listo.
 
 ## Governance Rules
 
@@ -468,7 +501,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 15 - Block 1: ampliar piloto RX590 a `sizes 1400/2048/3072` con mismo contrato de gate y rollback SLA.
-2. Week 15 - Block 2: ejecutar primer plugin piloto real usando `WEEK14_BLOCK6_PLUGIN_TEMPLATE.md` y cerrar acta+decision.
-3. Week 15 - Block 3: publicar paquete RC (release candidate) del framework base con checklist de adopción para proyectos dependientes.
+1. Week 16 - Block 1: ejecutar piloto de integración en un proyecto dependiente real usando `WEEK15_BLOCK3_FRAMEWORK_RC_MANIFEST.json`.
+2. Week 16 - Block 2: correr replay semanal automatizado sobre RC (`v0.15.0-rc1`) y cerrar acta comparativa de drift.
+3. Week 16 - Block 3: preparar propuesta de `v0.15.0` estable (salida de RC) con checklist de release final.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.

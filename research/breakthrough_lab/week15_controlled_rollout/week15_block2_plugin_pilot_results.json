@@ -1,0 +1,63 @@
+{
+  "$schema": "https://radeon-rx580.local/breakthrough/results.schema.json",
+  "schema_version": "1.0.0",
+  "experiment_id": "week15-block2-rx590_plugin_pilot_v1-20260210_012358",
+  "track": "t3_online_control",
+  "title": "Week15 Block2 plugin pilot baseline",
+  "status": "completed",
+  "owner": "gpu-lab",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "commit": "23357078f6607181d685a65afe88c6b80a0780e5",
+  "timestamps": {
+    "created_at": "2026-02-10T01:23:58.382840+00:00",
+    "started_at": "2026-02-10T01:23:58.382840+00:00",
+    "ended_at": "2026-02-10T01:23:58.391055+00:00"
+  },
+  "environment": {
+    "os": "linux",
+    "python": "3.12.3",
+    "opencl_platform": "Clover",
+    "opencl_device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+    "driver": "25.0.7-0ubuntu0.24.04.2"
+  },
+  "baseline_reference": {
+    "protocol_doc": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_PLUGIN_TEMPLATE.md",
+    "baseline_commit": "2335707",
+    "sizes": [
+      1400,
+      2048
+    ]
+  },
+  "parameters": {
+    "plugin_id": "rx590_plugin_pilot_v1",
+    "kernels": [
+      "auto_t3_controlled",
+      "auto_t5_guarded"
+    ],
+    "sessions": 1,
+    "iterations": 8,
+    "seed": 19021,
+    "t5_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week15_block1_expanded_sizes.json"
+  },
+  "metrics": {
+    "peak_gflops_mean": 840.1925215853773,
+    "avg_gflops_mean": 832.852592100583,
+    "p95_time_ms": 14.073176250008146,
+    "max_error": 0.000579833984375,
+    "cv_peak": 0.07343532902767047,
+    "delta_vs_baseline_percent": 0.08374879643720648,
+    "reproducibility_score": 0.0
+  },
+  "validation": {
+    "correctness_passed": true,
+    "stability_passed": true,
+    "promotion_gate_passed": true
+  },
+  "artifacts": [
+    "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week15_controlled_rollout/week15_block2_plugin_pilot_rerun_20260210_012358.json",
+    "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week15_controlled_rollout/week15_block2_plugin_pilot_rerun_20260210_012358.md",
+    "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_PLUGIN_TEMPLATE.md"
+  ],
+  "decision": "promote",
+  "notes": "Plugin pilot satisfies template contracts and performance/correctness guardrails."
+}
