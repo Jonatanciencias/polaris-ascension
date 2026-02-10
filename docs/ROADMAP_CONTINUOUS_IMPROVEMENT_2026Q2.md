@@ -357,6 +357,41 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK3_LIVE_DEBT_MATRIX_V2.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_133556.json`
   - Key finding: la auditoria mensual simulada cierra en `promote` y la deuda viva heredada queda en `open=0` (`closed=3`), tras confirmar push operativo + estabilidad de Block2 + gate canónico en verde.
+- Week 14 - Block 4 (RX590 pre-release package): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK14_BLOCK4_RX590_PRERELEASE_PACKAGE_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week14_block4_rx590_prerelease_package_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week14_controlled_rollout/build_week14_block4_prerelease_package.py`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block4_prerelease_package_20260210_002923.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK4_RX590_PRERELEASE_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK4_PLUGIN_PROJECT_BASE_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK4_RX590_PRERELEASE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_002917.json`
+  - Key finding: se publica paquete pre-release completo (runbook + checklist + manifest) con gate canónico en `promote`.
+- Week 14 - Block 5 (RX590 low-scope dry-run + go/no-go): **promote / go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK14_BLOCK5_RX590_DRY_RUN_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week14_block5_rx590_dry_run_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week14_controlled_rollout/run_week14_block5_rx590_dry_run.py`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block5_rx590_dry_run_20260210_003416.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block5_rx590_dry_run_rerun_20260210_003819.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block5_rx590_dry_run_hardened_v2_20260210_004609.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK5_GO_NO_GO_CHECKLIST.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_004249.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_004609.json`
+  - Key finding: tras tres intentos controlados, el dry-run cierra en `go` con `disable_events=0`, correctness dentro de contrato y rollback SLA verificado.
+- Week 14 - Block 6 (framework handoff consolidation for extensions/plugins): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK14_BLOCK6_FRAMEWORK_HANDOFF_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week14_block6_framework_handoff_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week14_controlled_rollout/build_week14_block6_framework_handoff.py`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block6_framework_handoff_20260210_004754.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_FRAMEWORK_HANDOFF.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_EXTENSION_CONTRACTS.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_PLUGIN_TEMPLATE.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_COMPATIBILITY_MATRIX.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_004747.json`
+  - Key finding: handoff base queda consolidado con contratos explícitos y matriz de compatibilidad mínima para equipos de extensión.
 
 ## Governance Rules
 
@@ -433,7 +468,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 14 - Block 4: preparar paquete pre-release para pruebas reales RX590 (runbook de habilitación + checklist de plugins/proyectos base).
-2. Week 14 - Block 5: correr dry-run de pre-release RX590 (scope bajo) con cierre formal go/no-go y SLA de rollback activo.
-3. Week 14 - Block 6: consolidar handoff del framework base (contratos de extension para plugins/proyectos dependientes + matriz minima de compatibilidad).
+1. Week 15 - Block 1: ampliar piloto RX590 a `sizes 1400/2048/3072` con mismo contrato de gate y rollback SLA.
+2. Week 15 - Block 2: ejecutar primer plugin piloto real usando `WEEK14_BLOCK6_PLUGIN_TEMPLATE.md` y cerrar acta+decision.
+3. Week 15 - Block 3: publicar paquete RC (release candidate) del framework base con checklist de adopción para proyectos dependientes.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.

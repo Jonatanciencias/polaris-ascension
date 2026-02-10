@@ -1,0 +1,158 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-10T00:42:18.119297+00:00",
+    "scope": "rx590_low_scope_dry_run",
+    "rollback_sla_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_ROLLBACK_SLA.md",
+    "params": {
+      "duration_minutes": 3.0,
+      "snapshot_interval_minutes": 1.0,
+      "sizes": [
+        1400,
+        2048
+      ],
+      "kernels": [
+        "auto_t3_controlled",
+        "auto_t5_guarded"
+      ],
+      "sessions": 1,
+      "iterations": 6
+    }
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_003858.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_003858.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "canary": {
+      "command": [
+        "./venv/bin/python",
+        "research/breakthrough_lab/platform_compatibility/run_week9_block6_wallclock_canary.py",
+        "--duration-minutes",
+        "3.0",
+        "--snapshot-interval-minutes",
+        "1.0",
+        "--sizes",
+        "1400",
+        "2048",
+        "--kernels",
+        "auto_t3_controlled",
+        "auto_t5_guarded",
+        "--sessions",
+        "1",
+        "--iterations",
+        "6",
+        "--pressure-size",
+        "896",
+        "--pressure-iterations",
+        "2",
+        "--pressure-pulses-per-snapshot",
+        "0",
+        "--seed",
+        "17091",
+        "--t5-policy-path",
+        "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week14_block1_low_overhead.json",
+        "--baseline-block5-path",
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block2_extended_horizon_canary_20260209_132519.json",
+        "--output-dir",
+        "research/breakthrough_lab/week14_controlled_rollout",
+        "--output-prefix",
+        "week14_block5_rx590_dry_run_hardened_canary"
+      ],
+      "returncode": 0,
+      "stdout": "Week9 block6 JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week14_controlled_rollout/week14_block5_rx590_dry_run_hardened_canary_20260210_004158.json\nWeek9 block6 MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week14_controlled_rollout/week14_block5_rx590_dry_run_hardened_canary_20260210_004158.md\nDecision: iterate\nFailed checks: ['t5_guardrails_all_runs']\nActual wall-clock minutes: 3.00\n",
+      "stderr": ""
+    },
+    "rollback_dry_run": {
+      "command": [
+        "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh",
+        "dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "Generated rollback runtime profile: results/runtime_states/week9_block5_runtime_env.sh\nGenerated rollback note: research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260210_004158.md\nDry-run only. No process-wide env was modified.\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_004218.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_004218.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    }
+  },
+  "artifacts": {
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_003858.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_004218.json",
+    "canary_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week14_controlled_rollout/week14_block5_rx590_dry_run_hardened_canary_20260210_004158.json",
+    "canary_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week14_controlled_rollout/week14_block5_rx590_dry_run_hardened_canary_20260210_004158.md",
+    "checklist_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK5_GO_NO_GO_CHECKLIST.md"
+  },
+  "summary": {
+    "pre_gate_decision": "promote",
+    "canary_decision": "iterate",
+    "canary_t5_disable_total": 1,
+    "canary_correctness_max": 0.000579833984375,
+    "post_gate_decision": "promote"
+  },
+  "evaluation": {
+    "checks": {
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "canary_returncode_zero": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "canary_promote": {
+        "observed": "iterate",
+        "required": "promote",
+        "pass": false
+      },
+      "canary_t5_disable_zero": {
+        "observed": 1,
+        "required": 0,
+        "pass": false
+      },
+      "rollback_dry_run_ok": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "rollback_sla_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      }
+    },
+    "failed_checks": [
+      "canary_promote",
+      "canary_t5_disable_zero"
+    ],
+    "decision": "no-go",
+    "rationale": "One or more dry-run gates failed; keep no-go and resolve before expansion."
+  }
+}
