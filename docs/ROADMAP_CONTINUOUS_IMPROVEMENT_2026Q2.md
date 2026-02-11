@@ -580,6 +580,24 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020812.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020832.json`
   - Key finding: paquete mensual queda publicado con cadena operativa `promote`, debt matrix sin items `high/critical` abiertos y gates canonicos pre/post en verde.
+- Week 20 - Block 1 (first full monthly cycle: replay + split + consolidation): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK20_BLOCK1_MONTHLY_FULL_CYCLE_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week20_block1_monthly_full_cycle_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week20_controlled_rollout/run_week20_block1_monthly_cycle.py`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_20260211_023053.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_dashboard_20260211_023053.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_weekly_replay_20260211_022549.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_weekly_replay_eval_20260211_022857.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_split_canary_20260211_023053.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_split_eval_20260211_023053.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK1_MONTHLY_CYCLE_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK1_MONTHLY_CYCLE_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK1_MONTHLY_CYCLE_LIVE_DEBT_MATRIX.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_022548.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_023113.json`
+  - Key finding: primer ciclo mensual completo queda estable en `promote` con `rusticl_ratio_min=0.9236`, `t5_overhead_max=1.3618`, `t5_disable_total=0` y consolidacion operativa publicada.
 
 ## Governance Rules
 
@@ -656,7 +674,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 20 - Block 1: iniciar primer ciclo mensual completo (replay + split + consolidación) con cierre formal de continuidad operativa.
-2. Week 20 - Block 2: automatizar ejecución programada del paquete mensual (runner + retención de artefactos + alertas).
-3. Week 20 - Block 3: cerrar primer informe mensual comparativo con revisión de deuda operativa y recomendaciones de plataforma.
+1. Week 20 - Block 2: automatizar ejecución programada del paquete mensual (runner + retención de artefactos + alertas).
+2. Week 20 - Block 3: cerrar primer informe mensual comparativo con revisión de deuda operativa y recomendaciones de plataforma.
+3. Week 21 - Block 1: iniciar continuidad mensual recurrente con comparación contra línea base Week20 y cierre formal por acta/decisión.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
