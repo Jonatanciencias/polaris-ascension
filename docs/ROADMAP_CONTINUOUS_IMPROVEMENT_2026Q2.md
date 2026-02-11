@@ -622,6 +622,19 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_140926.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_140946.json`
   - Key finding: cierre comparativo mensual en `promote` con cadena baseline->Block1->Block2 estable y deuda abierta solo en severidad no critica.
+- Week 21 - Block 1 (recurrent monthly continuity cycle against Week20 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK21_BLOCK1_MONTHLY_CONTINUITY_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week21_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block1_monthly_continuity_20260211_142611.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block1_monthly_continuity_weekly_replay_20260211_142109.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block1_monthly_continuity_weekly_replay_eval_20260211_142416.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block1_monthly_continuity_split_canary_20260211_142611.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block1_monthly_continuity_split_eval_20260211_142611.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK21_BLOCK1_MONTHLY_CONTINUITY_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_142109.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_142630.json`
+  - Key finding: continuidad mensual recurrente arranca estable en `promote` (`rusticl_ratio_min=0.9227`, `t5_overhead_max=1.3131`, `t5_disable_total=0`) con gates canonicos verdes.
 
 ## Governance Rules
 
@@ -698,7 +711,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 21 - Block 1: ejecutar primer ciclo de continuidad mensual recurrente (replay+split+consolidación) comparado contra baseline de Week20.
-2. Week 21 - Block 2: cerrar bridge de alertas externas (webhook/chatops) y health-check de schedule mensual.
-3. Week 21 - Block 3: emitir segundo informe mensual comparativo con decisión formal de plataforma por entorno.
+1. Week 21 - Block 2: cerrar bridge de alertas externas (webhook/chatops) y health-check de schedule mensual.
+2. Week 21 - Block 3: emitir segundo informe mensual comparativo con decisión formal de plataforma por entorno.
+3. Week 22 - Block 1: ejecutar segundo ciclo recurrente mensual con política de continuidad actualizada post Week21.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
