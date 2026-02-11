@@ -1,0 +1,65 @@
+{
+  "review_id": "week16-block3-stable-release-proposal-2026-02-10",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "v0_15_0_stable_release_proposal_from_rc_lineage",
+  "tracks": [
+    {
+      "track": "week16_block3_block1_dependency",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week16_controlled_rollout/week16_block1_dependent_integration_20260210_014453.json",
+        "research/breakthrough_lab/week16_block1_dependent_integration_decision.json"
+      ],
+      "rationale": "Dependent-project integration pilot over RC closed promote."
+    },
+    {
+      "track": "week16_block3_block2_dependency",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_rerun_20260210_015504.json",
+        "research/breakthrough_lab/week16_block2_weekly_rc_replay_decision.json"
+      ],
+      "rationale": "Weekly replay and drift evaluation over RC closed promote on strict rerun."
+    },
+    {
+      "track": "week16_block3_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015530.json"
+      ],
+      "rationale": "Canonical gate remained green at proposal generation time."
+    },
+    {
+      "track": "week16_block3_release_package_generation",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_RELEASE_NOTES.md",
+        "research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_RELEASE_CHECKLIST.md",
+        "research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_RELEASE_RUNBOOK.md",
+        "research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json"
+      ],
+      "rationale": "Stable proposal package artifacts were generated and linked to RC evidence chain."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "proposal-ready",
+  "block_rationale": "RC lineage is stable and ready for controlled transition proposal to v0.15.0.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK16_BLOCK3_STABLE_RELEASE_PROPOSAL_2026-02-10.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015530.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week16_block1_dependent_integration_decision.json",
+    "research/breakthrough_lab/week16_block2_weekly_rc_replay_decision.json"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "review_id": "week16-block2-weekly-rc-replay-2026-02-10",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "weekly_automated_replay_over_rc_with_drift_acta",
+  "tracks": [
+    {
+      "track": "week16_block2_initial_replay_attempt",
+      "decision": "iterate",
+      "evidence": [
+        "research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_20260210_015005.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014604.json"
+      ],
+      "rationale": "Initial run failed only pre_gate_promote due isolated pytest tier failure."
+    },
+    {
+      "track": "week16_block2_weekly_replay_rerun",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_rerun_20260210_015504.json",
+        "research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_rerun_automation_20260210_015103.json",
+        "research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_rerun_automation_eval_20260210_015424.json"
+      ],
+      "rationale": "Strict rerun passed replay + eval + gates with no failed checks."
+    },
+    {
+      "track": "week16_block2_drift_evaluation",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_rerun_20260210_015504.json"
+      ],
+      "rationale": "Drift metrics are within configured bounds (throughput and p95)."
+    },
+    {
+      "track": "week16_block2_mandatory_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015103.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015504.json"
+      ],
+      "rationale": "Mandatory pre/post canonical gates passed on formal rerun."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 1,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Weekly replay over RC is operationally stable and policy-compliant after strict rerun.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK16_BLOCK2_WEEKLY_RC_REPLAY_2026-02-10.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015504.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week16_block1_dependent_integration_decision.json"
+  ]
+}

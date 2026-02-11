@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-10T01:44:53.802010+00:00",
+    "rc_tag": "v0.15.0-rc1",
+    "rc_manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK15_BLOCK3_FRAMEWORK_RC_MANIFEST.json",
+    "dependent_project_dir": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/dependent_projects/rx590_rc_integration_pilot",
+    "plugin_id": "rx590_dependent_project_week16_block1",
+    "owner": "dependent-project-team",
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ]
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014330.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014330.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "plugin_pilot": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "research/breakthrough_lab/week15_controlled_rollout/run_week15_block2_plugin_pilot.py",
+        "--plugin-id",
+        "rx590_dependent_project_week16_block1",
+        "--owner",
+        "dependent-project-team",
+        "--sizes",
+        "1400",
+        "2048",
+        "3072",
+        "--sessions",
+        "1",
+        "--iterations",
+        "8",
+        "--seed",
+        "26011",
+        "--t5-policy-path",
+        "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week15_block1_expanded_sizes.json",
+        "--baseline-path",
+        "research/breakthrough_lab/week15_controlled_rollout/week15_block1_expanded_pilot_rerun_canary_20260210_011736.json",
+        "--template-path",
+        "research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_PLUGIN_TEMPLATE.md",
+        "--output-dir",
+        "research/breakthrough_lab/week16_controlled_rollout",
+        "--output-prefix",
+        "week16_block1_dependent_integration_plugin_pilot"
+      ],
+      "returncode": 0,
+      "stdout": "Week15 block2 JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block1_dependent_integration_plugin_pilot_20260210_014434.json\nWeek15 block2 MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block1_dependent_integration_plugin_pilot_20260210_014434.md\nWeek15 block2 results.json: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week15_block2_plugin_pilot_results.json\nDecision: promote\nFailed checks: []\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014453.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014453.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    }
+  },
+  "artifacts": {
+    "integration_profile_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/dependent_projects/rx590_rc_integration_pilot/week16_block1_integration_profile.json",
+    "plugin_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block1_dependent_integration_plugin_pilot_20260210_014434.json",
+    "plugin_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block1_dependent_integration_plugin_pilot_20260210_014434.md",
+    "plugin_results_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week15_block2_plugin_pilot_results.json",
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014330.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014453.json"
+  },
+  "evaluation": {
+    "checks": {
+      "rc_manifest_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "rc_manifest_status_candidate": {
+        "observed": "candidate",
+        "required": "candidate",
+        "pass": true
+      },
+      "rc_manifest_dependencies_exist": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "plugin_template_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "integration_profile_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "plugin_pilot_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "plugin_results_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Dependent project consumed RC manifest and completed integration pilot with all mandatory gates green."
+  }
+}

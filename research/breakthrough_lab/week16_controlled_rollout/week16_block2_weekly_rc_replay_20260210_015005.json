@@ -1,0 +1,224 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-10T01:50:05.856814+00:00",
+    "rc_tag": "v0.15.0-rc1",
+    "rc_manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK15_BLOCK3_FRAMEWORK_RC_MANIFEST.json",
+    "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+    "baseline_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week15_controlled_rollout/week15_block1_expanded_pilot_rerun_canary_20260210_011736.json",
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ],
+    "snapshots": 6,
+    "seed": 26111
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 1,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014604.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014604.md\nTier: canonical\nDecision: iterate\nFailed checks:\n- pytest_tier_green\n",
+      "stderr": ""
+    },
+    "replay_automation": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "research/breakthrough_lab/week12_controlled_rollout/run_week12_weekly_replay_automation.py",
+        "--mode",
+        "local",
+        "--policy-path",
+        "research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+        "--t5-policy-path",
+        "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week15_block1_expanded_sizes.json",
+        "--baseline-path",
+        "research/breakthrough_lab/week15_controlled_rollout/week15_block1_expanded_pilot_rerun_canary_20260210_011736.json",
+        "--sizes",
+        "1400",
+        "2048",
+        "3072",
+        "--snapshots",
+        "6",
+        "--snapshot-interval-minutes",
+        "60",
+        "--sessions",
+        "1",
+        "--iterations",
+        "8",
+        "--seed",
+        "26111",
+        "--validation-report-dir",
+        "research/breakthrough_lab/week8_validation_discipline",
+        "--output-dir",
+        "research/breakthrough_lab/week16_controlled_rollout",
+        "--output-prefix",
+        "week16_block2_weekly_rc_replay_automation"
+      ],
+      "returncode": 0,
+      "stdout": "Week12 block1 JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_automation_20260210_014604.json\nWeek12 block1 MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_automation_20260210_014604.md\nDecision: promote\nFailed checks: []\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015005.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015005.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "replay_cmd_pretty": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python research/breakthrough_lab/week12_controlled_rollout/run_week12_weekly_replay_automation.py --mode local --policy-path research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json --t5-policy-path research/breakthrough_lab/t5_reliability_abft/policy_hardening_week15_block1_expanded_sizes.json --baseline-path research/breakthrough_lab/week15_controlled_rollout/week15_block1_expanded_pilot_rerun_canary_20260210_011736.json --sizes 1400 2048 3072 --snapshots 6 --snapshot-interval-minutes 60 --sessions 1 --iterations 8 --seed 26111 --validation-report-dir research/breakthrough_lab/week8_validation_discipline --output-dir research/breakthrough_lab/week16_controlled_rollout --output-prefix week16_block2_weekly_rc_replay_automation"
+  },
+  "artifacts": {
+    "replay_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_automation_20260210_014604.json",
+    "replay_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_automation_20260210_014604.md",
+    "replay_eval_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_automation_eval_20260210_014926.json",
+    "replay_canary_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_automation_canary_20260210_014926.json",
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014604.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015005.json"
+  },
+  "drift": {
+    "rows": [
+      {
+        "kernel": "auto_t3_controlled",
+        "size": 1400,
+        "baseline_present": true,
+        "replay_present": true,
+        "baseline_avg_gflops": 875.4353743796433,
+        "replay_avg_gflops": 876.9457769392608,
+        "throughput_drift_percent": 0.17253158871809854,
+        "baseline_p95_ms": 6.144045874918902,
+        "replay_p95_ms": 6.139549000333015,
+        "p95_drift_percent": -0.07319077164192292
+      },
+      {
+        "kernel": "auto_t3_controlled",
+        "size": 2048,
+        "baseline_present": true,
+        "replay_present": true,
+        "baseline_avg_gflops": 742.1443951311937,
+        "replay_avg_gflops": 772.4393440936442,
+        "throughput_drift_percent": 4.082082834715073,
+        "baseline_p95_ms": 23.115088499991998,
+        "replay_p95_ms": 22.19328049992934,
+        "p95_drift_percent": -3.9879059950948355
+      },
+      {
+        "kernel": "auto_t3_controlled",
+        "size": 3072,
+        "baseline_present": true,
+        "replay_present": true,
+        "baseline_avg_gflops": 681.4819328926815,
+        "replay_avg_gflops": 705.5525560872218,
+        "throughput_drift_percent": 3.5320999769381856,
+        "baseline_p95_ms": 74.9218478750322,
+        "replay_p95_ms": 72.0477458332122,
+        "p95_drift_percent": -3.8361334154677107
+      },
+      {
+        "kernel": "auto_t5_guarded",
+        "size": 1400,
+        "baseline_present": true,
+        "replay_present": true,
+        "baseline_avg_gflops": 911.3085574240814,
+        "replay_avg_gflops": 906.1117972278436,
+        "throughput_drift_percent": -0.5702525400317855,
+        "baseline_p95_ms": 5.970426000089901,
+        "replay_p95_ms": 6.00397483337171,
+        "p95_drift_percent": 0.5619169098034781
+      },
+      {
+        "kernel": "auto_t5_guarded",
+        "size": 2048,
+        "baseline_present": true,
+        "replay_present": true,
+        "baseline_avg_gflops": 744.7175335449936,
+        "replay_avg_gflops": 774.7230728833928,
+        "throughput_drift_percent": 4.029116810982989,
+        "baseline_p95_ms": 22.8801727500354,
+        "replay_p95_ms": 21.991385833492433,
+        "p95_drift_percent": -3.8845288724561335
+      },
+      {
+        "kernel": "auto_t5_guarded",
+        "size": 3072,
+        "baseline_present": true,
+        "replay_present": true,
+        "baseline_avg_gflops": 774.7959407350884,
+        "replay_avg_gflops": 803.5467435720293,
+        "throughput_drift_percent": 3.7107580622665073,
+        "baseline_p95_ms": 74.72344324997948,
+        "replay_p95_ms": 71.96705516692721,
+        "p95_drift_percent": -3.6887862271430176
+      }
+    ],
+    "max_abs_throughput_drift_percent": 4.082082834715073,
+    "max_positive_p95_drift_percent": 0.5619169098034781
+  },
+  "evaluation": {
+    "checks": {
+      "rc_manifest_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "rc_tag_is_rc": {
+        "observed": "v0.15.0-rc1",
+        "required_prefix": "v0.15.0-rc",
+        "pass": true
+      },
+      "automation_replay_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "weekly_eval_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "drift_rows_present": {
+        "observed": 6,
+        "required_min": 1,
+        "pass": true
+      },
+      "throughput_drift_bound": {
+        "observed_max_abs_percent": 4.082082834715073,
+        "required_max_abs_percent": 15.0,
+        "pass": true
+      },
+      "p95_drift_bound": {
+        "observed_max_percent": 0.5619169098034781,
+        "required_max_percent": 20.0,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "iterate",
+        "required": "promote",
+        "pass": false
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      }
+    },
+    "failed_checks": [
+      "pre_gate_promote"
+    ],
+    "decision": "iterate",
+    "rationale": "Weekly replay over RC has unresolved drift or gate failures."
+  }
+}

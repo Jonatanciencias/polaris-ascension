@@ -425,6 +425,40 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/preprod_signoff/WEEK15_BLOCK3_FRAMEWORK_RC_MANIFEST.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_012516.json`
   - Key finding: RC `v0.15.0-rc1` publicado con dependencias técnicas en verde (`Block1=go`, `Block2=promote`) y checklist de adopción listo.
+- Week 16 - Block 1 (dependent-project integration pilot using RC manifest): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK16_BLOCK1_DEPENDENT_INTEGRATION_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week16_block1_dependent_integration_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week16_controlled_rollout/run_week16_block1_dependent_integration.py`
+    - `research/breakthrough_lab/dependent_projects/rx590_rc_integration_pilot/week16_block1_integration_profile.json`
+    - `research/breakthrough_lab/week16_controlled_rollout/week16_block1_dependent_integration_20260210_014453.json`
+    - `research/breakthrough_lab/week16_controlled_rollout/week16_block1_dependent_integration_plugin_pilot_20260210_014434.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014330.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014453.json`
+  - Key finding: el proyecto dependiente consume `v0.15.0-rc1` y cierra en `promote` con gates pre/post en verde.
+- Week 16 - Block 2 (weekly automated replay over RC + drift acta): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK16_BLOCK2_WEEKLY_RC_REPLAY_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week16_block2_weekly_rc_replay_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week16_controlled_rollout/run_week16_block2_weekly_rc_replay.py`
+    - `research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_20260210_015005.json`
+    - `research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_rerun_20260210_015504.json`
+    - `research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_rerun_automation_eval_20260210_015424.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015103.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015504.json`
+  - Key finding: intento inicial quedó `iterate` por fallo aislado de pre-gate; rerun estricto cerró `promote` con drift contenido (`thr max abs=4.4509%`, `p95 max=0.6219%`).
+- Week 16 - Block 3 (stable v0.15.0 release proposal + final checklist): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK16_BLOCK3_STABLE_RELEASE_PROPOSAL_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week16_block3_stable_release_proposal_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week16_controlled_rollout/build_week16_block3_stable_release_proposal.py`
+    - `research/breakthrough_lab/week16_controlled_rollout/week16_block3_stable_release_proposal_20260210_015530.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_RELEASE_NOTES.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_RELEASE_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_RELEASE_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015530.json`
+  - Key finding: la propuesta estable `v0.15.0` queda lista, trazada al RC y a evidencia semanal de integración + drift.
 
 ## Governance Rules
 
@@ -501,7 +535,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 16 - Block 1: ejecutar piloto de integración en un proyecto dependiente real usando `WEEK15_BLOCK3_FRAMEWORK_RC_MANIFEST.json`.
-2. Week 16 - Block 2: correr replay semanal automatizado sobre RC (`v0.15.0-rc1`) y cerrar acta comparativa de drift.
-3. Week 16 - Block 3: preparar propuesta de `v0.15.0` estable (salida de RC) con checklist de release final.
+1. Week 17 - Block 1: ejecutar despliegue controlado inicial de `v0.15.0` con snapshots extendidos y seguimiento de drift semanal.
+2. Week 17 - Block 2: validar segundo piloto de proyecto/plugin dependiente contra `WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json`.
+3. Week 17 - Block 3: hardening de estabilidad del gate canónico (cerrar flakiness intermitente en `pytest_tier_green`) y consolidar SLA operativo.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
