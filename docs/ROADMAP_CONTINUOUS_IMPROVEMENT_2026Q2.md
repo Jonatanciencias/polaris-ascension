@@ -635,6 +635,32 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_142109.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_142630.json`
   - Key finding: continuidad mensual recurrente arranca estable en `promote` (`rusticl_ratio_min=0.9227`, `t5_overhead_max=1.3131`, `t5_disable_total=0`) con gates canonicos verdes.
+- Week 21 - Block 2 (external alert bridge + monthly scheduler health-check): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK21_BLOCK2_ALERT_BRIDGE_HEALTHCHECK_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week21_block2_alert_bridge_healthcheck_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week21_controlled_rollout/run_week21_block2_alert_bridge_healthcheck.py`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block2_alert_bridge_healthcheck_20260211_143550.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block2_alert_bridge_healthcheck_bridge_payload_20260211_143550.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block2_alert_bridge_healthcheck_dispatch_20260211_143550.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block2_alert_bridge_healthcheck_scheduler_health_20260211_143550.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block2_alert_bridge_healthcheck_operational_debt_20260211_143550.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_143550.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_143609.json`
+  - Key finding: bridge de alertas queda operacional en `dry_run` trazable, scheduler mensual sano y gates canonicos pre/post en `promote`.
+- Week 21 - Block 3 (second monthly comparative + formal platform policy): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK21_BLOCK3_SECOND_MONTHLY_COMPARATIVE_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week21_block3_second_monthly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week21_controlled_rollout/run_week21_block3_second_monthly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block3_second_monthly_comparative_20260211_143945.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block3_second_monthly_dashboard_20260211_143945.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK21_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK21_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK21_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_143945.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_144004.json`
+  - Key finding: segundo comparativo mensual cierra en `promote` y formaliza política `dual_go_clover_rusticl` para production/staging/development.
 
 ## Governance Rules
 
@@ -711,7 +737,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 21 - Block 2: cerrar bridge de alertas externas (webhook/chatops) y health-check de schedule mensual.
-2. Week 21 - Block 3: emitir segundo informe mensual comparativo con decisión formal de plataforma por entorno.
-3. Week 22 - Block 1: ejecutar segundo ciclo recurrente mensual con política de continuidad actualizada post Week21.
+1. Week 22 - Block 1: ejecutar segundo ciclo recurrente mensual con política de continuidad actualizada post Week21.
+2. Week 22 - Block 2: ejecutar cutover controlado de alert bridge (de `dry_run` a webhook real) con rollback de canal.
+3. Week 22 - Block 3: validar política de plataforma dual con nuevo comparativo mensual y decisión de estabilidad.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.

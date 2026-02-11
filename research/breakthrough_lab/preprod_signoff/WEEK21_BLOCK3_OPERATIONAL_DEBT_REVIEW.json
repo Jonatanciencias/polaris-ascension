@@ -1,0 +1,86 @@
+{
+  "review_id": "week21-block3-operational-debt-review-v1",
+  "timestamp_utc": "2026-02-11T14:39:25.774869+00:00",
+  "source_matrices": [
+    "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK3_OPERATIONAL_DEBT_REVIEW.json",
+    "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK21_BLOCK1_MONTHLY_CONTINUITY_LIVE_DEBT_MATRIX.json",
+    "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week21_controlled_rollout/week21_block2_alert_bridge_healthcheck_operational_debt_20260211_143550.json"
+  ],
+  "summary": {
+    "matrices_loaded": 3,
+    "open_total": 7,
+    "high_or_critical_open_total": 0
+  },
+  "debts": [
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_dispatch_health",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Continuar monitoreo de fiabilidad del trigger schedule mensual en CI.",
+      "mitigation": "Agregar verificacion automatica del ultimo run schedule + alerta de ausencia.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week20_block2_external_alert_bridge",
+      "area": "operations",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-observability",
+      "description": "Conectar alert summary de Block2 con canal externo (webhook/chatops).",
+      "mitigation": "Publicar adaptador minimo de webhook para eventos critical/high.",
+      "target_window": "week21_block1"
+    },
+    {
+      "debt_id": "week21_block2_alert_bridge_execution",
+      "area": "operations",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-observability",
+      "description": "Implementar bridge de alertas externas (webhook/chatops) definido en Week20.",
+      "mitigation": "Cerrar integraci\u00f3n m\u00ednima de webhook con umbrales critical/high.",
+      "target_window": "week21_block2"
+    },
+    {
+      "debt_id": "week21_block3_platform_recommendation_refresh",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Actualizar recomendaci\u00f3n de plataforma por entorno con nuevo comparativo mensual.",
+      "mitigation": "Emitir reporte Week21 Block3 con decisi\u00f3n expl\u00edcita por entorno.",
+      "target_window": "week21_block3"
+    },
+    {
+      "debt_id": "week21_block2_webhook_live_cutover",
+      "area": "operations",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-observability",
+      "description": "Completar cutover de bridge de alertas de dry-run a endpoint real.",
+      "mitigation": "Configurar `WEEKLY_ALERT_WEBHOOK_URL` en entorno de despliegue controlado.",
+      "target_window": "week22_block1"
+    }
+  ]
+}
