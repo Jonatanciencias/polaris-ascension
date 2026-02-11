@@ -518,6 +518,29 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_013141.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_013200.json`
   - Key finding: paquete operativo estable `v0.15.0` queda listo para adopcion dependiente; la comparativa mejora drift frente a Week16 (`thr -3.8444 pts`, `p95 -0.2978 pts`) y gate canonico pre/post permanece en `promote`.
+- Week 18 - Block 2 (maintenance canary split Clover/rusticl on stable baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK18_BLOCK2_MAINTENANCE_SPLIT_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week18_block2_maintenance_split_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week18_controlled_rollout/run_week18_block2_maintenance_split.py`
+    - `research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_20260211_014255.json`
+    - `research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_canary_20260211_014235.json`
+    - `research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_eval_20260211_014235.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014059.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014255.json`
+  - Key finding: canary split estable pasa en `promote` con `rusticl_ratio_min=0.9181`, `t5_disable_total=0` y guardrails T5 dentro de limites.
+- Week 18 - Block 3 (final stable release checklist + GO recommendation): **promote / go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK18_BLOCK3_STABLE_RELEASE_RECOMMENDATION_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week18_block3_stable_release_recommendation_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week18_controlled_rollout/build_week18_block3_stable_release_recommendation.py`
+    - `research/breakthrough_lab/week18_controlled_rollout/week18_block3_stable_release_recommendation_20260211_014419.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK3_FINAL_RELEASE_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK3_STABLE_RELEASE_RECOMMENDATION.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK3_GO_NO_GO_DECISION.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014400.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014419.json`
+  - Key finding: checklist final queda en verde completo y se emite recomendacion operativa `GO` para adopcion controlada de `v0.15.0`.
 
 ## Governance Rules
 
@@ -594,7 +617,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 18 - Block 2: correr canary de mantenimiento (split Clover/rusticl + baseline estable) para cerrar transición a operación semanal.
-2. Week 18 - Block 3: formalizar checklist final de release estable y publicar recomendación GO de adopción.
-3. Week 19 - Block 1: iniciar ciclo operativo de mantenimiento (replay semanal automatizado + drift quincenal) sobre `v0.15.0`.
+1. Week 19 - Block 1: iniciar ciclo operativo de mantenimiento (replay semanal automatizado + split Clover/rusticl) sobre `v0.15.0`.
+2. Week 19 - Block 2: ejecutar drift quincenal y mantener recalibración conservadora de thresholds solo con evidencia sostenida.
+3. Week 19 - Block 3: publicar paquete operativo de continuidad mensual (dashboard + runbook + estado de deuda operativa).
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.

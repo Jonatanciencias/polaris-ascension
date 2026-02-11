@@ -1,0 +1,201 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-11T01:42:55.498689+00:00",
+    "stable_tag": "v0.15.0",
+    "stable_manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json",
+    "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+    "t5_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json",
+    "baseline_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_canary_20260211_004858.json",
+    "seeds": [
+      181,
+      313
+    ],
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ],
+    "kernels": [
+      "auto_t3_controlled",
+      "auto_t5_guarded"
+    ],
+    "min_rusticl_ratio": 0.85
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014059.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014059.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "canary": {
+      "command": [
+        "./venv/bin/python",
+        "research/breakthrough_lab/platform_compatibility/run_week9_block4_stress_split.py",
+        "--seeds",
+        "181",
+        "313",
+        "--sizes",
+        "1400",
+        "2048",
+        "3072",
+        "--kernels",
+        "auto_t3_controlled",
+        "auto_t5_guarded",
+        "--sessions",
+        "1",
+        "--iterations",
+        "8",
+        "--pressure-size",
+        "896",
+        "--pressure-iterations",
+        "2",
+        "--pressure-pulses-per-seed",
+        "2",
+        "--t5-policy-path",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json",
+        "--baseline-block3-path",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_canary_20260211_004858.json",
+        "--output-dir",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout",
+        "--output-prefix",
+        "week18_block2_maintenance_split_canary"
+      ],
+      "returncode": 0,
+      "stdout": "Week9 block4 JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_canary_20260211_014235.json\nWeek9 block4 MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_canary_20260211_014235.md\nDecision: promote\nFailed checks: []\n",
+      "stderr": ""
+    },
+    "split_eval": {
+      "command": [
+        "./venv/bin/python",
+        "research/breakthrough_lab/week12_controlled_rollout/evaluate_week12_platform_split_policy.py",
+        "--split-artifact",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_canary_20260211_014235.json",
+        "--policy-path",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+        "--min-rusticl-ratio",
+        "0.85",
+        "--required-sizes",
+        "1400",
+        "2048",
+        "3072",
+        "--output-dir",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout",
+        "--output-prefix",
+        "week18_block2_maintenance_split_eval"
+      ],
+      "returncode": 0,
+      "stdout": "Week12 block2 eval JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_eval_20260211_014235.json\nWeek12 block2 eval MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_eval_20260211_014235.md\nDecision: promote\nFailed checks: []\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014255.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014255.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "canary_cmd_pretty": "./venv/bin/python research/breakthrough_lab/platform_compatibility/run_week9_block4_stress_split.py --seeds 181 313 --sizes 1400 2048 3072 --kernels auto_t3_controlled auto_t5_guarded --sessions 1 --iterations 8 --pressure-size 896 --pressure-iterations 2 --pressure-pulses-per-seed 2 --t5-policy-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json --baseline-block3-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_canary_20260211_004858.json --output-dir /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout --output-prefix week18_block2_maintenance_split_canary",
+    "split_eval_cmd_pretty": "./venv/bin/python research/breakthrough_lab/week12_controlled_rollout/evaluate_week12_platform_split_policy.py --split-artifact /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_canary_20260211_014235.json --policy-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json --min-rusticl-ratio 0.85 --required-sizes 1400 2048 3072 --output-dir /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout --output-prefix week18_block2_maintenance_split_eval"
+  },
+  "artifacts": {
+    "canary_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_canary_20260211_014235.json",
+    "canary_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_canary_20260211_014235.md",
+    "split_eval_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_eval_20260211_014235.json",
+    "split_eval_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_eval_20260211_014235.md",
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014059.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014255.json"
+  },
+  "split_metrics": {
+    "rusticl_ratio_min": 0.9181158927385756,
+    "canary_t5_overhead_max": 1.4022657107309793,
+    "canary_t5_disable_total": 0
+  },
+  "evaluation": {
+    "checks": {
+      "stable_manifest_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "stable_tag_v0_15_0": {
+        "observed": "v0.15.0",
+        "required": "v0.15.0",
+        "pass": true
+      },
+      "canary_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "canary_split_present": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "canary_t5_guardrails": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "canary_no_regression_vs_baseline": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "split_eval_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "split_required_sizes_present": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "split_ratio_meets_floor": {
+        "observed_min": 0.9181158927385756,
+        "required_min": 0.85,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "pre_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "post_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Stable split maintenance canary passed policy, guardrails, and mandatory canonical gates."
+  }
+}
