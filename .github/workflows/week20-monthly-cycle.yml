@@ -1,0 +1,117 @@
+name: Week20 - Monthly Cycle Automation
+
+on:
+  schedule:
+    # First day of month at 04:00 UTC
+    - cron: "0 4 1 * *"
+  workflow_dispatch:
+    inputs:
+      run_gpu:
+        description: "Run monthly cycle on self-hosted GPU runner"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  monthly-policy-smoke:
+    name: Monthly Policy Smoke (CI)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-minimal.txt
+          pip install -e .
+          pip install pytest
+
+      - name: Validate monthly automation scripts
+        run: |
+          python -m py_compile \
+            research/breakthrough_lab/week20_controlled_rollout/run_week20_block1_monthly_cycle.py \
+            research/breakthrough_lab/week20_controlled_rollout/run_week20_block2_monthly_scheduler_automation.py \
+            research/breakthrough_lab/week20_controlled_rollout/run_week20_block3_monthly_comparative_report.py
+
+      - name: Unified validation suite (CPU fast + driver smoke)
+        run: |
+          python scripts/run_validation_suite.py \
+            --tier cpu-fast \
+            --allow-no-tests \
+            --driver-smoke \
+            --report-dir research/breakthrough_lab/week8_validation_discipline
+
+  monthly-cycle-gpu:
+    name: Monthly Cycle GPU (scheduled/manual)
+    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.run_gpu == true) }}
+    runs-on: [self-hosted, linux, gpu, opencl]
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+          pip install pytest
+
+      - name: Run Week20 Block2 scheduler automation
+        run: |
+          python research/breakthrough_lab/week20_controlled_rollout/run_week20_block2_monthly_scheduler_automation.py \
+            --mode ci \
+            --workflow-path .github/workflows/week20-monthly-cycle.yml \
+            --artifact-retention-days 45 \
+            --report-dir research/breakthrough_lab/week8_validation_discipline \
+            --output-dir research/breakthrough_lab/week20_controlled_rollout \
+            --output-prefix week20_block2_monthly_scheduler_automation_ci
+
+      - name: Alert summary gate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path("research/breakthrough_lab/week20_controlled_rollout")
+          alerts = sorted(root.glob("week20_block2_monthly_scheduler_automation_ci_alerts_*.json"))
+          assert alerts, "No alert artifact found"
+          payload = json.loads(alerts[-1].read_text())
+          decision = payload.get("summary", {}).get("decision")
+          if decision != "promote":
+            raise SystemExit(f"Monthly scheduler alerts decision is {decision}, expected promote")
+          print(f"Alert summary decision: {decision}")
+          PY
+
+      - name: Upload monthly cycle artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: week20-monthly-cycle
+          path: |
+            research/breakthrough_lab/week20_controlled_rollout/*.json
+            research/breakthrough_lab/week20_controlled_rollout/*.md
+            research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK1_MONTHLY_CYCLE_*.*
+            research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK3_OPERATIONAL_DEBT_REVIEW.json
+            research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_*.json
+            research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_*.md
+          retention-days: 45

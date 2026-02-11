@@ -3,7 +3,7 @@
 - Cadence: mensual, ventana operativa de continuidad.
 - Scope: replay semanal automatizado + split Clover/rusticl + consolidacion formal.
 - Active policy: `/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json`
-- Dashboard reference: `/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_dashboard_20260211_023053.json`
+- Dashboard reference: `/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_dashboard_20260211_140718.json`
 
 ## Mandatory Flow
 

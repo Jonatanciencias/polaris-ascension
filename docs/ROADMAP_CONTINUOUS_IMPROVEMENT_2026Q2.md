@@ -598,6 +598,30 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_022548.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_023113.json`
   - Key finding: primer ciclo mensual completo queda estable en `promote` con `rusticl_ratio_min=0.9236`, `t5_overhead_max=1.3618`, `t5_disable_total=0` y consolidacion operativa publicada.
+- Week 20 - Block 2 (scheduled monthly automation with artifact retention + alerting): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK20_BLOCK2_MONTHLY_SCHEDULER_AUTOMATION_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week20_block2_monthly_scheduler_automation_decision.json`
+  - Evidence:
+    - `.github/workflows/week20-monthly-cycle.yml`
+    - `research/breakthrough_lab/week20_controlled_rollout/run_week20_block2_monthly_scheduler_automation.py`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_20260211_140738.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_alerts_20260211_140738.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_scheduler_spec_20260211_140738.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_operational_debt_20260211_140738.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_140157.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_140757.json`
+  - Key finding: automatizacion mensual queda cerrada con `cycle_decision=promote`, `alerts_total=0`, `retention-days=45` y gates canonicos pre/post en verde.
+- Week 20 - Block 3 (monthly comparative report + operational debt review): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK20_BLOCK3_MONTHLY_COMPARATIVE_AND_DEBT_REVIEW_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week20_block3_monthly_comparative_report_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week20_controlled_rollout/run_week20_block3_monthly_comparative_report.py`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block3_monthly_comparative_report_20260211_140926.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block3_monthly_comparative_dashboard_20260211_140926.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_140926.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_140946.json`
+  - Key finding: cierre comparativo mensual en `promote` con cadena baseline->Block1->Block2 estable y deuda abierta solo en severidad no critica.
 
 ## Governance Rules
 
@@ -674,7 +698,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 20 - Block 2: automatizar ejecución programada del paquete mensual (runner + retención de artefactos + alertas).
-2. Week 20 - Block 3: cerrar primer informe mensual comparativo con revisión de deuda operativa y recomendaciones de plataforma.
-3. Week 21 - Block 1: iniciar continuidad mensual recurrente con comparación contra línea base Week20 y cierre formal por acta/decisión.
+1. Week 21 - Block 1: ejecutar primer ciclo de continuidad mensual recurrente (replay+split+consolidación) comparado contra baseline de Week20.
+2. Week 21 - Block 2: cerrar bridge de alertas externas (webhook/chatops) y health-check de schedule mensual.
+3. Week 21 - Block 3: emitir segundo informe mensual comparativo con decisión formal de plataforma por entorno.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.

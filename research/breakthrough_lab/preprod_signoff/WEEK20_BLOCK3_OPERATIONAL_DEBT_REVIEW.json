@@ -1,0 +1,55 @@
+{
+  "review_id": "week20-block3-operational-debt-review-v1",
+  "timestamp_utc": "2026-02-11T14:09:07.203876+00:00",
+  "source_matrices": [
+    "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK1_MONTHLY_CYCLE_LIVE_DEBT_MATRIX.json",
+    "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_operational_debt_20260211_140738.json"
+  ],
+  "summary": {
+    "matrices_loaded": 2,
+    "open_total": 4,
+    "high_or_critical_open_total": 0
+  },
+  "debts": [
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_dispatch_health",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Continuar monitoreo de fiabilidad del trigger schedule mensual en CI.",
+      "mitigation": "Agregar verificacion automatica del ultimo run schedule + alerta de ausencia.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week20_block2_external_alert_bridge",
+      "area": "operations",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-observability",
+      "description": "Conectar alert summary de Block2 con canal externo (webhook/chatops).",
+      "mitigation": "Publicar adaptador minimo de webhook para eventos critical/high.",
+      "target_window": "week21_block1"
+    }
+  ]
+}
