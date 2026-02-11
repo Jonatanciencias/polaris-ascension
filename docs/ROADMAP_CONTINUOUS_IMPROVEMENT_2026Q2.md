@@ -554,6 +554,32 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_015114.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_015638.json`
   - Key finding: mantenimiento semanal y split por plataforma permanecen estables sobre `v0.15.0` (`rusticl_ratio_min=0.9222`, `t5_disable_total=0`, `t5_overhead_max=1.3069`) con gates canonicos pre/post en `promote`.
+- Week 19 - Block 2 (biweekly drift review + conservative recalibration): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK19_BLOCK2_BIWEEKLY_DRIFT_RECALIBRATION_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week19_block2_biweekly_drift_recalibration_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week19_controlled_rollout/run_week19_block2_biweekly_drift_recalibration.py`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block2_biweekly_drift_recalibration_package_20260211_020443.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block2_biweekly_drift_recalibration_20260211_020423.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block2_recalibrated_policy_eval_20260211_020423.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020423.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020443.json`
+  - Key finding: drift quincenal queda acotado (`thr_abs_max=0.6906`, `p95_max=0.3241`) y la policy conservadora `v3` se recalibra en `applied` sin romper evaluación ni gates.
+- Week 19 - Block 3 (monthly continuity operational package): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK19_BLOCK3_MONTHLY_CONTINUITY_PACKAGE_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week19_block3_monthly_continuity_package_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week19_controlled_rollout/build_week19_block3_monthly_continuity_package.py`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block3_monthly_continuity_package_20260211_020812.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block3_monthly_continuity_dashboard_20260211_020812.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK19_BLOCK3_MONTHLY_CONTINUITY_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK19_BLOCK3_MONTHLY_CONTINUITY_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK19_BLOCK3_MONTHLY_LIVE_DEBT_MATRIX.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK19_BLOCK3_MONTHLY_CONTINUITY_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020812.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020832.json`
+  - Key finding: paquete mensual queda publicado con cadena operativa `promote`, debt matrix sin items `high/critical` abiertos y gates canonicos pre/post en verde.
 
 ## Governance Rules
 
@@ -630,7 +656,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 19 - Block 2: ejecutar drift quincenal y mantener recalibración conservadora de thresholds solo con evidencia sostenida.
-2. Week 19 - Block 3: publicar paquete operativo de continuidad mensual (dashboard + runbook + estado de deuda operativa).
-3. Week 20 - Block 1: iniciar primer ciclo mensual completo (replay + split + consolidación) con cierre formal de continuidad operativa.
+1. Week 20 - Block 1: iniciar primer ciclo mensual completo (replay + split + consolidación) con cierre formal de continuidad operativa.
+2. Week 20 - Block 2: automatizar ejecución programada del paquete mensual (runner + retención de artefactos + alertas).
+3. Week 20 - Block 3: cerrar primer informe mensual comparativo con revisión de deuda operativa y recomendaciones de plataforma.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.

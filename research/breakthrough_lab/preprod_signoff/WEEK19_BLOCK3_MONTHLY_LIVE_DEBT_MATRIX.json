@@ -1,0 +1,31 @@
+{
+  "matrix_id": "week19-block3-monthly-continuity-debt-v1-2026-02-11",
+  "timestamp_utc": "2026-02-11T02:08:12.562507+00:00",
+  "debts": [
+    {
+      "debt_id": "monthly_continuity_ci_schedule_hardening",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Consolidate monthly continuity runner as scheduled CI workflow.",
+      "mitigation": "Add scheduled workflow with artifact retention and failure escalation.",
+      "target_window": "week20_block1"
+    },
+    {
+      "debt_id": "external_alerting_bridge",
+      "area": "operations",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-observability",
+      "description": "Connect continuity failure events to external alerting channel.",
+      "mitigation": "Bridge canonical/split failures to alert endpoint (mail/webhook/chatops).",
+      "target_window": "week20_block2"
+    }
+  ],
+  "summary": {
+    "total": 2,
+    "open": 2,
+    "high_or_critical_open": 0
+  }
+}
