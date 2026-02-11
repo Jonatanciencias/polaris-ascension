@@ -1,0 +1,65 @@
+{
+  "review_id": "week17-block1-stable-rollout-2026-02-11",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "initial_controlled_rollout_v0_15_0_with_extended_snapshots",
+  "tracks": [
+    {
+      "track": "week17_block1_initial_rollout_attempt",
+      "decision": "iterate",
+      "operational_state": "no-go",
+      "evidence": [
+        "research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_20260211_003512.json",
+        "research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_canary_20260211_003452.json"
+      ],
+      "rationale": "Initial attempt failed canary promote due T5 overhead guardrail breach."
+    },
+    {
+      "track": "week17_block1_t5_low_overhead_hardening",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json",
+        "research/breakthrough_lab/week17_controlled_rollout/week17_block1_policy_smoke_20260211_003831.json"
+      ],
+      "rationale": "Policy hardening reduced T5 overhead while preserving correctness in smoke validation."
+    },
+    {
+      "track": "week17_block1_extended_rollout_rerun",
+      "decision": "promote",
+      "operational_state": "go",
+      "evidence": [
+        "research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_20260211_004918.json",
+        "research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_canary_20260211_004858.json"
+      ],
+      "rationale": "Rerun reached 10 snapshots and closed in go with promote canary."
+    },
+    {
+      "track": "week17_block1_mandatory_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_003858.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_004918.json"
+      ],
+      "rationale": "Pre/post canonical gates are green for the final rerun closure."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 1,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "go",
+  "block_rationale": "Stable v0.15.0 rollout is viable under controlled scope after targeted T5 overhead hardening.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK17_BLOCK1_STABLE_ROLLOUT_2026-02-11.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_004918.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week16_block3_stable_release_proposal_decision.json"
+  ]
+}

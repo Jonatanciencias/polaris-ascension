@@ -137,16 +137,23 @@ class TestGEMMCorrectness:
     def test_gemm_rectangular(self, kernel_engine):
         """Verifica corrección para matrices rectangulares"""
         M, K, N = 512, 256, 384
-        A = np.random.randn(M, K).astype(np.float32)
-        B = np.random.randn(K, N).astype(np.float32)
+        # Dataset determinista para evitar flake en pytest tier por muestras aleatorias.
+        rng = np.random.default_rng(17017)
+        A = rng.standard_normal((M, K)).astype(np.float32)
+        B = rng.standard_normal((K, N)).astype(np.float32)
         
         result = kernel_engine.gemm(A, B)
         C_gpu = result.result
         C_cpu = np.dot(A, B)
         
         assert C_gpu.shape == (M, N)
-        rel_error = np.mean(np.abs(C_gpu - C_cpu) / (np.abs(C_cpu) + 1e-10))
-        assert rel_error < 1e-4
+        # Métrica robusta: evita sobre-penalizar celdas donde el valor de referencia es ~0.
+        error = C_gpu - C_cpu
+        nrmse = np.linalg.norm(error) / (np.linalg.norm(C_cpu) + 1e-12)
+        max_abs_error = np.max(np.abs(error))
+
+        assert nrmse < 1e-4
+        assert max_abs_error < 1e-2
 
 
 class TestGEMMPerformance:

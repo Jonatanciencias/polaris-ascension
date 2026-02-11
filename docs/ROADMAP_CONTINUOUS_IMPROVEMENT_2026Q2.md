@@ -459,6 +459,29 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015530.json`
   - Key finding: la propuesta estable `v0.15.0` queda lista, trazada al RC y a evidencia semanal de integración + drift.
+- Week 17 - Block 1 (initial controlled rollout of v0.15.0 with extended snapshots): **promote / go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK17_BLOCK1_STABLE_ROLLOUT_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week17_block1_stable_rollout_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week17_controlled_rollout/run_week17_block1_stable_rollout.py`
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_20260211_003512.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_20260211_004918.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_canary_20260211_004858.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_003858.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_004918.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK17_BLOCK1_GO_NO_GO_CHECKLIST.md`
+  - Key finding: intento inicial quedó `no-go` por overhead T5; tras hardening de bajo overhead y rerun extendido (10 snapshots), el bloque cerró en `go`.
+- Week 17 - Block 3 (early pytest flake hardening for `pytest_tier_green`): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK17_BLOCK3_PYTEST_FLAKE_HARDENING_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week17_block3_pytest_flake_hardening_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week17_controlled_rollout/run_week17_block3_pytest_flake_hardening.py`
+    - `tests/test_optimized_kernel_engine.py`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block3_pytest_flake_hardening_20260211_005256.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_005256.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014604.json`
+  - Key finding: el test objetivo quedó estable (`20/20` repeticiones verdes) y el gate canónico post-hardening volvió a `promote`.
 
 ## Governance Rules
 
@@ -535,7 +558,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 17 - Block 1: ejecutar despliegue controlado inicial de `v0.15.0` con snapshots extendidos y seguimiento de drift semanal.
-2. Week 17 - Block 2: validar segundo piloto de proyecto/plugin dependiente contra `WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json`.
-3. Week 17 - Block 3: hardening de estabilidad del gate canónico (cerrar flakiness intermitente en `pytest_tier_green`) y consolidar SLA operativo.
+1. Week 17 - Block 2: validar segundo piloto de proyecto/plugin dependiente contra `WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json`.
+2. Week 17 - Block 4: ejecutar replay semanal post-hardening y confirmar deriva estable tras el fix de `pytest_tier_green`.
+3. Week 18 - Block 1: preparar paquete de salida operativa (`v0.15.0` estable) para adopción de proyectos dependientes con reporte comparativo actualizado.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
