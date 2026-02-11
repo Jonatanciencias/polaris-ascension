@@ -504,6 +504,20 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011608.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_012010.json`
   - Key finding: replay semanal post-hardening cierra en `promote` con drift muy bajo (`thr max abs=0.6065%`, `p95 max=0.3241%`) y `pytest_tier_green` estable en pre/post.
+- Week 18 - Block 1 (stable operations package for dependent adoption): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK18_BLOCK1_STABLE_OPERATIONS_PACKAGE_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week18_block1_stable_operations_package_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week18_controlled_rollout/build_week18_block1_stable_operations_package.py`
+    - `research/breakthrough_lab/week18_controlled_rollout/week18_block1_stable_operations_package_20260211_013141.json`
+    - `research/breakthrough_lab/week18_controlled_rollout/week18_block1_comparative_update_20260211_013141.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK1_V0_15_0_STABLE_RELEASE_PACKAGE.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK1_DEPENDENT_ADOPTION_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK1_STABLE_ADOPTION_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK1_STABLE_PACKAGE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_013141.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_013200.json`
+  - Key finding: paquete operativo estable `v0.15.0` queda listo para adopcion dependiente; la comparativa mejora drift frente a Week16 (`thr -3.8444 pts`, `p95 -0.2978 pts`) y gate canonico pre/post permanece en `promote`.
 
 ## Governance Rules
 
@@ -580,7 +594,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 18 - Block 1: preparar paquete de salida operativa (`v0.15.0` estable) para adopción de proyectos dependientes con reporte comparativo actualizado.
-2. Week 18 - Block 2: correr canary de mantenimiento (split Clover/rusticl + baseline estable) para cerrar transición a operación semanal.
-3. Week 18 - Block 3: formalizar checklist final de release estable y publicar recomendación GO de adopción.
+1. Week 18 - Block 2: correr canary de mantenimiento (split Clover/rusticl + baseline estable) para cerrar transición a operación semanal.
+2. Week 18 - Block 3: formalizar checklist final de release estable y publicar recomendación GO de adopción.
+3. Week 19 - Block 1: iniciar ciclo operativo de mantenimiento (replay semanal automatizado + drift quincenal) sobre `v0.15.0`.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
