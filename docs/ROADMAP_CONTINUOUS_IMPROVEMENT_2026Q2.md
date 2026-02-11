@@ -472,6 +472,17 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_004918.json`
     - `research/breakthrough_lab/preprod_signoff/WEEK17_BLOCK1_GO_NO_GO_CHECKLIST.md`
   - Key finding: intento inicial quedó `no-go` por overhead T5; tras hardening de bajo overhead y rerun extendido (10 snapshots), el bloque cerró en `go`.
+- Week 17 - Block 2 (second dependent plugin/project pilot on stable manifest): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK17_BLOCK2_SECOND_DEPENDENT_PILOT_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week17_block2_second_dependent_pilot_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week17_controlled_rollout/run_week17_block2_second_dependent_pilot.py`
+    - `research/breakthrough_lab/dependent_projects/rx590_stable_integration_pilot_v2/week17_block2_integration_profile.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block2_second_dependent_pilot_20260211_011149.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block2_second_dependent_pilot_plugin_20260211_011129.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011026.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011149.json`
+  - Key finding: segundo piloto dependiente cierra en `promote` sobre `v0.15.0` con gates pre/post y contratos plugin en verde.
 - Week 17 - Block 3 (early pytest flake hardening for `pytest_tier_green`): **promote**
   - Acta: `research/breakthrough_lab/ACTA_WEEK17_BLOCK3_PYTEST_FLAKE_HARDENING_2026-02-11.md`
   - Decision: `research/breakthrough_lab/week17_block3_pytest_flake_hardening_decision.json`
@@ -558,7 +569,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 17 - Block 2: validar segundo piloto de proyecto/plugin dependiente contra `WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json`.
-2. Week 17 - Block 4: ejecutar replay semanal post-hardening y confirmar deriva estable tras el fix de `pytest_tier_green`.
-3. Week 18 - Block 1: preparar paquete de salida operativa (`v0.15.0` estable) para adopción de proyectos dependientes con reporte comparativo actualizado.
+1. Week 17 - Block 4: ejecutar replay semanal post-hardening y confirmar deriva estable tras el fix de `pytest_tier_green`.
+2. Week 18 - Block 1: preparar paquete de salida operativa (`v0.15.0` estable) para adopción de proyectos dependientes con reporte comparativo actualizado.
+3. Week 18 - Block 2: correr canary de mantenimiento (split Clover/rusticl + baseline estable) para cerrar transición a operación semanal.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
