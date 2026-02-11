@@ -541,6 +541,19 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014400.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014419.json`
   - Key finding: checklist final queda en verde completo y se emite recomendacion operativa `GO` para adopcion controlada de `v0.15.0`.
+- Week 19 - Block 1 (weekly automated replay + Clover/rusticl split maintenance on `v0.15.0`): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK19_BLOCK1_WEEKLY_SPLIT_MAINTENANCE_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week19_block1_weekly_split_maintenance_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week19_controlled_rollout/run_week19_block1_weekly_split_maintenance.py`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block1_weekly_split_maintenance_20260211_015638.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block1_weekly_split_maintenance_weekly_replay_20260211_015114.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block1_weekly_split_maintenance_weekly_replay_eval_20260211_015423.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block1_weekly_split_maintenance_split_canary_20260211_015619.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block1_weekly_split_maintenance_split_eval_20260211_015619.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_015114.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_015638.json`
+  - Key finding: mantenimiento semanal y split por plataforma permanecen estables sobre `v0.15.0` (`rusticl_ratio_min=0.9222`, `t5_disable_total=0`, `t5_overhead_max=1.3069`) con gates canonicos pre/post en `promote`.
 
 ## Governance Rules
 
@@ -617,7 +630,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 19 - Block 1: iniciar ciclo operativo de mantenimiento (replay semanal automatizado + split Clover/rusticl) sobre `v0.15.0`.
-2. Week 19 - Block 2: ejecutar drift quincenal y mantener recalibración conservadora de thresholds solo con evidencia sostenida.
-3. Week 19 - Block 3: publicar paquete operativo de continuidad mensual (dashboard + runbook + estado de deuda operativa).
+1. Week 19 - Block 2: ejecutar drift quincenal y mantener recalibración conservadora de thresholds solo con evidencia sostenida.
+2. Week 19 - Block 3: publicar paquete operativo de continuidad mensual (dashboard + runbook + estado de deuda operativa).
+3. Week 20 - Block 1: iniciar primer ciclo mensual completo (replay + split + consolidación) con cierre formal de continuidad operativa.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
