@@ -493,6 +493,17 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_005256.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014604.json`
   - Key finding: el test objetivo quedó estable (`20/20` repeticiones verdes) y el gate canónico post-hardening volvió a `promote`.
+- Week 17 - Block 4 (weekly replay post-hardening + drift confirmation): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK17_BLOCK4_POSTHARDENING_REPLAY_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week17_block4_posthardening_replay_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week17_controlled_rollout/run_week17_block4_posthardening_replay.py`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_20260211_012010.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_automation_20260211_011608.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_automation_eval_20260211_011930.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011608.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_012010.json`
+  - Key finding: replay semanal post-hardening cierra en `promote` con drift muy bajo (`thr max abs=0.6065%`, `p95 max=0.3241%`) y `pytest_tier_green` estable en pre/post.
 
 ## Governance Rules
 
@@ -569,7 +580,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 17 - Block 4: ejecutar replay semanal post-hardening y confirmar deriva estable tras el fix de `pytest_tier_green`.
-2. Week 18 - Block 1: preparar paquete de salida operativa (`v0.15.0` estable) para adopción de proyectos dependientes con reporte comparativo actualizado.
-3. Week 18 - Block 2: correr canary de mantenimiento (split Clover/rusticl + baseline estable) para cerrar transición a operación semanal.
+1. Week 18 - Block 1: preparar paquete de salida operativa (`v0.15.0` estable) para adopción de proyectos dependientes con reporte comparativo actualizado.
+2. Week 18 - Block 2: correr canary de mantenimiento (split Clover/rusticl + baseline estable) para cerrar transición a operación semanal.
+3. Week 18 - Block 3: formalizar checklist final de release estable y publicar recomendación GO de adopción.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
