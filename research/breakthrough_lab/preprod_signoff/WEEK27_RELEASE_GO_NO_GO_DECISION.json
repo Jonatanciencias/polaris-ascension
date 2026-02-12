@@ -1,0 +1,27 @@
+{
+  "decision_id": "week27-release-package-go-no-go-2026-02-12",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "release_track": "monthly_continuity_bridge_observability_dual_platform",
+  "status": "completed",
+  "inputs": {
+    "week27_block1_decision": "research/breakthrough_lab/week27_block1_monthly_continuity_decision.json",
+    "week27_block2_decision": "research/breakthrough_lab/week27_block2_alert_bridge_observability_decision.json",
+    "week27_block3_decision": "research/breakthrough_lab/week27_block3_biweekly_comparative_decision.json"
+  },
+  "checks": {
+    "block1_promote": true,
+    "block2_promote": true,
+    "block3_promote": true,
+    "t5_disable_total_zero": true,
+    "bridge_success_ratio_ok": true,
+    "dual_platform_policy_active": true,
+    "high_critical_debt_zero": true
+  },
+  "decision": "go",
+  "rationale": "Week27 continuity, bridge observability, and dual-platform comparative remain promote with guardrails healthy and no high/critical debt.",
+  "artifacts": {
+    "release_runbook": "research/breakthrough_lab/preprod_signoff/WEEK27_RELEASE_PACKAGE_RUNBOOK.md",
+    "release_checklist": "research/breakthrough_lab/preprod_signoff/WEEK27_RELEASE_GO_NO_GO_CHECKLIST.md",
+    "platform_policy": "research/breakthrough_lab/week27_controlled_rollout/WEEK27_BLOCK3_PLATFORM_POLICY_DECISION.json"
+  }
+}
