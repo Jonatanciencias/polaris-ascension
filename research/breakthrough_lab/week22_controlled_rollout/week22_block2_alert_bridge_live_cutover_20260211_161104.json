@@ -1,0 +1,172 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-11T16:11:24.066048+00:00",
+    "workflow_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/.github/workflows/week20-monthly-cycle.yml",
+    "scheduler_spec_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_scheduler_spec_20260211_140738.json",
+    "source_cycle_report_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week22_controlled_rollout/week22_block1_monthly_continuity_20260211_155815.json",
+    "source_alerts_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_alerts_20260211_140738.json",
+    "mode": "local",
+    "dispatch_mode": "live",
+    "rollback_channel": "spool-fallback",
+    "endpoint_env": "WEEKLY_ALERT_WEBHOOK_URL",
+    "endpoint_present": true
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161104.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161104.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161124.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161124.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "pre_gate_cmd_pretty": "./venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline"
+  },
+  "artifacts": {
+    "bridge_payload_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week22_controlled_rollout/week22_block2_alert_bridge_live_cutover_bridge_payload_20260211_161104.json",
+    "dispatch_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week22_controlled_rollout/week22_block2_alert_bridge_live_cutover_dispatch_20260211_161104.json",
+    "scheduler_health_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week22_controlled_rollout/week22_block2_alert_bridge_live_cutover_scheduler_health_20260211_161104.json",
+    "rollback_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week22_controlled_rollout/week22_block2_alert_bridge_live_cutover_rollback_20260211_161104.json",
+    "rollback_spool_json": "",
+    "operational_debt_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week22_controlled_rollout/week22_block2_alert_bridge_live_cutover_operational_debt_20260211_161104.json",
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161104.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161124.json"
+  },
+  "highlights": {
+    "source_cycle_decision": "promote",
+    "source_alerts_decision": "promote",
+    "bridged_alerts_count": 1,
+    "heartbeat_emitted": true,
+    "dispatch_mode": "live",
+    "dispatch_sent": true,
+    "dispatch_http_status": 200,
+    "rollback_triggered": false
+  },
+  "evaluation": {
+    "checks": {
+      "workflow_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "scheduler_spec_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "scheduler_health_all_checks": {
+        "observed": {
+          "has_schedule": true,
+          "has_expected_cron": true,
+          "has_upload_artifact_step": true,
+          "has_expected_retention_days": true,
+          "has_alert_summary_gate": true
+        },
+        "required": "all_true",
+        "pass": true
+      },
+      "source_cycle_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "source_alerts_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "dispatch_mode_live": {
+        "observed": "live",
+        "required": "live",
+        "pass": true
+      },
+      "endpoint_present_for_live": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "bridge_payload_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "dispatch_record_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "dispatch_live_success": {
+        "observed": {
+          "mode": "live",
+          "sent": true,
+          "http_status": 200,
+          "error": null
+        },
+        "required": "sent_true_http_2xx",
+        "pass": true
+      },
+      "rollback_record_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "rollback_triggered_on_failure_or_not_needed": {
+        "observed": {
+          "dispatch_sent": true,
+          "rollback_triggered": false,
+          "rollback_reason": "not_required"
+        },
+        "required": "dispatch_success_or_triggered_fallback",
+        "pass": true
+      },
+      "no_high_critical_open_debt": {
+        "observed": 0,
+        "required_max": 0,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "pre_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "post_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Live webhook cutover succeeded with explicit rollback path ready and canonical gates green."
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "review_id": "week22-block3-monthly-comparative-platform-decision-2026-02-11",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "monthly_comparative_dual_platform_policy_formalization",
+  "tracks": [
+    {
+      "track": "week22_block3_monthly_comparative_execution",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week22_controlled_rollout/week22_block3_monthly_comparative_20260211_161536.json",
+        "research/breakthrough_lab/week22_controlled_rollout/week22_block3_monthly_comparative_dashboard_20260211_161536.json"
+      ],
+      "rationale": "Monthly comparative run closed in promote with bounded deltas and stable chain."
+    },
+    {
+      "track": "week22_block3_dual_platform_policy_formalization",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week22_controlled_rollout/WEEK22_BLOCK3_PLATFORM_POLICY_DECISION.json",
+        "research/breakthrough_lab/week22_controlled_rollout/WEEK22_BLOCK3_PLATFORM_POLICY_DECISION.md"
+      ],
+      "rationale": "Platform policy remains dual-go with guardrails satisfied for production/staging/development."
+    },
+    {
+      "track": "week22_block3_operational_debt_review",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week22_controlled_rollout/WEEK22_BLOCK3_OPERATIONAL_DEBT_REVIEW.json"
+      ],
+      "rationale": "Debt review keeps high/critical open debt at zero, preserving continuation safety."
+    },
+    {
+      "track": "week22_block3_canonical_gate_internal",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161536.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161556.json"
+      ],
+      "rationale": "Internal canonical gate remained promote pre/post block execution."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "ready-for-week22-closure",
+  "block_rationale": "Week22 Block3 confirms dual-platform continuity with stable guardrails and formalized policy.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK22_BLOCK3_MONTHLY_COMPARATIVE_PLATFORM_DECISION_2026-02-11.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161536.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161556.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week22_block2_alert_bridge_live_cutover_decision.json"
+  ]
+}

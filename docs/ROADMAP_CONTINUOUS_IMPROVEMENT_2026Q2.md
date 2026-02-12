@@ -661,6 +661,45 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_143945.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_144004.json`
   - Key finding: segundo comparativo mensual cierra en `promote` y formaliza política `dual_go_clover_rusticl` para production/staging/development.
+- Week 22 - Block 1 (second recurrent monthly continuity cycle against Week21 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK22_BLOCK1_MONTHLY_CONTINUITY_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week22_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block1_monthly_continuity_20260211_155815.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block1_monthly_continuity_weekly_replay_20260211_155314.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block1_monthly_continuity_weekly_replay_eval_20260211_155620.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block1_monthly_continuity_split_canary_20260211_155815.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block1_monthly_continuity_split_eval_20260211_155815.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_155247.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_155900.json`
+  - Key finding: segundo ciclo mensual recurrente permanece estable en `promote` (`rusticl_ratio_min=0.9224`, `t5_overhead_max=1.3238`, `t5_disable_total=0`) con gates canónicos explícitos pre/post en verde.
+- Week 22 - Block 2 (live alert bridge cutover + explicit rollback path): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK22_BLOCK2_ALERT_BRIDGE_LIVE_CUTOVER_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week22_block2_alert_bridge_live_cutover_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week22_controlled_rollout/run_week22_block2_alert_bridge_live_cutover.py`
+    - `research/breakthrough_lab/week22_controlled_rollout/run_week22_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block2_alert_bridge_live_cutover_20260211_161104.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block2_alert_bridge_live_cutover_dispatch_20260211_161104.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block2_alert_bridge_live_cutover_rollback_20260211_161104.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block2_live_webhook_capture_20260211_161043.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161029.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161150.json`
+  - Key finding: cutover `live` validado con webhook real en entorno controlado (`HTTP 200`), rollback explícito trazable y gates canónicos explícitos pre/post en `promote`.
+- Week 22 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK22_BLOCK3_MONTHLY_COMPARATIVE_PLATFORM_DECISION_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week22_block3_monthly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week22_controlled_rollout/run_week22_block3_monthly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block3_monthly_comparative_20260211_161536.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block3_monthly_comparative_dashboard_20260211_161536.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/WEEK22_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/WEEK22_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week22_controlled_rollout/WEEK22_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161536.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161556.json`
+  - Key finding: comparativo mensual cierra en `promote` y confirma política `dual_go_clover_rusticl` en production/staging/development sin deuda abierta high/critical.
 
 ## Governance Rules
 
@@ -737,7 +776,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 22 - Block 1: ejecutar segundo ciclo recurrente mensual con política de continuidad actualizada post Week21.
-2. Week 22 - Block 2: ejecutar cutover controlado de alert bridge (de `dry_run` a webhook real) con rollback de canal.
-3. Week 22 - Block 3: validar política de plataforma dual con nuevo comparativo mensual y decisión de estabilidad.
+1. Week 23 - Block 1: ejecutar siguiente ciclo de continuidad operativa mensual sobre baseline Week22 y cerrar acta/decisión formal.
+2. Week 23 - Block 2: hardening del alert bridge live (retry/backoff + health-check de delivery continuo) con rollback SLA activo.
+3. Week 23 - Block 3: comparativo dual plataforma post-hardening y refresh conservador de política por entorno.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
