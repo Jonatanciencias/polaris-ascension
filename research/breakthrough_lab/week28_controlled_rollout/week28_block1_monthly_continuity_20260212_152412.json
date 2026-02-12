@@ -1,0 +1,274 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-12T15:24:32.338159+00:00",
+    "stable_tag": "v0.15.0",
+    "stable_manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json",
+    "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json",
+    "t5_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json",
+    "baseline_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_20260212_145205.json",
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ],
+    "split_seeds": [
+      211,
+      509
+    ],
+    "weekly_seed": 20011
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_151910.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_151910.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "weekly_replay": {
+      "command": [
+        "./venv/bin/python",
+        "research/breakthrough_lab/week12_controlled_rollout/run_week12_weekly_replay_automation.py",
+        "--mode",
+        "local",
+        "--policy-path",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json",
+        "--t5-policy-path",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json",
+        "--baseline-path",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_20260212_145205.json",
+        "--sizes",
+        "1400",
+        "2048",
+        "3072",
+        "--snapshots",
+        "6",
+        "--snapshot-interval-minutes",
+        "60",
+        "--sessions",
+        "1",
+        "--iterations",
+        "8",
+        "--pressure-size",
+        "896",
+        "--pressure-iterations",
+        "2",
+        "--pressure-pulses-per-snapshot",
+        "2",
+        "--seed",
+        "20011",
+        "--validation-report-dir",
+        "research/breakthrough_lab/week8_validation_discipline",
+        "--output-dir",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout",
+        "--output-prefix",
+        "week28_block1_monthly_continuity_weekly_replay"
+      ],
+      "returncode": 0,
+      "stdout": "Week12 block1 JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_weekly_replay_20260212_151910.json\nWeek12 block1 MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_weekly_replay_20260212_151910.md\nDecision: promote\nFailed checks: []\n",
+      "stderr": ""
+    },
+    "split_canary": {
+      "command": [
+        "./venv/bin/python",
+        "research/breakthrough_lab/platform_compatibility/run_week9_block4_stress_split.py",
+        "--seeds",
+        "211",
+        "509",
+        "--sizes",
+        "1400",
+        "2048",
+        "3072",
+        "--kernels",
+        "auto_t3_controlled",
+        "auto_t5_guarded",
+        "--sessions",
+        "1",
+        "--iterations",
+        "8",
+        "--pressure-size",
+        "896",
+        "--pressure-iterations",
+        "2",
+        "--pressure-pulses-per-seed",
+        "2",
+        "--t5-policy-path",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json",
+        "--baseline-block3-path",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_20260212_145205.json",
+        "--output-dir",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout",
+        "--output-prefix",
+        "week28_block1_monthly_continuity_split_canary"
+      ],
+      "returncode": 0,
+      "stdout": "Week9 block4 JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_canary_20260212_152412.json\nWeek9 block4 MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_canary_20260212_152412.md\nDecision: promote\nFailed checks: []\n",
+      "stderr": ""
+    },
+    "split_eval": {
+      "command": [
+        "./venv/bin/python",
+        "research/breakthrough_lab/week12_controlled_rollout/evaluate_week12_platform_split_policy.py",
+        "--split-artifact",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_canary_20260212_152412.json",
+        "--policy-path",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json",
+        "--min-rusticl-ratio",
+        "0.85",
+        "--required-sizes",
+        "1400",
+        "2048",
+        "3072",
+        "--output-dir",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout",
+        "--output-prefix",
+        "week28_block1_monthly_continuity_split_eval"
+      ],
+      "returncode": 0,
+      "stdout": "Week12 block2 eval JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_eval_20260212_152412.json\nWeek12 block2 eval MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_eval_20260212_152412.md\nDecision: promote\nFailed checks: []\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_152432.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_152432.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "weekly_cmd_pretty": "./venv/bin/python research/breakthrough_lab/week12_controlled_rollout/run_week12_weekly_replay_automation.py --mode local --policy-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json --t5-policy-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json --baseline-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_20260212_145205.json --sizes 1400 2048 3072 --snapshots 6 --snapshot-interval-minutes 60 --sessions 1 --iterations 8 --pressure-size 896 --pressure-iterations 2 --pressure-pulses-per-snapshot 2 --seed 20011 --validation-report-dir research/breakthrough_lab/week8_validation_discipline --output-dir /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout --output-prefix week28_block1_monthly_continuity_weekly_replay",
+    "split_cmd_pretty": "./venv/bin/python research/breakthrough_lab/platform_compatibility/run_week9_block4_stress_split.py --seeds 211 509 --sizes 1400 2048 3072 --kernels auto_t3_controlled auto_t5_guarded --sessions 1 --iterations 8 --pressure-size 896 --pressure-iterations 2 --pressure-pulses-per-seed 2 --t5-policy-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json --baseline-block3-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_20260212_145205.json --output-dir /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout --output-prefix week28_block1_monthly_continuity_split_canary",
+    "split_eval_cmd_pretty": "./venv/bin/python research/breakthrough_lab/week12_controlled_rollout/evaluate_week12_platform_split_policy.py --split-artifact /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_canary_20260212_152412.json --policy-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json --min-rusticl-ratio 0.85 --required-sizes 1400 2048 3072 --output-dir /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout --output-prefix week28_block1_monthly_continuity_split_eval"
+  },
+  "artifacts": {
+    "weekly_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_weekly_replay_20260212_151910.json",
+    "weekly_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_weekly_replay_20260212_151910.md",
+    "weekly_canary_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_weekly_replay_canary_20260212_152217.json",
+    "weekly_eval_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_weekly_replay_eval_20260212_152217.json",
+    "split_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_canary_20260212_152412.json",
+    "split_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_canary_20260212_152412.md",
+    "split_eval_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_eval_20260212_152412.json",
+    "split_eval_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_eval_20260212_152412.md",
+    "dashboard_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week20_block1_monthly_cycle_dashboard_20260212_152412.json",
+    "dashboard_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/week20_block1_monthly_cycle_dashboard_20260212_152412.md",
+    "runbook_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_RUNBOOK.md",
+    "checklist_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_CHECKLIST.md",
+    "debt_matrix_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_LIVE_DEBT_MATRIX.json",
+    "manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week28_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json",
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_151910.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_152432.json"
+  },
+  "highlights": {
+    "weekly_replay_decision": "promote",
+    "split_canary_decision": "promote",
+    "split_eval_decision": "promote",
+    "split_ratio_min": 0.9228974446440383,
+    "split_t5_overhead_max": 1.3092043947546583,
+    "split_t5_disable_total": 0
+  },
+  "evaluation": {
+    "checks": {
+      "stable_manifest_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "stable_tag_v0_15_0": {
+        "observed": "v0.15.0",
+        "required": "v0.15.0",
+        "pass": true
+      },
+      "weekly_replay_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "weekly_replay_canary_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "weekly_replay_eval_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "split_canary_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "split_eval_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "split_required_sizes_present": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "split_ratio_floor": {
+        "observed_min": 0.9228974446440383,
+        "required_min": 0.85,
+        "pass": true
+      },
+      "split_t5_guardrails": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "split_no_regression_vs_baseline": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "consolidation_artifacts_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "no_high_critical_open_debt": {
+        "observed": 0,
+        "required_max": 0,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "pre_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "post_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Week20 Block1 monthly full cycle completed with replay/split/consolidation stable and canonical gates green."
+  }
+}

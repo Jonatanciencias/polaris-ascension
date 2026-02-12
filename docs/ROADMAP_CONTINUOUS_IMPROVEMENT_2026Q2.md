@@ -908,6 +908,19 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/preprod_signoff/WEEK27_RELEASE_GO_NO_GO_CHECKLIST.md`
     - `research/breakthrough_lab/preprod_signoff/WEEK27_RELEASE_GO_NO_GO_DECISION.json`
   - Key finding: paquete de release cierra en `GO` con cadena Week27 Block1/2/3 en `promote` y guardrails operativos sanos.
+- Week 28 - Block 1 (new recurrent monthly continuity cycle against Week27 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK28_BLOCK1_MONTHLY_CONTINUITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week28_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_20260212_152412.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_weekly_replay_20260212_151910.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_weekly_replay_eval_20260212_152217.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_canary_20260212_152412.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_eval_20260212_152412.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_151910.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_152432.json`
+  - Key finding: ciclo recurrente cierra en `promote` con guardrails sanos (`rusticl_ratio_min=0.9229`, `t5_overhead_max=1.3092`, `t5_disable_total=0`) y continuidad estable.
 
 ## Governance Rules
 
@@ -984,7 +997,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 28 - Block 1: ejecutar nuevo ciclo mensual recurrente contra baseline Week27 y cerrar acta/decisión formal.
-2. Week 28 - Block 2: hardening incremental del alert bridge live (SLO de delivery + tendencia de latencia + estabilidad de retries) sobre evidencia Week27.
-3. Week 28 - Block 3: comparativo mensual dual plataforma con revisión conservadora de drift/debt y decisión formal por entorno.
+1. Week 28 - Block 2: hardening incremental del alert bridge live (SLO de delivery + tendencia de latencia + estabilidad de retries) sobre evidencia Week28 Block1.
+2. Week 28 - Block 3: comparativo mensual dual plataforma con revisión conservadora de drift/debt y decisión formal por entorno.
+3. Week 29 - Block 1: iniciar nuevo ciclo mensual recurrente contra baseline Week28 una vez cerrado Block 2+3.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
