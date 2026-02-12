@@ -935,6 +935,19 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_154301.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_154321.json`
   - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=14.214ms`, `retries_rate=0.25`) con retry real (`503 -> 200`) y sin alertas de degradación.
+- Week 28 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK28_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week28_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week28_controlled_rollout/run_week28_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block3_biweekly_comparative_20260212_160302.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block3_biweekly_comparative_dashboard_20260212_160302.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/WEEK28_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/WEEK28_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week28_controlled_rollout/WEEK28_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_160302.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_160321.json`
+  - Key finding: comparativo mensual cierra en `promote`, mantiene política `dual_go_clover_rusticl`, mejora overhead (`-2.3046%`) y conserva deuda high/critical en `0`.
 
 ## Governance Rules
 
@@ -1011,7 +1024,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 28 - Block 3: comparativo mensual dual plataforma con revisión conservadora de drift/debt y decisión formal por entorno.
-2. Week 29 - Block 1: iniciar nuevo ciclo mensual recurrente contra baseline Week28 una vez cerrado Block 3.
-3. Week 29 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week29 Block1.
+1. Week 29 - Block 1: iniciar nuevo ciclo mensual recurrente contra baseline Week28 y cerrar acta/decisión formal.
+2. Week 29 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week29 Block1.
+3. Week 29 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y actualización de política si aplica.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
