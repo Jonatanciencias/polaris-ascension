@@ -26,10 +26,11 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+import time
+
 from src.core.gpu import GPUManager
 from src.core.memory import MemoryManager
-from src.inference import ONNXInferenceEngine, InferenceConfig
-import time
+from src.inference import InferenceConfig, ONNXInferenceEngine
 
 
 def demo_classification_models(precision="fp32"):

@@ -14,17 +14,18 @@ Uso:
     python examples/demo_kernel_cache.py
 """
 
-import sys
-from pathlib import Path
-import time
-import shutil
 import argparse
+import shutil
+import sys
+import time
+from pathlib import Path
 
 # Agregar src al path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.optimization_engines.optimized_kernel_engine import OptimizedKernelEngine
 import numpy as np
+
+from src.optimization_engines.optimized_kernel_engine import OptimizedKernelEngine
 
 
 def clear_cache():

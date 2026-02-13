@@ -15,10 +15,11 @@ Test Categories:
 Run with: pytest tests/test_opencl_gemm.py -v
 """
 
-import pytest
-import numpy as np
-import sys
 import os
+import sys
+
+import numpy as np
+import pytest
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))

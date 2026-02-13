@@ -28,17 +28,17 @@ Author: Legacy GPU AI Platform
 Version: 0.6.0-dev (Session 12 Phase 2)
 """
 
-import sys
-import time
-import numpy as np
-from typing import Dict, Tuple
-
 # Add src to path
 import os
+import sys
+import time
+from typing import Dict, Tuple
+
+import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from src.compute.sparse_formats import CSRMatrix, CSCMatrix, BlockSparseMatrix, SparseMatrixStats
+from src.compute.sparse_formats import BlockSparseMatrix, CSCMatrix, CSRMatrix, SparseMatrixStats
 
 
 def print_header(title: str):

@@ -13,14 +13,15 @@ Autor: AI Assistant
 Fecha: 2026-01-25
 """
 
+import json
 import sys
+import time
+import warnings
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
+
 import numpy as np
 import pandas as pd
-import time
-from pathlib import Path
-from typing import Dict, List, Tuple, Any
-import json
-import warnings
 
 warnings.filterwarnings("ignore")
 
@@ -28,8 +29,8 @@ warnings.filterwarnings("ignore")
 try:
     # Técnicas breakthrough
     sys.path.append(str(Path(__file__).parent / "fase_9_breakthrough_integration" / "src"))
-    from low_rank_matrix_approximator_gpu import GPUAcceleratedLowRankApproximator
     from coppersmith_winograd_gpu import CoppersmithWinogradGPU
+    from low_rank_matrix_approximator_gpu import GPUAcceleratedLowRankApproximator
     from quantum_annealing_optimizer import QuantumAnnealingMatrixOptimizer
 
     # AI Kernel Predictor

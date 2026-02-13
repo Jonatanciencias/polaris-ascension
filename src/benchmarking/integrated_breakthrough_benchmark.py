@@ -10,10 +10,11 @@ Objetivo: Superar 890.3 GFLOPS usando selección automática e hibridación inte
 """
 
 import sys
-import numpy as np
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 import pandas as pd
 
 # Agregar paths para imports
@@ -26,9 +27,9 @@ try:
         BreakthroughTechniqueSelector,
     )
     from fase_9_breakthrough_integration.src.hybrid_optimizer import (
+        HybridConfiguration,
         HybridOptimizer,
         HybridStrategy,
-        HybridConfiguration,
     )
 
     FASE_9_AVAILABLE = True
@@ -38,8 +39,8 @@ except ImportError as e:
 
 # Importar técnicas individuales para comparación
 try:
-    from low_rank_matrix_approximator_gpu import GPUAcceleratedLowRankApproximator
     from coppersmith_winograd_gpu import CoppersmithWinogradGPU
+    from low_rank_matrix_approximator_gpu import GPUAcceleratedLowRankApproximator
     from quantum_annealing_optimizer import QuantumAnnealingMatrixOptimizer
 
     TECHNIQUES_AVAILABLE = True

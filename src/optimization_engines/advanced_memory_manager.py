@@ -16,17 +16,18 @@ Author: Sistema de Optimización RX 580
 Date: 2026-02-02
 """
 
-import numpy as np
-import pyopencl as cl
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple, Any, Set, Callable
-from collections import defaultdict, OrderedDict
+import logging
 import threading
 import time
-import logging
 import weakref
-from enum import Enum, auto
+from collections import OrderedDict, defaultdict
 from contextlib import contextmanager
+from dataclasses import dataclass, field
+from enum import Enum, auto
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+
+import numpy as np
+import pyopencl as cl
 
 logger = logging.getLogger(__name__)
 

@@ -11,6 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import numpy as np
+
 from src.inference.model_loaders import ONNXModelLoader, PyTorchModelLoader, create_loader
 
 print("=" * 80)
@@ -74,8 +75,8 @@ print("\n6. Testing with a real ONNX model...")
 print("   Attempting to download a small test model...")
 
 try:
-    import urllib.request
     import os
+    import urllib.request
 
     # Create models directory
     models_dir = Path(__file__).parent / "models"

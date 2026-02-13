@@ -17,13 +17,14 @@ Autor: AI Assistant
 Fecha: Enero 2026
 """
 
+import math
 import sys
+import time
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
-import time
-import math
 
 
 class AdvancedTechniquesInvestigator:

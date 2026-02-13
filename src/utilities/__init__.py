@@ -1,14 +1,20 @@
 # Utilities Package
 # Helper functions and analysis tools
+from importlib import import_module
+from typing import Any
 
-try:
-    from .quick_analysis import QuickAnalysis
-except (ImportError, AttributeError):
-    QuickAnalysis = None
 
-try:
-    from .advanced_techniques_investigation import AdvancedTechniquesInvestigation
-except (ImportError, AttributeError):
-    AdvancedTechniquesInvestigation = None
+def _load_symbol(module_name: str, symbol_name: str) -> Any:
+    try:
+        module = import_module(f".{module_name}", __name__)
+        return getattr(module, symbol_name)
+    except (ImportError, AttributeError):
+        return None
 
-__all__ = ["QuickAnalysis", "AdvancedTechniquesInvestigation"]
+
+quick_analysis = _load_symbol("quick_analysis", "quick_analysis")
+AdvancedTechniquesInvestigator = _load_symbol(
+    "advanced_techniques_investigation", "AdvancedTechniquesInvestigator"
+)
+
+__all__ = ["quick_analysis", "AdvancedTechniquesInvestigator"]

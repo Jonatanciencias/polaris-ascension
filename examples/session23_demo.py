@@ -16,20 +16,20 @@ Author: Session 23 Implementation
 Date: January 2026
 """
 
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
 import time
 from typing import Optional
 
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
 from src.pipelines.unified_optimization import (
-    UnifiedOptimizationPipeline,
-    OptimizationTarget,
     OptimizationConfig,
+    OptimizationTarget,
     PipelineStage,
+    UnifiedOptimizationPipeline,
     quick_optimize,
 )
-
 
 # ============================================================================
 # Test Models

@@ -13,19 +13,20 @@ Usage:
     python examples/demo_sparse.py
 """
 
-import numpy as np
-import time
 import sys
+import time
 from pathlib import Path
+
+import numpy as np
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.compute.sparse import (
-    MagnitudePruner,
-    StructuredPruner,
     GradualPruner,
+    MagnitudePruner,
     SparseOperations,
+    StructuredPruner,
     create_sparse_layer,
 )
 

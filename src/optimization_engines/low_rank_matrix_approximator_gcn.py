@@ -11,10 +11,11 @@ para lograr el potencial de +150% y superar 890.3 GFLOPS.
 """
 
 import sys
-import numpy as np
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 import pyopencl as cl
 import pyopencl.array as cl_array
 

@@ -12,12 +12,13 @@ Provides intelligent kernel selection for matrix multiplication:
 Uses Gradient Boosting model + heuristics for optimal selection.
 """
 
-import numpy as np
 import json
-import pickle
-from pathlib import Path
-from typing import Any, Dict, Tuple, Optional
 import warnings
+from pathlib import Path
+from typing import Any, Dict, Optional, Tuple, cast
+
+import joblib
+import numpy as np
 
 # Suppress sklearn warnings
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -123,15 +124,14 @@ class ProductionKernelSelector:
 
         if self.model_path.exists():
             try:
-                with open(self.model_path, "rb") as f:
-                    model_data = pickle.load(f)
-                    self.model = model_data.get("model")
-                    self.metrics = model_data.get("metrics", {})
-                    self.model_available = True
+                model_data = joblib.load(self.model_path)
+                self.model = model_data.get("model")
+                self.metrics = model_data.get("metrics", {})
+                self.model_available = True
 
-                    r2 = self.metrics.get("r2_train", 0)
-                    mae = self.metrics.get("mae_train", 0)
-                    print(f"✓ Model loaded: R²={r2:.4f}, MAE={mae:.1f} GFLOPS")
+                r2 = self.metrics.get("r2_train", 0)
+                mae = self.metrics.get("mae_train", 0)
+                print(f"✓ Model loaded: R²={r2:.4f}, MAE={mae:.1f} GFLOPS")
             except Exception as e:
                 print(f"⚠️  Could not load model: {e}")
                 print("   Falling back to heuristic-only selection")
@@ -157,7 +157,14 @@ class ProductionKernelSelector:
     ) -> np.ndarray:
         """Engineer features for ML model (same as training)"""
         # Base features
-        features = [M, N, K, tile_size, threads, 1 if vectorized else 0]
+        features: list[float] = [
+            float(M),
+            float(N),
+            float(K),
+            float(tile_size),
+            float(threads),
+            float(1 if vectorized else 0),
+        ]
 
         # Derived features
         total_ops = 2 * M * N * K
@@ -176,7 +183,7 @@ class ProductionKernelSelector:
 
     def _predict_performance(self, M: int, N: int, K: int, kernel_key: str) -> float:
         """Predict GFLOPS for given configuration"""
-        config = self.kernel_configs[kernel_key]
+        config = cast(Dict[str, Any], self.kernel_configs[kernel_key])
 
         # Promoted scoped kernel uses measured deterministic replay value.
         # Avoid extrapolating it through the legacy model.
@@ -185,7 +192,12 @@ class ProductionKernelSelector:
 
         if self.model_available and self.model:
             features = self._engineer_features(
-                M, N, K, config["tile_size"], config["threads"], config["vectorized"]
+                M,
+                N,
+                K,
+                int(config["tile_size"]),
+                int(config["threads"]),
+                bool(config["vectorized"]),
             )
             try:
                 prediction = self.model.predict(features)[0]
@@ -194,7 +206,7 @@ class ProductionKernelSelector:
                 pass
 
         # Fallback: return typical GFLOPS
-        return config["typical_gflops"]
+        return float(config["typical_gflops"])
 
     def _heuristic_selection(self, M: int, N: int, K: int) -> str:
         """
@@ -284,7 +296,7 @@ class ProductionKernelSelector:
         eligible_keys = self._eligible_kernel_keys(M, N, K)
 
         # Get predictions for eligible kernels only.
-        predictions = {}
+        predictions: dict[str, Any] = {}
         for kernel_key in eligible_keys:
             predictions[kernel_key] = self._predict_performance(M, N, K, kernel_key)
         static_key, static_method = self._select_static_kernel(
@@ -341,7 +353,7 @@ class ProductionKernelSelector:
                 'selected': str
             }
         """
-        predictions = {}
+        predictions: Dict[str, Any] = {}
         for kernel_key in self.kernel_configs.keys():
             if kernel_key == "tile20_v3_1400" and not self._in_t2_promoted_scope(M, N, K):
                 predictions[kernel_key] = None

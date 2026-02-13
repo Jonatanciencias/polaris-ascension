@@ -31,22 +31,23 @@ Author: AI Assistant
 Date: 2026-01-26
 """
 
-import numpy as np
-import time
-import matplotlib.pyplot as plt
-import seaborn as sns
-from typing import Dict, List, Tuple
 import logging
-import pandas as pd
+import time
 from dataclasses import asdict
+from typing import Dict, List, Tuple
 
-# Importar motores OpenCL
-from optimized_opencl_engine import OptimizedOpenCLEngine, OpenCLOptimizationConfig
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 from advanced_polaris_opencl_engine import (
     AdvancedPolarisOpenCLEngine,
     PolarisOptimizationConfig,
     create_polaris_engine,
 )
+
+# Importar motores OpenCL
+from optimized_opencl_engine import OpenCLOptimizationConfig, OptimizedOpenCLEngine
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")

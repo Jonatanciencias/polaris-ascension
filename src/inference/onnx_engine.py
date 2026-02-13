@@ -4,10 +4,10 @@ ONNX inference engine compatibility implementation.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
+import time
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Union
-import time
 
 import numpy as np
 from PIL import Image

@@ -10,10 +10,11 @@ Técnica: Algoritmo CW optimizado para GPU, complementa las aproximaciones de ba
 """
 
 import sys
-import numpy as np
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 import pyopencl as cl
 import pyopencl.array as cl_array
 

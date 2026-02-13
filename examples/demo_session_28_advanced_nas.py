@@ -13,23 +13,24 @@ Author: AMD GPU Computing Team
 Date: January 21, 2026
 """
 
-import torch
-import torch.nn as nn
-import numpy as np
 import time
 from typing import Dict, List
 
+import numpy as np
+import torch
+import torch.nn as nn
+
 from src.compute.nas_advanced import (
-    ProgressiveNAS,
+    MixedPrecisionConfig,
     MixedPrecisionNAS,
+    MultiBranchConfig,
     MultiBranchOperation,
     PrecisionLevel,
-    SearchStage,
     ProgressiveConfig,
-    MultiBranchConfig,
-    MixedPrecisionConfig,
-    create_progressive_nas,
+    ProgressiveNAS,
+    SearchStage,
     create_mixed_precision_nas,
+    create_progressive_nas,
 )
 from src.compute.nas_darts import DARTSConfig
 

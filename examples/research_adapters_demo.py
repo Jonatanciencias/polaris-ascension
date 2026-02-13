@@ -9,29 +9,26 @@ with existing infrastructure (sparse, quantization, snn, hybrid).
 Session 20 - Research Integration Phase
 """
 
+import os
+import sys
+
 import torch
 import torch.nn as nn
-import sys
-import os
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
+from src.compute.evolutionary_pruning import EvolutionaryConfig, EvolutionaryPruner
+from src.compute.physics_utils import create_heat_pinn
 from src.compute.research_adapters import (
-    STDPAdapter,
     EvolutionaryPrunerAdapter,
     PINNQuantizationAdapter,
     SNNHybridAdapter,
-    create_adapted_snn,
+    STDPAdapter,
     create_adapted_pruner,
+    create_adapted_snn,
 )
-
-from src.compute.snn_homeostasis import HomeostaticSTDP, HomeostasisConfig, HomeostaticSpikingLayer
-
-from src.compute.evolutionary_pruning import EvolutionaryPruner, EvolutionaryConfig
-
-from src.compute.physics_utils import create_heat_pinn
-
+from src.compute.snn_homeostasis import HomeostasisConfig, HomeostaticSpikingLayer, HomeostaticSTDP
 
 # ============================================================================
 # Example 1: STDP Adapter - Backward Compatible STDP

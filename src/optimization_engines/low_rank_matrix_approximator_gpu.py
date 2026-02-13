@@ -10,10 +10,11 @@ Técnica: SVD + GEMM optimizada en GPU para superar límites de performance.
 """
 
 import sys
-import numpy as np
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 import pyopencl as cl
 import pyopencl.array as cl_array
 from pyopencl.elementwise import ElementwiseKernel

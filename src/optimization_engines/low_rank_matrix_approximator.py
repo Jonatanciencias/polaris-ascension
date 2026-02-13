@@ -10,11 +10,12 @@ Técnica: Descomposición en valores singulares (SVD) adaptada para GEMM operati
 """
 
 import sys
-import numpy as np
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class LowRankMatrixApproximator:

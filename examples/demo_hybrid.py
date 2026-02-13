@@ -10,15 +10,16 @@ This demo showcases the hybrid scheduler capabilities:
 Session 14 - Hybrid Scheduler Demo
 """
 
-import torch
-import time
 import sys
+import time
 from pathlib import Path
+
+import torch
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.compute.hybrid import HybridScheduler, TaskConfig, OpType, Device
+from src.compute.hybrid import Device, HybridScheduler, OpType, TaskConfig
 
 
 def print_section(title: str):

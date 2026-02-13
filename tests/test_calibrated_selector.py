@@ -13,10 +13,11 @@ Date: 2026-02-02
 """
 
 import sys
-import numpy as np
 import time
 from pathlib import Path
 from typing import Dict, List, Tuple
+
+import numpy as np
 
 # Agregar path del proyecto
 project_root = Path(__file__).parent.parent
@@ -25,9 +26,9 @@ sys.path.insert(0, str(project_root / "src"))
 
 from ml_models.calibrated_intelligent_selector import (
     CalibratedIntelligentSelector,
+    MatrixCharacteristics,
     OptimizationTechnique,
     SelectionResult,
-    MatrixCharacteristics,
 )
 
 

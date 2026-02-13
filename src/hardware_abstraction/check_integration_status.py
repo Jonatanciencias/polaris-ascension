@@ -9,10 +9,10 @@ y determinar qué falta por integrar en el sistema híbrido.
 Estado objetivo: 7/8 técnicas exitosas integradas
 """
 
-import sys
-import os
-from pathlib import Path
 import importlib.util
+import os
+import sys
+from pathlib import Path
 
 
 def check_technique_integration():

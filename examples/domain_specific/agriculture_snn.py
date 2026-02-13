@@ -37,28 +37,28 @@ Author: Legacy GPU AI Platform Team
 License: MIT
 """
 
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
+import math
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
-from typing import Optional, Tuple, Dict, List
-from dataclasses import dataclass
-import math
 
 # Import our SNN modules
 from src.compute.snn import LIFNeuron, LIFParams, SpikingLayer
 from src.compute.snn_homeostasis import (
     HomeostasisConfig,
     HomeostaticSpikingLayer,
-    SynapticScaling,
     SleepConsolidation,
+    SynapticScaling,
 )
-
 
 # ============================================================================
 # Data Encoding for Agricultural Sensors

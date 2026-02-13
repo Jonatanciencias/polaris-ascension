@@ -14,7 +14,7 @@ def main():
     try:
         # Test import
         sys.path.append(str(Path(__file__).parent / "fase_7_ai_kernel_predictor" / "src"))
-        from kernel_predictor import AIKernelPredictor, BAYESIAN_INTEGRATION_AVAILABLE
+        from kernel_predictor import BAYESIAN_INTEGRATION_AVAILABLE, AIKernelPredictor
 
         print("✅ Imports successful")
 

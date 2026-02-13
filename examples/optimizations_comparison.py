@@ -13,24 +13,25 @@ This completes "Opción 3: Implementación Incremental"
 """
 
 import sys
-from pathlib import Path
-import numpy as np
 import time
+from pathlib import Path
 from typing import Dict, List
+
+import numpy as np
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.inference import ONNXInferenceEngine, InferenceConfig
+import logging
+
 from src.core.gpu import GPUManager
 from src.core.memory import MemoryManager
 from src.core.profiler import Profiler
 from src.experiments.precision_experiments import PrecisionExperiment
-from src.experiments.sparse_networks import SparseNetwork, sparse_vs_dense_benchmark
 from src.experiments.quantization_analysis import QuantizationAnalyzer
+from src.experiments.sparse_networks import SparseNetwork, sparse_vs_dense_benchmark
+from src.inference import InferenceConfig, ONNXInferenceEngine
 from src.utils.logging_config import setup_logging
-
-import logging
 
 
 def benchmark_baseline_inference():

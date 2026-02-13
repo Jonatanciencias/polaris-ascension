@@ -18,19 +18,20 @@ Author: Radeon RX 580 AI Project
 Version: 0.6.0-dev
 """
 
-import numpy as np
+import os
+import sys
 import time
 from typing import Dict, List
-import sys
-import os
+
+import numpy as np
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from src.compute.dynamic_sparse import (
-    RigLPruner,
     DynamicSparsityAllocator,
     RigLConfig,
+    RigLPruner,
 )
 
 

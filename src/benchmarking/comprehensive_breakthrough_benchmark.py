@@ -8,10 +8,11 @@ para superar el límite de 890.3 GFLOPS en Radeon RX 580.
 """
 
 import sys
-import numpy as np
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 
 
 def run_baseline_gemm(A: np.ndarray, B: np.ndarray) -> Tuple[np.ndarray, Dict[str, Any]]:

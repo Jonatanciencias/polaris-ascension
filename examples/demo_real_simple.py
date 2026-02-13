@@ -5,20 +5,18 @@ Usa cualquier imagen que tengas en tu computadora
 """
 
 import sys
-from pathlib import Path
 import time
+from pathlib import Path
 
 # Agregar src al path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-print(
-    """
+print("""
 ╔══════════════════════════════════════════════════════════════════╗
 ║     🔬 DEMOSTRACIÓN VERIFICABLE - RX 580 AI Framework           ║
 ║     Procesamiento REAL con mediciones de tiempo verificables    ║
 ╚══════════════════════════════════════════════════════════════════╝
-"""
-)
+""")
 
 # Verificar imágenes disponibles
 demo_dir = Path("data/wildlife/demo_real")
@@ -46,8 +44,8 @@ print("🔬 CLASIFICACIÓN CON FRAMEWORK RX 580 - TIEMPOS REALES")
 print("=" * 70)
 
 try:
-    from src.inference.onnx_engine import ONNXInferenceEngine
     from src.inference.base import InferenceConfig
+    from src.inference.onnx_engine import ONNXInferenceEngine
 except ImportError as e:
     print(f"❌ Error importando: {e}")
     print("Ejecuta: source venv/bin/activate")

@@ -24,10 +24,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import numpy as np
-from src.sdk.easy import QuickModel, quick_inference, AutoOptimizer
-from src.sdk.plugins import PluginManager, Plugin, PluginMetadata, PluginType
-from src.sdk.registry import ModelRegistry, ModelZoo, ModelTask
-from src.sdk.builder import InferencePipeline, ConfigBuilder, ModelBuilder
+
+from src.sdk.builder import ConfigBuilder, InferencePipeline, ModelBuilder
+from src.sdk.easy import AutoOptimizer, QuickModel, quick_inference
+from src.sdk.plugins import Plugin, PluginManager, PluginMetadata, PluginType
+from src.sdk.registry import ModelRegistry, ModelTask, ModelZoo
 
 
 def print_section(title: str):
@@ -44,21 +45,18 @@ def demo_high_level_api():
     print("\n✨ One-Liner Inference:")
     print("-" * 80)
     print("Code:")
-    print(
-        """
+    print("""
     from src.sdk.easy import quick_inference
     
     result = quick_inference("cat.jpg", "mobilenet.onnx")
     print(f"{result.class_name}: {result.confidence:.2%}")
-    """
-    )
+    """)
     print("\nBenefit: Simplest possible API - just provide input and model!")
 
     print("\n✨ QuickModel Class:")
     print("-" * 80)
     print("Code:")
-    print(
-        """
+    print("""
     from src.sdk.easy import QuickModel
     
     # Load once, use many times
@@ -73,15 +71,13 @@ def demo_high_level_api():
     # Benchmark performance
     stats = model.benchmark(num_runs=100)
     print(f"Average: {stats['mean_ms']:.2f} ms")
-    """
-    )
+    """)
     print("\nBenefit: Reusable model instance, batch processing, benchmarking!")
 
     print("\n✨ Auto-Optimization:")
     print("-" * 80)
     print("Code:")
-    print(
-        """
+    print("""
     from src.sdk.easy import AutoOptimizer
     
     optimizer = AutoOptimizer(target_device="rx580")
@@ -93,8 +89,7 @@ def demo_high_level_api():
     
     # Apply optimizations
     optimized = optimizer.optimize("model.onnx")
-    """
-    )
+    """)
     print("\nBenefit: Automatic hardware-specific optimizations!")
 
 
@@ -105,8 +100,7 @@ def demo_plugin_system():
     print("\n🔌 Creating a Plugin:")
     print("-" * 80)
     print("Code:")
-    print(
-        """
+    print("""
     from src.sdk.plugins import Plugin, PluginMetadata, PluginType
     
     class MyOptimizer(Plugin):
@@ -130,14 +124,12 @@ def demo_plugin_system():
         def cleanup(self):
             print("Cleaning up...")
             return True
-    """
-    )
+    """)
 
     print("\n🔌 Using the Plugin Manager:")
     print("-" * 80)
     print("Code:")
-    print(
-        """
+    print("""
     from src.sdk.plugins import PluginManager
     
     # Initialize manager
@@ -156,8 +148,7 @@ def demo_plugin_system():
     
     # Cleanup
     manager.cleanup_all()
-    """
-    )
+    """)
 
     # Actually demonstrate
     print("\n📦 Live Demo:")
@@ -183,8 +174,7 @@ def demo_model_registry():
     print("\n📝 Registering Models:")
     print("-" * 80)
     print("Code:")
-    print(
-        """
+    print("""
     from src.sdk.registry import ModelRegistry, ModelTask
     
     registry = ModelRegistry()
@@ -215,8 +205,7 @@ def demo_model_registry():
         "my_classifier",
         {"fps": 120, "latency_ms": 8.3, "accuracy": 0.92}
     )
-    """
-    )
+    """)
 
     print("\nBenefit: Central database of all your models with metadata!")
 
@@ -251,8 +240,7 @@ def demo_model_zoo():
     print("\n💾 Downloading Models:")
     print("-" * 80)
     print("Code:")
-    print(
-        """
+    print("""
     from src.sdk.registry import ModelZoo
     
     zoo = ModelZoo()
@@ -263,8 +251,7 @@ def demo_model_zoo():
     # Use immediately
     from src.sdk.easy import QuickModel
     model = QuickModel(model_path)
-    """
-    )
+    """)
 
     print("\nBenefit: Pre-optimized models ready to use!")
 
@@ -276,8 +263,7 @@ def demo_builder_pattern():
     print("\n🏗️  Inference Pipeline Builder:")
     print("-" * 80)
     print("Code:")
-    print(
-        """
+    print("""
     from src.sdk.builder import InferencePipeline
     
     pipeline = (InferencePipeline()
@@ -304,14 +290,12 @@ def demo_builder_pattern():
     
     # Execute pipeline
     result = pipeline.run("image.jpg")
-    """
-    )
+    """)
 
     print("\n🏗️  Config Builder:")
     print("-" * 80)
     print("Code:")
-    print(
-        """
+    print("""
     from src.sdk.builder import ConfigBuilder
     
     config = (ConfigBuilder()
@@ -323,8 +307,7 @@ def demo_builder_pattern():
         .enable_feature("profiling")
         .build()
     )
-    """
-    )
+    """)
 
     # Actually demonstrate
     print("\n📦 Live Demo:")
@@ -356,8 +339,7 @@ def demo_complete_workflow():
     print("\n🚀 Real-World Usage Example:")
     print("-" * 80)
     print("Code:")
-    print(
-        """
+    print("""
     # Step 1: Check available models in zoo
     from src.sdk.registry import ModelZoo
     zoo = ModelZoo()
@@ -404,8 +386,7 @@ def demo_complete_workflow():
     
     print(f"Prediction: {results['predictions'][0]}")
     print(f"Time: {results['inference_time_ms']:.2f} ms")
-    """
-    )
+    """)
 
     print("\n✅ Complete Pipeline:")
     print("  1. Discover models → ModelZoo")

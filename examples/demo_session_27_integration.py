@@ -14,25 +14,26 @@ This demo shows:
 Hardware Target: AMD Radeon RX 580 (8GB VRAM, Polaris architecture)
 """
 
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
-import numpy as np
-import time
-from pathlib import Path
-import sys
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from compute.darts_decomposition import (
-    create_integrated_search,
-    DecompositionMethod,
-    CompressionConfig,
-    HardwareConstraints,
     ArchitectureMetrics,
+    CompressionConfig,
     DARTSDecompositionIntegration,
+    DecompositionMethod,
+    HardwareConstraints,
+    create_integrated_search,
 )
 from compute.nas_darts import DARTSConfig
 

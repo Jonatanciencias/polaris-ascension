@@ -6,8 +6,9 @@ Configuración global para pytest.
 Los tests en el directorio 'legacy/' están excluidos automáticamente.
 """
 
-import sys
 import os
+import sys
+
 import pytest
 
 # Add project root and src to path for testing

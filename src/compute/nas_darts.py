@@ -42,16 +42,17 @@ Author: AMD GPU Computing Team
 Date: February 2026
 """
 
+import logging
+import time
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-from typing import List, Tuple, Dict, Optional, Callable, Any
-from dataclasses import dataclass, field
-from enum import Enum
-import numpy as np
-import logging
-import time
 
 logger = logging.getLogger(__name__)
 

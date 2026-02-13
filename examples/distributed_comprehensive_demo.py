@@ -35,12 +35,12 @@ Version: 0.6.0-dev
 License: MIT
 """
 
-import time
+import logging
 import random
 import threading
-import logging
-from typing import Dict, Any, List
+import time
 from dataclasses import dataclass
+from typing import Any, Dict, List
 
 # Configure logging
 logging.basicConfig(
@@ -48,22 +48,23 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+import os
+
 # Import distributed modules
 import sys
-import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from distributed.communication import Message, MessageType
-from distributed.load_balancing import (
-    LoadBalanceStrategy,
-    WorkerLoad,
-    TaskRequirements,
-    LeastLoadedBalancer,
-    AdaptiveBalancer,
-)
-from distributed.fault_tolerance import RetryManager, RetryConfig, CircuitBreaker, HealthChecker
 from distributed.coordinator import ClusterCoordinator, TaskPriority
+from distributed.fault_tolerance import CircuitBreaker, HealthChecker, RetryConfig, RetryManager
+from distributed.load_balancing import (
+    AdaptiveBalancer,
+    LeastLoadedBalancer,
+    LoadBalanceStrategy,
+    TaskRequirements,
+    WorkerLoad,
+)
 from distributed.worker import InferenceWorker, WorkerConfig
 
 

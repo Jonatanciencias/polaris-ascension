@@ -19,20 +19,21 @@ Demo includes:
 4. Comparison with manual architectures
 """
 
+import time
+
 import torch
 import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Subset
-import time
 
 from src.compute.nas_darts import (
+    PRIMITIVES,
     DARTSConfig,
-    SearchSpace,
     DARTSNetwork,
     DARTSTrainer,
+    SearchSpace,
     search_architecture,
-    PRIMITIVES,
 )
 
 
@@ -319,8 +320,7 @@ def demo_6_production_workflow():
     print("   └─ Profile on target hardware")
 
     print("\n💾 Code Example:")
-    print(
-        """
+    print("""
     # Search
     result = search_architecture(train_loader, val_loader, config)
     
@@ -334,8 +334,7 @@ def demo_6_production_workflow():
     
     # Deploy
     torch.onnx.export(model, 'model.onnx')
-    """
-    )
+    """)
 
 
 def main():

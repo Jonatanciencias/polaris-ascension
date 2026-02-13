@@ -13,24 +13,24 @@ This demo shows:
 6. Complete pipeline: Compress → Fine-tune → Deploy
 """
 
+import time
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset
-import time
 
 from src.compute.tensor_decomposition import (
-    decompose_model,
     DecompositionConfig,
     compute_compression_ratio,
+    decompose_model,
 )
 from src.compute.tensor_decomposition_finetuning import (
     DecompositionFinetuner,
     FinetuneConfig,
-    quick_finetune,
     LayerWiseFinetuner,
+    quick_finetune,
 )
-
 
 # ============================================================================
 #  Helper Functions

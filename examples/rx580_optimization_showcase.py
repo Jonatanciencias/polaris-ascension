@@ -15,11 +15,12 @@ Objetivo: Demostrar capacidades reales de RX 580 optimizada
 
 import sys
 import time
+from pathlib import Path
+from typing import Any, Dict, List
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from typing import Dict, List, Any
-import matplotlib.pyplot as plt
 
 
 class RX580OptimizationShowcase:
@@ -41,7 +42,7 @@ class RX580OptimizationShowcase:
         """Cargar el sistema AI + Bayesian"""
         try:
             sys.path.append(str(Path(__file__).parent / "fase_7_ai_kernel_predictor" / "src"))
-            from kernel_predictor import AIKernelPredictor, BAYESIAN_INTEGRATION_AVAILABLE
+            from kernel_predictor import BAYESIAN_INTEGRATION_AVAILABLE, AIKernelPredictor
 
             self.predictor = AIKernelPredictor()
             self.bayesian_available = BAYESIAN_INTEGRATION_AVAILABLE

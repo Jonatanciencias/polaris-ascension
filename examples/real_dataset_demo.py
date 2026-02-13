@@ -13,17 +13,18 @@ Date: January 21, 2026
 """
 
 import asyncio
-import torch
-import torch.nn as nn
+import json
 import logging
 from pathlib import Path
-import json
 
-from src.data.cifar_dataset import CIFARDataset
-from src.training.real_data_trainer import RealDataTrainer, TrainingConfig
-from src.optimization.hyperparameter_tuner import HyperparameterTuner, HyperparameterSpace
+import torch
+import torch.nn as nn
+
 from src.benchmarks.dataset_comparison import DatasetComparisonBenchmark
+from src.data.cifar_dataset import CIFARDataset
 from src.models.resnet import ResNet18
+from src.optimization.hyperparameter_tuner import HyperparameterSpace, HyperparameterTuner
+from src.training.real_data_trainer import RealDataTrainer, TrainingConfig
 
 # Setup logging
 logging.basicConfig(

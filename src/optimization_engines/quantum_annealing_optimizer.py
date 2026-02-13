@@ -10,10 +10,11 @@ Técnica: Simulación de annealing cuántico adaptada para GEMM operations.
 """
 
 import sys
-import numpy as np
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 import pyopencl as cl
 import pyopencl.array as cl_array
 
@@ -132,19 +133,6 @@ class QuantumAnnealingMatrixOptimizer:
         except Exception as e:
             print(f"❌ Error compilando kernels OpenCL: {e}")
             self.opencl_available = False
-
-            devices = amd_platform.get_devices(device_type=cl.device_type.GPU)
-            self.device = devices[0] if devices else None
-
-            if self.device:
-                print(f"🔬 Quantum Annealing usando GPU: {self.device.name}")
-
-            self.ctx = cl.Context([self.device])
-            self.queue = cl.CommandQueue(self.ctx)
-
-        except Exception as e:
-            print(f"❌ Error OpenCL: {e}")
-            raise
 
     def quantum_annealing_optimization(
         self, matrix_A: np.ndarray, matrix_B: np.ndarray, num_sweeps: int = 100
