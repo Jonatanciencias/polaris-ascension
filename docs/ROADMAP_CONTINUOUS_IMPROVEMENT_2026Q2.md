@@ -988,6 +988,19 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_011733.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_011753.json`
   - Key finding: comparativo mensual cierra en `promote`, mantiene política `dual_go_clover_rusticl`, mejora overhead (`-3.4264%`) y conserva deuda high/critical en `0`.
+- Week 30 - Block 1 (new recurrent monthly continuity cycle against Week29 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK30_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week30_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block1_monthly_continuity_20260213_013243.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block1_monthly_continuity_weekly_replay_20260213_012742.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block1_monthly_continuity_weekly_replay_eval_20260213_013048.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block1_monthly_continuity_split_canary_20260213_013243.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block1_monthly_continuity_split_eval_20260213_013243.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_012742.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_013302.json`
+  - Key finding: ciclo recurrente cierra en `promote` con guardrails sanos (`rusticl_ratio_min=0.9059`, `t5_overhead_max=1.3656`, `t5_disable_total=0`) y continuidad estable.
 
 ## Governance Rules
 
@@ -1064,7 +1077,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 30 - Block 1: iniciar nuevo ciclo mensual recurrente contra baseline Week29 y cerrar acta/decisión formal.
-2. Week 30 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week30 Block1.
-3. Week 30 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y actualización de política si aplica.
+1. Week 30 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week30 Block1.
+2. Week 30 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y actualización de política si aplica.
+3. Week 31 - Block 1: iniciar nuevo ciclo mensual recurrente contra baseline Week30 tras cierre de Block 2+3.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
