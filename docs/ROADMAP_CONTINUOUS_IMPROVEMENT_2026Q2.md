@@ -961,6 +961,20 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_161229.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_161750.json`
   - Key finding: ciclo recurrente cierra en `promote` con guardrails sanos (`rusticl_ratio_min=0.9223`, `t5_overhead_max=1.2555`, `t5_disable_total=0`) y continuidad estable.
+- Week 29 - Block 2 (alert bridge observability hardening: success ratio + latency + degradation alerts): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK29_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week29_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week29_controlled_rollout/run_week29_block2_alert_bridge_observability.py`
+    - `research/breakthrough_lab/week29_controlled_rollout/run_week29_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block2_alert_bridge_observability_20260213_011150.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block2_alert_bridge_observability_dispatch_20260213_011150.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block2_alert_bridge_observability_scheduler_health_20260213_011150.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block2_alert_bridge_observability_operational_debt_20260213_011150.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block2_live_webhook_capture_20260213_parallel.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_011149.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_011209.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=14.219ms`, `retries_rate=0.25`) con retry real (`503 -> 200`) y sin alertas de degradación.
 
 ## Governance Rules
 
@@ -1037,7 +1051,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 29 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week29 Block1.
-2. Week 29 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y actualización de política si aplica.
-3. Week 30 - Block 1: iniciar nuevo ciclo mensual recurrente contra baseline Week29 tras cierre de Block 2+3.
+1. Week 29 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y actualización de política si aplica.
+2. Week 30 - Block 1: iniciar nuevo ciclo mensual recurrente contra baseline Week29 tras cierre de Block 3.
+3. Week 30 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week30 Block1.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
