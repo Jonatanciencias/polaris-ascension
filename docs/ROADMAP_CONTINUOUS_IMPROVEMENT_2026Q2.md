@@ -1224,6 +1224,28 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_163318.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_163916.json`
   - Key finding: continuidad mensual Week35 cierra en `promote` con `t5_disable_total=0`, `weekly_t5_overhead_max=2.4137%`, `split_ratio_min=0.9211` y gates canónicos pre/post en verde.
+- Week 35 - Block 2 (alert bridge observability hardening): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK35_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week35_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block2_alert_bridge_observability_20260213_165233.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block2_alert_bridge_observability_dispatch_20260213_165233.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block2_alert_bridge_observability_scheduler_health_20260213_165233.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block2_live_webhook_capture_20260213_165205.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_165200.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_165330.json`
+  - Key finding: observabilidad bridge cierra en `promote` con `cycle_success_ratio=1.0`, `latency_p95=11.9380ms`, `retries_rate=0.3333` y gates canónicos explícitos/internos en verde.
+- Week 35 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK35_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week35_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block3_biweekly_comparative_20260213_170240.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_170240.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_170210.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_170324.json`
+  - Key finding: comparativo mensual cierra en `promote`, mantiene política `clover_primary_rusticl_canary`, y conserva deuda high/critical en `0`.
 
 ## Governance Rules
 
@@ -1300,8 +1322,8 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 35 - Block 2: hardening incremental del alert bridge live sobre evidencia Week35 Block1 con gate canónico pre/post.
-2. Week 35 - Block 3: comparativo mensual dual plataforma + decisión formal por entorno y cierre de continuidad.
-3. Cerrar Week35 con paquete formal (actas + decisions + evidencia + roadmap) y push de rama.
-4. Arrancar Week36 Block1 contra baseline Week35 (mismo gate canónico pre/post).
+1. Cerrar Week35 con commit técnico limpio de Block2+3 (actas + decisions + evidencia + roadmap) y push de rama.
+2. Arrancar Week36 Block1 contra baseline Week35 (mismo gate canónico pre/post).
+3. Ejecutar Week36 Block2 (hardening incremental del alert bridge live) con gate canónico pre/post.
+4. Ejecutar Week36 Block3 (comparativo mensual dual plataforma + decisión formal por entorno).
 5. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
