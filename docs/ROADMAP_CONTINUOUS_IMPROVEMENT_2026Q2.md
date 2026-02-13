@@ -1173,6 +1173,16 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/preprod_signoff/WEEK33_RX590_EXTENDED_RC_CHECKLIST.md`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_041245.json`
   - Key finding: con Week33 completo en `promote`, queda publicado RC operativo para pruebas extendidas RX590 en modo controlado con rollback SLA activo.
+- Week 34 - Block 1 (monthly continuity RC canary against Week33 recovery baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK34_BLOCK1_MONTHLY_CONTINUITY_RC_CANARY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week34_block1_monthly_continuity_rc_canary_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block1_monthly_continuity_rc_canary_20260213_042736.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block1_monthly_continuity_rc_canary_weekly_replay_eval_20260213_042603.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block1_monthly_continuity_rc_canary_split_eval_20260213_042736.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_042219.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_042821.json`
+  - Key finding: continuidad mensual Week34 cierra en `promote` con `t5_disable_total=0`, `weekly_t5_overhead_max=2.3030%`, `split_ratio_min=0.9124` y gates canónicos pre/post en verde.
 
 ## Governance Rules
 
@@ -1249,8 +1259,8 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 34 - Block 1: ejecutar ciclo mensual recurrente contra baseline Week33 recovery y cerrar acta/decisión formal.
-2. Week 34 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week34 Block1.
-3. Week 34 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y recalibración conservadora si aplica.
-4. Week 34 - RC Validation: ejecutar pruebas extendidas RX590 siguiendo `WEEK33_RX590_EXTENDED_RC_RUNBOOK.md` y cerrar go/no-go formal.
+1. Week 34 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week34 Block1.
+2. Week 34 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y recalibración conservadora si aplica.
+3. Week 34 - RC Validation: completar validación extendida RX590 del runbook (`step 4` bridge observability + checklist go/no-go formal).
+4. Preparar commit técnico limpio de Week34 Block1/2/3 + RC validation y push de rama.
 5. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
