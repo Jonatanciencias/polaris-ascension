@@ -1,0 +1,124 @@
+{
+  "timestamp_utc": "2026-02-13T03:11:58.920109+00:00",
+  "endpoint": "http://127.0.0.1:8825/webhook",
+  "health_url": "http://127.0.0.1:8825/health",
+  "cycles": [
+    {
+      "cycle": 1,
+      "pre_health": {
+        "url": "http://127.0.0.1:8825/health",
+        "status": 200,
+        "ok": true,
+        "elapsed_ms": 48.65803299981053,
+        "error": null
+      },
+      "dispatch": {
+        "sent": true,
+        "http_status": 200,
+        "error": null,
+        "attempts": [
+          {
+            "attempt": 1,
+            "timestamp_utc": "2026-02-13T03:11:58.525231+00:00",
+            "sent": false,
+            "http_status": 503,
+            "error": "HTTP Error 503: Service Unavailable",
+            "elapsed_ms": null,
+            "backoff_applied_seconds": 0.3
+          },
+          {
+            "attempt": 2,
+            "timestamp_utc": "2026-02-13T03:11:58.837042+00:00",
+            "sent": true,
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 11.48341799944319,
+            "backoff_applied_seconds": 0.0
+          }
+        ],
+        "attempts_executed": 2,
+        "retries_used": true,
+        "success_latency_ms": 11.48341799944319
+      },
+      "post_health": {
+        "url": "http://127.0.0.1:8825/health",
+        "status": 200,
+        "ok": true,
+        "elapsed_ms": 11.581877999560675,
+        "error": null
+      }
+    },
+    {
+      "cycle": 2,
+      "pre_health": {
+        "url": "http://127.0.0.1:8825/health",
+        "status": 200,
+        "ok": true,
+        "elapsed_ms": 11.335074999806238,
+        "error": null
+      },
+      "dispatch": {
+        "sent": true,
+        "http_status": 200,
+        "error": null,
+        "attempts": [
+          {
+            "attempt": 1,
+            "timestamp_utc": "2026-02-13T03:11:58.872038+00:00",
+            "sent": true,
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 11.71174599949154,
+            "backoff_applied_seconds": 0.0
+          }
+        ],
+        "attempts_executed": 1,
+        "retries_used": false,
+        "success_latency_ms": 11.71174599949154
+      },
+      "post_health": {
+        "url": "http://127.0.0.1:8825/health",
+        "status": 200,
+        "ok": true,
+        "elapsed_ms": 11.746914000468678,
+        "error": null
+      }
+    },
+    {
+      "cycle": 3,
+      "pre_health": {
+        "url": "http://127.0.0.1:8825/health",
+        "status": 200,
+        "ok": true,
+        "elapsed_ms": 11.86149299974204,
+        "error": null
+      },
+      "dispatch": {
+        "sent": true,
+        "http_status": 200,
+        "error": null,
+        "attempts": [
+          {
+            "attempt": 1,
+            "timestamp_utc": "2026-02-13T03:11:58.908055+00:00",
+            "sent": true,
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 12.013707999358303,
+            "backoff_applied_seconds": 0.0
+          }
+        ],
+        "attempts_executed": 1,
+        "retries_used": false,
+        "success_latency_ms": 12.013707999358303
+      },
+      "post_health": {
+        "url": "http://127.0.0.1:8825/health",
+        "status": 200,
+        "ok": true,
+        "elapsed_ms": 11.847300000226824,
+        "error": null
+      }
+    }
+  ]
+}
