@@ -10,6 +10,7 @@ Usage:
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import numpy as np
@@ -36,7 +37,7 @@ print(f"   Threading: 4 intra-op, 2 inter-op")
 
 try:
     print("\n1.2 PyTorch Loader")
-    pytorch_loader = PyTorchModelLoader(optimization_level=2, preferred_device='auto')
+    pytorch_loader = PyTorchModelLoader(optimization_level=2, preferred_device="auto")
     print(f"✅ PyTorchModelLoader initialized")
     print(f"   Available backends: {pytorch_loader.get_available_providers()}")
     print(f"   Selected device: {pytorch_loader._device}")
@@ -56,27 +57,27 @@ print("  - EfficientNet-B0: Optimized architecture")
 
 # Simulate model specifications
 models_spec = {
-    'resnet50': {
-        'input_shape': (1, 3, 224, 224),
-        'output_shape': (1, 1000),
-        'size_mb': 98.0,
-        'params': '25.6M',
-        'flops': '4.1B',
+    "resnet50": {
+        "input_shape": (1, 3, 224, 224),
+        "output_shape": (1, 1000),
+        "size_mb": 98.0,
+        "params": "25.6M",
+        "flops": "4.1B",
     },
-    'mobilenetv2': {
-        'input_shape': (1, 3, 224, 224),
-        'output_shape': (1, 1000),
-        'size_mb': 14.0,
-        'params': '3.5M',
-        'flops': '0.3B',
+    "mobilenetv2": {
+        "input_shape": (1, 3, 224, 224),
+        "output_shape": (1, 1000),
+        "size_mb": 14.0,
+        "params": "3.5M",
+        "flops": "0.3B",
     },
-    'efficientnet_b0': {
-        'input_shape': (1, 3, 224, 224),
-        'output_shape': (1, 1000),
-        'size_mb': 20.0,
-        'params': '5.3M',
-        'flops': '0.4B',
-    }
+    "efficientnet_b0": {
+        "input_shape": (1, 3, 224, 224),
+        "output_shape": (1, 1000),
+        "size_mb": 20.0,
+        "params": "5.3M",
+        "flops": "0.4B",
+    },
 }
 
 for model_name, spec in models_spec.items():
@@ -94,10 +95,7 @@ print("DEMO 3: Multi-Model Server with Real Loaders")
 print("=" * 80)
 
 print("\nInitializing MultiModelServer...")
-server = MultiModelServer(
-    max_models=5,
-    memory_limit_mb=6000.0  # RX 580 has 8GB, reserve 2GB
-)
+server = MultiModelServer(max_models=5, memory_limit_mb=6000.0)  # RX 580 has 8GB, reserve 2GB
 
 print("✅ Server initialized")
 print(f"   Max models: 5")
@@ -108,15 +106,15 @@ print("\n Simulating model loading...")
 print("(In production, these would be real ONNX/PyTorch models)")
 
 # Simulate loading with timing
-simulated_models = ['resnet50', 'mobilenetv2', 'efficientnet_b0']
+simulated_models = ["resnet50", "mobilenetv2", "efficientnet_b0"]
 for model_name in simulated_models:
     spec = models_spec[model_name]
     print(f"\n  Loading {model_name}...")
     start = time.time()
-    
+
     # Simulate load time based on model size
-    time.sleep(spec['size_mb'] / 100.0)  # Faster simulation
-    
+    time.sleep(spec["size_mb"] / 100.0)  # Faster simulation
+
     load_time = (time.time() - start) * 1000
     print(f"    ✅ Loaded in {load_time:.1f}ms")
     print(f"    Memory: {spec['size_mb']:.1f} MB")
@@ -132,34 +130,38 @@ print("(Simulated with realistic timings)")
 
 # Realistic inference times for RX 580 (based on benchmarks)
 inference_times_ms = {
-    'resnet50': {
-        'batch_1': 45.2,
-        'batch_4': 120.5,
-        'batch_8': 220.1,
+    "resnet50": {
+        "batch_1": 45.2,
+        "batch_4": 120.5,
+        "batch_8": 220.1,
     },
-    'mobilenetv2': {
-        'batch_1': 12.3,
-        'batch_4': 35.7,
-        'batch_8': 65.4,
+    "mobilenetv2": {
+        "batch_1": 12.3,
+        "batch_4": 35.7,
+        "batch_8": 65.4,
     },
-    'efficientnet_b0': {
-        'batch_1': 18.5,
-        'batch_4': 52.3,
-        'batch_8': 95.2,
-    }
+    "efficientnet_b0": {
+        "batch_1": 18.5,
+        "batch_4": 52.3,
+        "batch_8": 95.2,
+    },
 }
 
 batch_sizes = [1, 4, 8]
 
 print("\nInference Latency (ms):")
-print(f"{'Model':<20} {'Batch 1':>10} {'Batch 4':>10} {'Batch 8':>10} {'Throughput (imgs/sec)':>20}")
+print(
+    f"{'Model':<20} {'Batch 1':>10} {'Batch 4':>10} {'Batch 8':>10} {'Throughput (imgs/sec)':>20}"
+)
 print("-" * 80)
 
 for model_name in simulated_models:
     times = inference_times_ms[model_name]
-    throughput = (8 / times['batch_8']) * 1000  # images per second at batch 8
-    
-    print(f"{model_name:<20} {times['batch_1']:>10.1f} {times['batch_4']:>10.1f} {times['batch_8']:>10.1f} {throughput:>20.1f}")
+    throughput = (8 / times["batch_8"]) * 1000  # images per second at batch 8
+
+    print(
+        f"{model_name:<20} {times['batch_1']:>10.1f} {times['batch_4']:>10.1f} {times['batch_8']:>10.1f} {throughput:>20.1f}"
+    )
 
 print("\nThroughput Analysis:")
 print("  • MobileNetV2: Best for real-time (122 imgs/sec)")
@@ -172,7 +174,7 @@ print("DEMO 5: Memory Efficiency on RX 580")
 print("=" * 80)
 
 print("\nMemory usage for concurrent models:")
-total_memory = sum(spec['size_mb'] for spec in models_spec.values())
+total_memory = sum(spec["size_mb"] for spec in models_spec.values())
 print(f"  Total model memory: {total_memory:.1f} MB")
 print(f"  Activation memory (est.): ~500 MB")
 print(f"  System overhead: ~200 MB")
@@ -220,22 +222,28 @@ print(f"{'Model':<20} {'Original':>12} {'Compressed':>12} {'Ratio':>10} {'Speedu
 print("-" * 80)
 
 compression_data = {
-    'resnet50': {'original': 98.0, 'compressed': 25.5, 'speedup': 2.1},
-    'mobilenetv2': {'original': 14.0, 'compressed': 4.2, 'speedup': 2.8},
-    'efficientnet_b0': {'original': 20.0, 'compressed': 5.8, 'speedup': 2.5},
+    "resnet50": {"original": 98.0, "compressed": 25.5, "speedup": 2.1},
+    "mobilenetv2": {"original": 14.0, "compressed": 4.2, "speedup": 2.8},
+    "efficientnet_b0": {"original": 20.0, "compressed": 5.8, "speedup": 2.5},
 }
 
 total_savings = 0
 for model_name, data in compression_data.items():
-    ratio = data['original'] / data['compressed']
-    savings = data['original'] - data['compressed']
+    ratio = data["original"] / data["compressed"]
+    savings = data["original"] - data["compressed"]
     total_savings += savings
-    
-    print(f"{model_name:<20} {data['original']:>10.1f} MB {data['compressed']:>10.1f} MB {ratio:>9.1f}x {data['speedup']:>9.1f}x")
+
+    print(
+        f"{model_name:<20} {data['original']:>10.1f} MB {data['compressed']:>10.1f} MB {ratio:>9.1f}x {data['speedup']:>9.1f}x"
+    )
 
 print(f"\n{'Total savings:':<20} {total_savings:>10.1f} MB")
-print(f"{'Average compression:':<20} {sum(d['original'] for d in compression_data.values()) / sum(d['compressed'] for d in compression_data.values()):>10.1f}x")
-print(f"{'Average speedup:':<20} {np.mean([d['speedup'] for d in compression_data.values()]):>10.1f}x")
+print(
+    f"{'Average compression:':<20} {sum(d['original'] for d in compression_data.values()) / sum(d['compressed'] for d in compression_data.values()):>10.1f}x"
+)
+print(
+    f"{'Average speedup:':<20} {np.mean([d['speedup'] for d in compression_data.values()]):>10.1f}x"
+)
 
 # Summary
 print("\n" + "=" * 80)

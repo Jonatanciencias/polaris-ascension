@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Dict, List, Any
 import matplotlib.pyplot as plt
 
+
 class RX580OptimizationShowcase:
     """
     Demostración completa de optimizaciones RX 580
@@ -30,10 +31,10 @@ class RX580OptimizationShowcase:
         self.results = []
         self.test_matrices = [256, 512, 1024, 2048]
         self.baseline_performance = {
-            256: 60.0,   # Performance inicial aproximado
+            256: 60.0,  # Performance inicial aproximado
             512: 80.0,
             1024: 120.0,
-            2048: 180.0
+            2048: 180.0,
         }
 
     def load_ai_predictor(self):
@@ -41,6 +42,7 @@ class RX580OptimizationShowcase:
         try:
             sys.path.append(str(Path(__file__).parent / "fase_7_ai_kernel_predictor" / "src"))
             from kernel_predictor import AIKernelPredictor, BAYESIAN_INTEGRATION_AVAILABLE
+
             self.predictor = AIKernelPredictor()
             self.bayesian_available = BAYESIAN_INTEGRATION_AVAILABLE
             return True
@@ -65,12 +67,12 @@ class RX580OptimizationShowcase:
             enhanced_result = self.predictor.predict_best_kernel_enhanced(size, use_bayesian=True)
 
             ai_results[size] = {
-                'base_performance': base_result['predicted_performance'],
-                'enhanced_performance': enhanced_result['predicted_performance'],
-                'improvement_percent': enhanced_result['improvement_percent'],
-                'best_kernel': enhanced_result['best_kernel'],
-                'confidence': enhanced_result['confidence_score'],
-                'bayesian_used': enhanced_result['bayesian_integration']
+                "base_performance": base_result["predicted_performance"],
+                "enhanced_performance": enhanced_result["predicted_performance"],
+                "improvement_percent": enhanced_result["improvement_percent"],
+                "best_kernel": enhanced_result["best_kernel"],
+                "confidence": enhanced_result["confidence_score"],
+                "bayesian_used": enhanced_result["bayesian_integration"],
             }
 
             print(f"   Base: {base_result['predicted_performance']:.1f} GFLOPS")
@@ -102,18 +104,21 @@ class RX580OptimizationShowcase:
                 peak_performance = 890.3  # Project peak
 
             manual_results[size] = {
-                'simd_performance': peak_performance * 0.75,  # SIMD contribution
-                'gcn4_performance': peak_performance * 0.85,  # GCN4 contribution
-                'memory_performance': peak_performance * 0.95, # Memory optimization
-                'peak_performance': peak_performance,  # Final manual optimization
-                'total_improvement': ((peak_performance / self.baseline_performance[size]) - 1) * 100
+                "simd_performance": peak_performance * 0.75,  # SIMD contribution
+                "gcn4_performance": peak_performance * 0.85,  # GCN4 contribution
+                "memory_performance": peak_performance * 0.95,  # Memory optimization
+                "peak_performance": peak_performance,  # Final manual optimization
+                "total_improvement": ((peak_performance / self.baseline_performance[size]) - 1)
+                * 100,
             }
 
             print(f"Matrix {size}x{size}:")
             print(f"   SIMD: {manual_results[size]['simd_performance']:.1f} GFLOPS")
             print(f"   GCN4: {manual_results[size]['gcn4_performance']:.1f} GFLOPS")
             print(f"   Memory: {manual_results[size]['memory_performance']:.1f} GFLOPS")
-            print(f"   Peak Manual: {peak_performance:.1f} GFLOPS (+{manual_results[size]['total_improvement']:.1f}%)")
+            print(
+                f"   Peak Manual: {peak_performance:.1f} GFLOPS (+{manual_results[size]['total_improvement']:.1f}%)"
+            )
             print()
 
         return manual_results
@@ -125,13 +130,13 @@ class RX580OptimizationShowcase:
 
         # Radeon RX 580 Polaris 10 specs
         gpu_specs = {
-            'compute_units': 36,
-            'stream_processors': 2304,
-            'base_clock': 1257,  # MHz
-            'boost_clock': 1340,  # MHz
-            'memory_clock': 8000,  # MHz (GDDR5)
-            'memory_bus': 256,  # bits
-            'bandwidth': 256,  # GB/s
+            "compute_units": 36,
+            "stream_processors": 2304,
+            "base_clock": 1257,  # MHz
+            "boost_clock": 1340,  # MHz
+            "memory_clock": 8000,  # MHz (GDDR5)
+            "memory_bus": 256,  # bits
+            "bandwidth": 256,  # GB/s
         }
 
         theoretical_max = {}
@@ -139,22 +144,22 @@ class RX580OptimizationShowcase:
         for size in self.test_matrices:
             # Cálculo simplificado de GFLOPS teórico
             # FP32: 2 operaciones por ciclo por stream processor
-            fp32_flops = gpu_specs['stream_processors'] * gpu_specs['boost_clock'] * 2 * 1e6
+            fp32_flops = gpu_specs["stream_processors"] * gpu_specs["boost_clock"] * 2 * 1e6
 
             # Limitado por memoria para matrices grandes
             # GEMM requiere: 2 lecturas + 1 escritura por elemento resultado
             bytes_per_operation = 4 * 3  # 4 bytes por float * 3 (A, B, C)
             total_bytes = size * size * bytes_per_operation
-            memory_time = total_bytes / (gpu_specs['bandwidth'] * 1e9)  # segundos
+            memory_time = total_bytes / (gpu_specs["bandwidth"] * 1e9)  # segundos
             memory_limited = (size * size * 2) / memory_time / 1e9  # GFLOPS (2 FLOPs por elemento)
 
             theoretical = min(fp32_flops / 1e9, memory_limited)
 
             theoretical_max[size] = {
-                'fp32_theoretical': fp32_flops / 1e9,
-                'memory_limited': memory_limited,
-                'achievable_max': theoretical,
-                'utilization_percent': (890.3 / theoretical) * 100  # Basado en peak alcanzado
+                "fp32_theoretical": fp32_flops / 1e9,
+                "memory_limited": memory_limited,
+                "achievable_max": theoretical,
+                "utilization_percent": (890.3 / theoretical) * 100,  # Basado en peak alcanzado
             }
 
             print(f"Matrix {size}x{size}:")
@@ -196,40 +201,42 @@ class RX580OptimizationShowcase:
 
         for size in self.test_matrices:
             baseline = self.baseline_performance[size]
-            manual_peak = manual[size]['peak_performance']
-            ai_enhanced = ai[size]['enhanced_performance']
-            theoretical_max = theoretical[size]['achievable_max']
+            manual_peak = manual[size]["peak_performance"]
+            ai_enhanced = ai[size]["enhanced_performance"]
+            theoretical_max = theoretical[size]["achievable_max"]
 
             manual_improvement = ((manual_peak / baseline) - 1) * 100
             ai_improvement = ((ai_enhanced / baseline) - 1) * 100
             total_improvement = ((ai_enhanced / baseline) - 1) * 100
             utilization = (ai_enhanced / theoretical_max) * 100
 
-            comparison_data.append({
-                'Matrix Size': f'{size}x{size}',
-                'Baseline (GFLOPS)': baseline,
-                'Manual Peak (GFLOPS)': manual_peak,
-                'AI+Bayesian (GFLOPS)': ai_enhanced,
-                'Theoretical Max (GFLOPS)': theoretical_max,
-                'Manual Improvement (%)': manual_improvement,
-                'AI Improvement (%)': ai_improvement,
-                'Total Improvement (%)': total_improvement,
-                'GPU Utilization (%)': utilization
-            })
+            comparison_data.append(
+                {
+                    "Matrix Size": f"{size}x{size}",
+                    "Baseline (GFLOPS)": baseline,
+                    "Manual Peak (GFLOPS)": manual_peak,
+                    "AI+Bayesian (GFLOPS)": ai_enhanced,
+                    "Theoretical Max (GFLOPS)": theoretical_max,
+                    "Manual Improvement (%)": manual_improvement,
+                    "AI Improvement (%)": ai_improvement,
+                    "Total Improvement (%)": total_improvement,
+                    "GPU Utilization (%)": utilization,
+                }
+            )
 
         df = pd.DataFrame(comparison_data)
         print("📊 PERFORMANCE COMPARISON TABLE")
         print("-" * 80)
-        print(df.to_string(index=False, float_format='%.1f'))
+        print(df.to_string(index=False, float_format="%.1f"))
         print()
 
         # Estadísticas clave
         print("🏆 KEY ACHIEVEMENTS")
         print("-" * 40)
 
-        avg_manual_improvement = df['Manual Improvement (%)'].mean()
-        max_manual_performance = df['Manual Peak (GFLOPS)'].max()
-        max_ai_performance = df['AI+Bayesian (GFLOPS)'].max()
+        avg_manual_improvement = df["Manual Improvement (%)"].mean()
+        max_manual_performance = df["Manual Peak (GFLOPS)"].max()
+        max_ai_performance = df["AI+Bayesian (GFLOPS)"].max()
 
         print(f"   Peak Manual Performance: {max_manual_performance:.1f} GFLOPS")
         print(f"   Peak AI+Bayesian Performance: {max_ai_performance:.1f} GFLOPS")
@@ -279,10 +286,12 @@ class RX580OptimizationShowcase:
         print()
         print("🚀 NEXT: Multi-GPU scaling will unlock 2000-9600+ GFLOPS potential!")
 
+
 def main():
     """Función principal"""
     showcase = RX580OptimizationShowcase()
     showcase.run_complete_benchmark()
+
 
 if __name__ == "__main__":
     main()

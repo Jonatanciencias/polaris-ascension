@@ -1,0 +1,51 @@
+{
+  "cadence_id": "week13-block5-weekly-cadence-v1-2026-02-09",
+  "timezone": "America/New_York",
+  "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week13_controlled_rollout/policy_week13_block3_weekly_slo_v2.json",
+  "windows": {
+    "weekly_window": {
+      "day_of_week": "Monday",
+      "start_local": "08:00",
+      "duration_minutes": 120,
+      "steps": [
+        {
+          "id": "gate_pre",
+          "command": "./venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline"
+        },
+        {
+          "id": "weekly_replay",
+          "command": "./venv/bin/python research/breakthrough_lab/week12_controlled_rollout/run_week12_weekly_replay_automation.py --mode local --policy-path research/breakthrough_lab/week13_controlled_rollout/policy_week13_block3_weekly_slo_v2.json"
+        },
+        {
+          "id": "platform_split",
+          "command": "./venv/bin/python research/breakthrough_lab/platform_compatibility/run_week9_block4_stress_split.py --sizes 1400 2048 3072 --kernels auto_t3_controlled auto_t5_guarded"
+        },
+        {
+          "id": "continuity_consolidation",
+          "command": "./venv/bin/python research/breakthrough_lab/week13_controlled_rollout/build_week13_block5_continuity_package.py"
+        },
+        {
+          "id": "gate_post",
+          "command": "./venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline"
+        }
+      ]
+    },
+    "daily_smoke": {
+      "day_of_week": "Mon-Fri",
+      "start_local": "07:30",
+      "duration_minutes": 20,
+      "steps": [
+        {
+          "id": "driver_smoke",
+          "command": "./venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline"
+        }
+      ]
+    }
+  },
+  "sla": {
+    "sev1_response_minutes": 10,
+    "sev2_response_minutes": 30,
+    "sev3_response_minutes": 120,
+    "rollback_sla_reference": "research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_ROLLBACK_SLA.md"
+  }
+}

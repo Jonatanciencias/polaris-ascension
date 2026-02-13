@@ -1,0 +1,103 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-11T01:44:19.804306+00:00",
+    "stable_tag": "v0.15.0",
+    "stable_manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json",
+    "block1_decision_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_block1_stable_operations_package_decision.json",
+    "block2_report_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_20260211_014255.json",
+    "block2_decision_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week18_block2_maintenance_split_decision.json"
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014400.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014400.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014419.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014419.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "gate_cmd_pretty": "./venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline"
+  },
+  "inputs": {
+    "block1_decision": "promote",
+    "block2_decision": "promote",
+    "block2_ratio_min": 0.9181158927385756,
+    "block2_t5_disable_total": 0,
+    "block2_t5_overhead_max": 1.4022657107309793
+  },
+  "artifacts": {
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014400.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014419.json",
+    "final_checklist_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK3_FINAL_RELEASE_CHECKLIST.md",
+    "release_recommendation_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK3_STABLE_RELEASE_RECOMMENDATION.md",
+    "go_no_go_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK3_GO_NO_GO_DECISION.json"
+  },
+  "evaluation": {
+    "checks": {
+      "stable_manifest_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "stable_tag_v0_15_0": {
+        "observed": "v0.15.0",
+        "required": "v0.15.0",
+        "pass": true
+      },
+      "week18_block1_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "week18_block2_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "week18_block2_ratio_floor": {
+        "observed_min": 0.9181158927385756,
+        "required_min": 0.85,
+        "pass": true
+      },
+      "week18_block2_t5_disable_total": {
+        "observed": 0,
+        "required_max": 0,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "release_recommendation": "GO",
+    "rationale": "Stable release checklist is fully green and v0.15.0 is recommended for controlled adoption."
+  }
+}

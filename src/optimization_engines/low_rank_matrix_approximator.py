@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Optional, Any
 import matplotlib.pyplot as plt
 
+
 class LowRankMatrixApproximator:
     """
     Aproximador de matrices de bajo rango para operaciones GEMM optimizadas.
@@ -74,16 +75,16 @@ class LowRankMatrixApproximator:
         rank_90 = np.searchsorted(cumulative_energy, 0.90) + 1
 
         analysis = {
-            'matrix_shape': matrix.shape,
-            'theoretical_rank': min(matrix.shape),
-            'effective_rank': int(effective_rank),
-            'rank_99_percent': int(rank_99),
-            'rank_95_percent': int(rank_95),
-            'rank_90_percent': int(rank_90),
-            'singular_values': singular_values[:20].tolist(),  # Top 20
-            'cumulative_energy': cumulative_energy[:50].tolist(),  # Primeros 50
-            'rank_reduction_ratio': effective_rank / min(matrix.shape),
-            'compressibility_score': 1.0 - (effective_rank / min(matrix.shape))
+            "matrix_shape": matrix.shape,
+            "theoretical_rank": min(matrix.shape),
+            "effective_rank": int(effective_rank),
+            "rank_99_percent": int(rank_99),
+            "rank_95_percent": int(rank_95),
+            "rank_90_percent": int(rank_90),
+            "singular_values": singular_values[:20].tolist(),  # Top 20
+            "cumulative_energy": cumulative_energy[:50].tolist(),  # Primeros 50
+            "rank_reduction_ratio": effective_rank / min(matrix.shape),
+            "compressibility_score": 1.0 - (effective_rank / min(matrix.shape)),
         }
 
         print(f"   Rango teórico: {analysis['theoretical_rank']}")
@@ -93,7 +94,9 @@ class LowRankMatrixApproximator:
 
         return analysis
 
-    def low_rank_approximation(self, matrix: np.ndarray, rank: int) -> Tuple[np.ndarray, Dict[str, Any]]:
+    def low_rank_approximation(
+        self, matrix: np.ndarray, rank: int
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
         """
         Crea aproximación de bajo rango de la matriz.
 
@@ -127,21 +130,21 @@ class LowRankMatrixApproximator:
         decomposition_time = time.time() - start_time
 
         # Calcular métricas de calidad
-        frobenius_error = np.linalg.norm(matrix - approximated, 'fro')
-        frobenius_norm = np.linalg.norm(matrix, 'fro')
+        frobenius_error = np.linalg.norm(matrix - approximated, "fro")
+        frobenius_norm = np.linalg.norm(matrix, "fro")
         relative_error = frobenius_error / frobenius_norm
 
         compression_ratio = (matrix.size) / (U_r.size + s_r.size + Vt_r.size)
 
         info = {
-            'original_shape': matrix.shape,
-            'approximated_rank': rank,
-            'decomposition_time': decomposition_time,
-            'frobenius_error': frobenius_error,
-            'relative_error': relative_error,
-            'compression_ratio': compression_ratio,
-            'storage_savings': 1.0 - (1.0 / compression_ratio),
-            'singular_values_used': s_r.tolist()
+            "original_shape": matrix.shape,
+            "approximated_rank": rank,
+            "decomposition_time": decomposition_time,
+            "frobenius_error": frobenius_error,
+            "relative_error": relative_error,
+            "compression_ratio": compression_ratio,
+            "storage_savings": 1.0 - (1.0 / compression_ratio),
+            "singular_values_used": s_r.tolist(),
         }
 
         print(f"   Tiempo de descomposición: {decomposition_time:.3f}s")
@@ -151,7 +154,9 @@ class LowRankMatrixApproximator:
 
         return approximated, info
 
-    def _random_low_rank_approximation(self, matrix: np.ndarray, rank: int) -> Tuple[np.ndarray, Dict[str, Any]]:
+    def _random_low_rank_approximation(
+        self, matrix: np.ndarray, rank: int
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
         """
         Fallback: aproximación aleatoria para matrices problemáticas.
         """
@@ -168,21 +173,22 @@ class LowRankMatrixApproximator:
         approximated = U @ np.diag(s) @ V.T
 
         # Escalar para aproximar la norma original
-        original_norm = np.linalg.norm(matrix, 'fro')
-        approx_norm = np.linalg.norm(approximated, 'fro')
+        original_norm = np.linalg.norm(matrix, "fro")
+        approx_norm = np.linalg.norm(approximated, "fro")
         if approx_norm > 0:
-            approximated *= (original_norm / approx_norm)
+            approximated *= original_norm / approx_norm
 
         info = {
-            'method': 'random_approximation',
-            'rank': rank,
-            'note': 'Fallback para matrices problemáticas'
+            "method": "random_approximation",
+            "rank": rank,
+            "note": "Fallback para matrices problemáticas",
         }
 
         return approximated, info
 
-    def optimized_gemm_low_rank(self, A: np.ndarray, B: np.ndarray,
-                               target_rank: Optional[int] = None) -> Tuple[np.ndarray, Dict[str, Any]]:
+    def optimized_gemm_low_rank(
+        self, A: np.ndarray, B: np.ndarray, target_rank: Optional[int] = None
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
         """
         Realiza GEMM optimizada usando aproximaciones de bajo rango.
 
@@ -205,7 +211,7 @@ class LowRankMatrixApproximator:
         # Determinar rango óptimo
         if target_rank is None:
             # Usar el mínimo de los rangos efectivos
-            effective_rank = min(rank_A['effective_rank'], rank_B['effective_rank'])
+            effective_rank = min(rank_A["effective_rank"], rank_B["effective_rank"])
             # Conservador: usar 50% del rango efectivo
             target_rank = max(1, int(effective_rank * 0.5))
 
@@ -222,8 +228,8 @@ class LowRankMatrixApproximator:
         try:
             if A.shape[1] == B.shape[0]:  # Verificar compatibilidad
                 result_exact = A @ B
-                error = np.linalg.norm(result_exact - result_approx, 'fro')
-                relative_error = error / np.linalg.norm(result_exact, 'fro')
+                error = np.linalg.norm(result_exact - result_approx, "fro")
+                relative_error = error / np.linalg.norm(result_exact, "fro")
             else:
                 relative_error = None
                 print("   ⚠️  Matrices no compatibles para comparación exacta")
@@ -251,28 +257,22 @@ class LowRankMatrixApproximator:
         gflops_achieved = (operations_performed / total_time) / 1e9
 
         results = {
-            'result_matrix': result_approx,
-            'computation_time': total_time,
-            'target_rank': target_rank,
-            'matrix_analysis': {
-                'A': rank_A,
-                'B': rank_B
+            "result_matrix": result_approx,
+            "computation_time": total_time,
+            "target_rank": target_rank,
+            "matrix_analysis": {"A": rank_A, "B": rank_B},
+            "approximation_info": {"A": info_A, "B": info_B},
+            "quality_metrics": {
+                "relative_error": relative_error,
+                "actual_speedup": actual_speedup,
+                "gflops_achieved": gflops_achieved,
             },
-            'approximation_info': {
-                'A': info_A,
-                'B': info_B
+            "performance_summary": {
+                "original_operations": operations_original,
+                "performed_operations": operations_performed,
+                "speedup_achieved": actual_speedup,
+                "time_savings": f"{((1 - 1/actual_speedup)*100):.1f}%",
             },
-            'quality_metrics': {
-                'relative_error': relative_error,
-                'actual_speedup': actual_speedup,
-                'gflops_achieved': gflops_achieved
-            },
-            'performance_summary': {
-                'original_operations': operations_original,
-                'performed_operations': operations_performed,
-                'speedup_achieved': actual_speedup,
-                'time_savings': f"{((1 - 1/actual_speedup)*100):.1f}%"
-            }
         }
 
         print(f"   Tiempo total: {total_time:.3f}s")
@@ -283,8 +283,9 @@ class LowRankMatrixApproximator:
 
         return result_approx, results
 
-    def benchmark_different_ranks(self, A: np.ndarray, B: np.ndarray,
-                                 rank_range: List[int]) -> Dict[str, Any]:
+    def benchmark_different_ranks(
+        self, A: np.ndarray, B: np.ndarray, rank_range: List[int]
+    ) -> Dict[str, Any]:
         """
         Benchmark de diferentes rangos de aproximación.
 
@@ -305,17 +306,19 @@ class LowRankMatrixApproximator:
                 _, results = self.optimized_gemm_low_rank(A, B, rank)
 
                 benchmark_results[rank] = {
-                    'computation_time': results['computation_time'],
-                    'gflops_achieved': results['quality_metrics']['gflops_achieved'],
-                    'relative_error': results['quality_metrics']['relative_error'],
-                    'actual_speedup': results['quality_metrics']['actual_speedup']
+                    "computation_time": results["computation_time"],
+                    "gflops_achieved": results["quality_metrics"]["gflops_achieved"],
+                    "relative_error": results["quality_metrics"]["relative_error"],
+                    "actual_speedup": results["quality_metrics"]["actual_speedup"],
                 }
 
-                print(f"   ✓ Rango {rank}: {results['quality_metrics']['gflops_achieved']:.2f} GFLOPS")
+                print(
+                    f"   ✓ Rango {rank}: {results['quality_metrics']['gflops_achieved']:.2f} GFLOPS"
+                )
 
             except Exception as e:
                 print(f"   ❌ Error con rango {rank}: {e}")
-                benchmark_results[rank] = {'error': str(e)}
+                benchmark_results[rank] = {"error": str(e)}
 
         return benchmark_results
 
@@ -328,11 +331,10 @@ class LowRankMatrixApproximator:
         report.append("=" * 60)
 
         # Encontrar mejor configuración
-        valid_results = {k: v for k, v in benchmark_results.items() if 'error' not in v}
+        valid_results = {k: v for k, v in benchmark_results.items() if "error" not in v}
 
         if valid_results:
-            best_rank = max(valid_results.keys(),
-                          key=lambda x: valid_results[x]['gflops_achieved'])
+            best_rank = max(valid_results.keys(), key=lambda x: valid_results[x]["gflops_achieved"])
             best_result = valid_results[best_rank]
 
             report.append(f"🏆 MEJOR CONFIGURACIÓN:")
@@ -344,7 +346,7 @@ class LowRankMatrixApproximator:
 
             # Comparación con baseline
             baseline_gflops = 890.3  # Nuestro límite actual
-            improvement = (best_result['gflops_achieved'] / baseline_gflops - 1) * 100
+            improvement = (best_result["gflops_achieved"] / baseline_gflops - 1) * 100
 
             report.append(f"\n💹 COMPARACIÓN CON BASELINE:")
             report.append(f"   Baseline (manual optimization): {baseline_gflops:.1f} GFLOPS")
@@ -424,14 +426,19 @@ def main():
         benchmark_results = approximator.benchmark_different_ranks(A, B, rank_range)
 
         # Generar reporte final
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         report = approximator.generate_performance_report(benchmark_results)
         print(report)
 
         # Guardar resultados
-        np.savez('low_rank_results.npz',
-                matrix_A=A, matrix_B=B, result=result,
-                metrics=metrics, benchmark=benchmark_results)
+        np.savez(
+            "low_rank_results.npz",
+            matrix_A=A,
+            matrix_B=B,
+            result=result,
+            metrics=metrics,
+            benchmark=benchmark_results,
+        )
 
         print("\n💾 Resultados guardados en: low_rank_results.npz")
         print("✅ Demostración completada exitosamente!")
@@ -439,6 +446,7 @@ def main():
     except Exception as e:
         print(f"❌ Error en demostración: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 

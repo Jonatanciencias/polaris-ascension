@@ -1,0 +1,84 @@
+{
+  "review_id": "week10-block2-4-t5-hardening-rerun-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "t5_long_horizon_hardening_and_wallclock_rerun_40m",
+  "tracks": [
+    {
+      "track": "week10_block2_4_t5_policy_hardening_long_horizon",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block2_4_long_horizon.json"
+      ],
+      "rationale": "ABFT verification cost was reduced while preserving hard guardrail thresholds."
+    },
+    {
+      "track": "week10_block2_4_t5_hardening_smoke",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week10_block2_4_wallclock_hardening_smoke_20260208_193407.json",
+        "research/breakthrough_lab/platform_compatibility/week10_block2_4_wallclock_hardening_smoke_20260208_193407.md"
+      ],
+      "rationale": "Short-horizon smoke validated the candidate policy before the full wall-clock rerun."
+    },
+    {
+      "track": "week10_block2_4_t5_hardening_rerun_40m",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week10_block2_4_wallclock_hardening_rerun_20260208_201448.json",
+        "research/breakthrough_lab/platform_compatibility/week10_block2_4_wallclock_hardening_rerun_20260208_201448.md"
+      ],
+      "rationale": "40-minute wall-clock rerun passed all checks with zero T5 disable events and overhead max below 5%."
+    },
+    {
+      "track": "week10_block2_4_t5_hardening_mandatory_gates",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_193438.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_201518.json"
+      ],
+      "rationale": "Mandatory canonical gate remained promote before and after the hardening rerun."
+    },
+    {
+      "track": "week10_block2_4_dashboard_refresh_post_hardening",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week9_comparative_dashboard_20260208_201655.json",
+        "research/breakthrough_lab/week9_comparative_dashboard_20260208_201655.md"
+      ],
+      "rationale": "Comparative dashboard chain is restored to promote with the hardened wall-clock artifact."
+    },
+    {
+      "track": "week10_block2_4_go_no_go_final",
+      "decision": "go",
+      "evidence": [
+        "research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_GO_NO_GO_CHECKLIST.md",
+        "research/breakthrough_lab/ACTA_WEEK10_BLOCK2_4_T5_HARDENING_RERUN_2026-02-08.md"
+      ],
+      "rationale": "GO criteria are met after rerun: disable_events=0 and t5_overhead_max<=5%."
+    }
+  ],
+  "summary": {
+    "promote": 5,
+    "iterate": 0,
+    "go": 1,
+    "no-go": 0
+  },
+  "block_decision": "promote",
+  "go_no_go": "go",
+  "block_rationale": "T5 long-horizon hardening succeeded and the required rerun met all promotion goals.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK10_BLOCK2_4_T5_HARDENING_RERUN_2026-02-08.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_193438.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_201518.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week10_block2_4_wallclock_final_decision.json"
+  ]
+}

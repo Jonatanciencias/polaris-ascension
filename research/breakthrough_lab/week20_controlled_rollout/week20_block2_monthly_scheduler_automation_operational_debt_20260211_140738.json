@@ -1,0 +1,31 @@
+{
+  "matrix_id": "week20-block2-monthly-scheduler-automation-debt-v1",
+  "timestamp_utc": "2026-02-11T14:07:38.175912+00:00",
+  "debts": [
+    {
+      "debt_id": "week20_block2_scheduler_dispatch_health",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Continuar monitoreo de fiabilidad del trigger schedule mensual en CI.",
+      "mitigation": "Agregar verificacion automatica del ultimo run schedule + alerta de ausencia.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week20_block2_external_alert_bridge",
+      "area": "operations",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-observability",
+      "description": "Conectar alert summary de Block2 con canal externo (webhook/chatops).",
+      "mitigation": "Publicar adaptador minimo de webhook para eventos critical/high.",
+      "target_window": "week21_block1"
+    }
+  ],
+  "summary": {
+    "total": 2,
+    "open": 2,
+    "high_or_critical_open": 0
+  }
+}

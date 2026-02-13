@@ -1,0 +1,181 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-11T02:04:23.420447+00:00",
+    "base_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+    "eval_artifacts": [
+      "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_automation_eval_20260211_011930.json",
+      "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/week19_block1_weekly_split_maintenance_weekly_replay_eval_20260211_015423.json"
+    ],
+    "min_windows": 2
+  },
+  "artifacts": {
+    "recalibrated_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json"
+  },
+  "evaluation": {
+    "summary": {
+      "windows_analyzed": 2,
+      "all_window_decisions_promote": true,
+      "window_decisions": [
+        "promote",
+        "promote"
+      ],
+      "global_max_abs_throughput_drift_percent": 0.6905933519737987,
+      "global_max_p95_drift_percent": 0.32414501905815746
+    },
+    "checks": {
+      "all_windows_promote": {
+        "observed": [
+          "promote",
+          "promote"
+        ],
+        "required": "all promote",
+        "pass": true
+      },
+      "global_abs_drift_stable": {
+        "observed_max": 0.6905933519737987,
+        "required_max": 1.0,
+        "pass": true
+      },
+      "global_p95_drift_stable": {
+        "observed_max": 0.32414501905815746,
+        "required_max": 0.5,
+        "pass": true
+      },
+      "policy_rows_sustained_stability": {
+        "rows": [
+          {
+            "key": "auto_t3_controlled:1400",
+            "samples": 2,
+            "avg_gflops_cv": 0.0013457064531822243,
+            "p95_time_ms_cv": 0.00018816127512719393,
+            "required_samples_min": 2,
+            "required_avg_cv_max": 0.01,
+            "required_p95_cv_max": 0.01,
+            "pass": true
+          },
+          {
+            "key": "auto_t3_controlled:2048",
+            "samples": 2,
+            "avg_gflops_cv": 0.00016851327531256012,
+            "p95_time_ms_cv": 8.97831460515382e-05,
+            "required_samples_min": 2,
+            "required_avg_cv_max": 0.01,
+            "required_p95_cv_max": 0.01,
+            "pass": true
+          },
+          {
+            "key": "auto_t5_guarded:1400",
+            "samples": 2,
+            "avg_gflops_cv": 0.0011452179518789624,
+            "p95_time_ms_cv": 0.0014530977246704614,
+            "required_samples_min": 2,
+            "required_avg_cv_max": 0.01,
+            "required_p95_cv_max": 0.01,
+            "pass": true
+          },
+          {
+            "key": "auto_t5_guarded:2048",
+            "samples": 2,
+            "avg_gflops_cv": 0.0014190945884894844,
+            "p95_time_ms_cv": 8.486551633091092e-05,
+            "required_samples_min": 2,
+            "required_avg_cv_max": 0.01,
+            "required_p95_cv_max": 0.01,
+            "pass": true
+          }
+        ],
+        "pass": true
+      }
+    },
+    "per_key": {
+      "auto_t3_controlled:1400": {
+        "samples": 2,
+        "avg_gflops_mean": 874.7453531638889,
+        "avg_gflops_min": 873.568202697245,
+        "avg_gflops_cv": 0.0013457064531822243,
+        "p95_time_ms_mean": 6.1516383334492275,
+        "p95_time_ms_max": 6.152795833562171,
+        "p95_time_ms_cv": 0.00018816127512719393,
+        "throughput_drift_abs_max": 0.6905933519737987,
+        "p95_drift_max": 0.21638769959249418,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.0,
+        "t5_disable_events_total": 0
+      },
+      "auto_t3_controlled:2048": {
+        "samples": 2,
+        "avg_gflops_mean": 772.3729384982568,
+        "avg_gflops_min": 772.2427834046276,
+        "avg_gflops_cv": 0.00016851327531256012,
+        "p95_time_ms_mean": 22.17751066662762,
+        "p95_time_ms_max": 22.17950183330686,
+        "p95_time_ms_cv": 8.97831460515382e-05,
+        "throughput_drift_abs_max": 0.015150253373867923,
+        "p95_drift_max": 0.08737735721679137,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.0,
+        "t5_disable_events_total": 0
+      },
+      "auto_t3_controlled:3072": {
+        "samples": 2,
+        "avg_gflops_mean": 709.1105860061136,
+        "avg_gflops_min": 708.916748602973,
+        "avg_gflops_cv": 0.00027335285492259515,
+        "p95_time_ms_mean": 72.07496708345693,
+        "p95_time_ms_max": 72.075575333353,
+        "p95_time_ms_cv": 8.439128322846264e-06,
+        "throughput_drift_abs_max": 0.3951487865136131,
+        "p95_drift_max": -0.011662982721908001,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.0,
+        "t5_disable_events_total": 0
+      },
+      "auto_t5_guarded:1400": {
+        "samples": 2,
+        "avg_gflops_mean": 909.4975459165338,
+        "avg_gflops_min": 908.4559729997603,
+        "avg_gflops_cv": 0.0011452179518789624,
+        "p95_time_ms_mean": 5.986578250182598,
+        "p95_time_ms_max": 5.9952773334165,
+        "p95_time_ms_cv": 0.0014530977246704614,
+        "throughput_drift_abs_max": 0.2771523923505676,
+        "p95_drift_max": 0.32414501905815746,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 1.2206613234527561,
+        "t5_disable_events_total": 0
+      },
+      "auto_t5_guarded:2048": {
+        "samples": 2,
+        "avg_gflops_mean": 776.9092538656646,
+        "avg_gflops_min": 775.8067461477564,
+        "avg_gflops_cv": 0.0014190945884894844,
+        "p95_time_ms_mean": 21.98085408326733,
+        "p95_time_ms_max": 21.982719499798502,
+        "p95_time_ms_cv": 8.486551633091092e-05,
+        "throughput_drift_abs_max": 0.03503826670072692,
+        "p95_drift_max": -0.03608631590219452,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.5371373339940182,
+        "t5_disable_events_total": 0
+      },
+      "auto_t5_guarded:3072": {
+        "samples": 2,
+        "avg_gflops_mean": 803.3934316323545,
+        "avg_gflops_min": 802.6763408362367,
+        "avg_gflops_cv": 0.0008925773697959622,
+        "p95_time_ms_mean": 71.97896916666954,
+        "p95_time_ms_max": 71.99578283340695,
+        "p95_time_ms_cv": 0.0002335913799832314,
+        "throughput_drift_abs_max": 0.6065075586318003,
+        "p95_drift_max": 0.2347789638338359,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.9112622756526394,
+        "t5_disable_events_total": 0
+      }
+    },
+    "decision": "promote",
+    "recalibration_action": "applied",
+    "failed_checks": [],
+    "rationale": "Sustained evidence conditions passed across windows; conservative tightening was applied."
+  }
+}

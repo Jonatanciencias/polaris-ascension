@@ -1,0 +1,41 @@
+{
+  "policy_id": "t4-approx-gating-week8-block4-2026-02-08",
+  "status": "candidate_mixed_workload_refinement",
+  "inherits_from": "research/breakthrough_lab/t4_approximate_gemm/policy_activation_block3.json",
+  "scope": {
+    "families_tested": [
+      "dense_random",
+      "compressible_lowrank"
+    ],
+    "sizes": [
+      512,
+      768,
+      1024
+    ],
+    "activation_mode": "compressibility_energy_gate_mixed_campaign"
+  },
+  "activation_policy": {
+    "precheck_energy_threshold_exact_route": 0.95,
+    "target_rank": 18,
+    "error_budget": 0.005,
+    "sample_size": 64
+  },
+  "mixed_campaign": {
+    "noise_scale": 0.02,
+    "sessions": 6,
+    "seed": 42
+  },
+  "runtime_guardrails": {
+    "disable_if_post_fallback_violation_rate_gt": 0.0,
+    "disable_if_contract_compliance_rate_lt": 0.99,
+    "disable_if_fallback_rate_gt": 0.1,
+    "disable_if_compressible_speedup_lt": 1.5,
+    "require_fallback_reduction_abs_ge": 0.1,
+    "max_policy_exact_route_rate": 0.8
+  },
+  "rollback_defaults": {
+    "default_policy_path": "research/breakthrough_lab/t4_approximate_gemm/policy_activation_block3.json",
+    "fallback_mode": "exact_only",
+    "auto_disable_on_contract_escape": true
+  }
+}

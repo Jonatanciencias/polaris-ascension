@@ -1,0 +1,44 @@
+{
+  "review_id": "week9-block3-robustness-replay-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "post_hardening_robustness_replay_alternate_seeds_with_short_platform_split",
+  "tracks": [
+    {
+      "track": "robustness_replay_alternate_seeds",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/run_week9_block3_robustness_replay.py",
+        "research/breakthrough_lab/platform_compatibility/week9_block3_robustness_replay_20260208_033111.json",
+        "research/breakthrough_lab/platform_compatibility/week9_block3_robustness_replay_20260208_033111.md"
+      ],
+      "rationale": "Alternate-seed replay (7/42/1337) preserved correctness and T3/T5 guardrails with zero T5 auto-disable events."
+    },
+    {
+      "track": "platform_split_short_post_hardening",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week9_block3_robustness_replay_20260208_033111.json",
+        "research/breakthrough_lab/platform_compatibility/week9_block3_robustness_replay_20260208_033111.md",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_033147.json"
+      ],
+      "rationale": "Clover/rusticl short split completed successfully with minimum rusticl/clover peak ratio 0.9209 and no T5 regressions vs Week9 Block2 baseline."
+    }
+  ],
+  "summary": {
+    "promote": 2,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Post-hardening robustness replay confirmed no regressions across alternate seeds and short platform split.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK9_BLOCK3_ROBUSTNESS_REPLAY_2026-02-08.md",
+  "required_gate": {
+    "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_033147.json",
+    "decision": "promote"
+  },
+  "depends_on": [
+    "research/breakthrough_lab/week9_block2_t5_hardening_decision.json"
+  ]
+}

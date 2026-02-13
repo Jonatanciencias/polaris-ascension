@@ -11,17 +11,21 @@ import time
 # Agregar src al path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-print("""
+print(
+    """
 ╔══════════════════════════════════════════════════════════════════╗
 ║     🔬 DEMOSTRACIÓN VERIFICABLE - RX 580 AI Framework           ║
 ║     Procesamiento REAL con mediciones de tiempo verificables    ║
 ╚══════════════════════════════════════════════════════════════════╝
-""")
+"""
+)
 
 # Verificar imágenes disponibles
 demo_dir = Path("data/wildlife/demo_real")
 if demo_dir.exists():
-    images = list(demo_dir.glob("*.jpg")) + list(demo_dir.glob("*.jpeg")) + list(demo_dir.glob("*.png"))
+    images = (
+        list(demo_dir.glob("*.jpg")) + list(demo_dir.glob("*.jpeg")) + list(demo_dir.glob("*.png"))
+    )
 else:
     images = []
 
@@ -59,11 +63,7 @@ print(f"📦 Cargando modelo MobileNetV2...")
 start_load = time.time()
 
 # Crear configuración
-config = InferenceConfig(
-    model_path=str(model_path),
-    device="gpu",
-    batch_size=1
-)
+config = InferenceConfig(model_path=str(model_path), device="gpu", batch_size=1)
 
 engine = ONNXInferenceEngine(config)
 load_time = (time.time() - start_load) * 1000
@@ -79,27 +79,29 @@ times = []
 
 for img_path in images[:5]:  # Max 5 imágenes
     print(f"🖼️  {img_path.name}:")
-    
+
     try:
         start = time.time()
         predictions = engine.infer(str(img_path), top_k=3)
         elapsed = (time.time() - start) * 1000
         times.append(elapsed)
-        
+
         print(f"   ⏱️  {elapsed:.1f}ms")
-        
+
         for i, (label, conf) in enumerate(predictions, 1):
             icon = "🥇" if i == 1 else "🥈" if i == 2 else "🥉"
             print(f"   {icon} {label}: {conf:.1%}")
-        
-        results.append({
-            "image": img_path.name,
-            "time_ms": elapsed,
-            "prediction": predictions[0][0],
-            "confidence": predictions[0][1]
-        })
+
+        results.append(
+            {
+                "image": img_path.name,
+                "time_ms": elapsed,
+                "prediction": predictions[0][0],
+                "confidence": predictions[0][1],
+            }
+        )
         print()
-        
+
     except Exception as e:
         print(f"   ❌ Error: {e}\n")
 
@@ -124,7 +126,9 @@ print()
 
 print("Predicciones:")
 for r in results:
-    print(f"  • {r['image']:20s} → {r['prediction']:30s} ({r['confidence']:.1%}, {r['time_ms']:.0f}ms)")
+    print(
+        f"  • {r['image']:20s} → {r['prediction']:30s} ({r['confidence']:.1%}, {r['time_ms']:.0f}ms)"
+    )
 
 print()
 print("✅ DEMOSTRACIÓN COMPLETADA CON DATOS REALES Y TIEMPOS MEDIDOS")

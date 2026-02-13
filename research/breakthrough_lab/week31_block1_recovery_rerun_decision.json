@@ -1,0 +1,68 @@
+{
+  "review_id": "week31-block1-recovery-rerun-2026-02-13",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "week31_block1_recovery_hardening_t5_snapshots",
+  "tracks": [
+    {
+      "track": "week31_block1_recovery_attempt_1",
+      "decision": "iterate",
+      "evidence": [
+        "research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_20260213_023854.json",
+        "research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_weekly_replay_eval_20260213_023710.json"
+      ],
+      "rationale": "First recovery attempt fixed snapshots/disable events but still failed weekly overhead bound (4.3320% > 3.0%)."
+    },
+    {
+      "track": "week31_block1_recovery_attempt_2",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_20260213_024515.json",
+        "research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_weekly_replay_eval_20260213_024342.json",
+        "research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_weekly_replay_canary_20260213_024342.json"
+      ],
+      "rationale": "Second recovery attempt reduced T5 overhead under strict bound and restored full weekly replay promote."
+    },
+    {
+      "track": "week31_block1_recovery_split_guardrails",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_split_canary_20260213_024515.json",
+        "research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_split_eval_20260213_024515.json"
+      ],
+      "rationale": "Split validation remains healthy (ratio floor + T5 guardrails + zero disable events)."
+    },
+    {
+      "track": "week31_block1_recovery_canonical_gate_internal",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024027.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024535.json"
+      ],
+      "rationale": "Canonical gate pre/post stayed promote during final recovery run."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 1,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "ready-for-week31-block2",
+  "block_rationale": "Week31 Block1 recovery rerun closed the remaining T5 overhead gap and restored promote status for continuity path.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK31_BLOCK1_RECOVERY_RERUN_2026-02-13.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024027.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024535.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week31_block1_monthly_continuity_decision.json"
+  ]
+}

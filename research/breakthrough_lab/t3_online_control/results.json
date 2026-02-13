@@ -1,0 +1,93 @@
+{
+  "$schema": "../results.schema.json",
+  "schema_version": "1.0.0",
+  "experiment_id": "t3_online_control-005",
+  "track": "t3_online_control",
+  "title": "T3 Week 8 Block 3 controlled drift campaign with rollback-safe guardrails",
+  "status": "completed",
+  "owner": "codex",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "commit": null,
+  "timestamps": {
+    "created_at": "2026-02-08T00:00:00Z",
+    "started_at": "2026-02-08T02:01:48.401359+00:00",
+    "ended_at": "2026-02-08T02:01:48.401359+00:00"
+  },
+  "environment": {
+    "os": "linux",
+    "python": "3.12",
+    "opencl_platform": "Clover",
+    "opencl_device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+    "driver": "Mesa"
+  },
+  "baseline_reference": {
+    "protocol_doc": "docs/PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md",
+    "baseline_commit": "57db7b4",
+    "sizes": [
+      1400,
+      1536,
+      2048
+    ]
+  },
+  "parameters": {
+    "campaign": "week8_block3_t3_drift_controlled",
+    "policy": "controlled_t3_rollout_auto_t3_controlled",
+    "policy_id": "t3-controlled-week8-block3-2026-02-08",
+    "policy_path": "research/breakthrough_lab/t3_online_control/policy_hardening_block3.json",
+    "epsilon": 0.04,
+    "bootstrap_weight": 3.0,
+    "warmup_steps_per_context": 2,
+    "min_delta_for_nonstatic": 8.0,
+    "freeze_sizes": [
+      1400,
+      2048
+    ],
+    "fallback_regression_limit": 0.07,
+    "max_fallback_rate": 0.08,
+    "correctness_threshold": 0.001,
+    "boundary_report_path": "research/breakthrough_lab/t2_auto_scheduler/week2_t2_expanded_search_20260207_194454.json",
+    "scenarios": [
+      "cold",
+      "warm",
+      "warm_queue_pressure"
+    ],
+    "sizes": [
+      1400,
+      1536,
+      2048
+    ],
+    "sessions": 2,
+    "iterations_per_session": 6,
+    "seed": 42,
+    "pressure_size": 896,
+    "pressure_iterations": 3,
+    "pressure_pulses": 2,
+    "pressure_pause_ms": 20
+  },
+  "metrics": {
+    "peak_gflops_mean": 814.8687016393577,
+    "avg_gflops_mean": 808.204614195275,
+    "p95_time_ms": 12.591442515379944,
+    "max_error": 0.000640869140625,
+    "cv_peak": 0.06590677156762718,
+    "delta_vs_baseline_percent": 19.486641020685266,
+    "reproducibility_score": 0.9340932284323729,
+    "energy_joules": null
+  },
+  "validation": {
+    "correctness_passed": true,
+    "stability_passed": true,
+    "promotion_gate_passed": true
+  },
+  "artifacts": [
+    "research/breakthrough_lab/t3_online_control/policy_hardening_block3.json",
+    "research/breakthrough_lab/t3_online_control/rollback_playbook_block3.md",
+    "research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_020148.json",
+    "research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_020148.md",
+    "research/breakthrough_lab/t3_online_control/run_week8_t3_drift_campaign.py",
+    "research/breakthrough_lab/t3_online_control/report.md",
+    "research/breakthrough_lab/ACTA_WEEK8_BLOCK3_T3_DRIFT_CONTROLLED_2026-02-08.md"
+  ],
+  "decision": "promote",
+  "notes": "Week 8 Block 3 drift campaign (cold/warm/queue-pressure) passed all rollback-safe guardrails. Under queue pressure, T3 retained +19.487% throughput vs auto, improved p95 latency, observed zero fallback/disable events, and stayed below correctness threshold."
+}

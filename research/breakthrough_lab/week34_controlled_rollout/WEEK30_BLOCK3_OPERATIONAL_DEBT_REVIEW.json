@@ -1,0 +1,626 @@
+{
+  "review_id": "week30-block3-operational-debt-review-v1",
+  "timestamp_utc": "2026-02-13T16:19:57.112705+00:00",
+  "source_matrices": [
+    "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week33_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json",
+    "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week34_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_LIVE_DEBT_MATRIX.json",
+    "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week34_controlled_rollout/week34_block2_alert_bridge_observability_recovery_operational_debt_20260213_161831.json"
+  ],
+  "summary": {
+    "matrices_loaded": 3,
+    "open_total": 29,
+    "high_or_critical_open_total": 0
+  },
+  "debts": [
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_dispatch_health",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Continuar monitoreo de fiabilidad del trigger schedule mensual en CI.",
+      "mitigation": "Agregar verificacion automatica del ultimo run schedule + alerta de ausencia.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week20_block2_external_alert_bridge",
+      "area": "operations",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-observability",
+      "description": "Conectar alert summary de Block2 con canal externo (webhook/chatops).",
+      "mitigation": "Publicar adaptador minimo de webhook para eventos critical/high.",
+      "target_window": "week21_block1"
+    },
+    {
+      "debt_id": "week21_block2_alert_bridge_execution",
+      "area": "operations",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-observability",
+      "description": "Implementar bridge de alertas externas (webhook/chatops) definido en Week20.",
+      "mitigation": "Cerrar integraci\u00f3n m\u00ednima de webhook con umbrales critical/high.",
+      "target_window": "week21_block2"
+    },
+    {
+      "debt_id": "week21_block3_platform_recommendation_refresh",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Actualizar recomendaci\u00f3n de plataforma por entorno con nuevo comparativo mensual.",
+      "mitigation": "Emitir reporte Week21 Block3 con decisi\u00f3n expl\u00edcita por entorno.",
+      "target_window": "week21_block3"
+    },
+    {
+      "debt_id": "week21_block2_webhook_live_cutover",
+      "area": "operations",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-observability",
+      "description": "Completar cutover de bridge de alertas de dry-run a endpoint real.",
+      "mitigation": "Configurar `WEEKLY_ALERT_WEBHOOK_URL` en entorno de despliegue controlado.",
+      "target_window": "week22_block1"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week22_block2_webhook_live_cutover",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Completar cutover del bridge de alertas de dry-run a endpoint webhook real.",
+      "mitigation": "Mantener endpoint controlado y monitorear delivery success 2xx.",
+      "target_window": "week22_block2"
+    },
+    {
+      "debt_id": "week22_block2_rollback_explicit_path",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Definir y validar rollback expl\u00edcito de canal ante falla de dispatch live.",
+      "mitigation": "Registrar rollback record y spool de payload para retry seguro.",
+      "target_window": "week22_block2"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week23_block2_retry_backoff_hardening",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Validar ruta de retry/backoff en dispatch live ante falla transitoria.",
+      "mitigation": "Mantener retry determinista con backoff exponencial acotado.",
+      "target_window": "week23_block2"
+    },
+    {
+      "debt_id": "week23_block2_delivery_healthcheck",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear salud del endpoint de delivery antes y despues del dispatch.",
+      "mitigation": "Agregar health-check GET pre/post al bridge y alertar si falla.",
+      "target_window": "week23_block2"
+    },
+    {
+      "debt_id": "week23_block2_live_dispatch_reliability",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Asegurar entrega live del bridge con resultado 2xx.",
+      "mitigation": "Continuar monitoreo de success ratio y fallback controlado.",
+      "target_window": "week23_block2"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week24_block2_delivery_success_ratio_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear success ratio de delivery en bridge live.",
+      "mitigation": "Alertar si ratio cae bajo threshold y activar rollback operativo.",
+      "target_window": "week24_block2"
+    },
+    {
+      "debt_id": "week24_block2_delivery_latency_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear latencia p95 de delivery para detectar degradaci\u00f3n.",
+      "mitigation": "Publicar m\u00e9tricas por ciclo y alertar si p95 excede policy.",
+      "target_window": "week24_block2"
+    },
+    {
+      "debt_id": "week24_block2_degradation_alerting",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Emitir alertas de degradaci\u00f3n para bridge live.",
+      "mitigation": "Mantener cat\u00e1logo de alertas y acciones operativas de contenci\u00f3n.",
+      "target_window": "week24_block2"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week25_block2_delivery_success_ratio_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear success ratio de delivery en bridge live.",
+      "mitigation": "Alertar si ratio cae bajo threshold y activar rollback operativo.",
+      "target_window": "week25_block2"
+    },
+    {
+      "debt_id": "week25_block2_delivery_latency_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear latencia p95 de delivery para detectar degradaci\u00f3n.",
+      "mitigation": "Publicar m\u00e9tricas por ciclo y alertar si p95 excede policy.",
+      "target_window": "week25_block2"
+    },
+    {
+      "debt_id": "week25_block2_degradation_alerting",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Emitir alertas de degradaci\u00f3n para bridge live.",
+      "mitigation": "Mantener cat\u00e1logo de alertas y acciones operativas de contenci\u00f3n.",
+      "target_window": "week25_block2"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week26_block2_delivery_success_ratio_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear success ratio de delivery en bridge live.",
+      "mitigation": "Alertar si ratio cae bajo threshold y activar rollback operativo.",
+      "target_window": "week26_block2"
+    },
+    {
+      "debt_id": "week26_block2_delivery_latency_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear latencia p95 de delivery para detectar degradaci\u00f3n.",
+      "mitigation": "Publicar m\u00e9tricas por ciclo y alertar si p95 excede policy.",
+      "target_window": "week26_block2"
+    },
+    {
+      "debt_id": "week26_block2_degradation_alerting",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Emitir alertas de degradaci\u00f3n para bridge live.",
+      "mitigation": "Mantener cat\u00e1logo de alertas y acciones operativas de contenci\u00f3n.",
+      "target_window": "week26_block2"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week28_block2_delivery_success_ratio_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear success ratio de delivery en bridge live.",
+      "mitigation": "Alertar si ratio cae bajo threshold y activar rollback operativo.",
+      "target_window": "week28_block2"
+    },
+    {
+      "debt_id": "week28_block2_delivery_latency_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear latencia p95 de delivery para detectar degradaci\u00f3n.",
+      "mitigation": "Publicar m\u00e9tricas por ciclo y alertar si p95 excede policy.",
+      "target_window": "week28_block2"
+    },
+    {
+      "debt_id": "week28_block2_degradation_alerting",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Emitir alertas de degradaci\u00f3n para bridge live.",
+      "mitigation": "Mantener cat\u00e1logo de alertas y acciones operativas de contenci\u00f3n.",
+      "target_window": "week28_block2"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week30_block2_delivery_success_ratio_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear success ratio de delivery en bridge live.",
+      "mitigation": "Alertar si ratio cae bajo threshold y activar rollback operativo.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week30_block2_delivery_latency_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear latencia p95 de delivery para detectar degradaci\u00f3n.",
+      "mitigation": "Publicar m\u00e9tricas por ciclo y alertar si p95 excede policy.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week30_block2_degradation_alerting",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Emitir alertas de degradaci\u00f3n para bridge live.",
+      "mitigation": "Mantener cat\u00e1logo de alertas y acciones operativas de contenci\u00f3n.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week30_block2_delivery_success_ratio_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear success ratio de delivery en bridge live.",
+      "mitigation": "Alertar si ratio cae bajo threshold y activar rollback operativo.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week30_block2_delivery_latency_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear latencia p95 de delivery para detectar degradaci\u00f3n.",
+      "mitigation": "Publicar m\u00e9tricas por ciclo y alertar si p95 excede policy.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week30_block2_degradation_alerting",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Emitir alertas de degradaci\u00f3n para bridge live.",
+      "mitigation": "Mantener cat\u00e1logo de alertas y acciones operativas de contenci\u00f3n.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week30_block2_delivery_success_ratio_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear success ratio de delivery en bridge live.",
+      "mitigation": "Alertar si ratio cae bajo threshold y activar rollback operativo.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week30_block2_delivery_latency_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear latencia p95 de delivery para detectar degradaci\u00f3n.",
+      "mitigation": "Publicar m\u00e9tricas por ciclo y alertar si p95 excede policy.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week30_block2_degradation_alerting",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Emitir alertas de degradaci\u00f3n para bridge live.",
+      "mitigation": "Mantener cat\u00e1logo de alertas y acciones operativas de contenci\u00f3n.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week30_block2_delivery_success_ratio_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear success ratio de delivery en bridge live.",
+      "mitigation": "Alertar si ratio cae bajo threshold y activar rollback operativo.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week30_block2_delivery_latency_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear latencia p95 de delivery para detectar degradaci\u00f3n.",
+      "mitigation": "Publicar m\u00e9tricas por ciclo y alertar si p95 excede policy.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week30_block2_degradation_alerting",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Emitir alertas de degradaci\u00f3n para bridge live.",
+      "mitigation": "Mantener cat\u00e1logo de alertas y acciones operativas de contenci\u00f3n.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week20_block2_scheduler_automation",
+      "area": "automation",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-automation",
+      "description": "Automatizar ejecucion programada mensual con retencion explicita de artefactos.",
+      "mitigation": "Crear job mensual en CI/local con housekeeping de reportes.",
+      "target_window": "week20_block2"
+    },
+    {
+      "debt_id": "week20_block3_comparative_reporting",
+      "area": "analytics",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops-analytics",
+      "description": "Consolidar informe mensual comparativo con recomendacion de plataforma por entorno.",
+      "mitigation": "Cerrar reporte operativo con tabla comparativa y riesgo residual.",
+      "target_window": "week20_block3"
+    },
+    {
+      "debt_id": "week30_block2_delivery_success_ratio_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear success ratio de delivery en bridge live.",
+      "mitigation": "Alertar si ratio cae bajo threshold y activar rollback operativo.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week30_block2_delivery_latency_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear latencia p95 de delivery para detectar degradaci\u00f3n.",
+      "mitigation": "Publicar m\u00e9tricas por ciclo y alertar si p95 excede policy.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week30_block2_degradation_alerting",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Emitir alertas de degradaci\u00f3n para bridge live.",
+      "mitigation": "Mantener cat\u00e1logo de alertas y acciones operativas de contenci\u00f3n.",
+      "target_window": "week30_block2"
+    }
+  ]
+}

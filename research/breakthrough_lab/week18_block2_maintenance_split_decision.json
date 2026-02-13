@@ -1,0 +1,65 @@
+{
+  "review_id": "week18-block2-maintenance-split-2026-02-11",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "stable_maintenance_canary_split_clover_rusticl",
+  "tracks": [
+    {
+      "track": "week18_block2_stable_split_canary_execution",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_20260211_014255.json",
+        "research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_canary_20260211_014235.json"
+      ],
+      "rationale": "Maintenance split canary executed end-to-end and closed promote."
+    },
+    {
+      "track": "week18_block2_policy_eval_and_ratio_floor",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_eval_20260211_014235.json"
+      ],
+      "rationale": "Formal policy evaluation passed and rusticl/clover ratio floor remained above threshold."
+    },
+    {
+      "track": "week18_block2_t5_guardrails_on_split",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_canary_20260211_014235.json"
+      ],
+      "rationale": "T5 guardrails remained stable on split run (disable_total=0, overhead bounded)."
+    },
+    {
+      "track": "week18_block2_mandatory_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014059.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014255.json"
+      ],
+      "rationale": "Canonical gate discipline preserved pre and post block execution."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "ready-for-week18-block3",
+  "block_rationale": "Stable split canary remains healthy with policy-compliant platform behavior.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK18_BLOCK2_MAINTENANCE_SPLIT_2026-02-11.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014059.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014255.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week18_block1_stable_operations_package_decision.json"
+  ]
+}

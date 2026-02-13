@@ -1,0 +1,1421 @@
+# Roadmap 2026Q2 - Continuous Improvement
+
+## Mission
+
+Advance from roadmap closure to continuous, low-risk production improvement:
+
+- preserve deterministic throughput at target sizes (`1400`, `2048`, `3072`)
+- reduce operational variance and diagnostics drift
+- improve maintainability and CI confidence without destabilizing production kernels
+
+## Baseline at Kickoff (2026-02-08)
+
+- 2026Q1 closure status: **promote**
+- Week6 final strict rerun: **promote**
+- Canonical suite: `pytest -q` green (`83 passed`)
+- Primary production evidence: `research/breakthrough_lab/week6_final_suite_20260208_011347.json`
+
+## Execution Status
+
+- Week 8 - Block 1 (Validation Discipline Hardening): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK1_VALIDATION_DISCIPLINE_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block1_validation_discipline_decision.json`
+  - Evidence dir: `research/breakthrough_lab/week8_validation_discipline/`
+- Week 8 - Block 2 (Local/CI parity hardening): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK2_LOCAL_CI_PARITY_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block2_local_ci_parity_decision.json`
+  - Key changes: `ci.yml` primary gate + runner unit tests
+- Week 8 - Block 3 (T3 drift robustness under controlled pressure): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK3_T3_DRIFT_CONTROLLED_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block3_t3_drift_controlled_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_020148.json`
+    - `research/breakthrough_lab/t3_online_control/policy_hardening_block3.json`
+- Week 8 - Block 4 (T4 mixed activation refinement): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK4_T4_MIXED_POLICY_REFINEMENT_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block4_t4_mixed_policy_refinement_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/t4_approximate_gemm/week8_t4_mixed_campaign_20260208_021541.json`
+    - `research/breakthrough_lab/t4_approximate_gemm/policy_activation_block4.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_021724.json`
+- Week 8 - Block 5 (T5 reliability maturation with fault-injection tuning): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK5_T5_RELIABILITY_MATURATION_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block5_t5_reliability_maturation_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/t5_reliability_abft/week8_t5_maturation_20260208_022633.json`
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_block5.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_022835.json`
+- Week 8 - Block 6 (Integrated consolidation + interaction + critical canary): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK8_BLOCK6_CONSOLIDATION_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week8_block6_consolidation_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week8_block6_integrated_consolidation_20260208_024445.json`
+    - `research/breakthrough_lab/week8_block6_t4_t5_interaction_20260208_024510.json`
+    - `research/breakthrough_lab/platform_compatibility/week8_platform_canary_critical_20260208_024625.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_024700.json`
+- Week 9 - Block 1 (Long mixed canary under queue pressure): **iterate**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK9_BLOCK1_LONG_MIXED_CANARY_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week9_block1_long_mixed_canary_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week9_block1_long_canary_20260208_030816.json`
+    - `research/breakthrough_lab/week9_block1_long_canary_20260208_030816.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_030950.json`
+  - Key finding: all checks passed except `t5_disable_events_zero` (1 auto-disable event in T5 path).
+- Week 9 - Block 2 (T5 hardening + strict rerun of long canary): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK9_BLOCK2_T5_HARDENING_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week9_block2_t5_hardening_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_week9_block2.json`
+    - `research/breakthrough_lab/week9_block2_long_canary_rerun_20260208_032017.json`
+    - `research/breakthrough_lab/week9_block2_long_canary_rerun_20260208_032017.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_032043.json`
+  - Key finding: strict rerun closed Block 1 debt (`t5_disable_events_zero` now pass, observed=0).
+- Week 9 - Block 3 (Robustness replay with alternate seeds + short platform split): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK9_BLOCK3_ROBUSTNESS_REPLAY_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week9_block3_robustness_replay_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week9_block3_robustness_replay_20260208_033111.json`
+    - `research/breakthrough_lab/platform_compatibility/week9_block3_robustness_replay_20260208_033111.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_033147.json`
+  - Key finding: no post-hardening regressions in T5; split Clover/rusticl passed with min ratio 0.9209.
+- Week 9 - Block 4 (Short stress replay with queue pulses + platform split): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK9_BLOCK4_STRESS_SPLIT_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week9_block4_stress_split_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week9_block4_stress_split_20260208_033946.json`
+    - `research/breakthrough_lab/platform_compatibility/week9_block4_stress_split_20260208_033946.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_034047.json`
+  - Key finding: stress with queue pulses preserved correctness and guardrails (T5 disable events=0).
+- Week 9 - Comparative Dashboard (T3/T4/T5 with Week9 deltas): **promote**
+  - Artifact:
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_035352.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_035352.md`
+  - Key finding: Block1 iterate is superseded by Block2 hardening; active chain Block2/3/4/5 remains promote.
+- Week 9 - Block 5 (Controlled pre-production pilot RX590 + mirrored rusticl + rollback drill): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK9_BLOCK5_PREPROD_PILOT_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week9_block5_preprod_pilot_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week9_block5_preprod_pilot_20260208_035240.json`
+    - `research/breakthrough_lab/platform_compatibility/week9_block5_preprod_pilot_20260208_035240.md`
+    - `research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260208_035258.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_035317.json`
+  - Key finding: extended pilot and mirrored rusticl pass; rollback path is explicit and validated.
+- Week 9 - Block 6 (Final pre-production sign-off + long wall-clock canary): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK9_BLOCK6_PREPROD_SIGNOFF_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week9_block6_preprod_signoff_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week9_block6_wallclock_canary_20260208_043949.json`
+    - `research/breakthrough_lab/platform_compatibility/week9_block6_wallclock_canary_20260208_043949.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_044015.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_PREPROD_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_GO_NO_GO_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_ROLLBACK_SLA.md`
+  - Key finding: long-horizon wall-clock canary passed all checks (48/48 runs, max error `5.6458e-4`, T5 disable events `0`, rusticl/clover min ratio `0.9197`), and canonical gate remained `promote`.
+- Week 10 - Block 1 (Controlled low-scope rollout + auto rollback guardrails): **iterate**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK1_CONTROLLED_ROLLOUT_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block1_controlled_rollout_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_controlled_rollout_20260208_160122.json`
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_controlled_rollout_20260208_160122.md`
+    - `research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260208_160103.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_160122.json`
+  - Key finding: rollout scope stayed safe (rollback automatico exitoso), but T5 disable event in snapshot 2 prevents promotion.
+- Week 10 - Block 2 (Comparative dashboard extension with explicit Block6 + weekly drift): **promote**
+  - Artifact:
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_161230.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_161230.md`
+  - Key finding: active chain `block2 -> block3 -> block4 -> block5 -> block6 -> block10` tracked with transition-level drift metrics and global state `promote`.
+- Week 10 - Block 1.1 (T5 hardening + >=4 snapshot rerun): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK1_1_T5_HARDENING_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block1_1_t5_hardening_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block1_1.json`
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_1_controlled_rollout_20260208_161153.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_161219.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_161230.json`
+  - Key finding: rerun complete `4/4` snapshots with no rollback and `disable_events=0`; canonical gate before promotion remained `promote`.
+- Week 10 - Block 1.2 + 1.3 (horizon expansion + scope expansion to 2048): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK1_2_1_3_SCOPE_EXPANSION_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block1_2_1_3_scope_expansion_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_2_controlled_rollout_20260208_163545.json`
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_3_controlled_rollout_20260208_163829.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163611.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163857.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_163903.json`
+  - Key finding: horizon `6/6` snapshots and size expansion (`1400+2048`) pass with rollback `false`, disable events `0`, and mandatory gates in `promote`.
+- Week 10 - Block 1.4 + 1.5 (long window + Clover/rusticl split): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK1_4_1_5_LONGWINDOW_SPLIT_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block1_4_1_5_longwindow_split_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_4_long_window_20260208_165345.json`
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_5_platform_split_20260208_165631.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165410.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165700.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_165707.json`
+  - Key finding: long-window equivalent (`>=45 min`) and split canary pass with `disable_events=0`, rollback inactive, and ratio rusticl/clover healthy.
+- Week 10 - Block 1.6 + 2.1 (extended split + scaled preproduction): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK1_6_BLOCK2_1_SCALING_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block1_6_block2_1_scaling_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week10_block1_6_platform_split_extended_20260208_171552.json`
+    - `research/breakthrough_lab/platform_compatibility/week10_block2_1_preprod_scaled_20260208_171024.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171618.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171051.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_171111.json`
+  - Key finding: split extendido (8 snapshots) y preproduccion escalada pasan con `disable_events=0`, rollback `false`, y gates obligatorios en `promote`.
+- Week 10 - Block 2.2 + 2.3 (long-horizon scaled preprod + final controlled-production package): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK2_2_2_3_PREPROD_SIGNOFF_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block2_2_2_3_preprod_signoff_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week10_block2_2_preprod_scaled_long_20260208_173314.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_OPERATIONS_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_ROLLBACK_HOT_THRESHOLDS.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_GO_NO_GO_CHECKLIST.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173343.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173514.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_173522.json`
+  - Key finding: ventana larga escalada `8/8` pasa con `disable_events=0`, rollback `false`, drift acotado, y se cierra el paquete operativo formal de recomendacion controlada.
+- Week 10 - Block 2.4 (final wall-clock canary): **iterate / no-go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK2_4_WALLCLOCK_FINAL_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block2_4_wallclock_final_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/platform_compatibility/week10_block2_4_wallclock_final_20260208_183529.json`
+    - `research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260208_183535.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_183620.json`
+  - Key finding: canary de 40 min completo, pero con breach en `t5_guardrails_all_runs` (disable events + overhead hard spike), por lo que se activó cierre `NO-GO`.
+- Week 10 - Block 2.4.1 (T5 long-horizon hardening + rerun): **promote / go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK10_BLOCK2_4_T5_HARDENING_RERUN_2026-02-08.md`
+  - Decision: `research/breakthrough_lab/week10_block2_4_t5_hardening_rerun_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block2_4_long_horizon.json`
+    - `research/breakthrough_lab/platform_compatibility/week10_block2_4_wallclock_hardening_rerun_20260208_201448.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_201518.json`
+    - `research/breakthrough_lab/week9_comparative_dashboard_20260208_201655.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_GO_NO_GO_CHECKLIST.md`
+  - Key finding: tras hardening T5, el rerun de 40 min cierra en `promote` con `disable_events=0` y `t5_overhead_max=1.2389%` (`<=5%`), habilitando `GO`.
+- Week 11 - Block 1 (continuous monitoring baseline + GFLOPS probe): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK11_BLOCK1_CONTINUOUS_MONITORING_BASELINE_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week11_block1_continuous_monitoring_baseline_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week11_controlled_rollout/week11_t5_effect_probe_20260209_003453.json`
+    - `research/breakthrough_lab/week11_controlled_rollout/week11_t5_effect_probe_rusticl_20260209_003557.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_003401.json`
+  - Key finding: baseline continuo confirma guardrails sanos (`disable_events=0`) y throughput estable; impacto GFLOPS de policy nueva es pequeño y mixto por size/plataforma (sin regresión global relevante).
+- Week 11 - Block 2 (continuous operational canary + T3/T5 drift alerting): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK11_BLOCK2_CONTINUOUS_CANARY_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week11_block2_continuous_canary_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week11_controlled_rollout/week11_block2_continuous_canary_20260209_005442.json`
+    - `research/breakthrough_lab/week11_controlled_rollout/week11_block2_drift_alerts_20260209_005442.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_005551.json`
+  - Key finding: canary de horizonte medio completa `6/6` snapshots sin rollback, `disable_events=0`, `t5_overhead_max=2.8982%`, y alertas de drift T3/T5 en `0`.
+- Week 11 - Block 3 (weekly SLO policy formalization): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK11_BLOCK3_WEEKLY_SLO_POLICY_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week11_block3_weekly_slo_policy_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_010222.json`
+  - Key finding: SLO semanal queda versionado con thresholds globales y por `kernel:size` derivados del baseline real de Block 2.
+- Week 11 - Block 4 (weekly replay against formal SLO policy): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK11_BLOCK4_WEEKLY_REPLAY_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week11_block4_weekly_replay_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week11_controlled_rollout/week11_block4_weekly_replay_canary_20260209_010447.json`
+    - `research/breakthrough_lab/week11_controlled_rollout/week11_block4_weekly_replay_eval_20260209_010454.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_010519.json`
+  - Key finding: replay semanal pasa `6/6` snapshots, sin rollback, con cumplimiento completo de guardrails y de SLO formales.
+- Week 11 - Block 5 (operational package: dashboard + drift status): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK11_BLOCK5_OPERATIONAL_PACKAGE_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week11_block5_operational_package_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week11_controlled_rollout/week11_block5_operational_dashboard_20260209_010526.json`
+    - `research/breakthrough_lab/week11_controlled_rollout/week11_block5_drift_status_20260209_010526.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_010551.json`
+  - Key finding: paquete operativo semanal consolidado en `promote`, con drift sano y deltas acotados frente al baseline de Block 2.
+- Week 12 - Block 1 (weekly replay automation local/CI): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK12_BLOCK1_WEEKLY_AUTOMATION_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week12_block1_weekly_automation_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week12_controlled_rollout/run_week12_weekly_replay_automation.py`
+    - `.github/workflows/week12-weekly-replay.yml`
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block1_weekly_automation_20260209_011907.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012201.json`
+  - Key finding: replay semanal queda automatizado para local/CI con ejecución formal `promote` y gates canónicos pre/post.
+- Week 12 - Block 2 (weekly Clover/rusticl split against formal policy): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK12_BLOCK2_PLATFORM_SPLIT_POLICY_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week12_block2_platform_split_policy_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block2_platform_split_20260209_012324.json`
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block2_platform_split_eval_20260209_012330.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012354.json`
+  - Key finding: split semanal pasa en ambos entornos con `ratio rusticl/clover min = 0.9231`, guardrails sanos y decisión `promote`.
+- Week 12 - Block 3 (pilot expansion to size 3072): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK12_BLOCK3_SIZE3072_EXPANSION_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week12_block3_size3072_expansion_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_20260209_012404.json`
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_eval_20260209_012745.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012804.json`
+  - Key finding: expansión a `3072` mantiene estabilidad (`rollback=false`, `disable_events=0`, `t5_overhead_max=1.8956%`) y cierra en `promote`.
+- Week 12 - Block 4 (combined canary split Clover/rusticl + 3072): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK12_BLOCK4_COMBINED_CANARY_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week12_block4_combined_canary_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block4_combined_split_3072_20260209_013814.json`
+    - `research/breakthrough_lab/week12_controlled_rollout/week12_block4_combined_split_3072_eval_20260209_013824.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_013850.json`
+  - Key finding: canary combinado y evaluación formal cumplen guardrails y split-ratio con tamaños `1400/2048/3072` (ratio mínimo observado `0.9242`).
+- Week 12 - Block 5 (definitive weekly operations runbook): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK12_BLOCK5_WEEKLY_RUNBOOK_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week12_block5_weekly_runbook_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/preprod_signoff/WEEK12_WEEKLY_OPERATIONS_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK12_WEEKLY_ALERT_SLA.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK12_WEEKLY_ESCALATION_MATRIX.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014015.json`
+  - Key finding: modelo operativo semanal queda formalizado con SLA/escalamiento/rollback explícito y cierre canónico `promote`.
+- Week 13 - Block 1 (expanded controlled production + biweekly comparative): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK13_BLOCK1_EXTENDED_CONTROLLED_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week13_block1_extended_controlled_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block1_extended_controlled_canary_20260209_014522.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block1_extended_controlled_eval_20260209_014522.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block1_biweekly_comparative_20260209_014733.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014046.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014541.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_014803.json`
+  - Key finding: horizonte extendido (`8 snapshots`) mantiene guardrails estables (`disable_events=0`, `rollback=false`) y comparativo quincenal sin regresión material.
+- Week 13 - Block 2 (weekly replay post-Block1 + Clover/rusticl split): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK13_BLOCK2_WEEKLY_REPLAY_SPLIT_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week13_block2_weekly_replay_split_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block2_weekly_replay_20260209_015702.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block2_weekly_replay_eval_20260209_020050.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block2_platform_split_20260209_020302.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block2_platform_split_eval_20260209_020309.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_015722.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_020109.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_020335.json`
+  - Key finding: replay semanal y split post-Block1 cierran en `promote`, con `disable_events=0`, `max_error=0.0008697509765625` y ratio rusticl/clover mínimo `0.9227649050049238`.
+- Week 13 - Block 3 (biweekly drift review + sustained-evidence recalibration): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK13_BLOCK3_DRIFT_RECALIBRATION_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week13_block3_drift_recalibration_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block3_drift_recalibration_20260209_021232.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/policy_week13_block3_weekly_slo_v2.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block3_recalibrated_policy_eval_20260209_021320.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_021311.json`
+  - Key finding: se aplicó endurecimiento conservador con evidencia sostenida (3 ventanas `promote`) y validación posterior en `promote` bajo policy v2.
+- Week 13 - Block 4 (biweekly operational consolidation + drift status v2): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK13_BLOCK4_OPERATIONAL_CONSOLIDATION_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week13_block4_operational_consolidation_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week13_controlled_rollout/build_week13_block4_operational_package.py`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block4_operational_dashboard_20260209_022251.json`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block4_drift_status_v2_20260209_022251.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_022317.json`
+  - Key finding: consolidación quincenal en `promote` con `split_ratio_min=0.9227649050049238`, `rollback=false`, `t5_disable_events=0` y drift v2 saludable.
+- Week 13 - Block 5 (operational continuity package): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK13_BLOCK5_OPERATIONAL_CONTINUITY_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week13_block5_operational_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week13_controlled_rollout/build_week13_block5_continuity_package.py`
+    - `research/breakthrough_lab/week13_controlled_rollout/week13_block5_operational_continuity_20260209_022849.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK13_BLOCK5_WEEKLY_CADENCE.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK13_BLOCK5_MONTHLY_AUDIT_WINDOW.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK13_BLOCK5_LIVE_DEBT_MATRIX.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_022841.json`
+  - Key finding: continuidad operativa formalizada en `promote` (cadencia semanal + auditoría mensual + deuda viva) con gate canónico `promote`.
+- Week 14 - Block 1 (first full biweekly cycle on policy v2): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK14_BLOCK1_POLICY_V2_EXTENDED_CYCLE_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week14_block1_policy_v2_extended_cycle_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_20260209_023353.json`
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_week14_block1_low_overhead.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_rerun_20260209_023945.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_rerun_eval_20260209_024440.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block1_platform_split_eval_20260209_024704.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_024728.json`
+  - Key finding: el primer intento detectó spike T5 (iterate), se aplicó hardening low-overhead y el rerun cerró en `promote` con `disable_events=0`, `t5_overhead_max=1.3479%` y split ratio mínimo `0.9220`.
+- Week 14 - Block 2 (extended horizon + policy v2 threshold tune check): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK14_BLOCK2_EXTENDED_HORIZON_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week14_block2_extended_horizon_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block2_extended_horizon_20260209_131849.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block2_extended_horizon_eval_20260209_132519.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block2_platform_split_20260209_132747.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block2_platform_split_eval_20260209_132755.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_132820.json`
+  - Key finding: bajo horizonte extendido (`10 snapshots`) y split Clover/rusticl, el bloque cierra en `promote` con `disable_events=0`, `t5_overhead_max=1.4280%`, `max_abs_drift=1.3759%` y ratio rusticl/clover mínimo `0.9199`.
+- Week 14 - Block 3 (first monthly-audit simulation + live debt matrix refresh): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK14_BLOCK3_MONTHLY_AUDIT_SIMULATION_2026-02-09.md`
+  - Decision: `research/breakthrough_lab/week14_block3_monthly_audit_simulation_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week14_controlled_rollout/run_week14_block3_monthly_audit_simulation.py`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block3_monthly_audit_simulation_20260209_133603.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK3_LIVE_DEBT_MATRIX_V2.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_133556.json`
+  - Key finding: la auditoria mensual simulada cierra en `promote` y la deuda viva heredada queda en `open=0` (`closed=3`), tras confirmar push operativo + estabilidad de Block2 + gate canónico en verde.
+- Week 14 - Block 4 (RX590 pre-release package): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK14_BLOCK4_RX590_PRERELEASE_PACKAGE_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week14_block4_rx590_prerelease_package_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week14_controlled_rollout/build_week14_block4_prerelease_package.py`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block4_prerelease_package_20260210_002923.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK4_RX590_PRERELEASE_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK4_PLUGIN_PROJECT_BASE_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK4_RX590_PRERELEASE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_002917.json`
+  - Key finding: se publica paquete pre-release completo (runbook + checklist + manifest) con gate canónico en `promote`.
+- Week 14 - Block 5 (RX590 low-scope dry-run + go/no-go): **promote / go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK14_BLOCK5_RX590_DRY_RUN_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week14_block5_rx590_dry_run_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week14_controlled_rollout/run_week14_block5_rx590_dry_run.py`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block5_rx590_dry_run_20260210_003416.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block5_rx590_dry_run_rerun_20260210_003819.json`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block5_rx590_dry_run_hardened_v2_20260210_004609.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK5_GO_NO_GO_CHECKLIST.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_004249.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_004609.json`
+  - Key finding: tras tres intentos controlados, el dry-run cierra en `go` con `disable_events=0`, correctness dentro de contrato y rollback SLA verificado.
+- Week 14 - Block 6 (framework handoff consolidation for extensions/plugins): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK14_BLOCK6_FRAMEWORK_HANDOFF_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week14_block6_framework_handoff_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week14_controlled_rollout/build_week14_block6_framework_handoff.py`
+    - `research/breakthrough_lab/week14_controlled_rollout/week14_block6_framework_handoff_20260210_004754.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_FRAMEWORK_HANDOFF.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_EXTENSION_CONTRACTS.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_PLUGIN_TEMPLATE.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_COMPATIBILITY_MATRIX.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_004747.json`
+  - Key finding: handoff base queda consolidado con contratos explícitos y matriz de compatibilidad mínima para equipos de extensión.
+- Week 15 - Block 1 (expanded pilot 1400/2048/3072 with same gate/rollback): **promote / go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK15_BLOCK1_EXPANDED_PILOT_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week15_block1_expanded_pilot_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week15_controlled_rollout/week15_block1_expanded_pilot_20260210_011240.json`
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_week15_block1_expanded_sizes.json`
+    - `research/breakthrough_lab/week15_controlled_rollout/week15_block1_expanded_pilot_rerun_20260210_011756.json`
+    - `research/breakthrough_lab/week15_controlled_rollout/week15_block1_expanded_pilot_rerun_canary_20260210_011736.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_011336.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_011756.json`
+  - Key finding: el intento inicial fue `no-go` por spike T5; tras hardening específico para tamaños ampliados, el rerun cerró en `go` con `disable_events=0`.
+- Week 15 - Block 2 (first real plugin pilot via Week14 template): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK15_BLOCK2_PLUGIN_PILOT_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week15_block2_plugin_pilot_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week15_controlled_rollout/run_week15_block2_plugin_pilot.py`
+    - `research/breakthrough_lab/week15_controlled_rollout/week15_block2_plugin_pilot_rerun_20260210_012358.json`
+    - `research/breakthrough_lab/week15_controlled_rollout/week15_block2_plugin_pilot_results.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_012323.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_012358.json`
+  - Key finding: primer plugin piloto real cerrado en `promote` con `results.json` schema-compatible y guardrails T3/T5 en verde.
+- Week 15 - Block 3 (framework RC package for dependent-project adoption): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK15_BLOCK3_FRAMEWORK_RC_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week15_block3_framework_rc_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week15_controlled_rollout/build_week15_block3_framework_rc.py`
+    - `research/breakthrough_lab/week15_controlled_rollout/week15_block3_framework_rc_20260210_012522.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK15_BLOCK3_FRAMEWORK_RC_RELEASE_NOTES.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK15_BLOCK3_FRAMEWORK_RC_ADOPTION_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK15_BLOCK3_DEPENDENT_PROJECTS_ONBOARDING.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK15_BLOCK3_FRAMEWORK_RC_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_012516.json`
+  - Key finding: RC `v0.15.0-rc1` publicado con dependencias técnicas en verde (`Block1=go`, `Block2=promote`) y checklist de adopción listo.
+- Week 16 - Block 1 (dependent-project integration pilot using RC manifest): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK16_BLOCK1_DEPENDENT_INTEGRATION_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week16_block1_dependent_integration_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week16_controlled_rollout/run_week16_block1_dependent_integration.py`
+    - `research/breakthrough_lab/dependent_projects/rx590_rc_integration_pilot/week16_block1_integration_profile.json`
+    - `research/breakthrough_lab/week16_controlled_rollout/week16_block1_dependent_integration_20260210_014453.json`
+    - `research/breakthrough_lab/week16_controlled_rollout/week16_block1_dependent_integration_plugin_pilot_20260210_014434.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014330.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014453.json`
+  - Key finding: el proyecto dependiente consume `v0.15.0-rc1` y cierra en `promote` con gates pre/post en verde.
+- Week 16 - Block 2 (weekly automated replay over RC + drift acta): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK16_BLOCK2_WEEKLY_RC_REPLAY_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week16_block2_weekly_rc_replay_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week16_controlled_rollout/run_week16_block2_weekly_rc_replay.py`
+    - `research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_20260210_015005.json`
+    - `research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_rerun_20260210_015504.json`
+    - `research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_rerun_automation_eval_20260210_015424.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015103.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015504.json`
+  - Key finding: intento inicial quedó `iterate` por fallo aislado de pre-gate; rerun estricto cerró `promote` con drift contenido (`thr max abs=4.4509%`, `p95 max=0.6219%`).
+- Week 16 - Block 3 (stable v0.15.0 release proposal + final checklist): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK16_BLOCK3_STABLE_RELEASE_PROPOSAL_2026-02-10.md`
+  - Decision: `research/breakthrough_lab/week16_block3_stable_release_proposal_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week16_controlled_rollout/build_week16_block3_stable_release_proposal.py`
+    - `research/breakthrough_lab/week16_controlled_rollout/week16_block3_stable_release_proposal_20260210_015530.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_RELEASE_NOTES.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_RELEASE_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_RELEASE_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015530.json`
+  - Key finding: la propuesta estable `v0.15.0` queda lista, trazada al RC y a evidencia semanal de integración + drift.
+- Week 17 - Block 1 (initial controlled rollout of v0.15.0 with extended snapshots): **promote / go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK17_BLOCK1_STABLE_ROLLOUT_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week17_block1_stable_rollout_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week17_controlled_rollout/run_week17_block1_stable_rollout.py`
+    - `research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_20260211_003512.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_20260211_004918.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_canary_20260211_004858.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_003858.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_004918.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK17_BLOCK1_GO_NO_GO_CHECKLIST.md`
+  - Key finding: intento inicial quedó `no-go` por overhead T5; tras hardening de bajo overhead y rerun extendido (10 snapshots), el bloque cerró en `go`.
+- Week 17 - Block 2 (second dependent plugin/project pilot on stable manifest): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK17_BLOCK2_SECOND_DEPENDENT_PILOT_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week17_block2_second_dependent_pilot_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week17_controlled_rollout/run_week17_block2_second_dependent_pilot.py`
+    - `research/breakthrough_lab/dependent_projects/rx590_stable_integration_pilot_v2/week17_block2_integration_profile.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block2_second_dependent_pilot_20260211_011149.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block2_second_dependent_pilot_plugin_20260211_011129.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011026.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011149.json`
+  - Key finding: segundo piloto dependiente cierra en `promote` sobre `v0.15.0` con gates pre/post y contratos plugin en verde.
+- Week 17 - Block 3 (early pytest flake hardening for `pytest_tier_green`): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK17_BLOCK3_PYTEST_FLAKE_HARDENING_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week17_block3_pytest_flake_hardening_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week17_controlled_rollout/run_week17_block3_pytest_flake_hardening.py`
+    - `tests/test_optimized_kernel_engine.py`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block3_pytest_flake_hardening_20260211_005256.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_005256.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014604.json`
+  - Key finding: el test objetivo quedó estable (`20/20` repeticiones verdes) y el gate canónico post-hardening volvió a `promote`.
+- Week 17 - Block 4 (weekly replay post-hardening + drift confirmation): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK17_BLOCK4_POSTHARDENING_REPLAY_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week17_block4_posthardening_replay_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week17_controlled_rollout/run_week17_block4_posthardening_replay.py`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_20260211_012010.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_automation_20260211_011608.json`
+    - `research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_automation_eval_20260211_011930.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011608.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_012010.json`
+  - Key finding: replay semanal post-hardening cierra en `promote` con drift muy bajo (`thr max abs=0.6065%`, `p95 max=0.3241%`) y `pytest_tier_green` estable en pre/post.
+- Week 18 - Block 1 (stable operations package for dependent adoption): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK18_BLOCK1_STABLE_OPERATIONS_PACKAGE_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week18_block1_stable_operations_package_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week18_controlled_rollout/build_week18_block1_stable_operations_package.py`
+    - `research/breakthrough_lab/week18_controlled_rollout/week18_block1_stable_operations_package_20260211_013141.json`
+    - `research/breakthrough_lab/week18_controlled_rollout/week18_block1_comparative_update_20260211_013141.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK1_V0_15_0_STABLE_RELEASE_PACKAGE.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK1_DEPENDENT_ADOPTION_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK1_STABLE_ADOPTION_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK1_STABLE_PACKAGE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_013141.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_013200.json`
+  - Key finding: paquete operativo estable `v0.15.0` queda listo para adopcion dependiente; la comparativa mejora drift frente a Week16 (`thr -3.8444 pts`, `p95 -0.2978 pts`) y gate canonico pre/post permanece en `promote`.
+- Week 18 - Block 2 (maintenance canary split Clover/rusticl on stable baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK18_BLOCK2_MAINTENANCE_SPLIT_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week18_block2_maintenance_split_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week18_controlled_rollout/run_week18_block2_maintenance_split.py`
+    - `research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_20260211_014255.json`
+    - `research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_canary_20260211_014235.json`
+    - `research/breakthrough_lab/week18_controlled_rollout/week18_block2_maintenance_split_eval_20260211_014235.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014059.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014255.json`
+  - Key finding: canary split estable pasa en `promote` con `rusticl_ratio_min=0.9181`, `t5_disable_total=0` y guardrails T5 dentro de limites.
+- Week 18 - Block 3 (final stable release checklist + GO recommendation): **promote / go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK18_BLOCK3_STABLE_RELEASE_RECOMMENDATION_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week18_block3_stable_release_recommendation_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week18_controlled_rollout/build_week18_block3_stable_release_recommendation.py`
+    - `research/breakthrough_lab/week18_controlled_rollout/week18_block3_stable_release_recommendation_20260211_014419.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK3_FINAL_RELEASE_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK3_STABLE_RELEASE_RECOMMENDATION.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK18_BLOCK3_GO_NO_GO_DECISION.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014400.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_014419.json`
+  - Key finding: checklist final queda en verde completo y se emite recomendacion operativa `GO` para adopcion controlada de `v0.15.0`.
+- Week 19 - Block 1 (weekly automated replay + Clover/rusticl split maintenance on `v0.15.0`): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK19_BLOCK1_WEEKLY_SPLIT_MAINTENANCE_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week19_block1_weekly_split_maintenance_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week19_controlled_rollout/run_week19_block1_weekly_split_maintenance.py`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block1_weekly_split_maintenance_20260211_015638.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block1_weekly_split_maintenance_weekly_replay_20260211_015114.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block1_weekly_split_maintenance_weekly_replay_eval_20260211_015423.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block1_weekly_split_maintenance_split_canary_20260211_015619.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block1_weekly_split_maintenance_split_eval_20260211_015619.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_015114.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_015638.json`
+  - Key finding: mantenimiento semanal y split por plataforma permanecen estables sobre `v0.15.0` (`rusticl_ratio_min=0.9222`, `t5_disable_total=0`, `t5_overhead_max=1.3069`) con gates canonicos pre/post en `promote`.
+- Week 19 - Block 2 (biweekly drift review + conservative recalibration): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK19_BLOCK2_BIWEEKLY_DRIFT_RECALIBRATION_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week19_block2_biweekly_drift_recalibration_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week19_controlled_rollout/run_week19_block2_biweekly_drift_recalibration.py`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block2_biweekly_drift_recalibration_package_20260211_020443.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block2_biweekly_drift_recalibration_20260211_020423.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block2_recalibrated_policy_eval_20260211_020423.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020423.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020443.json`
+  - Key finding: drift quincenal queda acotado (`thr_abs_max=0.6906`, `p95_max=0.3241`) y la policy conservadora `v3` se recalibra en `applied` sin romper evaluación ni gates.
+- Week 19 - Block 3 (monthly continuity operational package): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK19_BLOCK3_MONTHLY_CONTINUITY_PACKAGE_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week19_block3_monthly_continuity_package_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week19_controlled_rollout/build_week19_block3_monthly_continuity_package.py`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block3_monthly_continuity_package_20260211_020812.json`
+    - `research/breakthrough_lab/week19_controlled_rollout/week19_block3_monthly_continuity_dashboard_20260211_020812.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK19_BLOCK3_MONTHLY_CONTINUITY_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK19_BLOCK3_MONTHLY_CONTINUITY_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK19_BLOCK3_MONTHLY_LIVE_DEBT_MATRIX.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK19_BLOCK3_MONTHLY_CONTINUITY_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020812.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020832.json`
+  - Key finding: paquete mensual queda publicado con cadena operativa `promote`, debt matrix sin items `high/critical` abiertos y gates canonicos pre/post en verde.
+- Week 20 - Block 1 (first full monthly cycle: replay + split + consolidation): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK20_BLOCK1_MONTHLY_FULL_CYCLE_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week20_block1_monthly_full_cycle_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week20_controlled_rollout/run_week20_block1_monthly_cycle.py`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_20260211_023053.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_dashboard_20260211_023053.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_weekly_replay_20260211_022549.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_weekly_replay_eval_20260211_022857.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_split_canary_20260211_023053.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block1_monthly_cycle_split_eval_20260211_023053.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK1_MONTHLY_CYCLE_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK1_MONTHLY_CYCLE_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK1_MONTHLY_CYCLE_LIVE_DEBT_MATRIX.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_022548.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_023113.json`
+  - Key finding: primer ciclo mensual completo queda estable en `promote` con `rusticl_ratio_min=0.9236`, `t5_overhead_max=1.3618`, `t5_disable_total=0` y consolidacion operativa publicada.
+- Week 20 - Block 2 (scheduled monthly automation with artifact retention + alerting): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK20_BLOCK2_MONTHLY_SCHEDULER_AUTOMATION_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week20_block2_monthly_scheduler_automation_decision.json`
+  - Evidence:
+    - `.github/workflows/week20-monthly-cycle.yml`
+    - `research/breakthrough_lab/week20_controlled_rollout/run_week20_block2_monthly_scheduler_automation.py`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_20260211_140738.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_alerts_20260211_140738.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_scheduler_spec_20260211_140738.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_operational_debt_20260211_140738.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_140157.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_140757.json`
+  - Key finding: automatizacion mensual queda cerrada con `cycle_decision=promote`, `alerts_total=0`, `retention-days=45` y gates canonicos pre/post en verde.
+- Week 20 - Block 3 (monthly comparative report + operational debt review): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK20_BLOCK3_MONTHLY_COMPARATIVE_AND_DEBT_REVIEW_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week20_block3_monthly_comparative_report_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week20_controlled_rollout/run_week20_block3_monthly_comparative_report.py`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block3_monthly_comparative_report_20260211_140926.json`
+    - `research/breakthrough_lab/week20_controlled_rollout/week20_block3_monthly_comparative_dashboard_20260211_140926.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK20_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_140926.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_140946.json`
+  - Key finding: cierre comparativo mensual en `promote` con cadena baseline->Block1->Block2 estable y deuda abierta solo en severidad no critica.
+- Week 21 - Block 1 (recurrent monthly continuity cycle against Week20 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK21_BLOCK1_MONTHLY_CONTINUITY_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week21_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block1_monthly_continuity_20260211_142611.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block1_monthly_continuity_weekly_replay_20260211_142109.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block1_monthly_continuity_weekly_replay_eval_20260211_142416.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block1_monthly_continuity_split_canary_20260211_142611.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block1_monthly_continuity_split_eval_20260211_142611.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK21_BLOCK1_MONTHLY_CONTINUITY_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_142109.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_142630.json`
+  - Key finding: continuidad mensual recurrente arranca estable en `promote` (`rusticl_ratio_min=0.9227`, `t5_overhead_max=1.3131`, `t5_disable_total=0`) con gates canonicos verdes.
+- Week 21 - Block 2 (external alert bridge + monthly scheduler health-check): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK21_BLOCK2_ALERT_BRIDGE_HEALTHCHECK_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week21_block2_alert_bridge_healthcheck_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week21_controlled_rollout/run_week21_block2_alert_bridge_healthcheck.py`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block2_alert_bridge_healthcheck_20260211_143550.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block2_alert_bridge_healthcheck_bridge_payload_20260211_143550.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block2_alert_bridge_healthcheck_dispatch_20260211_143550.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block2_alert_bridge_healthcheck_scheduler_health_20260211_143550.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block2_alert_bridge_healthcheck_operational_debt_20260211_143550.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_143550.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_143609.json`
+  - Key finding: bridge de alertas queda operacional en `dry_run` trazable, scheduler mensual sano y gates canonicos pre/post en `promote`.
+- Week 21 - Block 3 (second monthly comparative + formal platform policy): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK21_BLOCK3_SECOND_MONTHLY_COMPARATIVE_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week21_block3_second_monthly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week21_controlled_rollout/run_week21_block3_second_monthly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block3_second_monthly_comparative_20260211_143945.json`
+    - `research/breakthrough_lab/week21_controlled_rollout/week21_block3_second_monthly_dashboard_20260211_143945.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK21_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK21_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK21_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_143945.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_144004.json`
+  - Key finding: segundo comparativo mensual cierra en `promote` y formaliza política `dual_go_clover_rusticl` para production/staging/development.
+- Week 22 - Block 1 (second recurrent monthly continuity cycle against Week21 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK22_BLOCK1_MONTHLY_CONTINUITY_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week22_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block1_monthly_continuity_20260211_155815.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block1_monthly_continuity_weekly_replay_20260211_155314.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block1_monthly_continuity_weekly_replay_eval_20260211_155620.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block1_monthly_continuity_split_canary_20260211_155815.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block1_monthly_continuity_split_eval_20260211_155815.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_155247.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_155900.json`
+  - Key finding: segundo ciclo mensual recurrente permanece estable en `promote` (`rusticl_ratio_min=0.9224`, `t5_overhead_max=1.3238`, `t5_disable_total=0`) con gates canónicos explícitos pre/post en verde.
+- Week 22 - Block 2 (live alert bridge cutover + explicit rollback path): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK22_BLOCK2_ALERT_BRIDGE_LIVE_CUTOVER_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week22_block2_alert_bridge_live_cutover_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week22_controlled_rollout/run_week22_block2_alert_bridge_live_cutover.py`
+    - `research/breakthrough_lab/week22_controlled_rollout/run_week22_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block2_alert_bridge_live_cutover_20260211_161104.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block2_alert_bridge_live_cutover_dispatch_20260211_161104.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block2_alert_bridge_live_cutover_rollback_20260211_161104.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block2_live_webhook_capture_20260211_161043.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161029.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161150.json`
+  - Key finding: cutover `live` validado con webhook real en entorno controlado (`HTTP 200`), rollback explícito trazable y gates canónicos explícitos pre/post en `promote`.
+- Week 22 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK22_BLOCK3_MONTHLY_COMPARATIVE_PLATFORM_DECISION_2026-02-11.md`
+  - Decision: `research/breakthrough_lab/week22_block3_monthly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week22_controlled_rollout/run_week22_block3_monthly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block3_monthly_comparative_20260211_161536.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/week22_block3_monthly_comparative_dashboard_20260211_161536.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/WEEK22_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week22_controlled_rollout/WEEK22_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week22_controlled_rollout/WEEK22_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161536.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_161556.json`
+  - Key finding: comparativo mensual cierra en `promote` y confirma política `dual_go_clover_rusticl` en production/staging/development sin deuda abierta high/critical.
+- Week 23 - Block 1 (next recurrent monthly continuity cycle against Week22 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK23_BLOCK1_MONTHLY_CONTINUITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week23_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week23_controlled_rollout/week23_block1_monthly_continuity_20260212_003814.json`
+    - `research/breakthrough_lab/week23_controlled_rollout/week23_block1_monthly_continuity_weekly_replay_20260212_003312.json`
+    - `research/breakthrough_lab/week23_controlled_rollout/week23_block1_monthly_continuity_weekly_replay_eval_20260212_003619.json`
+    - `research/breakthrough_lab/week23_controlled_rollout/week23_block1_monthly_continuity_split_canary_20260212_003814.json`
+    - `research/breakthrough_lab/week23_controlled_rollout/week23_block1_monthly_continuity_split_eval_20260212_003814.json`
+    - `research/breakthrough_lab/week23_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_003312.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_003834.json`
+  - Key finding: apertura de continuidad Week23 cierra en `promote` (`rusticl_ratio_min=0.9243`, `t5_overhead_max=1.3020`, `t5_disable_total=0`) y mantiene cadena de validación estable.
+- Week 23 - Block 2 (live alert bridge hardening: retry/backoff + delivery health-check): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK23_BLOCK2_ALERT_BRIDGE_HARDENING_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week23_block2_alert_bridge_hardening_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week23_controlled_rollout/run_week23_block2_alert_bridge_hardening.py`
+    - `research/breakthrough_lab/week23_controlled_rollout/run_week23_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week23_controlled_rollout/week23_block2_alert_bridge_hardening_20260212_005510.json`
+    - `research/breakthrough_lab/week23_controlled_rollout/week23_block2_alert_bridge_hardening_dispatch_20260212_005510.json`
+    - `research/breakthrough_lab/week23_controlled_rollout/week23_block2_alert_bridge_hardening_scheduler_health_20260212_005510.json`
+    - `research/breakthrough_lab/week23_controlled_rollout/week23_block2_alert_bridge_hardening_rollback_20260212_005510.json`
+    - `research/breakthrough_lab/week23_controlled_rollout/week23_block2_live_webhook_capture_20260212_005449.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_005509.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_005529.json`
+  - Key finding: hardening live validado con reintento real (`attempts=2`, `503 -> 200`), health-check pre/post en verde y rollback explícito disponible.
+- Week 23 - Block 3 (monthly dual-platform comparative post-hardening + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK23_BLOCK3_MONTHLY_COMPARATIVE_PLATFORM_DECISION_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week23_block3_monthly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week23_controlled_rollout/run_week23_block3_monthly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week23_controlled_rollout/week23_block3_monthly_comparative_20260212_005609.json`
+    - `research/breakthrough_lab/week23_controlled_rollout/week23_block3_monthly_comparative_dashboard_20260212_005609.json`
+    - `research/breakthrough_lab/week23_controlled_rollout/WEEK23_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week23_controlled_rollout/WEEK23_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week23_controlled_rollout/WEEK23_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_005609.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_005629.json`
+  - Key finding: comparativo post-hardening cierra en `promote` con mejora relativa (`split_ratio_delta=+0.2056%`, `t5_overhead_delta=-1.6502%`) y política `dual_go_clover_rusticl` sostenida.
+- Week 24 - Block 1 (new recurrent monthly continuity cycle against Week23 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK24_BLOCK1_MONTHLY_CONTINUITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week24_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week24_controlled_rollout/week24_block1_monthly_continuity_20260212_013806.json`
+    - `research/breakthrough_lab/week24_controlled_rollout/week24_block1_monthly_continuity_weekly_replay_20260212_013304.json`
+    - `research/breakthrough_lab/week24_controlled_rollout/week24_block1_monthly_continuity_weekly_replay_eval_20260212_013610.json`
+    - `research/breakthrough_lab/week24_controlled_rollout/week24_block1_monthly_continuity_split_canary_20260212_013806.json`
+    - `research/breakthrough_lab/week24_controlled_rollout/week24_block1_monthly_continuity_split_eval_20260212_013806.json`
+    - `research/breakthrough_lab/week24_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_013304.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_013825.json`
+  - Key finding: ciclo recurrente cierra en `promote` con guardrails sanos (`rusticl_ratio_min=0.9229`, `t5_overhead_max=1.3451`, `t5_disable_total=0`) y continuidad estable.
+- Week 24 - Block 2 (alert bridge observability hardening: success ratio + latency + degradation alerts): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK24_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week24_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week24_controlled_rollout/run_week24_block2_alert_bridge_observability.py`
+    - `research/breakthrough_lab/week24_controlled_rollout/run_week24_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week24_controlled_rollout/week24_block2_alert_bridge_observability_20260212_014745.json`
+    - `research/breakthrough_lab/week24_controlled_rollout/week24_block2_alert_bridge_observability_dispatch_20260212_014745.json`
+    - `research/breakthrough_lab/week24_controlled_rollout/week24_block2_alert_bridge_observability_scheduler_health_20260212_014745.json`
+    - `research/breakthrough_lab/week24_controlled_rollout/week24_block2_alert_bridge_observability_operational_debt_20260212_014745.json`
+    - `research/breakthrough_lab/week24_controlled_rollout/week24_block2_live_webhook_capture_20260212_0149_parallel.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_014744.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_014804.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=14.246ms`, `retries_rate=0.25`) con retry real (`503 -> 200`) y sin alertas de degradación.
+- Week 24 - Block 3 (biweekly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK24_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week24_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week24_controlled_rollout/run_week24_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week24_controlled_rollout/week24_block3_biweekly_comparative_20260212_014830.json`
+    - `research/breakthrough_lab/week24_controlled_rollout/week24_block3_biweekly_comparative_dashboard_20260212_014830.json`
+    - `research/breakthrough_lab/week24_controlled_rollout/WEEK24_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week24_controlled_rollout/WEEK24_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week24_controlled_rollout/WEEK24_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_014830.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_014850.json`
+  - Key finding: comparativo quincenal cierra en `promote` y mantiene política `dual_go_clover_rusticl`, con deuda high/critical en `0`.
+- Week 25 - Block 1 (new recurrent monthly continuity cycle against Week24 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK25_BLOCK1_MONTHLY_CONTINUITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week25_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week25_controlled_rollout/week25_block1_monthly_continuity_20260212_135951.json`
+    - `research/breakthrough_lab/week25_controlled_rollout/week25_block1_monthly_continuity_weekly_replay_20260212_135450.json`
+    - `research/breakthrough_lab/week25_controlled_rollout/week25_block1_monthly_continuity_weekly_replay_eval_20260212_135756.json`
+    - `research/breakthrough_lab/week25_controlled_rollout/week25_block1_monthly_continuity_split_canary_20260212_135951.json`
+    - `research/breakthrough_lab/week25_controlled_rollout/week25_block1_monthly_continuity_split_eval_20260212_135951.json`
+    - `research/breakthrough_lab/week25_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_135450.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_140011.json`
+  - Key finding: ciclo recurrente cierra en `promote` con guardrails sanos (`rusticl_ratio_min=0.9224`, `t5_overhead_max=1.4077`, `t5_disable_total=0`) y continuidad estable.
+- Week 25 - Block 2 (alert bridge observability hardening: success ratio + latency + degradation alerts): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK25_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week25_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week25_controlled_rollout/run_week25_block2_alert_bridge_observability.py`
+    - `research/breakthrough_lab/week25_controlled_rollout/run_week25_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week25_controlled_rollout/week25_block2_alert_bridge_observability_20260212_140153.json`
+    - `research/breakthrough_lab/week25_controlled_rollout/week25_block2_alert_bridge_observability_dispatch_20260212_140153.json`
+    - `research/breakthrough_lab/week25_controlled_rollout/week25_block2_alert_bridge_observability_scheduler_health_20260212_140153.json`
+    - `research/breakthrough_lab/week25_controlled_rollout/week25_block2_alert_bridge_observability_operational_debt_20260212_140153.json`
+    - `research/breakthrough_lab/week25_controlled_rollout/week25_block2_live_webhook_capture_20260212_parallel.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_140152.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_140212.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=14.228ms`, `retries_rate=0.25`) con retry real (`503 -> 200`) y sin alertas de degradación.
+- Week 25 - Block 3 (biweekly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK25_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week25_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week25_controlled_rollout/run_week25_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week25_controlled_rollout/week25_block3_biweekly_comparative_20260212_140239.json`
+    - `research/breakthrough_lab/week25_controlled_rollout/week25_block3_biweekly_comparative_dashboard_20260212_140239.json`
+    - `research/breakthrough_lab/week25_controlled_rollout/WEEK25_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week25_controlled_rollout/WEEK25_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week25_controlled_rollout/WEEK25_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_140239.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_140258.json`
+  - Key finding: comparativo quincenal cierra en `promote` y mantiene política `dual_go_clover_rusticl`, con deuda high/critical en `0`.
+- Week 26 - Block 1 (new recurrent monthly continuity cycle against Week25 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK26_BLOCK1_MONTHLY_CONTINUITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week26_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week26_controlled_rollout/week26_block1_monthly_continuity_20260212_143419.json`
+    - `research/breakthrough_lab/week26_controlled_rollout/week26_block1_monthly_continuity_weekly_replay_20260212_142918.json`
+    - `research/breakthrough_lab/week26_controlled_rollout/week26_block1_monthly_continuity_weekly_replay_eval_20260212_143224.json`
+    - `research/breakthrough_lab/week26_controlled_rollout/week26_block1_monthly_continuity_split_canary_20260212_143419.json`
+    - `research/breakthrough_lab/week26_controlled_rollout/week26_block1_monthly_continuity_split_eval_20260212_143419.json`
+    - `research/breakthrough_lab/week26_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_142918.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_143439.json`
+  - Key finding: ciclo recurrente cierra en `promote` con guardrails sanos (`rusticl_ratio_min=0.9225`, `t5_overhead_max=1.3401`, `t5_disable_total=0`) y continuidad estable.
+- Week 26 - Block 2 (alert bridge observability hardening: success ratio + latency + degradation alerts): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK26_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week26_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week26_controlled_rollout/run_week26_block2_alert_bridge_observability.py`
+    - `research/breakthrough_lab/week26_controlled_rollout/run_week26_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week26_controlled_rollout/week26_block2_alert_bridge_observability_20260212_143611.json`
+    - `research/breakthrough_lab/week26_controlled_rollout/week26_block2_alert_bridge_observability_dispatch_20260212_143611.json`
+    - `research/breakthrough_lab/week26_controlled_rollout/week26_block2_alert_bridge_observability_scheduler_health_20260212_143611.json`
+    - `research/breakthrough_lab/week26_controlled_rollout/week26_block2_alert_bridge_observability_operational_debt_20260212_143611.json`
+    - `research/breakthrough_lab/week26_controlled_rollout/week26_block2_live_webhook_capture_20260212_parallel.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_143611.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_143632.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=13.683ms`, `retries_rate=0.25`) con retry real (`503 -> 200`) y sin alertas de degradación.
+- Week 26 - Block 3 (biweekly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK26_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week26_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week26_controlled_rollout/run_week26_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week26_controlled_rollout/week26_block3_biweekly_comparative_20260212_143658.json`
+    - `research/breakthrough_lab/week26_controlled_rollout/week26_block3_biweekly_comparative_dashboard_20260212_143658.json`
+    - `research/breakthrough_lab/week26_controlled_rollout/WEEK26_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week26_controlled_rollout/WEEK26_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week26_controlled_rollout/WEEK26_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_143658.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_143718.json`
+  - Key finding: comparativo quincenal cierra en `promote` y mantiene política `dual_go_clover_rusticl`, con deuda high/critical en `0`.
+- Week 27 - Block 1 (new recurrent monthly continuity cycle against Week26 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK27_BLOCK1_MONTHLY_CONTINUITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week27_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_20260212_145205.json`
+    - `research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_weekly_replay_20260212_144704.json`
+    - `research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_weekly_replay_eval_20260212_145010.json`
+    - `research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_split_canary_20260212_145205.json`
+    - `research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_split_eval_20260212_145205.json`
+    - `research/breakthrough_lab/week27_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_144704.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_145225.json`
+  - Key finding: ciclo recurrente cierra en `promote` con guardrails sanos (`rusticl_ratio_min=0.9223`, `t5_overhead_max=1.3000`, `t5_disable_total=0`) y continuidad estable.
+- Week 27 - Block 2 (alert bridge observability hardening: success ratio + latency + degradation alerts): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK27_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week27_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week27_controlled_rollout/run_week27_block2_alert_bridge_observability.py`
+    - `research/breakthrough_lab/week27_controlled_rollout/run_week27_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week27_controlled_rollout/week27_block2_alert_bridge_observability_20260212_145340.json`
+    - `research/breakthrough_lab/week27_controlled_rollout/week27_block2_alert_bridge_observability_dispatch_20260212_145340.json`
+    - `research/breakthrough_lab/week27_controlled_rollout/week27_block2_alert_bridge_observability_scheduler_health_20260212_145340.json`
+    - `research/breakthrough_lab/week27_controlled_rollout/week27_block2_alert_bridge_observability_operational_debt_20260212_145340.json`
+    - `research/breakthrough_lab/week27_controlled_rollout/week27_block2_live_webhook_capture_20260212_parallel.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_145340.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_145400.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=14.262ms`, `retries_rate=0.25`) con retry real (`503 -> 200`) y sin alertas de degradación.
+- Week 27 - Block 3 (biweekly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK27_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week27_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week27_controlled_rollout/run_week27_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week27_controlled_rollout/week27_block3_biweekly_comparative_20260212_145424.json`
+    - `research/breakthrough_lab/week27_controlled_rollout/week27_block3_biweekly_comparative_dashboard_20260212_145424.json`
+    - `research/breakthrough_lab/week27_controlled_rollout/WEEK27_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week27_controlled_rollout/WEEK27_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week27_controlled_rollout/WEEK27_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_145424.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_145444.json`
+  - Key finding: comparativo quincenal cierra en `promote` y mantiene política `dual_go_clover_rusticl`, con deuda high/critical en `0`.
+- Week 27 - Release Package Closure: **go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK27_RELEASE_PACKAGE_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/preprod_signoff/WEEK27_RELEASE_GO_NO_GO_DECISION.json`
+  - Artifacts:
+    - `research/breakthrough_lab/preprod_signoff/WEEK27_RELEASE_PACKAGE_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK27_RELEASE_GO_NO_GO_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK27_RELEASE_GO_NO_GO_DECISION.json`
+  - Key finding: paquete de release cierra en `GO` con cadena Week27 Block1/2/3 en `promote` y guardrails operativos sanos.
+- Week 28 - Block 1 (new recurrent monthly continuity cycle against Week27 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK28_BLOCK1_MONTHLY_CONTINUITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week28_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_20260212_152412.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_weekly_replay_20260212_151910.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_weekly_replay_eval_20260212_152217.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_canary_20260212_152412.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block1_monthly_continuity_split_eval_20260212_152412.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_151910.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_152432.json`
+  - Key finding: ciclo recurrente cierra en `promote` con guardrails sanos (`rusticl_ratio_min=0.9229`, `t5_overhead_max=1.3092`, `t5_disable_total=0`) y continuidad estable.
+- Week 28 - Block 2 (alert bridge observability hardening: success ratio + latency + degradation alerts): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK28_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week28_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week28_controlled_rollout/run_week28_block2_alert_bridge_observability.py`
+    - `research/breakthrough_lab/week28_controlled_rollout/run_week28_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block2_alert_bridge_observability_20260212_154302.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block2_alert_bridge_observability_dispatch_20260212_154302.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block2_alert_bridge_observability_scheduler_health_20260212_154302.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block2_alert_bridge_observability_operational_debt_20260212_154302.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block2_live_webhook_capture_20260212_parallel.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_154301.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_154321.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=14.214ms`, `retries_rate=0.25`) con retry real (`503 -> 200`) y sin alertas de degradación.
+- Week 28 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK28_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week28_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week28_controlled_rollout/run_week28_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block3_biweekly_comparative_20260212_160302.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/week28_block3_biweekly_comparative_dashboard_20260212_160302.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/WEEK28_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week28_controlled_rollout/WEEK28_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week28_controlled_rollout/WEEK28_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_160302.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_160321.json`
+  - Key finding: comparativo mensual cierra en `promote`, mantiene política `dual_go_clover_rusticl`, mejora overhead (`-2.3046%`) y conserva deuda high/critical en `0`.
+- Week 29 - Block 1 (new recurrent monthly continuity cycle against Week28 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK29_BLOCK1_MONTHLY_CONTINUITY_2026-02-12.md`
+  - Decision: `research/breakthrough_lab/week29_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block1_monthly_continuity_20260212_161730.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block1_monthly_continuity_weekly_replay_20260212_161229.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block1_monthly_continuity_weekly_replay_eval_20260212_161535.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block1_monthly_continuity_split_canary_20260212_161730.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block1_monthly_continuity_split_eval_20260212_161730.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_161229.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_161750.json`
+  - Key finding: ciclo recurrente cierra en `promote` con guardrails sanos (`rusticl_ratio_min=0.9223`, `t5_overhead_max=1.2555`, `t5_disable_total=0`) y continuidad estable.
+- Week 29 - Block 2 (alert bridge observability hardening: success ratio + latency + degradation alerts): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK29_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week29_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week29_controlled_rollout/run_week29_block2_alert_bridge_observability.py`
+    - `research/breakthrough_lab/week29_controlled_rollout/run_week29_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block2_alert_bridge_observability_20260213_011150.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block2_alert_bridge_observability_dispatch_20260213_011150.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block2_alert_bridge_observability_scheduler_health_20260213_011150.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block2_alert_bridge_observability_operational_debt_20260213_011150.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block2_live_webhook_capture_20260213_parallel.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_011149.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_011209.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=14.219ms`, `retries_rate=0.25`) con retry real (`503 -> 200`) y sin alertas de degradación.
+- Week 29 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK29_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week29_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week29_controlled_rollout/run_week29_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block3_biweekly_comparative_20260213_011733.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/week29_block3_biweekly_comparative_dashboard_20260213_011733.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/WEEK29_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week29_controlled_rollout/WEEK29_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week29_controlled_rollout/WEEK29_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_011733.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_011753.json`
+  - Key finding: comparativo mensual cierra en `promote`, mantiene política `dual_go_clover_rusticl`, mejora overhead (`-3.4264%`) y conserva deuda high/critical en `0`.
+- Week 30 - Block 1 (new recurrent monthly continuity cycle against Week29 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK30_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week30_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block1_monthly_continuity_20260213_013243.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block1_monthly_continuity_weekly_replay_20260213_012742.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block1_monthly_continuity_weekly_replay_eval_20260213_013048.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block1_monthly_continuity_split_canary_20260213_013243.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block1_monthly_continuity_split_eval_20260213_013243.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_012742.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_013302.json`
+  - Key finding: ciclo recurrente cierra en `promote` con guardrails sanos (`rusticl_ratio_min=0.9059`, `t5_overhead_max=1.3656`, `t5_disable_total=0`) y continuidad estable.
+- Week 30 - Block 2 (alert bridge observability hardening: success ratio + latency + degradation alerts): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK30_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week30_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block2_alert_bridge_observability.py`
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block2_alert_bridge_observability_20260213_015239.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block2_alert_bridge_observability_dispatch_20260213_015239.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block2_alert_bridge_observability_scheduler_health_20260213_015239.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block2_alert_bridge_observability_operational_debt_20260213_015239.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block2_live_webhook_capture_20260213_parallel.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_015239.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_015259.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=14.087ms`, `retries_rate=0.25`) con retry real (`503 -> 200`) y sin alertas de degradación.
+- Week 30 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK30_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week30_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block3_biweekly_comparative_20260213_020104.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_020104.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week30_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_020104.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_020123.json`
+  - Key finding: comparativo mensual cierra en `promote`; por deriva relativa, la política de producción queda en `clover_primary_rusticl_canary` manteniendo deuda high/critical en `0`.
+- Week 31 - Block 1 (new recurrent monthly continuity cycle against Week30 baseline): **iterate**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK31_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week31_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_20260213_021006.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_weekly_replay_20260213_020538.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_weekly_replay_eval_20260213_020811.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_split_canary_20260213_021006.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_split_eval_20260213_021006.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_020538.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_021026.json`
+  - Key finding: split Clover/rusticl y gates canónicos pre/post cierran en `promote`, pero el replay semanal cae en `iterate` por `snapshots=4/6`, `t5_disable_total=1` y `t5_overhead_max=10.8918%` (rollback en snapshot 4); se requiere rerun de recuperación con hardening T5 antes de Block 2.
+- Week 31 - Block 1 Recovery Rerun (T5 hardening + extended snapshots): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK31_BLOCK1_RECOVERY_RERUN_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week31_block1_recovery_rerun_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_20260213_023854.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_weekly_replay_eval_20260213_023710.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_20260213_024515.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_weekly_replay_eval_20260213_024342.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_split_eval_20260213_024515.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024027.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024535.json`
+  - Key finding: recovery `r1` elimina fallos de snapshots/disable events pero queda `iterate` por overhead (`4.3320% > 3.0%`); recovery `r2` reduce presión y cierra en `promote` (`snapshots=8`, `t5_disable_total=0`, `t5_overhead_max=2.2758%`, split ratio min `0.9221`).
+- Week 31 - Block 2 (alert bridge observability hardening: success ratio + latency + degradation alerts): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK31_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week31_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block2_alert_bridge_observability.py`
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block2_alert_bridge_observability_20260213_025112.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block2_alert_bridge_observability_dispatch_20260213_025112.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block2_alert_bridge_observability_scheduler_health_20260213_025112.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block2_alert_bridge_observability_alerts_20260213_025112.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block2_alert_bridge_observability_operational_debt_20260213_025112.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block2_live_webhook_capture_20260212_215051.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025111.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025131.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=11.9797ms`, `retries_rate=0.3333`) con retry real (`503 -> 200`) y gates canónicos pre/post en verde.
+- Week 31 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK31_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week31_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block3_biweekly_comparative_20260213_025206.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block3_biweekly_comparative_rerun_20260213_025342.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_025342.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week31_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025312.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025342.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025402.json`
+  - Key finding: intento inicial quedó `iterate` por flake post-gate (`pytest_tier_green`), pero rerun estricto cerró `promote` y mantuvo política `clover_primary_rusticl_canary` con deuda high/critical en `0`.
+- Week 32 - Block 1 (new recurrent monthly continuity cycle against Week31 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK32_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week32_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week32_controlled_rollout/week32_block1_monthly_continuity_20260213_031007.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/week32_block1_monthly_continuity_weekly_replay_20260213_030507.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/week32_block1_monthly_continuity_weekly_replay_eval_20260213_030813.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/week32_block1_monthly_continuity_split_canary_20260213_031007.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/week32_block1_monthly_continuity_split_eval_20260213_031007.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_030439.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_031052.json`
+  - Key finding: ciclo recurrente cierra en `promote` con guardrails sanos (`split_ratio_min=0.9163`, `t5_overhead_max=1.3297`, `t5_disable_total=0`) y gates canónicos explícitos e internos en verde.
+- Week 32 - Block 2 (alert bridge observability hardening: success ratio + latency + degradation alerts): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK32_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week32_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block2_alert_bridge_observability.py`
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week32_controlled_rollout/week32_block2_alert_bridge_observability_20260213_031158.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/week32_block2_alert_bridge_observability_dispatch_20260213_031158.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/week32_block2_alert_bridge_observability_scheduler_health_20260213_031158.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/week32_block2_alert_bridge_observability_alerts_20260213_031158.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/week32_block2_alert_bridge_observability_operational_debt_20260213_031158.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/week32_block2_live_webhook_capture_20260212_221138.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_031123.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_031241.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=11.9835ms`, `retries_rate=0.3333`) con retry real (`503 -> 200`) y gates canónicos explícitos e internos en verde.
+- Week 32 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK32_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week32_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week32_controlled_rollout/week32_block3_biweekly_comparative_20260213_031337.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_031337.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week32_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week32_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_031309.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_031423.json`
+  - Key finding: comparativo mensual cierra en `promote`, mantiene política `clover_primary_rusticl_canary`, mejora overhead relativo (`-51.6319%`) y conserva deuda high/critical en `0`.
+- Week 33 - Block 1 (new recurrent monthly continuity cycle against Week32 baseline): **promote (after recovery)**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK33_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week33_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week33_controlled_rollout/week33_block1_monthly_continuity_20260213_035736.json`
+    - `research/breakthrough_lab/week33_controlled_rollout/week33_block1_monthly_continuity_weekly_replay_eval_20260213_035541.json`
+    - `research/breakthrough_lab/week33_controlled_rollout/week33_block1_monthly_continuity_recovery_20260213_040810.json`
+    - `research/breakthrough_lab/week33_controlled_rollout/week33_block1_monthly_continuity_recovery_weekly_replay_eval_20260213_040637.json`
+    - `research/breakthrough_lab/week33_controlled_rollout/week33_block1_monthly_continuity_recovery_split_eval_20260213_040810.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_040254.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_040854.json`
+  - Key finding: intento inicial quedó `iterate` por `t5_overhead_max=3.2060%` (`>3.0%`); recovery conservador cerró `promote` con `snapshots=8`, `t5_disable_total=0` y `t5_overhead_max=2.2986%`.
+- Week 33 - Block 2 (alert bridge observability hardening: success ratio + latency + degradation alerts): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK33_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week33_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block2_alert_bridge_observability.py`
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week33_controlled_rollout/week33_block2_alert_bridge_observability_20260213_041018.json`
+    - `research/breakthrough_lab/week33_controlled_rollout/week33_block2_alert_bridge_observability_dispatch_20260213_041018.json`
+    - `research/breakthrough_lab/week33_controlled_rollout/week33_block2_alert_bridge_observability_scheduler_health_20260213_041018.json`
+    - `research/breakthrough_lab/week33_controlled_rollout/week33_block2_alert_bridge_observability_alerts_20260213_041018.json`
+    - `research/breakthrough_lab/week33_controlled_rollout/week33_block2_alert_bridge_observability_operational_debt_20260213_041018.json`
+    - `research/breakthrough_lab/week33_controlled_rollout/week33_block2_live_webhook_capture_20260212_230957.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_040945.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_041104.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=11.9039ms`, `retries_rate=0.3333`) con retry real (`503 -> 200`) y gates canónicos explícitos/internos en verde.
+- Week 33 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK33_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week33_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week33_controlled_rollout/week33_block3_biweekly_comparative_20260213_041201.json`
+    - `research/breakthrough_lab/week33_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_041201.json`
+    - `research/breakthrough_lab/week33_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week33_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week33_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_041130.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_041245.json`
+  - Key finding: comparativo mensual cierra en `promote`, mantiene política `clover_primary_rusticl_canary`, conserva deuda high/critical en `0` y deja Week33 completo en verde.
+- Week 33 - RX590 Extended RC Package: **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK33_RX590_EXTENDED_RC_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week33_rx590_extended_rc_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/preprod_signoff/WEEK33_RX590_EXTENDED_RC_MANIFEST.json`
+    - `research/breakthrough_lab/preprod_signoff/WEEK33_RX590_EXTENDED_RC_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK33_RX590_EXTENDED_RC_CHECKLIST.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_041245.json`
+  - Key finding: con Week33 completo en `promote`, queda publicado RC operativo para pruebas extendidas RX590 en modo controlado con rollback SLA activo.
+- Week 34 - Block 1 (monthly continuity RC canary against Week33 recovery baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK34_BLOCK1_MONTHLY_CONTINUITY_RC_CANARY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week34_block1_monthly_continuity_rc_canary_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block1_monthly_continuity_rc_canary_20260213_042736.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block1_monthly_continuity_rc_canary_weekly_replay_eval_20260213_042603.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block1_monthly_continuity_rc_canary_split_eval_20260213_042736.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_042219.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_042821.json`
+  - Key finding: continuidad mensual Week34 cierra en `promote` con `t5_disable_total=0`, `weekly_t5_overhead_max=2.3030%`, `split_ratio_min=0.9124` y gates canónicos pre/post en verde.
+- Week 34 - Block 2 (alert bridge observability hardening): **promote (after recovery)**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK34_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week34_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block2_alert_bridge_observability_20260213_161653.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block2_alert_bridge_observability_recovery_20260213_161831.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block2_alert_bridge_observability_recovery_dispatch_20260213_161831.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block2_live_webhook_capture_recovery_20260213_161739.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_161806.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_161921.json`
+  - Key finding: attempt inicial quedó `iterate` por endpoint no disponible (`connection refused`); recovery inmediato cerró `promote` con `cycle_success_ratio=1.0`, `latency_p95=12.0797ms`, `retries_rate=0.3333` y gates canónicos en verde.
+- Week 34 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK34_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week34_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block3_biweekly_comparative_20260213_162016.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_162016.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_161949.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_162100.json`
+  - Key finding: comparativo mensual cierra en `promote`, mantiene política `clover_primary_rusticl_canary` y conserva deuda high/critical en `0`.
+- Week 34 - RC Validation (go/no-go closeout against Week33 RC runbook): **go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK34_RX590_EXTENDED_RC_VALIDATION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week34_rx590_extended_rc_validation_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/preprod_signoff/WEEK34_RX590_EXTENDED_RC_GO_NO_GO_CHECKLIST.md`
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_rc_driver_inventory_20260213_162152.json`
+    - `research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260213_162111.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_162100.json`
+  - Key finding: RC extendido queda habilitado en modo controlado con cadena Week34 en `promote`, drivers `good`, rollback path validado y checklist formal en `GO`.
+- Week 35 - Block 1 (monthly continuity against Week34 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK35_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week35_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_20260213_163831.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_weekly_replay_eval_20260213_163658.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_split_eval_20260213_163831.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_163318.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_163916.json`
+  - Key finding: continuidad mensual Week35 cierra en `promote` con `t5_disable_total=0`, `weekly_t5_overhead_max=2.4137%`, `split_ratio_min=0.9211` y gates canónicos pre/post en verde.
+- Week 35 - Block 2 (alert bridge observability hardening): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK35_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week35_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block2_alert_bridge_observability_20260213_165233.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block2_alert_bridge_observability_dispatch_20260213_165233.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block2_alert_bridge_observability_scheduler_health_20260213_165233.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block2_live_webhook_capture_20260213_165205.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_165200.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_165330.json`
+  - Key finding: observabilidad bridge cierra en `promote` con `cycle_success_ratio=1.0`, `latency_p95=11.9380ms`, `retries_rate=0.3333` y gates canónicos explícitos/internos en verde.
+- Week 35 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK35_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week35_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block3_biweekly_comparative_20260213_170240.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_170240.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_170210.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_170324.json`
+  - Key finding: comparativo mensual cierra en `promote`, mantiene política `clover_primary_rusticl_canary`, y conserva deuda high/critical en `0`.
+- Week 36 - Block 1 (monthly continuity against Week35 baseline): **promote (via Block1.1 targeted recovery)**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK36_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week36_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block1_monthly_continuity_20260213_171401.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block1_monthly_continuity_recovery_20260213_172206.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block1_monthly_continuity_recovery2_20260213_172906.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block1_1_monthly_continuity_targeted_20260213_174540.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block1_monthly_continuity_weekly_replay_eval_20260213_171228.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block1_monthly_continuity_recovery_weekly_replay_eval_20260213_172033.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block1_monthly_continuity_recovery2_split_eval_20260213_172906.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block1_1_monthly_continuity_targeted_weekly_replay_eval_20260213_174405.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block1_1_monthly_continuity_targeted_split_eval_20260213_174540.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_170912.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_171446.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_172353.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_172950.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_174020.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_174623.json`
+  - Key finding: intento inicial y recoveries #1/#2 quedaron en `iterate`, pero `Block1.1` focalizado cerró weekly+split simultáneamente en `promote` (`weekly_t5_overhead_max=1.9394%`, `split_t5_overhead_max=1.9518%`, `t5_disable_total=0`) con gate canónico explícito pre/post en verde.
+- Week 36 - Block 2 (alert bridge observability hardening): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK36_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week36_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block2_alert_bridge_observability_20260213_174746.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block2_alert_bridge_observability_dispatch_20260213_174746.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block2_alert_bridge_observability_scheduler_health_20260213_174746.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block2_alert_bridge_observability_operational_debt_20260213_174746.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block2_live_webhook_capture_20260213_174719.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_174713.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_174836.json`
+  - Key finding: hardening del bridge live cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=11.8876ms`, `retries_rate=0.3333`) con retry real ejercitado y gates canónicos pre/post en verde.
+- Week 36 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK36_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week36_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week36_controlled_rollout/week36_block3_biweekly_comparative_20260213_175545.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_175545.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week36_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_175518.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_175628.json`
+  - Key finding: comparativo mensual cierra en `promote`, eleva política a `dual_go_clover_rusticl`, mejora overhead T5 (`-28.8086%` vs baseline) y mantiene deuda high/critical en `0`.
+- Week 37 - Block 1 (monthly continuity against Week36 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK37_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week37_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block1_monthly_continuity_20260213_181108.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block1_monthly_continuity_weekly_replay_eval_20260213_180932.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block1_monthly_continuity_split_eval_20260213_181107.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_180547.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181150.json`
+  - Key finding: continuidad mensual cierra en `promote` con `split_ratio_min=0.9210`, `split_t5_overhead_max=1.9357`, `split_t5_disable_total=0` y gates canónicos explícitos/internos en verde.
+- Week 37 - Block 2 (alert bridge observability hardening): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK37_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week37_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block2_alert_bridge_observability_20260213_181244.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block2_alert_bridge_observability_dispatch_20260213_181244.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block2_alert_bridge_observability_scheduler_health_20260213_181244.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block2_alert_bridge_observability_operational_debt_20260213_181244.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181214.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181336.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=11.8989ms`, `retries_rate=0.3333`) con retry real ejercitado y sin deuda high/critical abierta.
+- Week 37 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote (via recovery rerun)**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK37_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week37_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block3_biweekly_comparative_20260213_181427.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block3_biweekly_comparative_rerun_20260213_181550.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_181550.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181522.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181633.json`
+  - Key finding: intento inicial cayó por error operativo de path en `split_eval`; rerun de recovery cierra en `promote` con política `dual_go_clover_rusticl` y deuda high/critical en `0`.
+- Week 37 - RX590 Extended Wall-Clock + GO/NO-GO: **go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK37_RX590_EXTENDED_WALLCLOCK_GO_NO_GO_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week37_rx590_extended_wallclock_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_rx590_wallclock_extended_20260213_183741.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_rx590_wallclock_extended_canary_20260213_183722.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/WEEK14_BLOCK5_GO_NO_GO_CHECKLIST.md`
+  - Key finding: canary extendido (20 min reales) cierra en `promote/go` con `t5_disable_total=0`, `t5_overhead_max=2.0164%`, `max_error=0.0005493`, `rusticl_ratio_min=0.9211`.
+- Week 37 - Stable Release Freeze (`v0.15.0`): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK37_STABLE_RELEASE_FREEZE_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week37_stable_release_freeze_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_NOTES.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_183821.json`
+  - Key finding: freeze estable cerrado con cadena técnica en verde (Week37 Blocks `promote`, wall-clock `go`, gate final `promote`) y paquete de release final publicado.
+
+## Governance Rules
+
+1. No promotion claim without machine-readable artifact.
+2. All new experiments stay in `research/breakthrough_lab/*` until promoted.
+3. Every block must end with:
+   - evidence file(s),
+   - acta,
+   - formal decision (`promote|iterate|refine|stop`).
+4. Production path changes require fallback and deterministic seed protocol.
+
+## 2026Q2 Execution Blocks
+
+### Block 1 - Validation Discipline Hardening (Week 1)
+
+- Goal: stabilize CI/local parity and reduce hidden regressions.
+- Tasks:
+  - finalize single validation entrypoint for local + CI
+  - enforce results schema validation in CI path
+  - add smoke checks for driver diagnostics script
+- Exit gate:
+  - canonical suite green in CI and local
+  - no schema drift in breakthrough artifacts
+
+### Block 2 - Selector Robustness Under Drift (Week 2)
+
+- Goal: improve resilience of `auto`/`auto_t3_controlled` under thermal/load drift.
+- Tasks:
+  - controlled drift scenarios (warm/cold, queue pressure)
+  - guardrail threshold calibration with rollback-safe defaults
+- Exit gate:
+  - correctness violations = 0
+  - fallback rate within policy limits
+
+### Block 3 - Approximate Mode Operational Envelope (Week 3)
+
+- Goal: reduce unnecessary fallback in T4 with explicit gating confidence.
+- Tasks:
+  - refine compressibility/predictive gating
+  - expand contract evaluation over mixed workload set
+- Exit gate:
+  - contract satisfaction >= 95%
+  - no regression in production exact mode
+
+### Block 4 - Reliability Guardrails Maturation (Week 4)
+
+- Goal: increase fault-detection robustness while keeping low overhead.
+- Tasks:
+  - ABFT-lite coverage tuning for edge distributions
+  - shadow canary replay with auto-disable verification
+- Exit gate:
+  - overhead remains below configured limit
+  - false positive rate below policy threshold
+
+### Block 5 - Platform Compatibility Closure (Week 5)
+
+- Goal: formal platform policy for Clover/Rusticl compatibility and canary rollout.
+- Tasks:
+  - compatibility matrix refresh
+  - explicit runtime selection policy publication
+- Exit gate:
+  - matrix artifact published
+  - canary policy approved with rollback path
+
+### Block 6 - Q2 Final Consolidation (Week 6)
+
+- Goal: close quarter with reproducible evidence and comparative report.
+- Tasks:
+  - full final suite execution
+  - final acta and comparative report update
+- Exit gate:
+  - final suite promote
+  - no unresolved high-priority debt
+
+## Immediate Backlog (Next Actions)
+
+1. Arrancar Week38 Block1 contra baseline Week37 con gate canónico pre/post.
+2. Ejecutar Week38 Block2 (hardening incremental del alert bridge live) con gate canónico pre/post.
+3. Ejecutar Week38 Block3 (comparativo mensual dual plataforma + decisión formal) y cerrar paquete mensual.
+4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.

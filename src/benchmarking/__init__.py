@@ -13,7 +13,10 @@ _EXPORT_MAP = {
     ),
     "GEMMProgressReport": (".gemm_progress_report", "GEMMProgressReport"),
     "PerformanceSummary": (".performance_summary", "PerformanceSummary"),
-    "PolarisBreakthroughBenchmark": (".polaris_breakthrough_benchmark", "PolarisBreakthroughBenchmark"),
+    "PolarisBreakthroughBenchmark": (
+        ".polaris_breakthrough_benchmark",
+        "PolarisBreakthroughBenchmark",
+    ),
     "ComprehensiveBreakthroughBenchmark": (
         ".comprehensive_breakthrough_benchmark",
         "ComprehensiveBreakthroughBenchmark",

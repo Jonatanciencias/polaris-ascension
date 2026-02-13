@@ -1,0 +1,45 @@
+{
+  "matrix_id": "week13-block5-live-debt-matrix-v1-2026-02-09",
+  "inputs": {
+    "block4_package_decision": "promote",
+    "canonical_gate_decision": "promote"
+  },
+  "debts": [
+    {
+      "debt_id": "ops_push_authentication_pending",
+      "area": "release_operations",
+      "severity": "medium",
+      "status": "open",
+      "owner": "ops",
+      "description": "Remote push still requires local GitHub auth configuration.",
+      "mitigation": "Configure PAT/SSH and validate branch push path.",
+      "due_window": "week14_block1"
+    },
+    {
+      "debt_id": "policy_v2_extended_horizon_confirmation",
+      "area": "performance_policy",
+      "severity": "medium",
+      "status": "open",
+      "owner": "performance",
+      "description": "Policy v2 was validated on current horizon; extended-horizon replay still pending.",
+      "mitigation": "Execute week14_block1 replay/split cycle with policy v2 and compare against block13 baselines.",
+      "due_window": "week14_block1"
+    },
+    {
+      "debt_id": "monthly_audit_first_dry_run",
+      "area": "governance",
+      "severity": "low",
+      "status": "open",
+      "owner": "qa_ops",
+      "description": "Monthly audit window template created, first dry run pending execution.",
+      "mitigation": "Run first monthly audit simulation and update checklist with findings.",
+      "due_window": "week14_block2"
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "open": 3,
+    "closed": 0,
+    "high_or_critical_open": 0
+  }
+}

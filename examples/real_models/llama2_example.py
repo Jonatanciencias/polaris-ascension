@@ -32,51 +32,43 @@ def main():
     print("Llama 2 7B Text Generation Example")
     print("=" * 70)
     print()
-    
+
     # Create integration with INT4 quantization
     print("Setting up Llama 2 7B...")
     print("- Quantization: INT4 (saves ~75% memory)")
     print("- Optimization: Level 2 (aggressive)")
     print("- Device: AMD Radeon RX 580")
     print()
-    
-    llama = create_llama2_integration(
-        quantization_mode='int4',
-        optimization_level=2
-    )
-    
+
+    llama = create_llama2_integration(quantization_mode="int4", optimization_level=2)
+
     print("Setup complete!")
     print()
-    
+
     # Example prompts
     prompts = [
         "Explain quantum computing in simple terms:",
         "Write a short poem about artificial intelligence:",
         "What are the benefits of GPU computing?",
     ]
-    
+
     print("Generating responses...")
     print("=" * 70)
-    
+
     for i, prompt in enumerate(prompts, 1):
         print(f"\nPrompt {i}: {prompt}")
         print("-" * 70)
-        
+
         # Generate text
-        response = llama.generate(
-            prompt=prompt,
-            max_length=150,
-            temperature=0.7,
-            top_p=0.9
-        )
-        
+        response = llama.generate(prompt=prompt, max_length=150, temperature=0.7, top_p=0.9)
+
         print(f"Response: {response}")
         print()
-    
+
     print("=" * 70)
     print("Example complete!")
     print()
-    
+
     # Show configuration
     print("Configuration:")
     print(f"- Model: {llama.config.name}")
@@ -84,12 +76,12 @@ def main():
     print(f"- Optimization Level: {llama.config.optimization_level}")
     print(f"- Device: {llama.config.device}")
     print()
-    
+
     print("Expected Performance:")
     print("- Memory Usage: ~3.5GB VRAM (vs ~14GB FP16)")
     print("- Generation Speed: 15-20 tokens/sec")
     print("- Quality: Minimal degradation with INT4")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

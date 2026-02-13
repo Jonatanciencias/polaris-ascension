@@ -47,9 +47,9 @@ from locust.env import Environment
 # Test data configuration
 TEST_MODEL_PATH = "models/test_model.onnx"
 TEST_INPUT_SHAPES = {
-    "small": (1, 3, 224, 224),      # ResNet-style
-    "medium": (1, 512),              # BERT-style  
-    "large": (1, 3, 512, 512),      # Large image
+    "small": (1, 3, 224, 224),  # ResNet-style
+    "medium": (1, 512),  # BERT-style
+    "large": (1, 3, 512, 512),  # Large image
 }
 
 # Load profile configuration
@@ -76,18 +76,19 @@ ENDPOINTS = {
 # UTILITY FUNCTIONS
 # ============================================================================
 
+
 def generate_test_input(shape: tuple) -> List[List[float]]:
     """
     Generate random test input data for inference.
-    
+
     Args:
         shape: Tuple representing input shape (batch, channels, height, width)
-        
+
     Returns:
         Nested list of random float values
     """
     import numpy as np
-    
+
     # Flatten shape for API (expecting 2D input)
     if len(shape) == 4:
         batch, channels, height, width = shape
@@ -98,24 +99,24 @@ def generate_test_input(shape: tuple) -> List[List[float]]:
         data = np.random.randn(batch, features).tolist()
     else:
         data = [[random.random() for _ in range(100)]]
-    
+
     return data
 
 
 def validate_response(response, expected_status: int = 200) -> bool:
     """
     Validate API response.
-    
+
     Args:
         response: Requests response object
         expected_status: Expected HTTP status code
-        
+
     Returns:
         True if response is valid, False otherwise
     """
     if response.status_code != expected_status:
         return False
-    
+
     try:
         data = response.json()
         return True
@@ -127,34 +128,29 @@ def validate_response(response, expected_status: int = 200) -> bool:
 # TASK SETS (Scenario Groups)
 # ============================================================================
 
+
 class HealthCheckTasks(TaskSet):
     """
     Scenario 1: Health Check Tasks
     Simple health check and metrics endpoints for warm-up.
     """
-    
+
     @task(5)
-    @tag('health', 'light_load', 'warm_up')
+    @tag("health", "light_load", "warm_up")
     def check_health(self):
         """Check API health endpoint."""
-        with self.client.get(
-            ENDPOINTS["health"],
-            name="/health",
-            catch_response=True
-        ) as response:
+        with self.client.get(ENDPOINTS["health"], name="/health", catch_response=True) as response:
             if validate_response(response):
                 response.success()
             else:
                 response.failure(f"Invalid response: {response.status_code}")
-    
+
     @task(1)
-    @tag('metrics', 'light_load')
+    @tag("metrics", "light_load")
     def check_metrics(self):
         """Check Prometheus metrics endpoint."""
         with self.client.get(
-            ENDPOINTS["metrics"],
-            name="/metrics",
-            catch_response=True
+            ENDPOINTS["metrics"], name="/metrics", catch_response=True
         ) as response:
             if response.status_code == 200:
                 response.success()
@@ -167,7 +163,7 @@ class ModelManagementTasks(TaskSet):
     Scenario 2: Model Management Tasks
     Loading, listing, and unloading models.
     """
-    
+
     def on_start(self):
         """Initialize: Check available models."""
         response = self.client.get(ENDPOINTS["models"])
@@ -175,23 +171,19 @@ class ModelManagementTasks(TaskSet):
             self.available_models = response.json().get("models", [])
         else:
             self.available_models = []
-    
+
     @task(3)
-    @tag('models', 'setup')
+    @tag("models", "setup")
     def list_models(self):
         """List all loaded models."""
-        with self.client.get(
-            ENDPOINTS["models"],
-            name="/models",
-            catch_response=True
-        ) as response:
+        with self.client.get(ENDPOINTS["models"], name="/models", catch_response=True) as response:
             if validate_response(response):
                 response.success()
             else:
                 response.failure(f"Failed to list models: {response.status_code}")
-    
+
     @task(1)
-    @tag('models', 'setup', 'heavy')
+    @tag("models", "setup", "heavy")
     def load_model(self):
         """Load a test model (if not already loaded)."""
         payload = {
@@ -199,12 +191,9 @@ class ModelManagementTasks(TaskSet):
             "model_path": TEST_MODEL_PATH,
             "precision": random.choice(["fp32", "fp16"]),
         }
-        
+
         with self.client.post(
-            ENDPOINTS["load_model"],
-            json=payload,
-            name="/models/load",
-            catch_response=True
+            ENDPOINTS["load_model"], json=payload, name="/models/load", catch_response=True
         ) as response:
             # Accept both 200 (success) and 409 (already loaded)
             if response.status_code in [200, 409]:
@@ -218,7 +207,7 @@ class InferenceTasks(TaskSet):
     Scenario 3-5: Inference Tasks
     Single and batch inference with varying loads.
     """
-    
+
     def on_start(self):
         """Initialize: Prepare test inputs."""
         self.test_inputs = {
@@ -227,21 +216,18 @@ class InferenceTasks(TaskSet):
             "large": generate_test_input(TEST_INPUT_SHAPES["large"]),
         }
         self.model_name = "test_model_1"
-    
+
     @task(10)
-    @tag('inference', 'light_load', 'medium_load', 'heavy_load')
+    @tag("inference", "light_load", "medium_load", "heavy_load")
     def single_inference_small(self):
         """Run inference with small input."""
         payload = {
             "model_name": self.model_name,
             "input_data": self.test_inputs["small"],
         }
-        
+
         with self.client.post(
-            ENDPOINTS["inference"],
-            json=payload,
-            name="/inference [small]",
-            catch_response=True
+            ENDPOINTS["inference"], json=payload, name="/inference [small]", catch_response=True
         ) as response:
             if response.status_code == 200:
                 response.success()
@@ -250,69 +236,62 @@ class InferenceTasks(TaskSet):
                 response.success()
             else:
                 response.failure(f"Inference failed: {response.status_code}")
-    
+
     @task(5)
-    @tag('inference', 'medium_load', 'heavy_load')
+    @tag("inference", "medium_load", "heavy_load")
     def single_inference_medium(self):
         """Run inference with medium input."""
         payload = {
             "model_name": self.model_name,
             "input_data": self.test_inputs["medium"],
         }
-        
+
         with self.client.post(
-            ENDPOINTS["inference"],
-            json=payload,
-            name="/inference [medium]",
-            catch_response=True
+            ENDPOINTS["inference"], json=payload, name="/inference [medium]", catch_response=True
         ) as response:
             if response.status_code in [200, 404]:
                 response.success()
             else:
                 response.failure(f"Inference failed: {response.status_code}")
-    
+
     @task(2)
-    @tag('inference', 'heavy_load', 'spike')
+    @tag("inference", "heavy_load", "spike")
     def single_inference_large(self):
         """Run inference with large input."""
         payload = {
             "model_name": self.model_name,
             "input_data": self.test_inputs["large"],
         }
-        
+
         with self.client.post(
-            ENDPOINTS["inference"],
-            json=payload,
-            name="/inference [large]",
-            catch_response=True
+            ENDPOINTS["inference"], json=payload, name="/inference [large]", catch_response=True
         ) as response:
             if response.status_code in [200, 404]:
                 response.success()
             else:
                 response.failure(f"Inference failed: {response.status_code}")
-    
+
     @task(3)
-    @tag('inference', 'batch', 'heavy_load')
+    @tag("inference", "batch", "heavy_load")
     def batch_inference(self):
         """Run batch inference."""
         batch_size = random.choice([2, 4, 8])
-        
+
         # Generate batch of inputs
         batch_inputs = [
-            generate_test_input(TEST_INPUT_SHAPES["small"])[0]
-            for _ in range(batch_size)
+            generate_test_input(TEST_INPUT_SHAPES["small"])[0] for _ in range(batch_size)
         ]
-        
+
         payload = {
             "model_name": self.model_name,
             "input_data": batch_inputs,
         }
-        
+
         with self.client.post(
             ENDPOINTS["inference_batch"],
             json=payload,
             name=f"/inference/batch [size={batch_size}]",
-            catch_response=True
+            catch_response=True,
         ) as response:
             if response.status_code in [200, 404]:
                 response.success()
@@ -325,7 +304,7 @@ class MixedWorkloadTasks(TaskSet):
     Scenario 6: Mixed Workload Tasks
     Realistic combination of all operations.
     """
-    
+
     tasks = {
         HealthCheckTasks: 2,
         ModelManagementTasks: 1,
@@ -337,16 +316,18 @@ class MixedWorkloadTasks(TaskSet):
 # USER CLASSES (Load Profiles)
 # ============================================================================
 
+
 class LightLoadUser(HttpUser):
     """
     Light Load User - Scenario 3
     Simulates 10 concurrent users, ~1 req/s each.
     """
+
     tasks = [HealthCheckTasks, InferenceTasks]
     wait_time = between(0.5, 2.0)  # Wait 0.5-2s between requests
     weight = 1
-    
-    @tag('light_load')
+
+    @tag("light_load")
     def on_start(self):
         """User initialization."""
         pass
@@ -357,11 +338,12 @@ class MediumLoadUser(HttpUser):
     Medium Load User - Scenario 4
     Simulates 50 concurrent users, ~10 req/s total.
     """
+
     tasks = [HealthCheckTasks, ModelManagementTasks, InferenceTasks]
     wait_time = between(0.2, 1.0)  # Wait 0.2-1s between requests
     weight = 5
-    
-    @tag('medium_load')
+
+    @tag("medium_load")
     def on_start(self):
         """User initialization."""
         pass
@@ -372,11 +354,12 @@ class HeavyLoadUser(HttpUser):
     Heavy Load User - Scenario 5
     Simulates 200 concurrent users, ~50 req/s total.
     """
+
     tasks = [MixedWorkloadTasks]
     wait_time = between(0.1, 0.5)  # Wait 0.1-0.5s between requests
     weight = 20
-    
-    @tag('heavy_load')
+
+    @tag("heavy_load")
     def on_start(self):
         """User initialization."""
         pass
@@ -387,11 +370,12 @@ class SpikeTestUser(HttpUser):
     Spike Test User - Scenario 6
     Simulates sudden traffic spike (0→500 users).
     """
+
     tasks = [InferenceTasks]
     wait_time = between(0.05, 0.2)  # Very short wait
     weight = 50
-    
-    @tag('spike')
+
+    @tag("spike")
     def on_start(self):
         """User initialization."""
         pass
@@ -401,6 +385,7 @@ class SpikeTestUser(HttpUser):
 # EVENT HANDLERS (Metrics Collection)
 # ============================================================================
 
+
 @events.test_start.add_listener
 def on_test_start(environment: Environment, **kwargs):
     """Handler called when load test starts."""
@@ -408,7 +393,9 @@ def on_test_start(environment: Environment, **kwargs):
     print(f"🚀 Load Test Starting")
     print(f"{'='*80}")
     print(f"Host: {environment.host}")
-    print(f"Users: {environment.runner.target_user_count if hasattr(environment.runner, 'target_user_count') else 'N/A'}")
+    print(
+        f"Users: {environment.runner.target_user_count if hasattr(environment.runner, 'target_user_count') else 'N/A'}"
+    )
     print(f"{'='*80}\n")
 
 
@@ -418,10 +405,10 @@ def on_test_stop(environment: Environment, **kwargs):
     print(f"\n{'='*80}")
     print(f"✅ Load Test Complete")
     print(f"{'='*80}")
-    
+
     # Print summary statistics
     stats = environment.stats
-    
+
     print(f"\n📊 Request Statistics:")
     print(f"   Total Requests: {stats.total.num_requests}")
     print(f"   Failed Requests: {stats.total.num_failures}")

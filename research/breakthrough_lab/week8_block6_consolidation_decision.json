@@ -1,0 +1,50 @@
+{
+  "review_id": "week8-block6-consolidation-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "integrated_consolidation_t3_t4_t5_plus_interaction_and_platform_canary",
+  "tracks": [
+    {
+      "track": "integrated_consolidation",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_block6_integrated_consolidation_20260208_024445.json",
+        "research/breakthrough_lab/week8_block6_integrated_consolidation_20260208_024445.md",
+        "research/breakthrough_lab/week6_final_suite_20260208_024315.json",
+        "research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_024412.json",
+        "research/breakthrough_lab/t4_approximate_gemm/week8_t4_mixed_campaign_20260208_024414.json",
+        "research/breakthrough_lab/t5_reliability_abft/week8_t5_maturation_20260208_024445.json"
+      ],
+      "rationale": "Integrated rerun kept Week6 and T3/T4/T5 decisions in promote with stable key metrics and no failing checks."
+    },
+    {
+      "track": "t4_t5_interaction",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_block6_t4_t5_interaction_20260208_024510.json",
+        "research/breakthrough_lab/week8_block6_t4_t5_interaction_20260208_024510.md"
+      ],
+      "rationale": "Combined profile preserved correctness and showed bounded cross-effect (overhead +0.069%, p95 -0.159%)."
+    },
+    {
+      "track": "platform_canary_critical",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week8_platform_canary_critical_20260208_024625.json",
+        "research/breakthrough_lab/platform_compatibility/week8_platform_canary_critical_20260208_024625.md"
+      ],
+      "rationale": "Critical-size canary passed selection/correctness/guardrail checks on Clover and rusticl with min rusticl/clover peak ratio 0.923."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK8_BLOCK6_CONSOLIDATION_2026-02-08.md",
+  "required_gate": {
+    "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_024700.json",
+    "decision": "promote"
+  }
+}

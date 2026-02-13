@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-09T01:47:33.303225+00:00",
+    "baseline_canary": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week12_controlled_rollout/week12_block3_size3072_pilot_canary_20260209_012745.json",
+    "current_canary": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week13_controlled_rollout/week13_block1_extended_controlled_canary_20260209_014522.json",
+    "max_throughput_drop_percent": 3.0,
+    "max_p95_increase_percent": 5.0
+  },
+  "guardrails": {
+    "baseline": {
+      "decision": "promote",
+      "snapshots": 6,
+      "rollback_triggered": false,
+      "failed_checks": [],
+      "max_error": 0.0009765625,
+      "t3_fallback_max": 0.0,
+      "t5_overhead_max": 1.8956077832869627,
+      "t5_disable_events_total": 0
+    },
+    "current": {
+      "decision": "promote",
+      "snapshots": 8,
+      "rollback_triggered": false,
+      "failed_checks": [],
+      "max_error": 0.000885009765625,
+      "t3_fallback_max": 0.0,
+      "t5_overhead_max": 1.4781648825890927,
+      "t5_disable_events_total": 0
+    }
+  },
+  "rows": [
+    {
+      "key": "auto_t3_controlled:1400",
+      "baseline_avg_gflops": 881.8988752701335,
+      "current_avg_gflops": 880.8595417846435,
+      "avg_gflops_delta_percent": -0.1178517758253945,
+      "baseline_p95_ms": 6.148419108285452,
+      "current_p95_ms": 6.140341549917139,
+      "p95_delta_percent": -0.13137618347175398
+    },
+    {
+      "key": "auto_t3_controlled:2048",
+      "baseline_avg_gflops": 773.4315596562826,
+      "current_avg_gflops": 773.1102923722278,
+      "avg_gflops_delta_percent": -0.04153790727101398,
+      "baseline_p95_ms": 22.188258597755823,
+      "current_p95_ms": 22.19590591312226,
+      "p95_delta_percent": 0.03446559509276153
+    },
+    {
+      "key": "auto_t3_controlled:3072",
+      "baseline_avg_gflops": 706.6175127661888,
+      "current_avg_gflops": 704.724753268108,
+      "avg_gflops_delta_percent": -0.26786195698310616,
+      "baseline_p95_ms": 72.09222217503945,
+      "current_p95_ms": 72.11066886252411,
+      "p95_delta_percent": 0.025587625028212484
+    },
+    {
+      "key": "auto_t5_guarded:1400",
+      "baseline_avg_gflops": 903.6705096993443,
+      "current_avg_gflops": 907.4265049410411,
+      "avg_gflops_delta_percent": 0.4156376911034173,
+      "baseline_p95_ms": 6.005152909468355,
+      "current_p95_ms": 5.999715700727393,
+      "p95_delta_percent": -0.09054238622948486
+    },
+    {
+      "key": "auto_t5_guarded:2048",
+      "baseline_avg_gflops": 779.5910536831536,
+      "current_avg_gflops": 777.2839222810169,
+      "avg_gflops_delta_percent": -0.2959412362721168,
+      "baseline_p95_ms": 21.978464109088236,
+      "current_p95_ms": 21.994346025940104,
+      "p95_delta_percent": 0.0722612679987056
+    },
+    {
+      "key": "auto_t5_guarded:3072",
+      "baseline_avg_gflops": 803.701048650642,
+      "current_avg_gflops": 803.7535558248479,
+      "avg_gflops_delta_percent": 0.006533172290135334,
+      "baseline_p95_ms": 71.98147417669436,
+      "current_p95_ms": 71.97421403789122,
+      "p95_delta_percent": -0.010086121305776031
+    }
+  ],
+  "decision": "promote",
+  "failed_checks": [],
+  "rationale": "Extended controlled production remains stable with bounded deltas and healthy guardrails."
+}

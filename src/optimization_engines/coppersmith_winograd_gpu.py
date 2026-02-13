@@ -17,6 +17,7 @@ from typing import Dict, List, Tuple, Optional, Any
 import pyopencl as cl
 import pyopencl.array as cl_array
 
+
 class CoppersmithWinogradGPU:
     """
     Implementación GPU-accelerated del algoritmo de Coppersmith-Winograd.
@@ -33,7 +34,7 @@ class CoppersmithWinogradGPU:
             platforms = cl.get_platforms()
             amd_platform = None
             for platform in platforms:
-                if 'AMD' in platform.name.upper() or 'ATI' in platform.name.upper():
+                if "AMD" in platform.name.upper() or "ATI" in platform.name.upper():
                     amd_platform = platform
                     break
 
@@ -93,7 +94,9 @@ class CoppersmithWinogradGPU:
 
         self.program = cl.Program(self.ctx, cw_kernel).build()
 
-    def cw_matrix_multiply_gpu(self, A: np.ndarray, B: np.ndarray) -> Tuple[np.ndarray, Dict[str, Any]]:
+    def cw_matrix_multiply_gpu(
+        self, A: np.ndarray, B: np.ndarray
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
         """
         Multiplicación de matrices usando algoritmo CW en GPU.
 
@@ -126,9 +129,17 @@ class CoppersmithWinogradGPU:
 
         # Ejecutar kernel CW
         kernel_start = time.time()
-        self.program.cw_matrix_multiply(self.queue, global_size, local_size,
-                                       A_gpu.data, B_gpu.data, C_gpu.data,
-                                       np.int32(M), np.int32(N), np.int32(K))
+        self.program.cw_matrix_multiply(
+            self.queue,
+            global_size,
+            local_size,
+            A_gpu.data,
+            B_gpu.data,
+            C_gpu.data,
+            np.int32(M),
+            np.int32(N),
+            np.int32(K),
+        )
         self.queue.finish()
         kernel_time = time.time() - kernel_start
 
@@ -142,21 +153,21 @@ class CoppersmithWinogradGPU:
 
         # Calcular speedup teórico de CW vs estándar
         # CW tiene complejidad O(n^2.376) vs O(n^3) del estándar
-        theoretical_speedup = (K ** 3) / (K ** 2.376) if K > 1 else 1.0
+        theoretical_speedup = (K**3) / (K**2.376) if K > 1 else 1.0
 
         # Error relativo (comparado con NumPy)
         reference = A @ B
-        error = np.linalg.norm(result - reference, 'fro')
-        relative_error = error / np.linalg.norm(reference, 'fro')
+        error = np.linalg.norm(result - reference, "fro")
+        relative_error = error / np.linalg.norm(reference, "fro")
 
         metrics = {
-            'result': result,
-            'computation_time': total_time,
-            'kernel_time': kernel_time,
-            'gflops_achieved': gflops,
-            'theoretical_speedup': theoretical_speedup,
-            'relative_error': relative_error,
-            'operations_performed': operations
+            "result": result,
+            "computation_time": total_time,
+            "kernel_time": kernel_time,
+            "gflops_achieved": gflops,
+            "theoretical_speedup": theoretical_speedup,
+            "relative_error": relative_error,
+            "operations_performed": operations,
         }
 
         print(f"   Tiempo total: {total_time:.3f}s")
@@ -197,12 +208,12 @@ class CoppersmithWinogradGPU:
         speedup_hybrid = operations_full / operations_lr
 
         metrics_hybrid = {
-            'result': result_lr,
-            'approach': 'hybrid_cw_lowrank',
-            'target_rank': target_rank,
-            'speedup_hybrid': speedup_hybrid,
-            'gflops_lr': metrics_lr['gflops_achieved'],
-            'error_lr': metrics_lr['relative_error']
+            "result": result_lr,
+            "approach": "hybrid_cw_lowrank",
+            "target_rank": target_rank,
+            "speedup_hybrid": speedup_hybrid,
+            "gflops_lr": metrics_lr["gflops_achieved"],
+            "error_lr": metrics_lr["relative_error"],
         }
 
         print(f"   Enfoque híbrido: CW + Low-Rank (rango {target_rank})")
@@ -230,8 +241,11 @@ class CoppersmithWinogradGPU:
         except:
             return min(matrix.shape) // 2
 
-    def _low_rank_approximation(self, A: np.ndarray, B: np.ndarray, rank: int) -> Tuple[np.ndarray, np.ndarray]:
+    def _low_rank_approximation(
+        self, A: np.ndarray, B: np.ndarray, rank: int
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Crea aproximaciones de bajo rango rápidas."""
+
         # Implementación simplificada de aproximación de bajo rango
         def approximate_matrix(matrix, r):
             m, n = matrix.shape
@@ -280,20 +294,17 @@ def benchmark_cw_techniques():
             if size >= 512:
                 result_hybrid, metrics_hybrid = cw.optimized_cw_gemm(A, B)
             else:
-                metrics_hybrid = {'approach': 'N/A'}
+                metrics_hybrid = {"approach": "N/A"}
 
-            results[size] = {
-                'cw_direct': metrics_cw,
-                'cw_hybrid': metrics_hybrid
-            }
+            results[size] = {"cw_direct": metrics_cw, "cw_hybrid": metrics_hybrid}
 
             print(f"   CW Directo: {metrics_cw['gflops_achieved']:.2f} GFLOPS")
-            if 'gflops_lr' in metrics_hybrid:
+            if "gflops_lr" in metrics_hybrid:
                 print(f"   CW Híbrido: {metrics_hybrid['gflops_lr']:.2f} GFLOPS")
 
         except Exception as e:
             print(f"   ❌ Error: {e}")
-            results[size] = {'error': str(e)}
+            results[size] = {"error": str(e)}
 
     return results
 
@@ -331,13 +342,13 @@ def main():
         benchmark_results = benchmark_cw_techniques()
 
         # Reporte final
-        print("\n" + "="*55)
+        print("\n" + "=" * 55)
         print("🎯 COPPERSMITH-WINOGRAD PERFORMANCE REPORT")
         print("=" * 55)
 
         baseline_gflops = 890.3
-        cw_gflops = metrics_cw['gflops_achieved']
-        hybrid_gflops = metrics_hybrid.get('gflops_lr', 0)
+        cw_gflops = metrics_cw["gflops_achieved"]
+        hybrid_gflops = metrics_hybrid.get("gflops_lr", 0)
 
         print("🏆 RESULTADOS CW:")
         print(f"   CW Directo: {cw_gflops:.2f} GFLOPS")
@@ -349,7 +360,9 @@ def main():
         print(f"   Baseline (manual): {baseline_gflops:.1f} GFLOPS")
         print(f"   CW Directo: {cw_gflops:.2f} GFLOPS ({(cw_gflops/baseline_gflops-1)*100:+.1f}%)")
         if hybrid_gflops > 0:
-            print(f"   CW Híbrido: {hybrid_gflops:.2f} GFLOPS ({(hybrid_gflops/baseline_gflops-1)*100:+.1f}%)")
+            print(
+                f"   CW Híbrido: {hybrid_gflops:.2f} GFLOPS ({(hybrid_gflops/baseline_gflops-1)*100:+.1f}%)"
+            )
 
         if cw_gflops > baseline_gflops or hybrid_gflops > baseline_gflops:
             print("   ✅ ¡CW SUPERA EL LÍMITE DE 890.3 GFLOPS!")
@@ -363,11 +376,16 @@ def main():
         print(f"   • Explorar implementaciones híbridas CPU/GPU")
 
         # Guardar resultados
-        np.savez('cw_algorithm_results.npz',
-                matrix_A=A, matrix_B=B,
-                result_cw=result_cw, result_hybrid=result_hybrid,
-                metrics_cw=metrics_cw, metrics_hybrid=metrics_hybrid,
-                benchmark=benchmark_results)
+        np.savez(
+            "cw_algorithm_results.npz",
+            matrix_A=A,
+            matrix_B=B,
+            result_cw=result_cw,
+            result_hybrid=result_hybrid,
+            metrics_cw=metrics_cw,
+            metrics_hybrid=metrics_hybrid,
+            benchmark=benchmark_results,
+        )
 
         print("\n💾 Resultados CW guardados en: cw_algorithm_results.npz")
         print("✅ Demostración CW completada exitosamente!")
@@ -375,6 +393,7 @@ def main():
     except Exception as e:
         print(f"❌ Error en demostración CW: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 

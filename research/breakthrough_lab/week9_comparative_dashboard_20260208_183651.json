@@ -1,0 +1,503 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-08T18:36:51.602567+00:00",
+    "branch": "feat/breakthrough-roadmap-2026q1",
+    "inputs": {
+      "block1_path": "research/breakthrough_lab/week9_block1_long_canary_20260208_030816.json",
+      "block2_path": "research/breakthrough_lab/week9_block2_long_canary_rerun_20260208_032017.json",
+      "block3_path": "research/breakthrough_lab/platform_compatibility/week9_block3_robustness_replay_20260208_033111.json",
+      "block4_path": "research/breakthrough_lab/platform_compatibility/week9_block4_stress_split_20260208_033946.json",
+      "block5_path": "research/breakthrough_lab/platform_compatibility/week9_block5_preprod_pilot_20260208_035240.json",
+      "block6_path": "research/breakthrough_lab/platform_compatibility/week9_block6_wallclock_canary_20260208_043949.json",
+      "block10_path": "research/breakthrough_lab/platform_compatibility/week10_block2_4_wallclock_final_20260208_183529.json",
+      "t4_reference_path": "research/breakthrough_lab/week8_block6_t4_t5_interaction_20260208_024510.json"
+    },
+    "active_stage_sequence": [
+      "block2",
+      "block3",
+      "block4",
+      "block5",
+      "block6",
+      "block10"
+    ]
+  },
+  "stages": {
+    "block1": {
+      "metadata": {
+        "timestamp_utc": "2026-02-08T03:08:16.444097+00:00",
+        "branch": "feat/breakthrough-roadmap-2026q1",
+        "sizes": [
+          1400,
+          2048
+        ],
+        "batches": 24,
+        "sessions_per_batch": 1,
+        "iterations_per_session": 8,
+        "seed": 42,
+        "pressure": {
+          "size": 896,
+          "iterations": 3,
+          "pulses_per_batch": 2
+        },
+        "horizon_label": "24h_equivalent_batches"
+      },
+      "decision": "iterate",
+      "t3": {
+        "avg_gflops_mean": 825.0294486503526,
+        "p95_time_ms_mean": 14.142035750410287,
+        "max_error_max": 0.0006103515625,
+        "drift_abs_max_percent": 0.2596536775949194,
+        "fallback_rate_mean": 0.0,
+        "policy_disabled_total": 0
+      },
+      "t5": {
+        "avg_gflops_mean": 838.4531222302854,
+        "p95_time_ms_mean": 13.975185770808215,
+        "max_error_max": 0.000579833984375,
+        "drift_abs_max_percent": 2.0261242166500497,
+        "overhead_mean_percent": 1.3389754680994757,
+        "false_positive_rate_mean": 0.0,
+        "disable_events_total": 1
+      }
+    },
+    "block2": {
+      "metadata": {
+        "timestamp_utc": "2026-02-08T03:20:17.380949+00:00",
+        "branch": "feat/breakthrough-roadmap-2026q1",
+        "sizes": [
+          1400,
+          2048
+        ],
+        "batches": 24,
+        "sessions_per_batch": 1,
+        "iterations_per_session": 8,
+        "seed": 42,
+        "pressure": {
+          "size": 896,
+          "iterations": 3,
+          "pulses_per_batch": 2
+        },
+        "t5_policy_path": "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week9_block2.json",
+        "t5_state_path": "results/runtime_states/t5_abft_guard_state_week9_block2_20260208.json",
+        "horizon_label": "24h_equivalent_batches"
+      },
+      "decision": "promote",
+      "t3": {
+        "avg_gflops_mean": 824.6603961849812,
+        "p95_time_ms_mean": 14.151986937577021,
+        "max_error_max": 0.0006103515625,
+        "drift_abs_max_percent": 0.06173941883068804,
+        "fallback_rate_mean": 0.0,
+        "policy_disabled_total": 0
+      },
+      "t5": {
+        "avg_gflops_mean": 840.5016861116651,
+        "p95_time_ms_mean": 13.972558541809121,
+        "max_error_max": 0.000579833984375,
+        "drift_abs_max_percent": 1.5003787556826524,
+        "overhead_mean_percent": 1.3133532081979677,
+        "false_positive_rate_mean": 0.0,
+        "disable_events_total": 0
+      }
+    },
+    "block3": {
+      "metadata": {
+        "timestamp_utc": "2026-02-08T03:31:11.572231+00:00",
+        "seeds": [
+          7,
+          42,
+          1337
+        ],
+        "sizes": [
+          1400,
+          2048
+        ],
+        "kernels": [
+          "auto_t3_controlled",
+          "auto_t5_guarded"
+        ],
+        "sessions": 1,
+        "iterations": 6,
+        "t5_policy_path": "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week9_block2.json",
+        "baseline_block2_path": "research/breakthrough_lab/week9_block2_long_canary_rerun_20260208_032017.json",
+        "state_tag": "20260208_033002"
+      },
+      "decision": "promote",
+      "t3": {
+        "avg_gflops_mean": 823.8047625667757,
+        "p95_time_ms_mean": 14.144613503352351,
+        "max_error_max": 0.000518798828125,
+        "fallback_rate_mean": 0.0,
+        "policy_disabled_total": 0
+      },
+      "t5": {
+        "avg_gflops_mean": 843.7446272580128,
+        "p95_time_ms_mean": 13.993480165178577,
+        "max_error_max": 0.000640869140625,
+        "overhead_mean_percent": 1.5593001623556333,
+        "false_positive_rate_mean": 0.0,
+        "disable_events_total": 0
+      }
+    },
+    "block4": {
+      "metadata": {
+        "timestamp_utc": "2026-02-08T03:39:46.858207+00:00",
+        "seeds": [
+          11,
+          77
+        ],
+        "sizes": [
+          1400,
+          2048
+        ],
+        "kernels": [
+          "auto_t3_controlled",
+          "auto_t5_guarded"
+        ],
+        "sessions": 1,
+        "iterations": 6,
+        "t5_policy_path": "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week9_block2.json",
+        "baseline_block3_path": "research/breakthrough_lab/platform_compatibility/week9_block3_robustness_replay_20260208_033111.json",
+        "pressure": {
+          "size": 896,
+          "iterations": 2,
+          "pulses_per_seed": 2
+        }
+      },
+      "decision": "promote",
+      "t3": {
+        "avg_gflops_mean": 823.6771239189333,
+        "p95_time_ms_mean": 14.175469501424232,
+        "max_error_max": 0.0005645751953125,
+        "fallback_rate_mean": 0.0,
+        "policy_disabled_total": 0
+      },
+      "t5": {
+        "avg_gflops_mean": 840.0019766112761,
+        "p95_time_ms_mean": 14.0019527534605,
+        "max_error_max": 0.00054931640625,
+        "overhead_mean_percent": 1.691213290780809,
+        "false_positive_rate_mean": 0.0,
+        "disable_events_total": 0
+      }
+    },
+    "block5": {
+      "metadata": {
+        "timestamp_utc": "2026-02-08T03:52:40.209121+00:00",
+        "snapshots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "sizes": [
+          1400,
+          2048
+        ],
+        "kernels": [
+          "auto_t3_controlled",
+          "auto_t5_guarded"
+        ],
+        "sessions": 1,
+        "iterations": 6,
+        "seed": 2026,
+        "pressure": {
+          "size": 896,
+          "iterations": 2,
+          "pulses_per_snapshot": 3
+        },
+        "t5_policy_path": "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week9_block2.json",
+        "baseline_block4_path": "research/breakthrough_lab/platform_compatibility/week9_block4_stress_split_20260208_033946.json",
+        "rollback_script_path": "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh"
+      },
+      "decision": "promote",
+      "t3": {
+        "avg_gflops_mean": 824.2367851135798,
+        "p95_time_ms_mean": 14.14643858273242,
+        "max_error_max": 0.00054931640625,
+        "fallback_rate_mean": 0.0,
+        "policy_disabled_total": 0
+      },
+      "t5": {
+        "avg_gflops_mean": 843.8675577291134,
+        "p95_time_ms_mean": 13.985413250945081,
+        "max_error_max": 0.000701904296875,
+        "overhead_mean_percent": 1.5856701790354586,
+        "false_positive_rate_mean": 0.0,
+        "disable_events_total": 0
+      }
+    },
+    "block6": {
+      "metadata": {
+        "timestamp_utc": "2026-02-08T04:39:49.952231+00:00",
+        "sizes": [
+          1400,
+          2048
+        ],
+        "kernels": [
+          "auto_t3_controlled",
+          "auto_t5_guarded"
+        ],
+        "sessions": 1,
+        "iterations": 6,
+        "seed": 2602,
+        "t5_policy_path": "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week9_block2.json",
+        "baseline_block5_path": "research/breakthrough_lab/platform_compatibility/week9_block5_preprod_pilot_20260208_035240.json",
+        "snapshots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "wallclock": {
+          "target_minutes": 30.0,
+          "actual_minutes": 30.000002423922222,
+          "snapshot_interval_minutes": 5.0
+        },
+        "pressure": {
+          "size": 896,
+          "iterations": 2,
+          "pulses_per_snapshot": 2
+        }
+      },
+      "decision": "promote",
+      "t3": {
+        "avg_gflops_mean": 823.6689909487014,
+        "p95_time_ms_mean": 14.149933582302765,
+        "max_error_max": 0.00054931640625,
+        "fallback_rate_mean": 0.0,
+        "policy_disabled_total": 0
+      },
+      "t5": {
+        "avg_gflops_mean": 842.7429399143984,
+        "p95_time_ms_mean": 13.986652331974861,
+        "max_error_max": 0.0005645751953125,
+        "overhead_mean_percent": 1.6079728455047857,
+        "false_positive_rate_mean": 0.0,
+        "disable_events_total": 0
+      }
+    },
+    "block10": {
+      "metadata": {
+        "timestamp_utc": "2026-02-08T18:35:29.147344+00:00",
+        "sizes": [
+          1400,
+          2048
+        ],
+        "kernels": [
+          "auto_t3_controlled",
+          "auto_t5_guarded"
+        ],
+        "sessions": 2,
+        "iterations": 10,
+        "seed": 2602,
+        "t5_policy_path": "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block1_3.json",
+        "baseline_block5_path": "research/breakthrough_lab/platform_compatibility/week10_block2_2_preprod_scaled_long_20260208_173314.json",
+        "snapshots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "wallclock": {
+          "target_minutes": 40.0,
+          "actual_minutes": 40.00000232855479,
+          "snapshot_interval_minutes": 5.0
+        },
+        "pressure": {
+          "size": 896,
+          "iterations": 3,
+          "pulses_per_snapshot": 3
+        }
+      },
+      "decision": "iterate",
+      "t3": {
+        "avg_gflops_mean": 827.0692847257923,
+        "p95_time_ms_mean": 14.144641144116576,
+        "max_error_max": 0.00054931640625,
+        "fallback_rate_mean": 0.0,
+        "policy_disabled_total": 0
+      },
+      "t5": {
+        "avg_gflops_mean": 831.2616745328687,
+        "p95_time_ms_mean": 13.99717160312548,
+        "max_error_max": 0.000579833984375,
+        "overhead_mean_percent": 1.9018120156365559,
+        "false_positive_rate_mean": 0.0,
+        "disable_events_total": 2
+      }
+    }
+  },
+  "deltas_week9_block123": {
+    "t3": {
+      "block2_vs_block1": {
+        "avg_gflops_delta_percent": -0.044732035441295004,
+        "p95_time_ms_delta_percent": 0.07036601619710865
+      },
+      "block3_vs_block2": {
+        "avg_gflops_delta_percent": -0.1037558760143943,
+        "p95_time_ms_delta_percent": -0.052101759683592985
+      },
+      "block3_vs_block1": {
+        "avg_gflops_delta_percent": -0.14844149934045814,
+        "p95_time_ms_delta_percent": 0.01822759458085773
+      }
+    },
+    "t5": {
+      "block2_vs_block1": {
+        "avg_gflops_delta_percent": 0.24432658512028482,
+        "p95_time_ms_delta_percent": -0.018799242043577545
+      },
+      "block3_vs_block2": {
+        "avg_gflops_delta_percent": 0.385833984622945,
+        "p95_time_ms_delta_percent": 0.1497336604949824
+      },
+      "block3_vs_block1": {
+        "avg_gflops_delta_percent": 0.6311032647420927,
+        "p95_time_ms_delta_percent": 0.1309062696581477
+      },
+      "disable_events": {
+        "block1": 1,
+        "block2": 0,
+        "block3": 0
+      }
+    }
+  },
+  "weekly_drift_tracking": {
+    "t3": {
+      "stage_sequence": [
+        "block2",
+        "block3",
+        "block4",
+        "block5",
+        "block6",
+        "block10"
+      ],
+      "transitions": [
+        {
+          "from": "block2",
+          "to": "block3",
+          "avg_gflops_delta_percent": -0.1037558760143943,
+          "p95_time_ms_delta_percent": -0.052101759683592985,
+          "fallback_rate_delta": 0.0
+        },
+        {
+          "from": "block3",
+          "to": "block4",
+          "avg_gflops_delta_percent": -0.015493798244714509,
+          "p95_time_ms_delta_percent": 0.2181466327416233,
+          "fallback_rate_delta": 0.0
+        },
+        {
+          "from": "block4",
+          "to": "block5",
+          "avg_gflops_delta_percent": 0.06794667211148861,
+          "p95_time_ms_delta_percent": -0.20479687596163498,
+          "fallback_rate_delta": 0.0
+        },
+        {
+          "from": "block5",
+          "to": "block6",
+          "avg_gflops_delta_percent": -0.06888726336087056,
+          "p95_time_ms_delta_percent": 0.024705861831618225,
+          "fallback_rate_delta": 0.0
+        },
+        {
+          "from": "block6",
+          "to": "block10",
+          "avg_gflops_delta_percent": 0.412822846854339,
+          "p95_time_ms_delta_percent": -0.03740256556969101,
+          "fallback_rate_delta": 0.0
+        }
+      ],
+      "cumulative": {
+        "from": "block2",
+        "to": "block10",
+        "avg_gflops_delta_percent": 0.2921067328993837,
+        "p95_time_ms_delta_percent": -0.051906446019533425,
+        "fallback_rate_delta": 0.0
+      }
+    },
+    "t5": {
+      "stage_sequence": [
+        "block2",
+        "block3",
+        "block4",
+        "block5",
+        "block6",
+        "block10"
+      ],
+      "transitions": [
+        {
+          "from": "block2",
+          "to": "block3",
+          "avg_gflops_delta_percent": 0.385833984622945,
+          "p95_time_ms_delta_percent": 0.1497336604949824,
+          "overhead_delta_percent": 0.24594695415766554,
+          "disable_events_delta": 0
+        },
+        {
+          "from": "block3",
+          "to": "block4",
+          "avg_gflops_delta_percent": -0.4435762345414287,
+          "p95_time_ms_delta_percent": 0.06054668446957957,
+          "overhead_delta_percent": 0.13191312842517577,
+          "disable_events_delta": 0
+        },
+        {
+          "from": "block4",
+          "to": "block5",
+          "avg_gflops_delta_percent": 0.4601871454436106,
+          "p95_time_ms_delta_percent": -0.1181228276272516,
+          "overhead_delta_percent": -0.10554311174535047,
+          "disable_events_delta": 0
+        },
+        {
+          "from": "block5",
+          "to": "block6",
+          "avg_gflops_delta_percent": -0.1332694691737351,
+          "p95_time_ms_delta_percent": 0.008859809914422635,
+          "overhead_delta_percent": 0.022302666469327104,
+          "disable_events_delta": 0
+        },
+        {
+          "from": "block6",
+          "to": "block10",
+          "avg_gflops_delta_percent": -1.3623686224764988,
+          "p95_time_ms_delta_percent": 0.07520935604133597,
+          "overhead_delta_percent": 0.2938391701317702,
+          "disable_events_delta": 2
+        }
+      ],
+      "cumulative": {
+        "from": "block2",
+        "to": "block10",
+        "avg_gflops_delta_percent": -1.0993447998352734,
+        "p95_time_ms_delta_percent": 0.17615285878180928,
+        "overhead_delta_percent": 0.5884588074385881,
+        "disable_events_delta": 2
+      }
+    }
+  },
+  "t4_reference": {
+    "source": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week8_block6_t4_t5_interaction_20260208_024510.json",
+    "contract_compliance_rate": 1.0,
+    "fallback_rate": 0.0,
+    "post_fallback_violation_rate": 0.0,
+    "compressible_speedup_vs_exact_mean": 5.103603000981633,
+    "delta_vs_exact_percent": 227.65807380157952,
+    "t5_cross_overhead_delta_percent": 0.06938785501831912,
+    "t5_cross_p95_delta_percent": -0.15931134959027163,
+    "t5_cross_avg_gflops_delta_percent": 0.24223756219863216
+  },
+  "dashboard_decision": "iterate",
+  "dashboard_rationale": "One or more active stages are not in promote state."
+}

@@ -33,6 +33,7 @@ def save_image(image: np.ndarray, filename: str):
     """Save generated image"""
     try:
         from PIL import Image
+
         img = Image.fromarray(image)
         img.save(filename)
         print(f"Saved image to: {filename}")
@@ -45,72 +46,69 @@ def main():
     print("Stable Diffusion 1.5 Image Generation Example")
     print("=" * 70)
     print()
-    
+
     # Create integration with mixed precision
     print("Setting up Stable Diffusion 1.5...")
     print("- Quantization: Mixed Precision (FP16 + FP32)")
     print("- Optimization: Level 2 (aggressive)")
     print("- Device: AMD Radeon RX 580")
     print()
-    
-    sd = create_stable_diffusion_integration(
-        quantization_mode='mixed',
-        optimization_level=2
-    )
-    
+
+    sd = create_stable_diffusion_integration(quantization_mode="mixed", optimization_level=2)
+
     print("Setup complete!")
     print()
-    
+
     # Example prompts
     prompts = [
         {
-            'prompt': 'A beautiful sunset over mountains, oil painting style',
-            'negative_prompt': 'blurry, low quality, distorted',
-            'seed': 42
+            "prompt": "A beautiful sunset over mountains, oil painting style",
+            "negative_prompt": "blurry, low quality, distorted",
+            "seed": 42,
         },
         {
-            'prompt': 'A futuristic city with flying cars, cyberpunk art',
-            'negative_prompt': 'ugly, deformed, low resolution',
-            'seed': 123
+            "prompt": "A futuristic city with flying cars, cyberpunk art",
+            "negative_prompt": "ugly, deformed, low resolution",
+            "seed": 123,
         },
         {
-            'prompt': 'A cute robot learning to paint, digital art',
-            'negative_prompt': 'bad anatomy, poorly drawn',
-            'seed': 456
-        }
+            "prompt": "A cute robot learning to paint, digital art",
+            "negative_prompt": "bad anatomy, poorly drawn",
+            "seed": 456,
+        },
     ]
-    
+
     print("Generating images...")
     print("=" * 70)
-    
-    output_dir = Path(__file__).parent / 'outputs'
+
+    output_dir = Path(__file__).parent / "outputs"
     output_dir.mkdir(exist_ok=True)
-    
+
     for i, config in enumerate(prompts, 1):
         print(f"\nImage {i}:")
         print(f"Prompt: {config['prompt']}")
         print(f"Negative: {config['negative_prompt']}")
         print(f"Seed: {config['seed']}")
         print("-" * 70)
-        
+
         # Generate image
         image = sd.generate(
-            prompt=config['prompt'],
-            negative_prompt=config['negative_prompt'],
+            prompt=config["prompt"],
+            negative_prompt=config["negative_prompt"],
             num_inference_steps=50,
             guidance_scale=7.5,
-            seed=config['seed']
+            seed=config["seed"],
         )
-        
+
         # Save image
-        filename = output_dir / f'sd_output_{i}.png'
+        filename = output_dir / f"sd_output_{i}.png"
         save_image(image, str(filename))
         print()
-    
+
     print("=" * 70)
     print("Example complete!")
     print()
-    
+
     # Show configuration
     print("Configuration:")
     print(f"- Model: {sd.config.name}")
@@ -119,7 +117,7 @@ def main():
     print(f"- Image Size: {sd.image_size}")
     print(f"- Inference Steps: {sd.num_inference_steps}")
     print()
-    
+
     print("Expected Performance:")
     print("- Memory Usage: ~4GB VRAM")
     print("- Generation Time: 15-20 seconds (50 steps)")
@@ -127,5 +125,5 @@ def main():
     print(f"- Output Location: {output_dir}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

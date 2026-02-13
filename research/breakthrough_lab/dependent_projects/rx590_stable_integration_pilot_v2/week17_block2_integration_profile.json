@@ -1,0 +1,25 @@
+{
+  "integration_id": "week17-block2-rx590-stable-dependent-pilot",
+  "timestamp_utc": "2026-02-11T01:10:26.325950+00:00",
+  "stable_manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json",
+  "stable_tag": "v0.15.0",
+  "plugin_id": "rx590_dependent_project_week17_block2",
+  "owner": "dependent-project-team-v2",
+  "sizes": [
+    1400,
+    2048,
+    3072
+  ],
+  "sessions": 1,
+  "iterations": 8,
+  "seed": 27111,
+  "policy_paths": {
+    "t5": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json",
+    "baseline": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_canary_20260211_004858.json",
+    "template": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_PLUGIN_TEMPLATE.md"
+  },
+  "commands": {
+    "canonical_gate": "./venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline",
+    "plugin_pilot": "week15 block2 runner reused with stable manifest context"
+  }
+}

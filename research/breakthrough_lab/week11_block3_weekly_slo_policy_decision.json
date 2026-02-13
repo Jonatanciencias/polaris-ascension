@@ -1,0 +1,53 @@
+{
+  "review_id": "week11-block3-weekly-slo-policy-2026-02-09",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "formal_weekly_slo_policy_for_continuous_monitoring",
+  "tracks": [
+    {
+      "track": "week11_block3_policy_formalization",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+        "research/breakthrough_lab/week11_controlled_rollout/week11_block2_continuous_canary_20260209_005442.json"
+      ],
+      "rationale": "Weekly SLO policy is versioned with explicit guardrails and per-kernel-size thresholds derived from Block 2 baseline evidence."
+    },
+    {
+      "track": "week11_block3_rollback_safe_defaults",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+        "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh"
+      ],
+      "rationale": "Policy keeps rollback-safe defaults and explicit linkage to active rollback playbook."
+    },
+    {
+      "track": "week11_block3_mandatory_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_010222.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_010222.md"
+      ],
+      "rationale": "Canonical validation gate remained promote at Block 3 closure."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Formal SLO policy is ready for weekly replay evaluation with deterministic thresholds and rollback-safe defaults.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK11_BLOCK3_WEEKLY_SLO_POLICY_2026-02-09.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_010222.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week11_block2_continuous_canary_decision.json"
+  ]
+}

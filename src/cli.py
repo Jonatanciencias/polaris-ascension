@@ -6,13 +6,13 @@ Radeon RX 580 AI command-line interface.
 from __future__ import annotations
 
 import argparse
+import os
 import time
 from pathlib import Path
 from typing import Any, List, Optional
 
 import numpy as np
 
-from .benchmarking.production_kernel_benchmark import run_production_benchmark
 from .benchmarking.reporting import (
     markdown_table,
     report_paths,
@@ -23,19 +23,26 @@ from .core.gpu import GPUManager
 from .core.memory import MemoryManager
 from .inference.base import InferenceConfig
 from .inference.onnx_engine import ONNXInferenceEngine
-from .optimization_engines.optimized_kernel_engine import OptimizedKernelEngine
 
 
 class CLI:
     """CLI wrapper for system info, inference and GEMM benchmarking."""
 
-    def __init__(self) -> None:
-        self.gpu_manager = GPUManager()
-        self.gpu_manager.initialize()
-        self.memory_manager = MemoryManager()
+    def __init__(self, *, initialize_runtime: bool = True) -> None:
+        self.gpu_manager: GPUManager | None = None
+        self.memory_manager: MemoryManager | None = None
+        if initialize_runtime:
+            self.gpu_manager = GPUManager()
+            self.gpu_manager.initialize()
+            self.memory_manager = MemoryManager()
 
     def info(self) -> int:
         """Display system and runtime capabilities."""
+        if self.gpu_manager is None or self.memory_manager is None:
+            self.gpu_manager = GPUManager()
+            self.gpu_manager.initialize()
+            self.memory_manager = MemoryManager()
+
         print("\n" + "=" * 60)
         print("RADEON RX 580 AI - SYSTEM INFORMATION")
         print("=" * 60)
@@ -80,6 +87,11 @@ class CLI:
         output: Optional[str] = None,
     ) -> int:
         """Run ONNX image classification."""
+        if self.gpu_manager is None or self.memory_manager is None:
+            self.gpu_manager = GPUManager()
+            self.gpu_manager.initialize()
+            self.memory_manager = MemoryManager()
+
         if ultra_fast:
             precision = "int8"
             mode_name = "Ultra-Fast Mode (INT8)"
@@ -128,7 +140,7 @@ class CLI:
     def _print_result(image_path: str, result: dict[str, Any], top_k: int) -> None:
         print(Path(image_path).name)
         print(f"   Top prediction: Class {result['top1_class']} ({result['top1_confidence']:.1%})")
-        preds = result.get("predictions", [])[:max(1, top_k)]
+        preds = result.get("predictions", [])[: max(1, top_k)]
         if len(preds) > 1:
             print(f"   Top {len(preds)} predictions:")
             for idx, pred in enumerate(preds, 1):
@@ -155,6 +167,9 @@ class CLI:
         mode: str = "engine",
         kernel: str = "auto",
         sessions: int = 5,
+        opencl_platform: str | None = None,
+        opencl_device: str | None = None,
+        rusticl_enable: str | None = None,
         report_dir: str = "results/benchmark_reports",
         no_report: bool = False,
     ) -> int:
@@ -168,9 +183,17 @@ class CLI:
         print(f"Sessions: {sessions}")
         if mode == "production":
             print(f"Kernel mode: {kernel}")
+            if opencl_platform is not None:
+                print(f"OpenCL platform selector: {opencl_platform}")
+            if opencl_device is not None:
+                print(f"OpenCL device selector: {opencl_device}")
+            if rusticl_enable is not None:
+                print(f"RUSTICL_ENABLE: {rusticl_enable}")
 
         if mode == "engine":
             try:
+                from .optimization_engines.optimized_kernel_engine import OptimizedKernelEngine
+
                 engine = OptimizedKernelEngine()
             except Exception as exc:
                 print(f"ERROR: failed to initialize OpenCL engine: {exc}")
@@ -244,12 +267,21 @@ class CLI:
 
         if mode == "production":
             try:
+                if rusticl_enable is not None:
+                    os.environ["RUSTICL_ENABLE"] = str(rusticl_enable)
+                # Lazy import so environment selectors (e.g. RUSTICL_ENABLE)
+                # can be set before PyOpenCL platform discovery.
+                from .benchmarking.production_kernel_benchmark import run_production_benchmark
+
                 report = run_production_benchmark(
                     size=size,
                     iterations=iterations,
                     sessions=sessions,
                     kernel=kernel,
                     seed=42,
+                    opencl_platform=opencl_platform,
+                    opencl_device=opencl_device,
+                    rusticl_enable=rusticl_enable,
                 )
             except Exception as exc:
                 print(f"ERROR: production benchmark failed: {exc}")
@@ -280,6 +312,9 @@ class CLI:
                     rows=[
                         ("Size", f"{size}x{size}"),
                         ("Kernel mode", kernel),
+                        ("OpenCL platform selector", opencl_platform or "auto/env"),
+                        ("OpenCL device selector", opencl_device or "auto/env"),
+                        ("RUSTICL_ENABLE", rusticl_enable or "<unchanged>"),
                         ("Sessions", sessions),
                         ("Iterations/session", iterations),
                         (
@@ -343,7 +378,14 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     bench.add_argument(
         "--kernel",
-        choices=["auto", "tile20", "tile24"],
+        choices=[
+            "auto",
+            "auto_t3_controlled",
+            "auto_t5_guarded",
+            "tile20",
+            "tile20_v3_1400",
+            "tile24",
+        ],
         default="auto",
         help="Kernel mode for --mode production",
     )
@@ -352,6 +394,23 @@ def _build_parser() -> argparse.ArgumentParser:
         type=int,
         default=5,
         help="Repeated sessions for aggregate metrics (production mode)",
+    )
+    bench.add_argument(
+        "--opencl-platform",
+        default=None,
+        help="Explicit OpenCL platform selector (name substring).",
+    )
+    bench.add_argument(
+        "--opencl-device",
+        default=None,
+        help="Explicit OpenCL device selector (name substring).",
+    )
+    bench.add_argument(
+        "--rusticl-enable",
+        nargs="?",
+        const="radeonsi",
+        default=None,
+        help="Set RUSTICL_ENABLE before OpenCL discovery (default value: radeonsi).",
     )
     bench.add_argument(
         "--report-dir",
@@ -373,10 +432,11 @@ def main() -> None:
         parser.print_help()
         raise SystemExit(0)
 
-    cli = CLI()
     if args.command == "info":
+        cli = CLI(initialize_runtime=True)
         raise SystemExit(cli.info())
     if args.command == "classify":
+        cli = CLI(initialize_runtime=True)
         raise SystemExit(
             cli.classify(
                 image_paths=args.images,
@@ -389,6 +449,9 @@ def main() -> None:
             )
         )
     if args.command == "benchmark":
+        # Delay GPU/OpenCL runtime initialization so selector env vars
+        # (e.g. RUSTICL_ENABLE) can be applied before platform discovery.
+        cli = CLI(initialize_runtime=False)
         raise SystemExit(
             cli.benchmark(
                 size=args.size,
@@ -396,6 +459,9 @@ def main() -> None:
                 mode=args.mode,
                 kernel=args.kernel,
                 sessions=args.sessions,
+                opencl_platform=args.opencl_platform,
+                opencl_device=args.opencl_device,
+                rusticl_enable=args.rusticl_enable,
                 report_dir=args.report_dir,
                 no_report=args.no_report,
             )

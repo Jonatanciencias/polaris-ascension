@@ -1,0 +1,85 @@
+{
+  "policy_id": "week19-block2-weekly-slo-v3-2026-02-11",
+  "status": "candidate_weekly_monitoring_policy_week19_block2",
+  "inherits_from": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+  "scope": {
+    "campaign": "week11_weekly_monitoring",
+    "sizes": [
+      1400,
+      2048
+    ],
+    "kernels": [
+      "auto_t3_controlled",
+      "auto_t5_guarded"
+    ],
+    "snapshot_target": 6,
+    "platform": "Clover"
+  },
+  "baseline": {
+    "artifact": "research/breakthrough_lab/week11_controlled_rollout/week11_block2_continuous_canary_20260209_005442.json",
+    "captured_at": "2026-02-09T00:54:42.830408+00:00",
+    "means": {
+      "auto_t3_controlled:1400": {
+        "avg_gflops": 882.6670475868948,
+        "p95_time_ms": 6.118261685999944
+      },
+      "auto_t3_controlled:2048": {
+        "avg_gflops": 773.0132117302221,
+        "p95_time_ms": 22.179902666903217
+      },
+      "auto_t5_guarded:1400": {
+        "avg_gflops": 906.7934056152105,
+        "p95_time_ms": 5.999435684740699
+      },
+      "auto_t5_guarded:2048": {
+        "avg_gflops": 777.5237022380061,
+        "p95_time_ms": 22.00436089030215
+      }
+    }
+  },
+  "weekly_slo": {
+    "global_guardrails": {
+      "minimum_snapshots": 6,
+      "max_correctness_error": 0.001,
+      "max_t3_fallback_rate": 0.08,
+      "max_t5_disable_events_total": 0,
+      "max_t5_overhead_percent": 3.0,
+      "max_abs_throughput_drift_percent": 2.5,
+      "max_p95_drift_percent": 5.0
+    },
+    "per_kernel_size": {
+      "auto_t3_controlled:1400": {
+        "min_avg_gflops": 843.788871,
+        "max_p95_time_ms": 6.539484,
+        "notes": "Recalibrated in Week 13 Block 3 with sustained evidence; conservative headroom tightening."
+      },
+      "auto_t3_controlled:2048": {
+        "min_avg_gflops": 740.044586,
+        "max_p95_time_ms": 23.688076,
+        "notes": "Recalibrated in Week 13 Block 3 with sustained evidence; conservative headroom tightening."
+      },
+      "auto_t5_guarded:1400": {
+        "min_avg_gflops": 868.504071,
+        "max_p95_time_ms": 6.406774,
+        "notes": "Recalibrated in Week 13 Block 3 with sustained evidence; conservative headroom tightening."
+      },
+      "auto_t5_guarded:2048": {
+        "min_avg_gflops": 744.221401,
+        "max_p95_time_ms": 23.497411,
+        "notes": "Recalibrated in Week 13 Block 3 with sustained evidence; conservative headroom tightening."
+      }
+    }
+  },
+  "rollback_defaults": {
+    "auto_rollback_enabled": true,
+    "rollback_after_consecutive_soft_overhead_violations": 2,
+    "rollback_script_path": "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh",
+    "rollback_sla_path": "research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_ROLLBACK_SLA.md"
+  },
+  "recalibration": {
+    "applied_at": "2026-02-11T02:04:23.420160+00:00",
+    "method": "conservative_headroom_tightening_week19_block2",
+    "tighten_headroom_fraction": 0.15,
+    "evidence_source": "week17_block4 + week19_block1"
+  }
+}

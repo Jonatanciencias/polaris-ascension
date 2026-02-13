@@ -1,0 +1,44 @@
+{
+  "review_id": "week9-block4-stress-split-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "short_stress_replay_with_queue_pulses_and_platform_split",
+  "tracks": [
+    {
+      "track": "week9_block4_stress_replay",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/run_week9_block4_stress_split.py",
+        "research/breakthrough_lab/platform_compatibility/week9_block4_stress_split_20260208_033946.json",
+        "research/breakthrough_lab/platform_compatibility/week9_block4_stress_split_20260208_033946.md"
+      ],
+      "rationale": "Queue-pressure replay completed with zero pulse failures and all correctness/T3/T5 guardrails passing."
+    },
+    {
+      "track": "week9_block4_platform_split",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week9_block4_stress_split_20260208_033946.json",
+        "research/breakthrough_lab/platform_compatibility/week9_block4_stress_split_20260208_033946.md",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_034047.json"
+      ],
+      "rationale": "Clover/rusticl split stayed within ratio and regression bounds, with no T5 auto-disable events."
+    }
+  ],
+  "summary": {
+    "promote": 2,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Stress replay under queue pulses validates post-hardening stability and preserves split-platform compatibility.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK9_BLOCK4_STRESS_SPLIT_2026-02-08.md",
+  "required_gate": {
+    "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_034047.json",
+    "decision": "promote"
+  },
+  "depends_on": [
+    "research/breakthrough_lab/week9_block3_robustness_replay_decision.json"
+  ]
+}

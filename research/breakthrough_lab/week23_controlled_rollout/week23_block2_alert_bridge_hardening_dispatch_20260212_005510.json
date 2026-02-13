@@ -1,0 +1,35 @@
+{
+  "timestamp_utc": "2026-02-12T00:55:10.346982+00:00",
+  "endpoint_env": "WEEKLY_ALERT_WEBHOOK_URL",
+  "endpoint_present": true,
+  "endpoint": "http://127.0.0.1:8775/alerts",
+  "health_url": "http://127.0.0.1:8775/health",
+  "result": {
+    "mode": "live",
+    "sent": true,
+    "http_status": 200,
+    "error": null,
+    "attempts": [
+      {
+        "attempt": 1,
+        "timestamp_utc": "2026-02-12T00:55:10.043552+00:00",
+        "sent": false,
+        "http_status": 503,
+        "error": "HTTP Error 503: Service Unavailable",
+        "elapsed_ms": 1.0258990000693302,
+        "backoff_applied_seconds": 0.3
+      },
+      {
+        "attempt": 2,
+        "timestamp_utc": "2026-02-12T00:55:10.345268+00:00",
+        "sent": true,
+        "http_status": 200,
+        "error": null,
+        "elapsed_ms": 1.5663689998746122,
+        "backoff_applied_seconds": 0.0
+      }
+    ],
+    "attempts_executed": 2,
+    "retries_used": true
+  }
+}

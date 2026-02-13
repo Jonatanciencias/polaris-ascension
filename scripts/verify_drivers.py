@@ -34,13 +34,21 @@ import argparse
 from typing import Optional, Dict, Any, List, Tuple
 from dataclasses import dataclass, asdict
 
+try:
+    import pyopencl as cl
+
+    HAS_PYOPENCL = True
+except Exception:
+    cl = None  # type: ignore[assignment]
+    HAS_PYOPENCL = False
+
 
 @dataclass
 class DriverReport:
     """Container for comprehensive driver status report"""
     kernel_driver: Optional[Dict[str, str]] = None
     mesa_version: Optional[str] = None
-    opencl: Optional[Dict[str, str]] = None
+    opencl: Optional[Dict[str, Any]] = None
     vulkan: Optional[Dict[str, str]] = None
     rocm: Optional[Dict[str, Any]] = None
     recommendations: List[str] = None
@@ -132,68 +140,209 @@ def check_mesa_version() -> Optional[str]:
     return None
 
 
-def check_opencl_status() -> Optional[Dict[str, str]]:
+def _is_amd_text(text: str) -> bool:
+    lower = (text or "").lower()
+    return "amd" in lower or "radeon" in lower or "advanced micro devices" in lower
+
+
+def _detect_opencl_via_pyopencl() -> Optional[Dict[str, Any]]:
+    if not HAS_PYOPENCL:
+        return None
+
+    try:
+        platforms = cl.get_platforms()  # type: ignore[union-attr]
+    except Exception as exc:
+        return {
+            "available": False,
+            "platform": "PyOpenCL error",
+            "version": "N/A",
+            "implementation": "N/A",
+            "source": "pyopencl",
+            "error": str(exc),
+        }
+
+    if not platforms:
+        return {
+            "available": False,
+            "platform": "None",
+            "version": "N/A",
+            "implementation": "N/A",
+            "source": "pyopencl",
+            "inventory": [],
+        }
+
+    inventory: List[Dict[str, Any]] = []
+    amd_gpu_candidates: List[Tuple[int, Dict[str, Any]]] = []
+
+    for idx, platform in enumerate(platforms):
+        try:
+            gpu_devices = platform.get_devices(device_type=cl.device_type.GPU)  # type: ignore[union-attr]
+        except Exception:
+            gpu_devices = []
+
+        p_name = str(platform.name).strip()
+        p_vendor = str(platform.vendor).strip()
+        p_version = str(platform.version).strip()
+
+        platform_entry: Dict[str, Any] = {
+            "index": idx,
+            "name": p_name,
+            "vendor": p_vendor,
+            "version": p_version,
+            "devices": [],
+        }
+
+        for dev in gpu_devices:
+            dev_name = str(dev.name).strip()
+            dev_vendor = str(dev.vendor).strip()
+            dev_version = str(dev.version).strip()
+            dev_driver = str(dev.driver_version).strip()
+            device_entry = {
+                "name": dev_name,
+                "vendor": dev_vendor,
+                "version": dev_version,
+                "driver": dev_driver,
+            }
+            platform_entry["devices"].append(device_entry)
+
+            if _is_amd_text(f"{dev_name} {dev_vendor}"):
+                amd_gpu_candidates.append((idx, device_entry))
+
+        inventory.append(platform_entry)
+
+    if amd_gpu_candidates:
+        # Prefer RX 580/590 names when available.
+        amd_gpu_candidates.sort(
+            key=lambda item: (
+                0
+                if ("rx 580" in item[1]["name"].lower() or "rx 590" in item[1]["name"].lower())
+                else 1,
+                item[0],
+            )
+        )
+        p_idx, selected_device = amd_gpu_candidates[0]
+        selected_platform = inventory[p_idx]
+        platform_name = str(selected_platform["name"])
+        platform_version = str(selected_platform["version"])
+
+        if any(token in platform_name.lower() for token in ["clover", "rusticl", "mesa"]):
+            implementation = "Mesa (Clover/RustiCL)"
+        elif "amd" in platform_name.lower():
+            implementation = "AMD Proprietary"
+        else:
+            implementation = "Unknown"
+
+        return {
+            "available": True,
+            "platform": platform_name,
+            "version": platform_version,
+            "implementation": implementation,
+            "source": "pyopencl",
+            "device": selected_device["name"],
+            "driver": selected_device["driver"],
+            "inventory": inventory,
+        }
+
+    return {
+        "available": False,
+        "platform": "None (AMD GPU platform not found)",
+        "version": "N/A",
+        "implementation": "N/A",
+        "source": "pyopencl",
+        "inventory": inventory,
+    }
+
+
+def _parse_clinfo_list(stdout: str) -> List[Dict[str, Any]]:
+    platforms: List[Dict[str, Any]] = []
+    current: Optional[Dict[str, Any]] = None
+
+    for raw_line in stdout.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+
+        platform_match = re.match(r"Platform\s*#?\d+:\s*(.+)$", line)
+        if platform_match:
+            if current is not None:
+                platforms.append(current)
+            current = {
+                "name": platform_match.group(1).strip(),
+                "devices": [],
+            }
+            continue
+
+        device_match = re.search(r"Device\s*#?\d+:\s*(.+)$", line)
+        if current is not None and device_match:
+            current["devices"].append(device_match.group(1).strip())
+
+    if current is not None:
+        platforms.append(current)
+    return platforms
+
+
+def check_opencl_status() -> Optional[Dict[str, Any]]:
     """
     Check OpenCL availability and platform info.
     
     Returns:
         Dictionary with OpenCL info or None if not available
     """
-    success, stdout, _ = run_command(["clinfo", "--list"])
-    
+    by_pyopencl = _detect_opencl_via_pyopencl()
+    if by_pyopencl is not None and by_pyopencl.get("available"):
+        return by_pyopencl
+
+    # Fallback for environments without pyopencl or with pyopencl failures.
+    success, stdout, stderr = run_command(["clinfo", "--list"])
     if not success or "Platform" not in stdout:
-        return None
-    
-    # Parse OpenCL platforms
-    platforms = []
-    current_platform = None
-    
-    for line in stdout.split('\n'):
-        if "Platform #" in line:
-            if current_platform:
-                platforms.append(current_platform)
-            current_platform = {"devices": []}
-        elif current_platform is not None:
-            if "Platform Name" in line:
-                current_platform["name"] = line.split("Platform Name")[-1].strip()
-            elif "Platform Version" in line:
-                version_str = line.split("Platform Version")[-1].strip()
-                version_match = re.search(r'OpenCL\s+([0-9.]+)', version_str)
-                if version_match:
-                    current_platform["version"] = version_match.group(1)
-            elif "`--" in line and "AMD" in line or "Radeon" in line:
-                current_platform["devices"].append(line.strip())
-    
-    if current_platform:
-        platforms.append(current_platform)
-    
-    # Find AMD/Mesa platform
+        if by_pyopencl is not None:
+            return by_pyopencl
+        return {
+            "available": False,
+            "platform": "clinfo unavailable",
+            "version": "N/A",
+            "implementation": "N/A",
+            "source": "clinfo",
+            "error": stderr.strip() or "clinfo --list failed",
+        }
+
+    platforms = _parse_clinfo_list(stdout)
     for platform in platforms:
-        name = platform.get("name", "").lower()
-        if "clover" in name or "rusticl" in name or "mesa" in name:
-            return {
-                "available": True,
-                "platform": platform.get("name", "Unknown"),
-                "version": platform.get("version", "Unknown"),
-                "implementation": "Mesa (Clover/RustiCL)"
-            }
-        elif "amd" in name:
-            return {
-                "available": True,
-                "platform": platform.get("name", "Unknown"),
-                "version": platform.get("version", "Unknown"),
-                "implementation": "AMD Proprietary"
-            }
-    
-    # OpenCL detected but no AMD platform
+        platform_name = str(platform.get("name", "Unknown"))
+        devices = [str(d) for d in platform.get("devices", [])]
+        amd_device = next((d for d in devices if _is_amd_text(d)), None)
+        if amd_device is None:
+            continue
+
+        if any(token in platform_name.lower() for token in ["clover", "rusticl", "mesa"]):
+            implementation = "Mesa (Clover/RustiCL)"
+        elif "amd" in platform_name.lower():
+            implementation = "AMD Proprietary"
+        else:
+            implementation = "Unknown"
+
+        return {
+            "available": True,
+            "platform": platform_name,
+            "version": "Unknown",
+            "implementation": implementation,
+            "source": "clinfo",
+            "device": amd_device,
+            "inventory": platforms,
+        }
+
     if platforms:
         return {
             "available": False,
-            "platform": "None (AMD platform not found)",
+            "platform": "None (AMD GPU platform not found)",
             "version": "N/A",
-            "implementation": "N/A"
+            "implementation": "N/A",
+            "source": "clinfo",
+            "inventory": platforms,
         }
-    
+
+    if by_pyopencl is not None:
+        return by_pyopencl
     return None
 
 
@@ -285,6 +434,23 @@ def check_rocm_status() -> Optional[Dict[str, Any]]:
     return info
 
 
+def infer_mesa_version_from_opencl(opencl_report: Optional[Dict[str, Any]]) -> Optional[str]:
+    """Infer Mesa version from OpenCL strings when explicit Mesa probe is unavailable."""
+    if not opencl_report:
+        return None
+
+    candidates = [
+        str(opencl_report.get("version", "")),
+        str(opencl_report.get("driver", "")),
+    ]
+    for value in candidates:
+        # Example: "OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2"
+        match = re.search(r"Mesa\s+([0-9]+\.[0-9]+(?:\.[0-9]+)?)", value, flags=re.IGNORECASE)
+        if match:
+            return match.group(1)
+    return None
+
+
 def analyze_and_recommend(report: DriverReport) -> None:
     """
     Analyze driver report and generate recommendations.
@@ -303,6 +469,12 @@ def analyze_and_recommend(report: DriverReport) -> None:
         )
         report.overall_status = "critical"
     
+    # Try Mesa inference from OpenCL runtime if explicit tools are unavailable.
+    if report.mesa_version is None:
+        inferred = infer_mesa_version_from_opencl(report.opencl)
+        if inferred:
+            report.mesa_version = inferred
+
     # Check Mesa version
     if report.mesa_version:
         try:
@@ -482,7 +654,7 @@ def print_driver_report(report: DriverReport, verbose: bool = False) -> None:
     print("=" * 70)
 
 
-def check_driver_health() -> DriverReport:
+def check_driver_health(*, show_progress: bool = True) -> DriverReport:
     """
     Perform comprehensive driver health check.
     
@@ -492,7 +664,8 @@ def check_driver_health() -> DriverReport:
     report = DriverReport()
     
     # Perform all checks
-    print("Running driver diagnostics...\n")
+    if show_progress:
+        print("Running driver diagnostics...\n")
     
     report.kernel_driver = check_amdgpu_kernel()
     report.mesa_version = check_mesa_version()
@@ -538,7 +711,7 @@ For setup instructions, see: docs/guides/DRIVER_SETUP_RX580.md
     
     # Run checks
     try:
-        report = check_driver_health()
+        report = check_driver_health(show_progress=not args.json)
         
         if args.json:
             # Output as JSON

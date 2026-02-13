@@ -1,0 +1,195 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-13T16:17:12.937396+00:00",
+    "workflow_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/.github/workflows/week20-monthly-cycle.yml",
+    "scheduler_spec_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_scheduler_spec_20260211_140738.json",
+    "source_cycle_report_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week34_controlled_rollout/week34_block1_monthly_continuity_rc_canary_20260213_042736.json",
+    "source_alerts_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_alerts_20260211_140738.json",
+    "mode": "local",
+    "endpoint": "http://127.0.0.1:8855/webhook",
+    "health_url": "http://127.0.0.1:8855/health",
+    "cycles": 3,
+    "retry_attempts": 3,
+    "backoff_seconds": 0.3,
+    "backoff_multiplier": 2.0
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_161650.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_161650.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_161712.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_161712.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "pre_gate_cmd_pretty": "./venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline"
+  },
+  "artifacts": {
+    "bridge_payload_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week34_controlled_rollout/week34_block2_alert_bridge_observability_bridge_payload_20260213_161653.json",
+    "dispatch_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week34_controlled_rollout/week34_block2_alert_bridge_observability_dispatch_20260213_161653.json",
+    "scheduler_health_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week34_controlled_rollout/week34_block2_alert_bridge_observability_scheduler_health_20260213_161653.json",
+    "alerts_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week34_controlled_rollout/week34_block2_alert_bridge_observability_alerts_20260213_161653.json",
+    "operational_debt_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week34_controlled_rollout/week34_block2_alert_bridge_observability_operational_debt_20260213_161653.json",
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_161650.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_161712.json"
+  },
+  "observability_metrics": {
+    "cycles_total": 3,
+    "cycles_success": 0,
+    "cycle_success_ratio": 0.0,
+    "attempts_total": 9,
+    "attempts_success": 0,
+    "attempt_success_ratio": 0.0,
+    "dispatch_success_latency_p95_ms": null,
+    "dispatch_success_latency_max_ms": null,
+    "retries_rate": 1.0
+  },
+  "alerts": [
+    {
+      "severity": "high",
+      "code": "delivery_success_ratio_below_floor",
+      "message": "Observed cycle success ratio 0.000000 below floor 0.950000."
+    },
+    {
+      "severity": "high",
+      "code": "delivery_healthcheck_failed",
+      "message": "Pre or post delivery health-check failed in at least one cycle."
+    }
+  ],
+  "highlights": {
+    "source_cycle_decision": "promote",
+    "source_alerts_decision": "promote",
+    "cycle_success_ratio": 0.0,
+    "dispatch_success_latency_p95_ms": null,
+    "dispatch_success_latency_max_ms": null,
+    "retries_rate": 1.0
+  },
+  "evaluation": {
+    "checks": {
+      "workflow_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "scheduler_spec_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "scheduler_health_all_checks": {
+        "observed": {
+          "has_schedule": true,
+          "has_expected_cron": true,
+          "has_upload_artifact_step": true,
+          "has_expected_retention_days": true,
+          "has_alert_summary_gate": true
+        },
+        "required": "all_true",
+        "pass": true
+      },
+      "source_cycle_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "source_alerts_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "endpoint_present": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "cycle_success_ratio_threshold": {
+        "observed": 0.0,
+        "required_min": 0.95,
+        "pass": false
+      },
+      "latency_p95_threshold": {
+        "observed": null,
+        "required_max": 50.0,
+        "pass": false
+      },
+      "degradation_high_alerts_none": {
+        "observed_high_alerts": [
+          {
+            "severity": "high",
+            "code": "delivery_success_ratio_below_floor",
+            "message": "Observed cycle success ratio 0.000000 below floor 0.950000."
+          },
+          {
+            "severity": "high",
+            "code": "delivery_healthcheck_failed",
+            "message": "Pre or post delivery health-check failed in at least one cycle."
+          }
+        ],
+        "required": "empty",
+        "pass": false
+      },
+      "retry_path_exercised": {
+        "observed": 3,
+        "required_min": 1,
+        "pass": true
+      },
+      "artifacts_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "no_high_critical_open_debt": {
+        "observed": 0,
+        "required_max": 0,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "pre_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "post_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      }
+    },
+    "failed_checks": [
+      "cycle_success_ratio_threshold",
+      "latency_p95_threshold",
+      "degradation_high_alerts_none"
+    ],
+    "decision": "iterate",
+    "rationale": "Observability block found unresolved delivery reliability, latency, alerting, or validation issues."
+  }
+}

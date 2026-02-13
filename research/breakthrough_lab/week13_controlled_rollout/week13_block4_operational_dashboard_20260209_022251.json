@@ -1,0 +1,112 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-09T02:22:51.407239+00:00",
+    "baseline_canary_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week13_controlled_rollout/week13_block1_extended_controlled_canary_20260209_014522.json",
+    "current_canary_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week13_controlled_rollout/week13_block2_weekly_replay_canary_20260209_020049.json",
+    "policy_eval_v2_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week13_controlled_rollout/week13_block3_recalibrated_policy_eval_20260209_021320.json",
+    "split_eval_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week13_controlled_rollout/week13_block2_platform_split_eval_20260209_020309.json",
+    "block3_report_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week13_controlled_rollout/week13_block3_drift_recalibration_20260209_021232.json"
+  },
+  "windows": {
+    "baseline": {
+      "decision": "promote",
+      "executed_snapshots": 8,
+      "rollback_triggered": false,
+      "failed_checks": [],
+      "correctness_max": 0.000885009765625,
+      "t3_fallback_max": 0.0,
+      "t5_overhead_max": 1.4781648825890927,
+      "t5_disable_events_total": 0
+    },
+    "current": {
+      "decision": "promote",
+      "executed_snapshots": 6,
+      "rollback_triggered": false,
+      "failed_checks": [],
+      "correctness_max": 0.0008697509765625,
+      "t3_fallback_max": 0.0,
+      "t5_overhead_max": 1.3788347389875628,
+      "t5_disable_events_total": 0
+    }
+  },
+  "comparison_rows": [
+    {
+      "key": "auto_t3_controlled:1400",
+      "baseline_avg_gflops": 880.8595417846435,
+      "current_avg_gflops": 881.7462005156975,
+      "avg_gflops_delta_percent": 0.10065835573031538,
+      "baseline_p95_ms": 6.140341549917139,
+      "current_p95_ms": 6.139958834379892,
+      "p95_delta_percent": -0.006232805360014738
+    },
+    {
+      "key": "auto_t3_controlled:2048",
+      "baseline_avg_gflops": 773.1102923722278,
+      "current_avg_gflops": 773.2463724408894,
+      "avg_gflops_delta_percent": 0.017601637179614063,
+      "baseline_p95_ms": 22.19590591312226,
+      "current_p95_ms": 22.177828043216625,
+      "p95_delta_percent": -0.08144686671674777
+    },
+    {
+      "key": "auto_t3_controlled:3072",
+      "baseline_avg_gflops": 704.724753268108,
+      "current_avg_gflops": 706.5142816563824,
+      "avg_gflops_delta_percent": 0.25393295467140115,
+      "baseline_p95_ms": 72.11066886252411,
+      "current_p95_ms": 72.07214903313191,
+      "p95_delta_percent": -0.05341765649911891
+    },
+    {
+      "key": "auto_t5_guarded:1400",
+      "baseline_avg_gflops": 907.4265049410411,
+      "current_avg_gflops": 901.8208285856583,
+      "avg_gflops_delta_percent": -0.6177554132328347,
+      "baseline_p95_ms": 5.999715700727393,
+      "current_p95_ms": 6.003053083501679,
+      "p95_delta_percent": 0.05562568196158983
+    },
+    {
+      "key": "auto_t5_guarded:2048",
+      "baseline_avg_gflops": 777.2839222810169,
+      "current_avg_gflops": 777.9964950901326,
+      "avg_gflops_delta_percent": 0.09167471353641427,
+      "baseline_p95_ms": 21.994346025940104,
+      "current_p95_ms": 21.986637617374072,
+      "p95_delta_percent": -0.0350472278509233
+    },
+    {
+      "key": "auto_t5_guarded:3072",
+      "baseline_avg_gflops": 803.7535558248479,
+      "current_avg_gflops": 803.69930768506,
+      "avg_gflops_delta_percent": -0.006749349896463658,
+      "baseline_p95_ms": 71.97421403789122,
+      "current_p95_ms": 71.97410524180061,
+      "p95_delta_percent": -0.0001511598175191922
+    }
+  ],
+  "drift_status_v2": {
+    "decision": "promote",
+    "failed_checks": [],
+    "rationale": "Weekly replay satisfies all global guardrails, per-kernel SLO rows, and drift bounds."
+  },
+  "split_status": {
+    "decision": "promote",
+    "failed_checks": [],
+    "ratio_min": 0.9227649050049238
+  },
+  "block3_summary": {
+    "windows_analyzed": 3,
+    "all_window_decisions_promote": true,
+    "window_decisions": [
+      "promote",
+      "promote",
+      "promote"
+    ],
+    "global_max_abs_throughput_drift_percent": 1.6482547532131846,
+    "global_max_p95_drift_percent": 0.5907853711448262
+  },
+  "package_decision": "promote",
+  "package_rationale": "Quincenal operational package is stable under policy v2 with healthy split compatibility.",
+  "failed_checks": []
+}

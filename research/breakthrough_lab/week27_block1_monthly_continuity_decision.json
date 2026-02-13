@@ -1,0 +1,69 @@
+{
+  "review_id": "week27-block1-monthly-continuity-2026-02-12",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "recurrent_monthly_continuity_against_week26_baseline",
+  "tracks": [
+    {
+      "track": "week27_block1_monthly_cycle_execution",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_20260212_145205.json",
+        "research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_weekly_replay_20260212_144704.json",
+        "research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_weekly_replay_eval_20260212_145010.json"
+      ],
+      "rationale": "Monthly continuity execution remains promote against Week26 baseline."
+    },
+    {
+      "track": "week27_block1_platform_split_guardrails",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_split_canary_20260212_145205.json",
+        "research/breakthrough_lab/week27_controlled_rollout/week27_block1_monthly_continuity_split_eval_20260212_145205.json"
+      ],
+      "rationale": "Split validation keeps ratio above floor and T5 guardrails healthy."
+    },
+    {
+      "track": "week27_block1_operational_package",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week27_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json",
+        "research/breakthrough_lab/week27_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_RUNBOOK.md",
+        "research/breakthrough_lab/week27_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_LIVE_DEBT_MATRIX.json"
+      ],
+      "rationale": "Operational package published for Week27 continuity window."
+    },
+    {
+      "track": "week27_block1_canonical_gate_internal",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_144704.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_145225.json"
+      ],
+      "rationale": "Internal canonical gate remained promote through block execution."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "ready-for-week27-block2",
+  "block_rationale": "Week27 continuity remains stable and enables bridge observability cycle.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK27_BLOCK1_MONTHLY_CONTINUITY_2026-02-12.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_144704.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_145225.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week26_block3_biweekly_comparative_decision.json"
+  ]
+}

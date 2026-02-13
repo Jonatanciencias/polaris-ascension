@@ -6,6 +6,7 @@
 import sys
 from pathlib import Path
 
+
 def main():
     print("🎯 VALIDATION: AI + BAYESIAN INTEGRATION COMPLETE")
     print("=" * 60)
@@ -23,7 +24,7 @@ def main():
 
         # Test prediction
         result = predictor.predict_best_kernel_enhanced(512, use_bayesian=True)
-        improvement = result['improvement_percent']
+        improvement = result["improvement_percent"]
 
         print(f"✅ Prediction successful: {result['predicted_performance']:.1f} GFLOPS")
         print(f"✅ Improvement: {improvement:.1f}%")
@@ -39,6 +40,7 @@ def main():
     except Exception as e:
         print(f"❌ ERROR: {e}")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

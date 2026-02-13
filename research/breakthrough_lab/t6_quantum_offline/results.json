@@ -1,0 +1,51 @@
+{
+  "$schema": "../results.schema.json",
+  "schema_version": "1.0.0",
+  "experiment_id": "t6_quantum_offline-001",
+  "track": "t6_quantum_offline",
+  "title": "Initial experiment scaffold",
+  "status": "planned",
+  "owner": "unassigned",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "commit": null,
+  "timestamps": {
+    "created_at": "2026-02-07T00:00:00Z",
+    "started_at": null,
+    "ended_at": null
+  },
+  "environment": {
+    "os": "linux",
+    "python": "3.12",
+    "opencl_platform": "Clover",
+    "opencl_device": "AMD Radeon RX 590 GME",
+    "driver": "Mesa"
+  },
+  "baseline_reference": {
+    "protocol_doc": "docs/PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md",
+    "baseline_commit": "57db7b4",
+    "sizes": [1400, 2048, 3072]
+  },
+  "parameters": {
+    "iterations": 20,
+    "sessions": 10,
+    "seed": 42
+  },
+  "metrics": {
+    "peak_gflops_mean": 0.0,
+    "avg_gflops_mean": 0.0,
+    "p95_time_ms": 0.0,
+    "max_error": 0.0,
+    "cv_peak": 0.0,
+    "delta_vs_baseline_percent": 0.0,
+    "reproducibility_score": 0.0,
+    "energy_joules": null
+  },
+  "validation": {
+    "correctness_passed": false,
+    "stability_passed": false,
+    "promotion_gate_passed": false
+  },
+  "artifacts": [],
+  "decision": "needs_data",
+  "notes": ""
+}

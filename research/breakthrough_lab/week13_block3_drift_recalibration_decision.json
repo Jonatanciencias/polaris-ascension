@@ -1,0 +1,62 @@
+{
+  "review_id": "week13-block3-drift-recalibration-2026-02-09",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "biweekly_drift_review_and_policy_recalibration_with_sustained_evidence",
+  "tracks": [
+    {
+      "track": "week13_block3_biweekly_drift_review",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block3_drift_recalibration_20260209_021232.json",
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block3_drift_recalibration_20260209_021232.md"
+      ],
+      "rationale": "Biweekly drift review over 3 windows passed sustained evidence checks."
+    },
+    {
+      "track": "week13_block3_threshold_recalibration_with_sustained_evidence",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+        "research/breakthrough_lab/week13_controlled_rollout/policy_week13_block3_weekly_slo_v2.json"
+      ],
+      "rationale": "Thresholds were tightened conservatively only after objective stability criteria were met."
+    },
+    {
+      "track": "week13_block3_recalibrated_policy_safety_eval",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block3_recalibrated_policy_eval_20260209_021320.json",
+        "research/breakthrough_lab/week13_controlled_rollout/week13_block3_recalibrated_policy_eval_20260209_021320.md"
+      ],
+      "rationale": "Latest canary remains promote under the recalibrated policy v2."
+    },
+    {
+      "track": "week13_block3_mandatory_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_021311.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_021311.md"
+      ],
+      "rationale": "Mandatory canonical validation gate stayed promote before block closure."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Week 13 Block 3 completes with conservative threshold hardening validated by sustained evidence and canonical gate.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK13_BLOCK3_DRIFT_RECALIBRATION_2026-02-09.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_021311.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week13_block2_weekly_replay_split_decision.json"
+  ]
+}

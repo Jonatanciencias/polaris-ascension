@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-10T01:55:30.891534+00:00",
+    "stable_tag": "v0.15.0",
+    "rc_tag": "v0.15.0-rc1",
+    "rc_manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK15_BLOCK3_FRAMEWORK_RC_MANIFEST.json"
+  },
+  "commands": {
+    "canonical_gate": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015530.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015530.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "canonical_gate_cmd_pretty": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline"
+  },
+  "artifacts": {
+    "block1_report_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block1_dependent_integration_20260210_014453.json",
+    "block2_report_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_rerun_20260210_015504.json",
+    "release_notes_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_RELEASE_NOTES.md",
+    "release_checklist_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_RELEASE_CHECKLIST.md",
+    "release_runbook_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_RELEASE_RUNBOOK.md",
+    "stable_manifest_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json",
+    "canonical_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_015530.json"
+  },
+  "evaluation": {
+    "checks": {
+      "rc_manifest_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "rc_source_is_expected": {
+        "observed": "v0.15.0-rc1",
+        "required": "v0.15.0-rc1",
+        "pass": true
+      },
+      "block1_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "block2_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "canonical_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "release_docs_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "RC lineage satisfies all gates and is ready to be proposed as stable v0.15.0."
+  }
+}

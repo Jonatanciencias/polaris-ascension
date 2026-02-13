@@ -1,0 +1,66 @@
+{
+  "review_id": "week25-block3-biweekly-comparative-platform-decision-2026-02-12",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "biweekly_dual_platform_comparative_post_observability",
+  "tracks": [
+    {
+      "track": "week25_block3_biweekly_comparative_execution",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week25_controlled_rollout/week25_block3_biweekly_comparative_20260212_140239.json",
+        "research/breakthrough_lab/week25_controlled_rollout/week25_block3_biweekly_comparative_dashboard_20260212_140239.json"
+      ],
+      "rationale": "Biweekly comparative closed promote with bounded deltas and healthy guardrails."
+    },
+    {
+      "track": "week25_block3_dual_platform_policy_formalization",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week25_controlled_rollout/WEEK25_BLOCK3_PLATFORM_POLICY_DECISION.json",
+        "research/breakthrough_lab/week25_controlled_rollout/WEEK25_BLOCK3_PLATFORM_POLICY_DECISION.md"
+      ],
+      "rationale": "Platform policy remains dual-go for production, staging, and development."
+    },
+    {
+      "track": "week25_block3_operational_debt_review",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week25_controlled_rollout/WEEK25_BLOCK3_OPERATIONAL_DEBT_REVIEW.json"
+      ],
+      "rationale": "Debt review keeps high/critical open debt at zero while tracking medium operational debt."
+    },
+    {
+      "track": "week25_block3_mandatory_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_140239.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_140258.json"
+      ],
+      "rationale": "Canonical gate remained promote in pre and post block execution."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "ready-for-week25-closure",
+  "block_rationale": "Biweekly comparative confirms stable dual-platform operation and controlled debt posture.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK25_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-12.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_140239.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_140258.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week25_block2_alert_bridge_observability_decision.json"
+  ]
+}

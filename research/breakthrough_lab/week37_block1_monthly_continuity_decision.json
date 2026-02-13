@@ -1,0 +1,75 @@
+{
+  "review_id": "week37-block1-monthly-continuity-2026-02-13",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "recurrent_monthly_continuity_against_week36_block1_1_baseline",
+  "tracks": [
+    {
+      "track": "week37_block1_monthly_cycle_execution",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week37_controlled_rollout/week37_block1_monthly_continuity_20260213_181108.json",
+        "research/breakthrough_lab/week37_controlled_rollout/week20_block1_monthly_cycle_dashboard_20260213_181108.json"
+      ],
+      "rationale": "Monthly continuity execution completed with all checks in promote."
+    },
+    {
+      "track": "week37_block1_weekly_replay_and_split_eval",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week37_controlled_rollout/week37_block1_monthly_continuity_weekly_replay_eval_20260213_180932.json",
+        "research/breakthrough_lab/week37_controlled_rollout/week37_block1_monthly_continuity_split_eval_20260213_181107.json"
+      ],
+      "rationale": "Weekly replay and split eval both closed in promote."
+    },
+    {
+      "track": "week37_block1_t5_guardrails",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week37_controlled_rollout/week37_block1_monthly_continuity_20260213_181108.json"
+      ],
+      "rationale": "T5 guardrails remained healthy with disable_events=0 and low overhead."
+    },
+    {
+      "track": "week37_block1_canonical_gate_internal",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_180613.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181127.json"
+      ],
+      "rationale": "Internal runner gates remained promote."
+    },
+    {
+      "track": "week37_block1_canonical_gate_explicit",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_180547.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181150.json"
+      ],
+      "rationale": "Explicit canonical pre/post gates remained promote."
+    }
+  ],
+  "summary": {
+    "promote": 5,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "ready-for-week37-block2",
+  "block_rationale": "Week37 Block1 confirms stable monthly continuity and guardrail compliance.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK37_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_180547.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181150.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week36_block3_biweekly_comparative_decision.json"
+  ]
+}

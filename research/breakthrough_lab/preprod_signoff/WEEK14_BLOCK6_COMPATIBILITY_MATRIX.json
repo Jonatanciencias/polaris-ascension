@@ -1,0 +1,28 @@
+{
+  "matrix_id": "week14-block6-framework-compatibility-v1-2026-02-10",
+  "timestamp_utc": "2026-02-10T00:47:54.877914+00:00",
+  "target_hardware": {
+    "gpu": "AMD Radeon RX 590 GME",
+    "driver_baseline": "amdgpu + Mesa 25.0.7",
+    "opencl_primary": "Clover",
+    "opencl_secondary": "rusticl"
+  },
+  "required_profiles": {
+    "selector_modes": [
+      "auto_t3_controlled",
+      "auto_t5_guarded"
+    ],
+    "size_scope_baseline": [
+      1400,
+      2048
+    ],
+    "correctness_max_error": 0.001,
+    "t5_disable_events_total": 0
+  },
+  "extension_readiness": {
+    "contracts_doc": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_EXTENSION_CONTRACTS.md",
+    "plugin_template": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_PLUGIN_TEMPLATE.md",
+    "weekly_policy": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week13_controlled_rollout/policy_week13_block3_weekly_slo_v2.json",
+    "rollback_sla": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_ROLLBACK_SLA.md"
+  }
+}

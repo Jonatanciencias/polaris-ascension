@@ -109,7 +109,11 @@ class ONNXInferenceEngine:
         self._session = ort.InferenceSession(str(path), providers=providers, sess_options=sess_opts)
         inp = self._session.get_inputs()[0]
         out = self._session.get_outputs()[0]
-        provider = self._session.get_providers()[0] if self._session.get_providers() else "CPUExecutionProvider"
+        provider = (
+            self._session.get_providers()[0]
+            if self._session.get_providers()
+            else "CPUExecutionProvider"
+        )
 
         self._model_info = ModelInfo(
             model_path=str(path),
@@ -204,10 +208,7 @@ class ONNXInferenceEngine:
         k = max(1, min(int(top_k), int(probs.size)))
         top_idx = np.argsort(probs)[::-1][:k]
 
-        predictions = [
-            {"class_id": int(i), "confidence": float(probs[i])}
-            for i in top_idx
-        ]
+        predictions = [{"class_id": int(i), "confidence": float(probs[i])} for i in top_idx]
         top1 = predictions[0]
         return {
             "top1_class": top1["class_id"],
@@ -297,4 +298,3 @@ class ONNXInferenceEngine:
 
 class ONNXEngine(ONNXInferenceEngine):
     """Compatibility alias used by older examples."""
-

@@ -1,0 +1,72 @@
+{
+  "review_id": "week14-block1-policy-v2-extended-cycle-2026-02-09",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "first_biweekly_full_cycle_with_policy_v2_plus_platform_split",
+  "tracks": [
+    {
+      "track": "week14_block1_initial_cycle_attempt",
+      "decision": "iterate",
+      "evidence": [
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_20260209_023353.json",
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_canary_20260209_023800.json",
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_eval_20260209_023800.json"
+      ],
+      "rationale": "Initial run exposed an overhead/disable spike on T5 that violated v2 policy bounds."
+    },
+    {
+      "track": "week14_block1_t5_low_overhead_hardening",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week14_block1_low_overhead.json"
+      ],
+      "rationale": "Targeted low-overhead T5 hardening was introduced to stabilize long-horizon behavior."
+    },
+    {
+      "track": "week14_block1_extended_cycle_rerun",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_rerun_20260209_023945.json",
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_rerun_canary_20260209_024440.json",
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block1_policy_v2_cycle_rerun_eval_20260209_024440.json"
+      ],
+      "rationale": "Rerun closed in promote with no rollback, no disable events, and bounded overhead/drift."
+    },
+    {
+      "track": "week14_block1_platform_split_eval",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block1_platform_split_20260209_024657.json",
+        "research/breakthrough_lab/week14_controlled_rollout/week14_block1_platform_split_eval_20260209_024704.json"
+      ],
+      "rationale": "Clover/rusticl split stayed policy-compliant with required sizes and healthy ratio floor."
+    },
+    {
+      "track": "week14_block1_mandatory_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_024728.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_024728.md"
+      ],
+      "rationale": "Canonical validation gate remained promote at block closure."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 1,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "After targeted hardening and strict rerun, the first full biweekly cycle on policy v2 is stable and promotable.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK14_BLOCK1_POLICY_V2_EXTENDED_CYCLE_2026-02-09.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_024728.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week13_block5_operational_continuity_decision.json"
+  ]
+}

@@ -1,0 +1,14 @@
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "t2-rust-sidecar"
+version = "0.1.0"
+description = "Rust sidecar scaffold for T2 auto-scheduler"
+requires-python = ">=3.8"
+
+[tool.maturin]
+module-name = "t2_rust_sidecar"
+python-source = "."
+features = ["python-module"]

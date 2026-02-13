@@ -1,0 +1,72 @@
+{
+  "review_id": "week35-block1-monthly-continuity-2026-02-13",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "recurrent_monthly_continuity_against_week34_block1_baseline",
+  "tracks": [
+    {
+      "track": "week35_block1_monthly_continuity_cycle",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_20260213_163831.json",
+        "research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_weekly_replay_20260213_163343.json"
+      ],
+      "rationale": "Main continuity cycle completed with promote and no failed checks against Week34 baseline."
+    },
+    {
+      "track": "week35_block1_weekly_guardrails",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_weekly_replay_eval_20260213_163658.json",
+        "research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_weekly_replay_canary_20260213_163658.json"
+      ],
+      "rationale": "Weekly guardrails satisfied: snapshots=8, t5_disable_events_total=0, t5_overhead_max=2.4137% <= 3.0%."
+    },
+    {
+      "track": "week35_block1_platform_split_guardrails",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_split_canary_20260213_163831.json",
+        "research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_split_eval_20260213_163831.json"
+      ],
+      "rationale": "Split canary passed policy checks with rusticl/clover ratio min 0.9211 and healthy T5 guardrails."
+    },
+    {
+      "track": "week35_block1_canonical_gate_explicit_and_internal",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_163318.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_163916.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_163343.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_163851.json"
+      ],
+      "rationale": "Canonical gates remained promote before and after execution (explicit and runner-internal)."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "ready-for-week35-block2",
+  "block_rationale": "Week35 Block1 closes in promote with stable continuity, healthy split behavior, and clean canonical gates.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK35_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_163318.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_163916.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week34_block1_monthly_continuity_rc_canary_decision.json",
+    "research/breakthrough_lab/week34_block2_alert_bridge_observability_decision.json",
+    "research/breakthrough_lab/week34_block3_biweekly_comparative_decision.json",
+    "research/breakthrough_lab/week34_rx590_extended_rc_validation_decision.json"
+  ]
+}

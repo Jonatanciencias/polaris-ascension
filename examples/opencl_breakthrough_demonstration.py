@@ -18,8 +18,9 @@ import time
 from optimized_opencl_engine import OptimizedOpenCLEngine, PerformanceMetrics
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
+
 
 def demonstrate_breakthrough_performance():
     """Demonstrate the breakthrough OpenCL performance achieved"""
@@ -36,11 +37,7 @@ def demonstrate_breakthrough_performance():
     logger.info("Testing breakthrough performance across multiple matrix sizes...")
     logger.info("")
 
-    breakthrough_results = {
-        'sizes': test_sizes,
-        'shared_memory_gemm': [],
-        'performance_gains': []
-    }
+    breakthrough_results = {"sizes": test_sizes, "shared_memory_gemm": [], "performance_gains": []}
 
     for size in test_sizes:
         logger.info(f"🔬 Testing {size}x{size} matrix multiplication")
@@ -53,18 +50,18 @@ def demonstrate_breakthrough_performance():
         engine.config.use_vectorization = False  # Use shared memory kernel
         C_gpu, metrics = engine.optimized_gemm(A, B)
 
-        breakthrough_results['shared_memory_gemm'].append(metrics.gflops)
+        breakthrough_results["shared_memory_gemm"].append(metrics.gflops)
 
         # Calculate performance gain vs theoretical baseline
         theoretical_peak = 6170.0  # Radeon RX 580 theoretical peak
         efficiency = (metrics.gflops / theoretical_peak) * 100
 
-        logger.info(".2f"                   ".2f"                   ".1f")
+        logger.info(".2f" ".2f" ".1f")
         logger.info("")
 
     # Calculate overall breakthrough statistics
-    best_performance = max(breakthrough_results['shared_memory_gemm'])
-    average_performance = np.mean(breakthrough_results['shared_memory_gemm'])
+    best_performance = max(breakthrough_results["shared_memory_gemm"])
+    average_performance = np.mean(breakthrough_results["shared_memory_gemm"])
 
     logger.info("🎯 BREAKTHROUGH ACHIEVEMENT SUMMARY")
     logger.info("=" * 60)
@@ -106,15 +103,16 @@ def demonstrate_breakthrough_performance():
 
     return breakthrough_results
 
+
 def create_performance_report(results: dict) -> str:
     """Create a comprehensive performance report"""
 
     # Calculate statistics
-    best_performance = max(results['shared_memory_gemm'])
-    average_performance = np.mean(results['shared_memory_gemm'])
+    best_performance = max(results["shared_memory_gemm"])
+    average_performance = np.mean(results["shared_memory_gemm"])
     theoretical_peak = 6170.0
-    for i, size in enumerate(results['sizes']):
-        perf = results['shared_memory_gemm'][i]
+    for i, size in enumerate(results["sizes"]):
+        perf = results["shared_memory_gemm"][i]
         efficiency = (perf / theoretical_peak) * 100
         report += f"|{size}x{size}|{perf:.2f}|{efficiency:.1f}|\n"
 
@@ -167,6 +165,7 @@ To reach 1000+ GFLOPS, additional techniques include:
 
     return report
 
+
 def main():
     """Main demonstration function"""
 
@@ -177,14 +176,14 @@ def main():
         # Create and save performance report
         report = create_performance_report(results)
 
-        with open('OPENCL_BREAKTHROUGH_REPORT.md', 'w') as f:
+        with open("OPENCL_BREAKTHROUGH_REPORT.md", "w") as f:
             f.write(report)
 
         logger.info("✅ Breakthrough demonstration completed!")
         logger.info("📄 Performance report saved to: OPENCL_BREAKTHROUGH_REPORT.md")
 
         # Final celebration message
-        best_perf = max(results['shared_memory_gemm'])
+        best_perf = max(results["shared_memory_gemm"])
         logger.info("")
         logger.info("🎉 BREAKTHROUGH ACHIEVED!")
         logger.info(f"📊 Peak Performance: {best_perf:.2f} GFLOPS")
@@ -194,6 +193,7 @@ def main():
     except Exception as e:
         logger.error(f"❌ Breakthrough demonstration failed: {e}")
         raise
+
 
 if __name__ == "__main__":
     main()

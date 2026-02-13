@@ -13,6 +13,9 @@ New to this project? Start with these documents in order:
 2. [EXECUTIVE_SUMMARY.md](../EXECUTIVE_SUMMARY.md) - Complete assessment, novelty analysis, publication recommendations
 3. [REAL_HARDWARE_VALIDATION.md](../REAL_HARDWARE_VALIDATION.md) - Verified performance on real RX 590 hardware
 4. [PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md](PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md) - Reproducible baseline protocol (Feb 7, 2026)
+5. [ROADMAP_BREAKTHROUGH_2026Q1.md](ROADMAP_BREAKTHROUGH_2026Q1.md) - New breakthrough roadmap (math/physics/CS/quantum + language strategy)
+6. [ROADMAP_CONTINUOUS_IMPROVEMENT_2026Q2.md](ROADMAP_CONTINUOUS_IMPROVEMENT_2026Q2.md) - Continuous-improvement roadmap after 2026Q1 closure
+7. [ROADMAP_EJECUCION_INMEDIATA_WEEK38.md](ROADMAP_EJECUCION_INMEDIATA_WEEK38.md) - Immediate execution plan (0-24h, 72h, Week38)
 
 ---
 
@@ -50,6 +53,21 @@ New to this project? Start with these documents in order:
   - File integrity verification
   - Real hardware performance validation
   - Novelty analysis output
+
+### Strategic Roadmap
+- [ROADMAP_BREAKTHROUGH_2026Q1.md](ROADMAP_BREAKTHROUGH_2026Q1.md) ⭐
+  - Dual-lane strategy (production core + breakthrough lab)
+  - Track-based innovation plan with promotion gates
+  - Language adoption matrix (Python/OpenCL/Rust/C/C++/ASM)
+  - Phased execution plan with measurable exit criteria
+- [ROADMAP_CONTINUOUS_IMPROVEMENT_2026Q2.md](ROADMAP_CONTINUOUS_IMPROVEMENT_2026Q2.md) ⭐
+  - Post-closure execution blocks for reliability and maintainability
+  - Explicit exit gates by week
+  - Immediate actionable backlog for Week 8 kickoff
+- [ROADMAP_EJECUCION_INMEDIATA_WEEK38.md](ROADMAP_EJECUCION_INMEDIATA_WEEK38.md) ⭐
+  - Prioritized backlog P0/P1/P2 for current branch execution
+  - 0-24h unblock path for CI + PR readiness
+  - Week38 continuity sequence with concrete outputs
 
 ---
 
@@ -206,6 +224,7 @@ python test_production_system.py
 2. [research/tile_20_investigation/PHASE21_FINAL_REPORT.md](../research/tile_20_investigation/PHASE21_FINAL_REPORT.md) - Methodology
 3. [research/tile_20_investigation/FLOAT8_EXPERIMENT.md](../research/tile_20_investigation/FLOAT8_EXPERIMENT.md) - Failed experiments
 4. [REAL_HARDWARE_VALIDATION.md](../REAL_HARDWARE_VALIDATION.md) - Verified results
+5. [ROADMAP_BREAKTHROUGH_2026Q1.md](ROADMAP_BREAKTHROUGH_2026Q1.md) - Forward innovation program
 
 ### For Publishers/Bloggers
 1. [EXECUTIVE_SUMMARY.md](../EXECUTIVE_SUMMARY.md) - Publication recommendations

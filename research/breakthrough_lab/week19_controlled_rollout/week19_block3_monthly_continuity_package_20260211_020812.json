@@ -1,0 +1,111 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-11T02:08:32.395125+00:00",
+    "stable_tag": "v0.15.0",
+    "stable_manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json",
+    "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json"
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020812.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020812.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020832.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020832.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "gate_cmd_pretty": "./venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline"
+  },
+  "artifacts": {
+    "dashboard_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/week19_block3_monthly_continuity_dashboard_20260211_020812.json",
+    "dashboard_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/week19_block3_monthly_continuity_dashboard_20260211_020812.md",
+    "runbook_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK19_BLOCK3_MONTHLY_CONTINUITY_RUNBOOK.md",
+    "checklist_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK19_BLOCK3_MONTHLY_CONTINUITY_CHECKLIST.md",
+    "debt_matrix_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK19_BLOCK3_MONTHLY_LIVE_DEBT_MATRIX.json",
+    "manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK19_BLOCK3_MONTHLY_CONTINUITY_MANIFEST.json",
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020812.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_020832.json"
+  },
+  "evaluation": {
+    "checks": {
+      "stable_manifest_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "stable_tag_v0_15_0": {
+        "observed": "v0.15.0",
+        "required": "v0.15.0",
+        "pass": true
+      },
+      "week19_block1_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "week19_block2_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "week19_block2_package_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "recalibrated_policy_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "dashboard_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "continuity_docs_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "no_high_critical_open_debt": {
+        "observed": 0,
+        "required_max": 0,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Monthly continuity package is complete with stable promote chain and operational artifacts published."
+  }
+}

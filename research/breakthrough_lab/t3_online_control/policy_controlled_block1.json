@@ -1,0 +1,42 @@
+{
+  "policy_id": "t3-controlled-week5-block1-2026-02-07",
+  "track": "t3_online_control",
+  "status": "controlled_rollout_candidate",
+  "scope": {
+    "sizes": [
+      1200,
+      1280,
+      1400,
+      1536,
+      1600,
+      1792,
+      1920,
+      2048
+    ],
+    "lane": "production_controlled"
+  },
+  "selector_policy": {
+    "epsilon": 0.05,
+    "bootstrap_weight": 3.0,
+    "warmup_steps_per_context": 2
+  },
+  "bootstrap": {
+    "boundary_report_path": "research/breakthrough_lab/t2_auto_scheduler/week2_t2_expanded_search_20260207_194454.json",
+    "min_delta_for_nonstatic": 8.0,
+    "freeze_sizes": [
+      1400,
+      2048
+    ]
+  },
+  "guardrails": {
+    "fallback_regression_limit": 0.08,
+    "disable_if_fallback_rate_gt": 0.1,
+    "disable_if_correctness_error_gt": 0.001
+  },
+  "promotion_gate": {
+    "min_uplift_percent": 5.0,
+    "max_p95_latency_delta_percent": 3.0,
+    "max_fallback_rate": 0.1,
+    "max_correctness_failures": 0
+  }
+}

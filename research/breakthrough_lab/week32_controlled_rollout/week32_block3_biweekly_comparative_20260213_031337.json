@@ -1,0 +1,140 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-13T03:13:57.404318+00:00",
+    "stable_tag": "v0.15.0",
+    "stable_manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json",
+    "baseline_comparative_report_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week31_controlled_rollout/week31_block3_biweekly_comparative_rerun_20260213_025342.json",
+    "baseline_cycle_report_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_20260213_024515.json",
+    "current_block1_report_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week32_controlled_rollout/week32_block1_monthly_continuity_20260213_031007.json",
+    "current_block2_report_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week32_controlled_rollout/week32_block2_alert_bridge_observability_20260213_031158.json",
+    "current_split_eval_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week32_controlled_rollout/week32_block1_monthly_continuity_split_eval_20260213_031007.json"
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_031337.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_031337.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_031357.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_031357.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "pre_gate_cmd_pretty": "./venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline"
+  },
+  "artifacts": {
+    "dashboard_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week32_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_031337.json",
+    "dashboard_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week32_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_031337.md",
+    "platform_policy_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week32_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json",
+    "platform_policy_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week32_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.md",
+    "debt_review_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week32_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json",
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_031337.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_031357.json"
+  },
+  "highlights": {
+    "baseline_cycle_decision": "promote",
+    "current_block1_decision": "promote",
+    "current_block2_decision": "promote",
+    "platform_policy": "clover_primary_rusticl_canary",
+    "split_ratio_delta_percent": -0.6265955302371993,
+    "t5_overhead_delta_percent": -51.631910580104126,
+    "t5_disable_delta": 0,
+    "debt_open_total": 25,
+    "debt_high_critical_open_total": 0
+  },
+  "evaluation": {
+    "checks": {
+      "stable_manifest_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "stable_tag_v0_15_0": {
+        "observed": "v0.15.0",
+        "required": "v0.15.0",
+        "pass": true
+      },
+      "baseline_cycle_report_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "current_block1_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "current_block2_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "split_eval_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "platform_policy_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "platform_policy_not_shadow_only": {
+        "observed": "clover_primary_rusticl_canary",
+        "required_not": "clover_primary_rusticl_shadow_only",
+        "pass": true
+      },
+      "debt_review_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "no_high_critical_open_debt": {
+        "observed": 0,
+        "required_max": 0,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "pre_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "post_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Second monthly comparative confirms continuity and emits a production-capable platform policy."
+  }
+}

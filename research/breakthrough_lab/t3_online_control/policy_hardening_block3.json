@@ -1,0 +1,54 @@
+{
+  "policy_id": "t3-controlled-week8-block3-2026-02-08",
+  "track": "t3_online_control",
+  "status": "controlled_rollout_candidate",
+  "inherits_from": "research/breakthrough_lab/t3_online_control/policy_controlled_block1.json",
+  "scope": {
+    "sizes": [
+      1400,
+      1536,
+      2048
+    ],
+    "lane": "production_controlled_drift_campaign",
+    "scenarios": [
+      "cold",
+      "warm",
+      "warm_queue_pressure"
+    ]
+  },
+  "selector_policy": {
+    "epsilon": 0.04,
+    "bootstrap_weight": 3.0,
+    "warmup_steps_per_context": 2
+  },
+  "bootstrap": {
+    "boundary_report_path": "research/breakthrough_lab/t2_auto_scheduler/week2_t2_expanded_search_20260207_194454.json",
+    "min_delta_for_nonstatic": 8.0,
+    "freeze_sizes": [
+      1400,
+      2048
+    ]
+  },
+  "guardrails": {
+    "fallback_regression_limit": 0.07,
+    "disable_if_fallback_rate_gt": 0.08,
+    "disable_if_correctness_error_gt": 0.001
+  },
+  "drift_guardrails": {
+    "max_t3_fallback_rate_under_pressure": 0.08,
+    "max_t3_p95_latency_delta_vs_auto_percent_under_pressure": 4.0,
+    "max_t3_throughput_drop_vs_cold_percent": 20.0,
+    "max_auto_throughput_drop_vs_cold_percent": 25.0
+  },
+  "promotion_gate": {
+    "min_t3_delta_vs_auto_percent_under_pressure": -1.0,
+    "max_correctness_failures": 0
+  },
+  "rollback_defaults": {
+    "default_kernel_mode": "auto",
+    "force_static_on_guardrail_breach": true,
+    "auto_disable_t3_on_correctness_guard": true,
+    "auto_disable_t3_on_fallback_guard": true,
+    "playbook_path": "research/breakthrough_lab/t3_online_control/rollback_playbook_block3.md"
+  }
+}

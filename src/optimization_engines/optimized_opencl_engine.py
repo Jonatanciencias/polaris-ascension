@@ -28,12 +28,14 @@ from typing import Tuple, Optional, Dict, Any
 import logging
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class OpenCLOptimizationConfig:
     """Configuration for OpenCL optimizations"""
+
     tile_size: int = 32
     vector_size: int = 4
     work_per_thread: int = 8
@@ -42,15 +44,18 @@ class OpenCLOptimizationConfig:
     use_vectorization: bool = True
     unroll_factor: int = 8
 
+
 @dataclass
 class PerformanceMetrics:
     """Performance measurement results"""
+
     gflops: float
     bandwidth_gb_s: float
     kernel_time_ms: float
     total_time_ms: float
     efficiency_percent: float
     theoretical_peak_gflops: float = 6170.0  # Radeon RX 580 theoretical peak
+
 
 class OptimizedOpenCLEngine:
     """
@@ -84,12 +89,14 @@ class OptimizedOpenCLEngine:
         try:
             # Get AMD platform
             platforms = cl.get_platforms()
-            amd_platforms = [p for p in platforms if 'AMD' in p.name or 'Advanced Micro Devices' in p.name]
+            amd_platforms = [
+                p for p in platforms if "AMD" in p.name or "Advanced Micro Devices" in p.name
+            ]
             self.platform = amd_platforms[0] if amd_platforms else platforms[0]
 
             # Get Radeon RX 580 device
             devices = self.platform.get_devices(device_type=cl.device_type.GPU)
-            radeon_devices = [d for d in devices if 'Radeon RX 580' in d.name or '580' in d.name]
+            radeon_devices = [d for d in devices if "Radeon RX 580" in d.name or "580" in d.name]
             self.device = radeon_devices[0] if radeon_devices else devices[0]
 
             logger.info(f"Selected device: {self.device.name}")
@@ -100,9 +107,7 @@ class OptimizedOpenCLEngine:
             # Create context and queue with optimal settings
             self.context = cl.Context([self.device])
             self.queue = cl.CommandQueue(
-                self.context,
-                self.device,
-                properties=cl.command_queue_properties.PROFILING_ENABLE
+                self.context, self.device, properties=cl.command_queue_properties.PROFILING_ENABLE
             )
 
         except Exception as e:
@@ -112,19 +117,19 @@ class OptimizedOpenCLEngine:
     def _load_kernels(self):
         """Load optimized OpenCL kernels"""
         try:
-            with open('optimized_kernels.cl', 'r') as f:
+            with open("optimized_kernels.cl", "r") as f:
                 kernel_source = f.read()
 
             # Build program with optimizations
             build_options = [
-                '-cl-mad-enable',           # Enable fused multiply-add
-                '-cl-no-signed-zeros',      # Assume no signed zeros
-                '-cl-unsafe-math-optimizations',  # Enable unsafe math optimizations
-                '-cl-finite-math-only',     # Assume finite math only
-                '-cl-fast-relaxed-math',    # Fast relaxed math
-                f'-DTILE_SIZE={self.config.tile_size}',
-                f'-DVECTOR_SIZE={self.config.vector_size}',
-                f'-DWORK_PER_THREAD={self.config.work_per_thread}'
+                "-cl-mad-enable",  # Enable fused multiply-add
+                "-cl-no-signed-zeros",  # Assume no signed zeros
+                "-cl-unsafe-math-optimizations",  # Enable unsafe math optimizations
+                "-cl-finite-math-only",  # Assume finite math only
+                "-cl-fast-relaxed-math",  # Fast relaxed math
+                f"-DTILE_SIZE={self.config.tile_size}",
+                f"-DVECTOR_SIZE={self.config.vector_size}",
+                f"-DWORK_PER_THREAD={self.config.work_per_thread}",
             ]
 
             self.program = cl.Program(self.context, kernel_source).build(options=build_options)
@@ -139,14 +144,16 @@ class OptimizedOpenCLEngine:
         # Use tile-based work groups for better cache utilization
         global_work_size = (
             (N + self.config.tile_size - 1) // self.config.tile_size * self.config.tile_size,
-            (M + self.config.tile_size - 1) // self.config.tile_size * self.config.tile_size
+            (M + self.config.tile_size - 1) // self.config.tile_size * self.config.tile_size,
         )
 
         local_work_size = self.config.local_work_size
 
         return global_work_size, local_work_size
 
-    def optimized_gemm(self, A: np.ndarray, B: np.ndarray, alpha: float = 1.0, beta: float = 0.0) -> Tuple[np.ndarray, PerformanceMetrics]:
+    def optimized_gemm(
+        self, A: np.ndarray, B: np.ndarray, alpha: float = 1.0, beta: float = 0.0
+    ) -> Tuple[np.ndarray, PerformanceMetrics]:
         """
         Perform highly optimized matrix multiplication using vectorized tiled kernels
 
@@ -167,8 +174,12 @@ class OptimizedOpenCLEngine:
 
         # Create OpenCL buffers
         mf = cl.mem_flags
-        A_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32))
-        B_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32))
+        A_buf = cl.Buffer(
+            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32)
+        )
+        B_buf = cl.Buffer(
+            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32)
+        )
         C_buf = cl.Buffer(self.context, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=C)
 
         # Get optimal work group configuration
@@ -179,25 +190,26 @@ class OptimizedOpenCLEngine:
             kernel = self.program.gemm_vectorized_tiled
             logger.info("Using vectorized tiled GEMM kernel")
             kernel_args = (
-                np.int32(M), np.int32(N), np.int32(K),
-                np.float32(alpha), A_buf, B_buf, np.float32(beta), C_buf
+                np.int32(M),
+                np.int32(N),
+                np.int32(K),
+                np.float32(alpha),
+                A_buf,
+                B_buf,
+                np.float32(beta),
+                C_buf,
             )
         else:
             kernel = self.program.gemm_shared_memory_tiled
             logger.info("Using shared memory tiled GEMM kernel")
-            kernel_args = (
-                np.int32(M), np.int32(N), np.int32(K),
-                A_buf, B_buf, C_buf
-            )
+            kernel_args = (np.int32(M), np.int32(N), np.int32(K), A_buf, B_buf, C_buf)
 
         # Set kernel arguments
         kernel.set_args(*kernel_args)
 
         # Execute kernel with timing
         start_time = time.time()
-        event = cl.enqueue_nd_range_kernel(
-            self.queue, kernel, global_work_size, local_work_size
-        )
+        event = cl.enqueue_nd_range_kernel(self.queue, kernel, global_work_size, local_work_size)
         event.wait()
         kernel_time = (event.profile.end - event.profile.start) * 1e-9  # Convert to seconds
 
@@ -210,26 +222,27 @@ class OptimizedOpenCLEngine:
         operations = 2 * M * N * K  # Multiply-add operations
         gflops = operations / (kernel_time * 1e9)
         bandwidth = (A.nbytes + B.nbytes + C.nbytes) / (kernel_time * 1e9) / (1024**3)  # GB/s
-        efficiency = (gflops / self.device.max_compute_units / 100) * 100  # Rough efficiency estimate
+        efficiency = (
+            gflops / self.device.max_compute_units / 100
+        ) * 100  # Rough efficiency estimate
 
         metrics = PerformanceMetrics(
             gflops=gflops,
             bandwidth_gb_s=bandwidth,
             kernel_time_ms=kernel_time * 1000,
             total_time_ms=total_time * 1000,
-            efficiency_percent=efficiency
+            efficiency_percent=efficiency,
         )
 
         self.metrics_history.append(metrics)
 
-        logger.info(".2f"
-                   ".2f"
-                   ".2f"
-                   ".1f")
+        logger.info(".2f" ".2f" ".2f" ".1f")
 
         return C, metrics
 
-    def optimized_cw_gemm(self, A: np.ndarray, B: np.ndarray) -> Tuple[np.ndarray, PerformanceMetrics]:
+    def optimized_cw_gemm(
+        self, A: np.ndarray, B: np.ndarray
+    ) -> Tuple[np.ndarray, PerformanceMetrics]:
         """
         Perform Coppersmith-Winograd optimized matrix multiplication
 
@@ -248,8 +261,12 @@ class OptimizedOpenCLEngine:
 
         # Create OpenCL buffers
         mf = cl.mem_flags
-        A_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32))
-        B_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32))
+        A_buf = cl.Buffer(
+            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32)
+        )
+        B_buf = cl.Buffer(
+            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32)
+        )
         C_buf = cl.Buffer(self.context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=C.nbytes)
 
         # Work group configuration
@@ -261,9 +278,7 @@ class OptimizedOpenCLEngine:
 
         # Execute kernel
         start_time = time.time()
-        event = cl.enqueue_nd_range_kernel(
-            self.queue, kernel, global_work_size, local_work_size
-        )
+        event = cl.enqueue_nd_range_kernel(self.queue, kernel, global_work_size, local_work_size)
         event.wait()
         kernel_time = (event.profile.end - event.profile.start) * 1e-9
 
@@ -279,14 +294,16 @@ class OptimizedOpenCLEngine:
             bandwidth_gb_s=(A.nbytes + B.nbytes + C.nbytes) / (kernel_time * 1e9) / (1024**3),
             kernel_time_ms=kernel_time * 1000,
             total_time_ms=total_time * 1000,
-            efficiency_percent=(gflops / self.device.max_compute_units / 100) * 100
+            efficiency_percent=(gflops / self.device.max_compute_units / 100) * 100,
         )
 
         logger.info(".2f")
 
         return C, metrics
 
-    def optimized_low_rank_gemm(self, A_approx: np.ndarray, B_approx: np.ndarray) -> Tuple[np.ndarray, PerformanceMetrics]:
+    def optimized_low_rank_gemm(
+        self, A_approx: np.ndarray, B_approx: np.ndarray
+    ) -> Tuple[np.ndarray, PerformanceMetrics]:
         """
         Perform low-rank optimized matrix multiplication
 
@@ -305,8 +322,12 @@ class OptimizedOpenCLEngine:
 
         # Create OpenCL buffers
         mf = cl.mem_flags
-        A_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A_approx.astype(np.float32))
-        B_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B_approx.astype(np.float32))
+        A_buf = cl.Buffer(
+            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A_approx.astype(np.float32)
+        )
+        B_buf = cl.Buffer(
+            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B_approx.astype(np.float32)
+        )
         C_buf = cl.Buffer(self.context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=C.nbytes)
 
         # Work group configuration
@@ -318,9 +339,7 @@ class OptimizedOpenCLEngine:
 
         # Execute kernel
         start_time = time.time()
-        event = cl.enqueue_nd_range_kernel(
-            self.queue, kernel, global_work_size, local_work_size
-        )
+        event = cl.enqueue_nd_range_kernel(self.queue, kernel, global_work_size, local_work_size)
         event.wait()
         kernel_time = (event.profile.end - event.profile.start) * 1e-9
 
@@ -333,15 +352,19 @@ class OptimizedOpenCLEngine:
 
         metrics = PerformanceMetrics(
             gflops=gflops,
-            bandwidth_gb_s=(A_approx.nbytes + B_approx.nbytes + C.nbytes) / (kernel_time * 1e9) / (1024**3),
+            bandwidth_gb_s=(A_approx.nbytes + B_approx.nbytes + C.nbytes)
+            / (kernel_time * 1e9)
+            / (1024**3),
             kernel_time_ms=kernel_time * 1000,
             total_time_ms=total_time * 1000,
-            efficiency_percent=(gflops / self.device.max_compute_units / 100) * 100
+            efficiency_percent=(gflops / self.device.max_compute_units / 100) * 100,
         )
 
         logger.info(".2f")
 
-    def optimized_gemm_ultra(self, A: np.ndarray, B: np.ndarray) -> Tuple[np.ndarray, PerformanceMetrics]:
+    def optimized_gemm_ultra(
+        self, A: np.ndarray, B: np.ndarray
+    ) -> Tuple[np.ndarray, PerformanceMetrics]:
         """
         Ultra-high performance GEMM using the most optimized kernel targeting 1000+ GFLOPS
 
@@ -360,16 +383,17 @@ class OptimizedOpenCLEngine:
 
         # Create OpenCL buffers
         mf = cl.mem_flags
-        A_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32))
-        B_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32))
+        A_buf = cl.Buffer(
+            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32)
+        )
+        B_buf = cl.Buffer(
+            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32)
+        )
         C_buf = cl.Buffer(self.context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=C.nbytes)
 
         # Ultra-optimized work group configuration
         TS = 32  # Tile size
-        global_work_size = (
-            (N + TS - 1) // TS * TS,
-            (M + TS - 1) // TS * TS
-        )
+        global_work_size = ((N + TS - 1) // TS * TS, (M + TS - 1) // TS * TS)
         local_work_size = (16, 16)  # Optimized for Radeon RX 580
 
         kernel = self.program.gemm_ultra_optimized
@@ -377,9 +401,7 @@ class OptimizedOpenCLEngine:
 
         # Execute kernel with timing
         start_time = time.time()
-        event = cl.enqueue_nd_range_kernel(
-            self.queue, kernel, global_work_size, local_work_size
-        )
+        event = cl.enqueue_nd_range_kernel(self.queue, kernel, global_work_size, local_work_size)
         event.wait()
         kernel_time = (event.profile.end - event.profile.start) * 1e-9
 
@@ -397,13 +419,10 @@ class OptimizedOpenCLEngine:
             bandwidth_gb_s=bandwidth,
             kernel_time_ms=kernel_time * 1000,
             total_time_ms=total_time * 1000,
-            efficiency_percent=(gflops / self.device.max_compute_units / 100) * 100
+            efficiency_percent=(gflops / self.device.max_compute_units / 100) * 100,
         )
 
-        logger.info(".2f"
-                   ".2f"
-                   ".2f"
-                   ".1f")
+        logger.info(".2f" ".2f" ".2f" ".1f")
 
         return C, metrics
 
@@ -421,12 +440,12 @@ class OptimizedOpenCLEngine:
             sizes = [512, 1024, 2048, 4096]
 
         results = {
-            'sizes': sizes,
-            'vectorized_gemm': [],
-            'shared_memory_gemm': [],
-            'ultra_optimized_gemm': [],
-            'cw_gemm': [],
-            'low_rank_gemm': []
+            "sizes": sizes,
+            "vectorized_gemm": [],
+            "shared_memory_gemm": [],
+            "ultra_optimized_gemm": [],
+            "cw_gemm": [],
+            "low_rank_gemm": [],
         }
 
         logger.info("🚀 Starting comprehensive OpenCL optimization benchmark")
@@ -441,39 +460,39 @@ class OptimizedOpenCLEngine:
             # Benchmark vectorized GEMM
             try:
                 _, metrics = self.optimized_gemm(A, B)
-                results['vectorized_gemm'].append(metrics.gflops)
+                results["vectorized_gemm"].append(metrics.gflops)
             except Exception as e:
                 logger.error(f"Vectorized GEMM failed for size {size}: {e}")
-                results['vectorized_gemm'].append(0.0)
+                results["vectorized_gemm"].append(0.0)
 
             # Benchmark shared memory GEMM
             self.config.use_vectorization = False
             try:
                 _, metrics = self.optimized_gemm(A, B)
-                results['shared_memory_gemm'].append(metrics.gflops)
+                results["shared_memory_gemm"].append(metrics.gflops)
             except Exception as e:
                 logger.error(f"Shared memory GEMM failed for size {size}: {e}")
-                results['shared_memory_gemm'].append(0.0)
+                results["shared_memory_gemm"].append(0.0)
             self.config.use_vectorization = True
 
             # Benchmark ultra-optimized GEMM
             try:
                 _, metrics = self.optimized_gemm_ultra(A, B)
-                results['ultra_optimized_gemm'].append(metrics.gflops)
+                results["ultra_optimized_gemm"].append(metrics.gflops)
             except Exception as e:
                 logger.error(f"Ultra-optimized GEMM failed for size {size}: {e}")
-                results['ultra_optimized_gemm'].append(0.0)
+                results["ultra_optimized_gemm"].append(0.0)
 
             # Benchmark CW GEMM (for smaller sizes)
             if size <= 1024:
                 try:
                     _, metrics = self.optimized_cw_gemm(A, B)
-                    results['cw_gemm'].append(metrics.gflops)
+                    results["cw_gemm"].append(metrics.gflops)
                 except Exception as e:
                     logger.error(f"CW GEMM failed for size {size}: {e}")
-                    results['cw_gemm'].append(0.0)
+                    results["cw_gemm"].append(0.0)
             else:
-                results['cw_gemm'].append(0.0)  # CW not suitable for large matrices
+                results["cw_gemm"].append(0.0)  # CW not suitable for large matrices
 
             # Benchmark low-rank GEMM
             rank = min(size // 4, 256)  # Adaptive rank
@@ -481,32 +500,41 @@ class OptimizedOpenCLEngine:
             B_approx = np.random.randn(rank, size).astype(np.float32)
             try:
                 _, metrics = self.optimized_low_rank_gemm(A_approx, B_approx)
-                results['low_rank_gemm'].append(metrics.gflops)
+                results["low_rank_gemm"].append(metrics.gflops)
             except Exception as e:
                 logger.error(f"Low-rank GEMM failed for size {size}: {e}")
-                results['low_rank_gemm'].append(0.0)
+                results["low_rank_gemm"].append(0.0)
 
         # Find best results
         best_results = {}
-        for method in ['vectorized_gemm', 'shared_memory_gemm', 'ultra_optimized_gemm', 'cw_gemm', 'low_rank_gemm']:
+        for method in [
+            "vectorized_gemm",
+            "shared_memory_gemm",
+            "ultra_optimized_gemm",
+            "cw_gemm",
+            "low_rank_gemm",
+        ]:
             performances = results[method]
             if performances:
                 max_perf = max(performances)
                 best_size_idx = performances.index(max_perf)
-                best_results[method] = {
-                    'peak_gflops': max_perf,
-                    'best_size': sizes[best_size_idx]
-                }
+                best_results[method] = {"peak_gflops": max_perf, "best_size": sizes[best_size_idx]}
 
-        results['best_results'] = best_results
+        results["best_results"] = best_results
 
         # Save benchmark results
-        np.savez('opencl_optimization_benchmark.npz', **results)
+        np.savez("opencl_optimization_benchmark.npz", **results)
 
         logger.info("✅ Benchmark completed")
-        logger.info(f"Best vectorized GEMM: {best_results.get('vectorized_gemm', {}).get('peak_gflops', 0):.2f} GFLOPS")
-        logger.info(f"Best shared memory GEMM: {best_results.get('shared_memory_gemm', {}).get('peak_gflops', 0):.2f} GFLOPS")
-        logger.info(f"Best ultra-optimized GEMM: {best_results.get('ultra_optimized_gemm', {}).get('peak_gflops', 0):.2f} GFLOPS")
+        logger.info(
+            f"Best vectorized GEMM: {best_results.get('vectorized_gemm', {}).get('peak_gflops', 0):.2f} GFLOPS"
+        )
+        logger.info(
+            f"Best shared memory GEMM: {best_results.get('shared_memory_gemm', {}).get('peak_gflops', 0):.2f} GFLOPS"
+        )
+        logger.info(
+            f"Best ultra-optimized GEMM: {best_results.get('ultra_optimized_gemm', {}).get('peak_gflops', 0):.2f} GFLOPS"
+        )
 
         return results
 
@@ -520,13 +548,13 @@ class OptimizedOpenCLEngine:
         efficiencies = [m.efficiency_percent for m in self.metrics_history]
 
         return {
-            'total_operations': len(self.metrics_history),
-            'average_gflops': np.mean(gflops_values),
-            'peak_gflops': np.max(gflops_values),
-            'average_kernel_time_ms': np.mean(kernel_times),
-            'min_kernel_time_ms': np.min(kernel_times),
-            'average_efficiency_percent': np.mean(efficiencies),
-            'max_efficiency_percent': np.max(efficiencies)
+            "total_operations": len(self.metrics_history),
+            "average_gflops": np.mean(gflops_values),
+            "peak_gflops": np.max(gflops_values),
+            "average_kernel_time_ms": np.mean(kernel_times),
+            "min_kernel_time_ms": np.min(kernel_times),
+            "average_efficiency_percent": np.mean(efficiencies),
+            "max_efficiency_percent": np.max(efficiencies),
         }
 
 

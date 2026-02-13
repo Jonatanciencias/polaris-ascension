@@ -149,3 +149,236 @@ Estado actual del proyecto: **operativo y estable** en el camino principal de va
 - `/tmp/gemm_multisize_sweep_20260207.json`
 - `/tmp/optimized_engine_sweep_20260207.json`
 
+## 8) Addendum de Cierre Roadmap Breakthrough (Week 5-6)
+
+Actualización al 7 de febrero de 2026 (cierre formal de roadmap `2026Q1` en rama `feat/breakthrough-roadmap-2026q1`):
+
+- Week 5 - Block 3 (T5 wiring productivo + auto-disable): **promote**
+- Week 5 - Block 4 (compatibilidad Rusticl/ROCm): **refine**
+- Week 6 - Suite final y cierre de roadmap: **promote**
+
+### Resultado de suite final Week 6
+- `test_production_system.py`: **PASS (4/4)**
+- `pytest -q tests/`: **74 passed**
+- `scripts/validate_breakthrough_results.py`: **6/6 válidos**
+- Benchmark productivo (1400, 5x10):
+  - `auto`: **900.233 GFLOPS** peak mean
+  - `auto_t3_controlled`: **899.357 GFLOPS** peak mean, fallback `0.0`
+  - `auto_t5_guarded`: **918.557 GFLOPS** peak mean, overhead ABFT `2.493%`, disable events `0`
+
+### Deuda residual (no bloqueante de cierre)
+1. Tests legacy fuera de `tests/` rompen `pytest -q` global por colección.
+2. Hardening de selección explícita de plataforma para canary Rusticl (evitar dependencia de `cl.get_platforms()[0]`).
+3. Alinear `scripts/verify_drivers.py` con señales reales de `pyopencl`/`clinfo`.
+
+### Evidencia de cierre
+- `research/breakthrough_lab/week5_block4_platform_compatibility_decision.json`
+- `research/breakthrough_lab/week6_final_closure_decision.json`
+- `research/breakthrough_lab/ACTA_WEEK6_FINAL_CLOSURE_2026-02-07.md`
+
+## 9) Addendum Week 8 - Bloques 3/4/5/6 (Actualizacion al 8 de febrero de 2026)
+
+### 9.1 Consolidacion integrada T3/T4/T5 (Block 6)
+Fuente: `research/breakthrough_lab/week8_block6_integrated_consolidation_20260208_024445.json`
+
+- Decision global: **promote**
+- Week6 suite: **promote**
+- T3 drift: **promote** (delta bajo presion `+19.445%`)
+- T4 mixed policy: **promote** (reduccion de fallback `0.194`)
+- T5 maturation: **promote** (delta uniform recall `+0.017`)
+- Auto peak mean en rerun integrado: **901.896 GFLOPS**
+
+### 9.2 Prueba combinada realista T4+T5 (efecto cruzado)
+Fuente: `research/breakthrough_lab/week8_block6_t4_t5_interaction_20260208_024510.json`
+
+- Decision: **promote**
+- T5 baseline vs combinado:
+  - avg GFLOPS: `841.470 -> 843.509` (`+0.242%`)
+  - p95 latencia: `13.995 ms -> 13.973 ms` (`-0.159%`)
+  - overhead ABFT: `1.143% -> 1.212%` (`+0.069%`)
+- T4 en perfil combinado:
+  - contract compliance: `1.000`
+  - post-fallback violations: `0.000`
+  - fallback rate: `0.000`
+
+Lectura:
+- No se observa regresion cruzada relevante de latencia/rendimiento en el perfil probado.
+- El costo incremental de overhead es pequeno y dentro de guardrails.
+
+### 9.3 Canary corto por plataforma (Clover vs rusticl) en tamanos criticos
+Fuente: `research/breakthrough_lab/platform_compatibility/week8_platform_canary_critical_20260208_024625.json`
+
+- Scope:
+  - tamanos: `1400`, `2048`
+  - kernels: `auto`, `auto_t3_controlled`, `auto_t5_guarded`
+- Decision: **promote**
+- Correctness max global: `0.0006104` (`<= 1e-3`)
+- Ratio minimo rusticl/clover (peak): `0.9229`
+- Guardrails T3/T5 en ambas plataformas: pass
+
+Ratios rusticl/clover destacados:
+- 1400:
+  - auto: `1.009`
+  - auto_t3_controlled: `1.012`
+  - auto_t5_guarded: `1.013`
+- 2048:
+  - auto: `0.924`
+  - auto_t3_controlled: `0.928`
+  - auto_t5_guarded: `0.923`
+
+### 9.4 Gate canonico obligatorio previo al cierre
+Fuente: `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_024700.json`
+
+- Decision: **promote**
+- `pytest tests`: **83 passed**
+- schema validation: **green**
+- driver smoke JSON: **good**
+
+### 9.5 Conclusión operativa post-Week 8
+- El stack de optimizacion (T3/T4/T5) se mantiene estable y promovible con evidencia fresca.
+- T4+T5 puede ejecutarse en perfil combinado sin degradacion significativa.
+- rusticl se mantiene apto para canary controlado en tamanos criticos, con guardrails activos.
+
+## 10) Addendum Week 9 - Sign-Off Preproduccion (8 de febrero de 2026)
+
+### 10.1 Block 6 - Canary largo de pared + cierre formal
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week9_block6_wallclock_canary_20260208_043949.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_044015.json`
+- `research/breakthrough_lab/ACTA_WEEK9_BLOCK6_PREPROD_SIGNOFF_2026-02-08.md`
+
+Resultado:
+- Decision Block 6: **promote**
+- Wall-clock: **30.0 min** reales (objetivo cumplido)
+- Runs OK: **48/48**
+- Correctness max: **0.0005646** (`<= 1e-3`)
+- Guardrails T3/T5: **pass** (disable T5 = `0`, fallback T3 max = `0.0`)
+- Ratio minimo rusticl/clover (peak): **0.9197** (`>= 0.80`)
+- Gate canonico posterior: **promote** (`pytest tests` = **85 passed**, smoke drivers JSON = `good`)
+
+### 10.2 Estado comparativo vs baseline original
+
+- Frente al estado base inicial del informe (7-feb), el proyecto pasa de "estable para pruebas controladas" a **candidato de despliegue controlado**, con sign-off formal preproduccion completado.
+- La cadena activa Week 9 (Block2..6) queda consolidada en `promote` sin deuda bloqueante para iniciar rollout controlado.
+
+## 11) Addendum Week 10 - Arranque de Rollout Controlado (8 de febrero de 2026)
+
+### 11.1 Block 1 (scope bajo con rollback automatico)
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week10_block1_controlled_rollout_20260208_160122.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_160122.json`
+- `research/breakthrough_lab/ACTA_WEEK10_BLOCK1_CONTROLLED_ROLLOUT_2026-02-08.md`
+
+Resultado:
+- Decision Block 1: **iterate**
+- Snapshots ejecutados: **2/3** (detenido por guardrail)
+- Trigger de rollback: **T5 hard guardrail** (disable event en snapshot 2)
+- Rollback: **exitoso** y gate canonico posterior **promote**
+
+Lectura:
+- El marco de seguridad operacional funciona como se esperaba (deteccion + rollback + validacion).
+- Para promover el rollout, queda trabajo puntual de hardening T5 en perfil de bajo alcance.
+
+### 11.2 Dashboard extendido (Block 6 explicito + drift semanal)
+Fuentes:
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_160146.json`
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_160146.md`
+
+Mejora aplicada:
+- Cadena activa ahora visible como `block2 -> block3 -> block4 -> block5 -> block6 -> block10`.
+- Se agrega tracking de drift por transicion de bloque para T3/T5.
+
+### 11.3 Block 1.1 (hardening T5) - cierre de la deuda de disable events
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week10_block1_1_controlled_rollout_20260208_161153.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_161219.json`
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_161230.json`
+
+Resultado:
+- Decision Block 1.1: **promote**
+- Rollout rerun: **4/4 snapshots** completados
+- T5 disable events: **0**
+- Rollback automatico: **no activado**
+- Overhead T5 max: **1.9597%**
+- Gate canonico previo a promocion: **promote**
+
+Lectura:
+- El hardening T5 elimina el problema detectado en Week10 Block1 sin sacrificar correctness ni guardrails duros.
+- El proyecto queda nuevamente en banda de despliegue controlado estable para pruebas reales progresivas.
+
+### 11.4 Block 1.2 + 1.3 (horizonte extendido y cobertura 2048)
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week10_block1_2_controlled_rollout_20260208_163545.json`
+- `research/breakthrough_lab/platform_compatibility/week10_block1_3_controlled_rollout_20260208_163829.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163611.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_163857.json`
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_163903.json`
+
+Resultado:
+- Block 1.2: **promote** (`6/6` snapshots, `1400`, rollback `false`, T5 disable `0`)
+- Block 1.3: **promote** (`6/6` snapshots, `1400+2048`, rollback `false`, T5 disable `0`)
+- Gates canonicos previos a promocion: **promote** en ambos bloques
+- Dashboard integrado: **promote** con cadena activa estable
+
+Lectura:
+- El perfil endurecido mantiene estabilidad temporal y de cobertura sin degradar guardrails.
+- Estado actual: listo para continuar con una ventana controlada mas larga antes de escalar alcance operativo.
+
+### 11.5 Block 1.4 + 1.5 (ventana larga + split Clover/rusticl)
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week10_block1_4_long_window_20260208_165345.json`
+- `research/breakthrough_lab/platform_compatibility/week10_block1_5_platform_split_20260208_165631.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165410.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165700.json`
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_165707.json`
+
+Resultado:
+- Block 1.4: **promote** (`>=45 min` equivalente, `1400+2048`, rollback `false`)
+- Block 1.5: **promote** (split `Clover/rusticl`, ratio minimo `0.9206`)
+- Disable events T5 en ambos bloques: **0**
+- Gates canonicos antes de promocion: **promote** en ambos bloques
+
+Lectura:
+- El sistema mantiene estabilidad bajo ventana larga y split de plataforma con guardrails sanos.
+- Se consolida el estado de candidato fuerte para pruebas reales controladas de mayor alcance.
+
+### 11.6 Block 1.6 + 2.1 (split extendido + preproduccion escalada)
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week10_block1_6_platform_split_extended_20260208_171552.json`
+- `research/breakthrough_lab/platform_compatibility/week10_block2_1_preprod_scaled_20260208_171024.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171618.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_171051.json`
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_171111.json`
+
+Resultado:
+- Block 1.6: **promote** (split `Clover/rusticl`, `8` snapshots, ratio minimo `0.9200`)
+- Block 2.1: **promote** (preproduccion escalada con `sessions=2`, `iterations=10`)
+- T5 disable events en ambos bloques: **0**
+- Gates canonicos antes de promocion: **promote** en ambos bloques
+
+Lectura:
+- La estabilidad se sostiene incluso al incrementar horizonte split y carga preproductiva.
+- El proyecto queda en fase de consolidacion final para recomendacion de produccion controlada.
+
+### 11.7 Block 2.2 + 2.3 (ventana larga escalada + paquete final de recomendacion)
+Fuentes:
+- `research/breakthrough_lab/platform_compatibility/week10_block2_2_preprod_scaled_long_20260208_173314.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173343.json`
+- `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_173514.json`
+- `research/breakthrough_lab/week9_comparative_dashboard_20260208_173522.json`
+- `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_OPERATIONS_RUNBOOK.md`
+- `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_ROLLBACK_HOT_THRESHOLDS.json`
+- `research/breakthrough_lab/preprod_signoff/WEEK10_BLOCK2_3_GO_NO_GO_CHECKLIST.md`
+
+Resultado:
+- Block 2.2: **promote** (`8/8` snapshots, rollback `false`, drift `<=0.6525%`)
+- Correctness max Block 2.2: `0.000579833984375`
+- T5 overhead Block 2.2: max `1.1988%`, mean `0.8480%`
+- T5 disable events Block 2.2: **0**
+- Block 2.3: **completed/promote** (runbook operativo + umbrales rollback hot + checklist go/no-go versionados)
+- Gates canonicos antes de promocion/cierre: **promote** en ambos hitos (`173343`, `173514`)
+- Dashboard comparativo actualizado: **promote**
+
+Lectura:
+- Se completa la evidencia de preproduccion escalada en horizonte largo sin degradar guardrails.
+- El paquete de recomendacion de produccion controlada queda formalizado y listo para uso operativo.

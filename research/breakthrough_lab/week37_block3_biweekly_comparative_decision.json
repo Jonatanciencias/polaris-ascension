@@ -1,0 +1,83 @@
+{
+  "review_id": "week37-block3-biweekly-comparative-platform-decision-2026-02-13",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "monthly_dual_platform_comparative_and_formal_policy_decision",
+  "tracks": [
+    {
+      "track": "week37_block3_comparative_attempt_initial",
+      "decision": "iterate",
+      "evidence": [
+        "research/breakthrough_lab/week37_controlled_rollout/week37_block3_biweekly_comparative_20260213_181427.json"
+      ],
+      "rationale": "Initial attempt failed due incorrect split_eval path reference (operational wiring issue)."
+    },
+    {
+      "track": "week37_block3_comparative_recovery_rerun",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week37_controlled_rollout/week37_block3_biweekly_comparative_rerun_20260213_181550.json",
+        "research/breakthrough_lab/week37_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_181550.json"
+      ],
+      "rationale": "Rerun with corrected split_eval path passed all checks against Week36 baseline."
+    },
+    {
+      "track": "week37_block3_platform_policy_decision",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week37_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json",
+        "research/breakthrough_lab/week37_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.md"
+      ],
+      "rationale": "Platform policy remains production-safe and closes as dual_go_clover_rusticl."
+    },
+    {
+      "track": "week37_block3_operational_debt_review",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week37_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json"
+      ],
+      "rationale": "Operational debt review reports high/critical open debt equal to zero."
+    },
+    {
+      "track": "week37_block3_canonical_gate_internal",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181550.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181609.json"
+      ],
+      "rationale": "Internal runner gates remained promote in closure rerun."
+    },
+    {
+      "track": "week37_block3_canonical_gate_explicit",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181522.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181633.json"
+      ],
+      "rationale": "Explicit canonical pre/post gates remained promote for formal closure."
+    }
+  ],
+  "summary": {
+    "promote": 5,
+    "iterate": 1,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "ready-for-rx590-extended-wallclock-canary",
+  "block_rationale": "Initial operational path issue was corrected and rerun closed Block3 in promote with dual-go platform policy.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK37_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181522.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181633.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week37_block2_alert_bridge_observability_decision.json"
+  ]
+}

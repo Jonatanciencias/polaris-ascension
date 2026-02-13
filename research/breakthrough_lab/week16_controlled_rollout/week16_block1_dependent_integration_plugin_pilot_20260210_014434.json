@@ -1,0 +1,226 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-10T01:44:34.253443+00:00",
+    "plugin_id": "rx590_dependent_project_week16_block1",
+    "owner": "dependent-project-team",
+    "template_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_PLUGIN_TEMPLATE.md",
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ],
+    "kernels": [
+      "auto_t3_controlled",
+      "auto_t5_guarded"
+    ],
+    "sessions": 1,
+    "iterations": 8,
+    "seed": 26011,
+    "t5_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week15_block1_expanded_sizes.json",
+    "baseline_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week15_controlled_rollout/week15_block1_expanded_pilot_rerun_canary_20260210_011736.json"
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014350.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014350.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "driver_smoke": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/verify_drivers.py",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"kernel_driver\": {\n    \"loaded\": true,\n    \"version\": \"37316FBEB018C901DC68DC9\",\n    \"name\": \"amdgpu\"\n  },\n  \"mesa_version\": \"25.0.7\",\n  \"opencl\": {\n    \"available\": true,\n    \"platform\": \"Clover\",\n    \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\",\n    \"implementation\": \"Mesa (Clover/RustiCL)\",\n    \"source\": \"pyopencl\",\n    \"device\": \"AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)\",\n    \"driver\": \"25.0.7-0ubuntu0.24.04.2\",\n    \"inventory\": [\n      {\n        \"index\": 0,\n        \"name\": \"Clover\",\n        \"vendor\": \"Mesa\",\n        \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\",\n        \"devices\": [\n          {\n            \"name\": \"AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)\",\n            \"vendor\": \"AMD\",\n            \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\",\n            \"driver\": \"25.0.7-0ubuntu0.24.04.2\"\n          }\n        ]\n      },\n      {\n        \"index\": 1,\n        \"name\": \"rusticl\",\n        \"vendor\": \"Mesa/X.org\",\n        \"version\": \"OpenCL 3.0\",\n        \"devices\": []\n      }\n    ]\n  },\n  \"vulkan\": {\n    \"version\": \"1.3.275\",\n    \"driver\": \"AMD Radeon RX 590 GME (RADV POLARIS10)\",\n    \"implementation\": \"Mesa RADV\",\n    \"available\": true\n  },\n  \"rocm\": null,\n  \"recommendations\": [],\n  \"overall_status\": \"good\"\n}\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014434.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014434.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    }
+  },
+  "runs": [
+    {
+      "status": "ok",
+      "kernel": "auto_t3_controlled",
+      "size": 1400,
+      "seed": 27411,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+        "driver": null,
+        "peak_mean_gflops": 897.1405769371318,
+        "avg_mean_gflops": 867.9200068923905,
+        "p95_time_ms": 6.117212999924959,
+        "max_error_max": 0.00030517578125,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      }
+    },
+    {
+      "status": "ok",
+      "kernel": "auto_t5_guarded",
+      "size": 1400,
+      "seed": 27411,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+        "driver": null,
+        "peak_mean_gflops": 920.9212568448537,
+        "avg_mean_gflops": 908.6975273014083,
+        "p95_time_ms": 5.959250000159955,
+        "max_error_max": 0.0003662109375,
+        "t5_overhead_percent": 1.2326838785987249,
+        "t5_disable_events": 0
+      }
+    },
+    {
+      "status": "ok",
+      "kernel": "auto_t3_controlled",
+      "size": 2048,
+      "seed": 29059,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+        "driver": null,
+        "peak_mean_gflops": 772.3129187749481,
+        "avg_mean_gflops": 771.3587893426287,
+        "p95_time_ms": 22.2446999996464,
+        "max_error_max": 0.000457763671875,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      }
+    },
+    {
+      "status": "ok",
+      "kernel": "auto_t5_guarded",
+      "size": 2048,
+      "seed": 29059,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+        "driver": null,
+        "peak_mean_gflops": 781.7029334189215,
+        "avg_mean_gflops": 777.702532059813,
+        "p95_time_ms": 21.977491000143345,
+        "max_error_max": 0.000518798828125,
+        "t5_overhead_percent": 0.5325656280457416,
+        "t5_disable_events": 0
+      }
+    },
+    {
+      "status": "ok",
+      "kernel": "auto_t3_controlled",
+      "size": 3072,
+      "seed": 31083,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+        "driver": null,
+        "peak_mean_gflops": 804.2497290708203,
+        "avg_mean_gflops": 708.0927052708898,
+        "p95_time_ms": 72.09459499972581,
+        "max_error_max": 0.00067138671875,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      }
+    },
+    {
+      "status": "ok",
+      "kernel": "auto_t5_guarded",
+      "size": 3072,
+      "seed": 31083,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+        "driver": null,
+        "peak_mean_gflops": 805.7810961724483,
+        "avg_mean_gflops": 803.0822109015978,
+        "p95_time_ms": 71.9575809998787,
+        "max_error_max": 0.00091552734375,
+        "t5_overhead_percent": 0.631030469689048,
+        "t5_disable_events": 0
+      }
+    }
+  ],
+  "metrics": {
+    "peak_gflops_mean": 830.3514185365207,
+    "avg_gflops_mean": 806.142295294788,
+    "p95_time_ms": 33.3918049999132,
+    "max_error": 0.00091552734375,
+    "cv_peak": 0.06897905371843516,
+    "delta_vs_baseline_percent": -0.01800607755239033,
+    "reproducibility_score": 0.0
+  },
+  "artifacts": {
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014350.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014434.json"
+  },
+  "evaluation": {
+    "checks": {
+      "template_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "driver_smoke_good": {
+        "observed": "good",
+        "required": "good",
+        "pass": true
+      },
+      "all_runs_success": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "correctness_bound": {
+        "observed_max": 0.00091552734375,
+        "required_max": 0.001,
+        "pass": true
+      },
+      "t3_fallback_bound": {
+        "observed_max": 0.0,
+        "required_max": 0.08,
+        "pass": true
+      },
+      "t5_disable_zero": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Plugin pilot satisfies template contracts and performance/correctness guardrails."
+  }
+}

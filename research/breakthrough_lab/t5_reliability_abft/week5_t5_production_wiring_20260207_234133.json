@@ -1,0 +1,1563 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-07T23:41:33.065607+00:00",
+    "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_block3.json",
+    "policy_id": "t5-abft-detect-only-block3-2026-02-07",
+    "sizes": [
+      1400,
+      2048
+    ],
+    "sessions": 8,
+    "iterations": 16,
+    "seed": 42
+  },
+  "per_size": [
+    {
+      "size": 1400,
+      "kernel_avg_gflops_mean": 910.8214941456383,
+      "effective_overhead_percent": 1.5748238242949364,
+      "false_positive_rate": 0.0,
+      "max_error": 0.0003509521484375,
+      "disable_events": 0
+    },
+    {
+      "size": 2048,
+      "kernel_avg_gflops_mean": 778.012932540544,
+      "effective_overhead_percent": 0.8677614286306714,
+      "false_positive_rate": 0.0,
+      "max_error": 0.0005950927734375,
+      "disable_events": 0
+    }
+  ],
+  "summary": {
+    "kernel_avg_gflops_mean": 844.4172133430911,
+    "effective_overhead_percent": 1.221292626462804,
+    "false_positive_rate": 0.0,
+    "max_error": 0.0005950927734375,
+    "disable_events": 0
+  },
+  "details": [
+    {
+      "size": 1400,
+      "seed": 42,
+      "report": {
+        "metadata": {
+          "size": 1400,
+          "iterations_per_session": 16,
+          "sessions": 8,
+          "seed": 42,
+          "kernel_mode_requested": "auto_t5_guarded",
+          "kernel_mode_resolved": "auto_t5_guarded",
+          "kernel_name": "gemm_tile20_vectorized",
+          "kernel_file": "src/kernels/gemm_tile20_v3_vectorized.cl",
+          "tile_size": 20,
+          "local_size": [
+            10,
+            10
+          ],
+          "platform": "Clover",
+          "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+          "t5_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_block3.json",
+          "t5_state_path": "results/runtime_states/t5_abft_guard_state.json",
+          "t5_policy_id": "t5-abft-detect-only-block3-2026-02-07"
+        },
+        "summary": {
+          "peak_gflops": {
+            "mean": 920.124887409971,
+            "std": 2.0506363512225994,
+            "min": 916.8254842924737,
+            "p50": 920.2071433896765,
+            "p95": 922.7977832138803,
+            "max": 922.97203081625
+          },
+          "avg_gflops": {
+            "mean": 910.8214941456383,
+            "std": 0.9285554113105912,
+            "min": 908.8446175635188,
+            "p50": 911.0562412728357,
+            "p95": 911.89818880157,
+            "max": 912.0057190012554
+          },
+          "time_ms": {
+            "mean": 5.964437375951093,
+            "std": 0.013297853525957203,
+            "min": 5.946008997852914,
+            "p50": 5.963876003079349,
+            "p95": 5.983794753046823,
+            "max": 5.985872005112469
+          },
+          "max_error": {
+            "mean": 0.00030612945556640625,
+            "std": 2.485049099120213e-05,
+            "min": 0.000274658203125,
+            "p50": 0.000293731689453125,
+            "p95": 0.000345611572265625,
+            "max": 0.0003509521484375
+          },
+          "t5_abft": {
+            "guardrails_all_passed": true,
+            "enabled_final": true,
+            "disable_events": 0,
+            "disable_reason": null,
+            "checked_runs": 16,
+            "total_runs": 128,
+            "sampling_coverage": 0.125,
+            "false_positive_rate": 0.0,
+            "effective_overhead_percent": 1.5748238242949364,
+            "critical_recall_reference": 1.0,
+            "uniform_recall_reference": 0.9666666666666667
+          }
+        },
+        "sessions": [
+          {
+            "session": 0,
+            "seed": 42,
+            "kernel_key": "tile20_v3_1400",
+            "kernel_name": "gemm_tile20_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 1.57719332819042,
+              "kernel_time_total_ms": 96.31254299165448,
+              "verify_time_total_ms": 1.5190350022749044,
+              "effective_gflops": 897.5425092851782,
+              "max_error": 0.00029754638671875
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:23.743952+00:00",
+              "session_id": 0,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.57719332819042,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.00029754638671875,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 1,
+            "seed": 1042,
+            "kernel_key": "tile20_v3_1400",
+            "kernel_name": "gemm_tile20_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 1.5783182450395445,
+              "kernel_time_total_ms": 96.37048799049808,
+              "verify_time_total_ms": 1.5210329947876744,
+              "effective_gflops": 896.992907212041,
+              "max_error": 0.0003509521484375
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:24.024695+00:00",
+              "session_id": 1,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.5783182450395445,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0003509521484375,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 2,
+            "seed": 2042,
+            "kernel_key": "tile20_v3_1400",
+            "kernel_name": "gemm_tile20_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 1.5653221986390604,
+              "kernel_time_total_ms": 96.35997001169017,
+              "verify_time_total_ms": 1.5083440011949278,
+              "effective_gflops": 897.2056061826039,
+              "max_error": 0.0002899169921875
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:24.304216+00:00",
+              "session_id": 2,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.5653221986390604,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0002899169921875,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 3,
+            "seed": 3042,
+            "kernel_key": "tile20_v3_1400",
+            "kernel_name": "gemm_tile20_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 1.566489135830126,
+              "kernel_time_total_ms": 96.39039099420188,
+              "verify_time_total_ms": 1.5099450029083528,
+              "effective_gflops": 896.9121413698914,
+              "max_error": 0.0002899169921875
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:24.584289+00:00",
+              "session_id": 3,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.566489135830126,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0002899169921875,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 4,
+            "seed": 4042,
+            "kernel_key": "tile20_v3_1400",
+            "kernel_name": "gemm_tile20_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 1.5944733978246215,
+              "kernel_time_total_ms": 96.46902899839915,
+              "verify_time_total_ms": 1.5381730045191944,
+              "effective_gflops": 895.9341579548956,
+              "max_error": 0.000274658203125
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:24.867408+00:00",
+              "session_id": 4,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.5944733978246215,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.000274658203125,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 5,
+            "seed": 5042,
+            "kernel_key": "tile20_v3_1400",
+            "kernel_name": "gemm_tile20_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 1.5597849670570538,
+              "kernel_time_total_ms": 96.44553799444111,
+              "verify_time_total_ms": 1.5043430030345917,
+              "effective_gflops": 896.4584653478337,
+              "max_error": 0.000335693359375
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:25.147517+00:00",
+              "session_id": 5,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.5597849670570538,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.000335693359375,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 6,
+            "seed": 6042,
+            "kernel_key": "tile20_v3_1400",
+            "kernel_name": "gemm_tile20_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 1.5693198671783284,
+              "kernel_time_total_ms": 96.61497499473626,
+              "verify_time_total_ms": 1.51619799726177,
+              "effective_gflops": 894.8023071848961,
+              "max_error": 0.0002899169921875
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:25.428308+00:00",
+              "session_id": 6,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.5693198671783284,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0002899169921875,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 7,
+            "seed": 7042,
+            "kernel_key": "tile20_v3_1400",
+            "kernel_name": "gemm_tile20_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 1.5877092322709958,
+              "kernel_time_total_ms": 96.28009799780557,
+              "verify_time_total_ms": 1.5286480047507212,
+              "effective_gflops": 897.7520271827744,
+              "max_error": 0.0003204345703125
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:25.709547+00:00",
+              "session_id": 7,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.5877092322709958,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0003204345703125,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          }
+        ],
+        "guard_state": {
+          "policy_id": "t5-abft-detect-only-block3-2026-02-07",
+          "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_block3.json",
+          "enabled": true,
+          "disable_reason": null,
+          "disable_events": 0,
+          "sampling": {
+            "sampling_period": 8,
+            "row_samples": 16,
+            "col_samples": 16,
+            "projection_count": 4,
+            "residual_scale": 5.0,
+            "residual_margin": 0.01,
+            "residual_floor": 0.05
+          },
+          "guardrails": {
+            "disable_if_false_positive_rate_gt": 0.05,
+            "disable_if_effective_overhead_percent_gt": 3.0,
+            "disable_if_correctness_error_gt": 0.001,
+            "disable_if_uniform_recall_lt": 0.95,
+            "disable_if_critical_recall_lt": 0.99
+          },
+          "evaluations": [
+            {
+              "timestamp_utc": "2026-02-07T23:41:23.743952+00:00",
+              "session_id": 0,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.57719332819042,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.00029754638671875,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:24.024695+00:00",
+              "session_id": 1,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.5783182450395445,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0003509521484375,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:24.304216+00:00",
+              "session_id": 2,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.5653221986390604,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0002899169921875,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:24.584289+00:00",
+              "session_id": 3,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.566489135830126,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0002899169921875,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:24.867408+00:00",
+              "session_id": 4,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.5944733978246215,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.000274658203125,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:25.147517+00:00",
+              "session_id": 5,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.5597849670570538,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.000335693359375,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:25.428308+00:00",
+              "session_id": 6,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.5693198671783284,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0002899169921875,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:25.709547+00:00",
+              "session_id": 7,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 1.5877092322709958,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0003204345703125,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "size": 2048,
+      "seed": 10042,
+      "report": {
+        "metadata": {
+          "size": 2048,
+          "iterations_per_session": 16,
+          "sessions": 8,
+          "seed": 10042,
+          "kernel_mode_requested": "auto_t5_guarded",
+          "kernel_mode_resolved": "auto_t5_guarded",
+          "kernel_name": "gemm_tile24_vectorized",
+          "kernel_file": "src/kernels/gemm_tile24_production.cl",
+          "tile_size": 24,
+          "local_size": [
+            12,
+            12
+          ],
+          "platform": "Clover",
+          "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+          "t5_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_block3.json",
+          "t5_state_path": "results/runtime_states/t5_abft_guard_state.json",
+          "t5_policy_id": "t5-abft-detect-only-block3-2026-02-07"
+        },
+        "summary": {
+          "peak_gflops": {
+            "mean": 782.259231970351,
+            "std": 0.24473098889526726,
+            "min": 781.9019889864153,
+            "p50": 782.2845348479631,
+            "p95": 782.6027851254663,
+            "max": 782.6690239376743
+          },
+          "avg_gflops": {
+            "mean": 778.012932540544,
+            "std": 0.7550101374041018,
+            "min": 776.0543307486192,
+            "p50": 778.2537220104339,
+            "p95": 778.478832590851,
+            "max": 778.4853946667312
+          },
+          "time_ms": {
+            "mean": 21.961864000331843,
+            "std": 0.006870960598241833,
+            "min": 21.95036299963249,
+            "p50": 21.961151498544496,
+            "p95": 21.971827399829635,
+            "max": 21.97189599974081
+          },
+          "max_error": {
+            "mean": 0.0005178451538085938,
+            "std": 5.0092872568774783e-05,
+            "min": 0.00045013427734375,
+            "p50": 0.00051116943359375,
+            "p95": 0.000589752197265625,
+            "max": 0.0005950927734375
+          },
+          "t5_abft": {
+            "guardrails_all_passed": true,
+            "enabled_final": true,
+            "disable_events": 0,
+            "disable_reason": null,
+            "checked_runs": 16,
+            "total_runs": 128,
+            "sampling_coverage": 0.125,
+            "false_positive_rate": 0.0,
+            "effective_overhead_percent": 0.8677614286306714,
+            "critical_recall_reference": 1.0,
+            "uniform_recall_reference": 0.9666666666666667
+          }
+        },
+        "sessions": [
+          {
+            "session": 0,
+            "seed": 10042,
+            "kernel_key": "tile24",
+            "kernel_name": "gemm_tile24_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 0.9097249015053455,
+              "kernel_time_total_ms": 353.303070020047,
+              "verify_time_total_ms": 3.2140860057552345,
+              "effective_gflops": 771.0089186398262,
+              "max_error": 0.000579833984375
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:27.742648+00:00",
+              "session_id": 0,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.9097249015053455,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.000579833984375,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 1,
+            "seed": 11042,
+            "kernel_key": "tile24",
+            "kernel_name": "gemm_tile24_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 0.850104058794147,
+              "kernel_time_total_ms": 353.10171399032697,
+              "verify_time_total_ms": 3.00173200230347,
+              "effective_gflops": 771.9046530925416,
+              "max_error": 0.0005950927734375
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:28.503056+00:00",
+              "session_id": 1,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.850104058794147,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0005950927734375,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 2,
+            "seed": 12042,
+            "kernel_key": "tile24",
+            "kernel_name": "gemm_tile24_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 0.8787349165876847,
+              "kernel_time_total_ms": 354.1993080289103,
+              "verify_time_total_ms": 3.112472993962001,
+              "effective_gflops": 769.2942733573188,
+              "max_error": 0.000457763671875
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:29.265028+00:00",
+              "session_id": 2,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.8787349165876847,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.000457763671875,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 3,
+            "seed": 13042,
+            "kernel_key": "tile24",
+            "kernel_name": "gemm_tile24_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 0.8726273718845666,
+              "kernel_time_total_ms": 353.0932100038626,
+              "verify_time_total_ms": 3.0811879987595603,
+              "effective_gflops": 771.750885199717,
+              "max_error": 0.0005035400390625
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:30.024762+00:00",
+              "session_id": 3,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.8726273718845666,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0005035400390625,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 4,
+            "seed": 14042,
+            "kernel_key": "tile24",
+            "kernel_name": "gemm_tile24_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 0.8537057553963427,
+              "kernel_time_total_ms": 353.18855201330734,
+              "verify_time_total_ms": 3.0151909959386103,
+              "effective_gflops": 771.6873063202625,
+              "max_error": 0.000518798828125
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:30.782915+00:00",
+              "session_id": 4,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.8537057553963427,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.000518798828125,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 5,
+            "seed": 15042,
+            "kernel_key": "tile24",
+            "kernel_name": "gemm_tile24_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 0.853863138072626,
+              "kernel_time_total_ms": 353.24220803158823,
+              "verify_time_total_ms": 3.0162050024955533,
+              "effective_gflops": 771.5688861997542,
+              "max_error": 0.00054931640625
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:31.543173+00:00",
+              "session_id": 5,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.853863138072626,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.00054931640625,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 6,
+            "seed": 16042,
+            "kernel_key": "tile24",
+            "kernel_name": "gemm_tile24_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 0.8458328385542246,
+              "kernel_time_total_ms": 353.2080880031572,
+              "verify_time_total_ms": 2.987549996760208,
+              "effective_gflops": 771.7048655830641,
+              "max_error": 0.00045013427734375
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:32.301947+00:00",
+              "session_id": 6,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.8458328385542246,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.00045013427734375,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          },
+          {
+            "session": 7,
+            "seed": 17042,
+            "kernel_key": "tile24",
+            "kernel_name": "gemm_tile24_vectorized",
+            "abft_enabled": true,
+            "runtime_metrics": {
+              "sampling_period": 8,
+              "checked_runs": 2,
+              "total_runs": 16,
+              "sampling_coverage": 0.125,
+              "false_positive_count": 0,
+              "false_positive_rate": 0.0,
+              "effective_overhead_percent": 0.8774554082055371,
+              "kernel_time_total_ms": 353.12757398787653,
+              "verify_time_total_ms": 3.0985369958216324,
+              "effective_gflops": 771.6388509111257,
+              "max_error": 0.00048828125
+            },
+            "guardrail_eval": {
+              "timestamp_utc": "2026-02-07T23:41:33.062443+00:00",
+              "session_id": 7,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.8774554082055371,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.00048828125,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          }
+        ],
+        "guard_state": {
+          "policy_id": "t5-abft-detect-only-block3-2026-02-07",
+          "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_block3.json",
+          "enabled": true,
+          "disable_reason": null,
+          "disable_events": 0,
+          "sampling": {
+            "sampling_period": 8,
+            "row_samples": 16,
+            "col_samples": 16,
+            "projection_count": 4,
+            "residual_scale": 5.0,
+            "residual_margin": 0.01,
+            "residual_floor": 0.05
+          },
+          "guardrails": {
+            "disable_if_false_positive_rate_gt": 0.05,
+            "disable_if_effective_overhead_percent_gt": 3.0,
+            "disable_if_correctness_error_gt": 0.001,
+            "disable_if_uniform_recall_lt": 0.95,
+            "disable_if_critical_recall_lt": 0.99
+          },
+          "evaluations": [
+            {
+              "timestamp_utc": "2026-02-07T23:41:27.742648+00:00",
+              "session_id": 0,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.9097249015053455,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.000579833984375,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:28.503056+00:00",
+              "session_id": 1,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.850104058794147,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0005950927734375,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:29.265028+00:00",
+              "session_id": 2,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.8787349165876847,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.000457763671875,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:30.024762+00:00",
+              "session_id": 3,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.8726273718845666,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.0005035400390625,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:30.782915+00:00",
+              "session_id": 4,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.8537057553963427,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.000518798828125,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:31.543173+00:00",
+              "session_id": 5,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.853863138072626,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.00054931640625,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:32.301947+00:00",
+              "session_id": 6,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.8458328385542246,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.00045013427734375,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            },
+            {
+              "timestamp_utc": "2026-02-07T23:41:33.062443+00:00",
+              "session_id": 7,
+              "checks": {
+                "false_positive_rate": {
+                  "observed": 0.0,
+                  "threshold": 0.05,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "effective_overhead_percent": {
+                  "observed": 0.8774554082055371,
+                  "threshold": 3.0,
+                  "comparator": "<=",
+                  "pass": true
+                },
+                "correctness_error": {
+                  "observed": 0.00048828125,
+                  "threshold": 0.001,
+                  "comparator": "<=",
+                  "pass": true
+                }
+              },
+              "failed_guardrails": [],
+              "all_passed": true,
+              "disable_signal": false,
+              "enabled_after_eval": true,
+              "disable_reason": null,
+              "fallback_action": "continue_abft_runtime"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "guardrails": {
+    "checks": {
+      "false_positive_rate": {
+        "observed": 0.0,
+        "threshold": 0.05,
+        "comparator": "<=",
+        "pass": true
+      },
+      "effective_overhead_percent": {
+        "observed": 1.221292626462804,
+        "threshold": 3.0,
+        "comparator": "<=",
+        "pass": true
+      },
+      "correctness_error": {
+        "observed": 0.0005950927734375,
+        "threshold": 0.001,
+        "comparator": "<=",
+        "pass": true
+      },
+      "uniform_recall_reference": {
+        "observed": 0.9666666666666667,
+        "threshold": 0.95,
+        "comparator": ">=",
+        "pass": true
+      },
+      "critical_recall_reference": {
+        "observed": 1.0,
+        "threshold": 0.99,
+        "comparator": ">=",
+        "pass": true
+      }
+    },
+    "all_passed": true,
+    "failed_guardrails": [],
+    "disable_signal": false,
+    "fallback_action": "keep_t5_abft_runtime_guarded"
+  },
+  "decision": {
+    "decision": "promote",
+    "rationale": "T5 guarded runtime wiring passed all guardrails with zero auto-disable events."
+  }
+}

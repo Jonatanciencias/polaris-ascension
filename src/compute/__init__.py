@@ -24,21 +24,23 @@ try:
         search_architecture,
         PRIMITIVES,
     )
+
     NAS_AVAILABLE = True
 except ImportError as e:
     NAS_AVAILABLE = False
     import warnings
+
     warnings.warn(f"NAS/DARTS module not fully available: {e}")
 
 __all__ = [
-    'DARTSConfig',
-    'SearchSpace',
-    'SearchResult',
-    'DARTSNetwork',
-    'DARTSTrainer',
-    'search_architecture',
-    'PRIMITIVES',
-    'NAS_AVAILABLE',
+    "DARTSConfig",
+    "SearchSpace",
+    "SearchResult",
+    "DARTSNetwork",
+    "DARTSTrainer",
+    "search_architecture",
+    "PRIMITIVES",
+    "NAS_AVAILABLE",
 ]
 
-__version__ = '1.0.0'
+__version__ = "1.0.0"

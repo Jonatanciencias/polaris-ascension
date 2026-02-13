@@ -38,11 +38,11 @@ except ImportError:
     QuantumAnnealingOptimizer = None
 
 __all__ = [
-    'AdvancedPolarisOpenCLEngine',
-    'OptimizedOpenCLEngine',
-    'LowRankMatrixApproximator',
-    'GCNOptimizedLowRankApproximator',
-    'LowRankMatrixApproximatorGPU',
-    'CoppersmithWinogradGPU',
-    'QuantumAnnealingOptimizer'
+    "AdvancedPolarisOpenCLEngine",
+    "OptimizedOpenCLEngine",
+    "LowRankMatrixApproximator",
+    "GCNOptimizedLowRankApproximator",
+    "LowRankMatrixApproximatorGPU",
+    "CoppersmithWinogradGPU",
+    "QuantumAnnealingOptimizer",
 ]

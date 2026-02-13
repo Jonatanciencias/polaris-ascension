@@ -22,10 +22,12 @@ sys.path.append(str(project_root / "fase_9_breakthrough_integration" / "src"))
 
 try:
     from breakthrough_selector import BreakthroughTechniqueSelector, BreakthroughTechnique
+
     SELECTOR_AVAILABLE = True
 except ImportError as e:
     print(f"❌ Error importando Breakthrough Selector: {e}")
     SELECTOR_AVAILABLE = False
+
 
 class MLIntegrationValidator:
     """
@@ -44,7 +46,9 @@ class MLIntegrationValidator:
             return False
 
         try:
-            self.selector = BreakthroughTechniqueSelector(use_ml_predictor=True, use_bayesian_opt=False)
+            self.selector = BreakthroughTechniqueSelector(
+                use_ml_predictor=True, use_bayesian_opt=False
+            )
             print("✅ Breakthrough Selector inicializado con modelo ML")
             return True
         except Exception as e:
@@ -56,7 +60,7 @@ class MLIntegrationValidator:
         print("\n🧪 GENERANDO MATRICES DE PRUEBA...")
 
         sizes = [128, 256, 512]
-        types = ['dense', 'sparse', 'low_rank']
+        types = ["dense", "sparse", "low_rank"]
 
         np.random.seed(42)  # Para reproducibilidad
 
@@ -70,11 +74,11 @@ class MLIntegrationValidator:
 
     def _generate_matrix_pair(self, size: int, matrix_type: str) -> Tuple[np.ndarray, np.ndarray]:
         """Genera un par de matrices del tipo especificado."""
-        if matrix_type == 'dense':
+        if matrix_type == "dense":
             A = np.random.randn(size, size).astype(np.float32)
             B = np.random.randn(size, size).astype(np.float32)
 
-        elif matrix_type == 'sparse':
+        elif matrix_type == "sparse":
             A = np.random.randn(size, size).astype(np.float32)
             mask_a = np.random.random((size, size)) > 0.9
             A[~mask_a] = 0
@@ -83,7 +87,7 @@ class MLIntegrationValidator:
             mask_b = np.random.random((size, size)) > 0.9
             B[~mask_b] = 0
 
-        elif matrix_type == 'low_rank':
+        elif matrix_type == "low_rank":
             rank = max(2, size // 8)
             U = np.random.randn(size, rank)
             V = np.random.randn(size, rank)
@@ -125,33 +129,31 @@ class MLIntegrationValidator:
 
                 # Registrar resultados
                 test_result = {
-                    'matrix_name': matrix_name,
-                    'matrix_size': A.shape[0],
-                    'selected_technique': selection.technique.value,
-                    'confidence': selection.confidence,
-                    'expected_performance': selection.expected_performance,
-                    'actual_gflops': metrics.get('gflops_achieved', 0.0),
-                    'actual_error': metrics.get('relative_error', 1.0),
-                    'selection_time': selection_time,
-                    'execution_time': execution_time,
-                    'success': result is not None
+                    "matrix_name": matrix_name,
+                    "matrix_size": A.shape[0],
+                    "selected_technique": selection.technique.value,
+                    "confidence": selection.confidence,
+                    "expected_performance": selection.expected_performance,
+                    "actual_gflops": metrics.get("gflops_achieved", 0.0),
+                    "actual_error": metrics.get("relative_error", 1.0),
+                    "selection_time": selection_time,
+                    "execution_time": execution_time,
+                    "success": result is not None,
                 }
 
                 self.results.append(test_result)
 
-                print(f"   Técnica: {selection.technique.value} (confianza: {selection.confidence:.2f})")
+                print(
+                    f"   Técnica: {selection.technique.value} (confianza: {selection.confidence:.2f})"
+                )
                 print(f"   GFLOPS esperado: {selection.expected_performance:.3f}")
                 print(f"   GFLOPS actual: {metrics.get('gflops_achieved', 0.0):.3f}")
-                if not test_result['success']:
+                if not test_result["success"]:
                     print("  ❌ Falló la ejecución")
 
             except Exception as e:
                 print(f"  ❌ Error: {e}")
-                self.results.append({
-                    'matrix_name': matrix_name,
-                    'error': str(e),
-                    'success': False
-                })
+                self.results.append({"matrix_name": matrix_name, "error": str(e), "success": False})
 
         return self.analyze_results()
 
@@ -165,16 +167,18 @@ class MLIntegrationValidator:
             return False
 
         # Convertir a DataFrame
-        df = pd.DataFrame([r for r in self.results if 'error' not in r])
+        df = pd.DataFrame([r for r in self.results if "error" not in r])
 
         if df.empty:
             print("❌ Todos los tests fallaron")
             return False
 
-        successful_tests = len(df[df['success'] == True])
+        successful_tests = len(df[df["success"] == True])
         total_tests = len(df)
 
-        print(f"Tests exitosos: {successful_tests}/{total_tests} ({successful_tests/total_tests*100:.1f}%)")
+        print(
+            f"Tests exitosos: {successful_tests}/{total_tests} ({successful_tests/total_tests*100:.1f}%)"
+        )
 
         if successful_tests > 0:
             # Estadísticas de performance
@@ -184,26 +188,28 @@ class MLIntegrationValidator:
             print(f"   Error relativo promedio: {df['actual_error'].mean():.6f}")
             # Análisis por técnica seleccionada
             print("\n🏷️  TÉCNICAS SELECCIONADAS:")
-            technique_counts = df['selected_technique'].value_counts()
+            technique_counts = df["selected_technique"].value_counts()
             for technique, count in technique_counts.items():
-                technique_data = df[df['selected_technique'] == technique]
-                avg_gflops = technique_data['actual_gflops'].mean()
+                technique_data = df[df["selected_technique"] == technique]
+                avg_gflops = technique_data["actual_gflops"].mean()
                 print(f"   {technique}: {count} veces, {avg_gflops:.3f} GFLOPS promedio")
             # Validación de precisión de predicciones
             print("\n🔍 VALIDACIÓN DE PREDICCIONES ML:")
-            valid_predictions = df[df['expected_performance'] > 0]
+            valid_predictions = df[df["expected_performance"] > 0]
             if not valid_predictions.empty:
-                prediction_errors = np.abs(valid_predictions['expected_performance'] - valid_predictions['actual_gflops'])
+                prediction_errors = np.abs(
+                    valid_predictions["expected_performance"] - valid_predictions["actual_gflops"]
+                )
                 mae = prediction_errors.mean()
-                rmse = np.sqrt((prediction_errors ** 2).mean())
+                rmse = np.sqrt((prediction_errors**2).mean())
 
                 print(f"   MAE de predicción: {mae:.3f} GFLOPS")
                 print(f"   RMSE de predicción: {rmse:.3f} GFLOPS")
                 # Accuracy de selección de técnica
                 accurate_selections = 0
                 for _, row in valid_predictions.iterrows():
-                    expected = row['expected_performance']
-                    actual = row['actual_gflops']
+                    expected = row["expected_performance"]
+                    actual = row["actual_gflops"]
                     # Considerar selección buena si el error relativo < 50%
                     if abs(expected - actual) / max(expected, actual) < 0.5:
                         accurate_selections += 1

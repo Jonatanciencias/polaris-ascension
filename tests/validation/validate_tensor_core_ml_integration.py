@@ -22,10 +22,12 @@ sys.path.append(str(project_root / "fase_9_breakthrough_integration" / "src"))
 
 try:
     from breakthrough_selector import BreakthroughTechniqueSelector, BreakthroughTechnique
+
     SELECTOR_AVAILABLE = True
 except ImportError as e:
     print(f"❌ Error importando Breakthrough Selector: {e}")
     SELECTOR_AVAILABLE = False
+
 
 class TensorCoreMLIntegrationValidator:
     """
@@ -44,7 +46,9 @@ class TensorCoreMLIntegrationValidator:
             return False
 
         try:
-            self.selector = BreakthroughTechniqueSelector(use_ml_predictor=True, use_bayesian_opt=False)
+            self.selector = BreakthroughTechniqueSelector(
+                use_ml_predictor=True, use_bayesian_opt=False
+            )
             print("✅ Breakthrough Selector inicializado con Tensor Core")
             return True
         except Exception as e:
@@ -55,39 +59,47 @@ class TensorCoreMLIntegrationValidator:
         """Crea casos de prueba para validar selección de Tensor Core."""
         self.test_cases = [
             {
-                'name': 'Matriz Cuadrada Pequeña (128x128)',
-                'matrices': (np.random.randn(128, 128).astype(np.float32),
-                           np.random.randn(128, 128).astype(np.float32)),
-                'expected_technique': BreakthroughTechnique.TRADITIONAL,
-                'reason': 'Demasiado pequeña para Tensor Core'
+                "name": "Matriz Cuadrada Pequeña (128x128)",
+                "matrices": (
+                    np.random.randn(128, 128).astype(np.float32),
+                    np.random.randn(128, 128).astype(np.float32),
+                ),
+                "expected_technique": BreakthroughTechnique.TRADITIONAL,
+                "reason": "Demasiado pequeña para Tensor Core",
             },
             {
-                'name': 'Matriz Cuadrada Mediana (256x256)',
-                'matrices': (np.random.randn(256, 256).astype(np.float32),
-                           np.random.randn(256, 256).astype(np.float32)),
-                'expected_technique': BreakthroughTechnique.TENSOR_CORE_SIMULATION,
-                'reason': 'Tamaño ideal para Tensor Core'
+                "name": "Matriz Cuadrada Mediana (256x256)",
+                "matrices": (
+                    np.random.randn(256, 256).astype(np.float32),
+                    np.random.randn(256, 256).astype(np.float32),
+                ),
+                "expected_technique": BreakthroughTechnique.TENSOR_CORE_SIMULATION,
+                "reason": "Tamaño ideal para Tensor Core",
             },
             {
-                'name': 'Matriz Cuadrada Grande (512x512)',
-                'matrices': (np.random.randn(512, 512).astype(np.float32),
-                           np.random.randn(512, 512).astype(np.float32)),
-                'expected_technique': BreakthroughTechnique.TENSOR_CORE_SIMULATION,
-                'reason': 'Tamaño óptimo para Tensor Core'
+                "name": "Matriz Cuadrada Grande (512x512)",
+                "matrices": (
+                    np.random.randn(512, 512).astype(np.float32),
+                    np.random.randn(512, 512).astype(np.float32),
+                ),
+                "expected_technique": BreakthroughTechnique.TENSOR_CORE_SIMULATION,
+                "reason": "Tamaño óptimo para Tensor Core",
             },
             {
-                'name': 'Matriz Rectangular (256x512 x 512x256)',
-                'matrices': (np.random.randn(256, 512).astype(np.float32),
-                           np.random.randn(512, 256).astype(np.float32)),
-                'expected_technique': BreakthroughTechnique.COPPERSMITH_WINOGRAD,
-                'reason': 'No cuadrada, mejor CW'
+                "name": "Matriz Rectangular (256x512 x 512x256)",
+                "matrices": (
+                    np.random.randn(256, 512).astype(np.float32),
+                    np.random.randn(512, 256).astype(np.float32),
+                ),
+                "expected_technique": BreakthroughTechnique.COPPERSMITH_WINOGRAD,
+                "reason": "No cuadrada, mejor CW",
             },
             {
-                'name': 'Matriz Sparsa (256x256, 90% zeros)',
-                'matrices': self._create_sparse_matrix(256, 0.9),
-                'expected_technique': BreakthroughTechnique.LOW_RANK,
-                'reason': 'Muy sparsa, mejor Low-Rank'
-            }
+                "name": "Matriz Sparsa (256x256, 90% zeros)",
+                "matrices": self._create_sparse_matrix(256, 0.9),
+                "expected_technique": BreakthroughTechnique.LOW_RANK,
+                "reason": "Muy sparsa, mejor Low-Rank",
+            },
         ]
 
     def _create_sparse_matrix(self, size: int, sparsity: float) -> Tuple[np.ndarray, np.ndarray]:
@@ -123,7 +135,7 @@ class TensorCoreMLIntegrationValidator:
 
             try:
                 # Ejecutar selección
-                matrix_a, matrix_b = test_case['matrices']
+                matrix_a, matrix_b = test_case["matrices"]
                 selection = self.selector.select_technique(matrix_a, matrix_b)
 
                 print(f"   Selected: {selection.technique.value}")
@@ -131,7 +143,7 @@ class TensorCoreMLIntegrationValidator:
                 print(f"   Confidence: {selection.confidence:.2f}")
 
                 # Verificar si la selección es correcta
-                if selection.technique == test_case['expected_technique']:
+                if selection.technique == test_case["expected_technique"]:
                     print("   ✅ CORRECTO")
                     success_count += 1
                 else:
@@ -140,7 +152,9 @@ class TensorCoreMLIntegrationValidator:
 
                 # Ejecutar la técnica seleccionada
                 print("   🚀 Ejecutando técnica seleccionada...")
-                result, metrics = self.selector.execute_selected_technique(matrix_a, matrix_b, selection)
+                result, metrics = self.selector.execute_selected_technique(
+                    matrix_a, matrix_b, selection
+                )
 
                 print(f"   Actual GFLOPS: {metrics.get('gflops_achieved', 0):.2f}")
                 print(f"   Technique: {metrics.get('technique', 'unknown')}")
@@ -162,31 +176,35 @@ class TensorCoreMLIntegrationValidator:
                 print(f"   Accuracy: {accuracy_status}")
 
                 # Registrar resultado
-                self.results.append({
-                    'test_case': test_case['name'],
-                    'expected': test_case['expected_technique'].value,
-                    'selected': selection.technique.value,
-                    'correct': selection.technique == test_case['expected_technique'],
-                    'confidence': selection.confidence,
-                    'performance': selection.expected_performance,
-                    'actual_gflops': metrics.get('gflops_achieved', 0),
-                    'max_error': max_error,
-                    'accuracy_status': accuracy_status
-                })
+                self.results.append(
+                    {
+                        "test_case": test_case["name"],
+                        "expected": test_case["expected_technique"].value,
+                        "selected": selection.technique.value,
+                        "correct": selection.technique == test_case["expected_technique"],
+                        "confidence": selection.confidence,
+                        "performance": selection.expected_performance,
+                        "actual_gflops": metrics.get("gflops_achieved", 0),
+                        "max_error": max_error,
+                        "accuracy_status": accuracy_status,
+                    }
+                )
 
             except Exception as e:
                 print(f"   ❌ ERROR: {e}")
-                self.results.append({
-                    'test_case': test_case['name'],
-                    'expected': test_case['expected_technique'].value,
-                    'selected': 'ERROR',
-                    'correct': False,
-                    'confidence': 0.0,
-                    'performance': 0.0,
-                    'actual_gflops': 0.0,
-                    'max_error': float('inf'),
-                    'accuracy_status': 'ERROR'
-                })
+                self.results.append(
+                    {
+                        "test_case": test_case["name"],
+                        "expected": test_case["expected_technique"].value,
+                        "selected": "ERROR",
+                        "correct": False,
+                        "confidence": 0.0,
+                        "performance": 0.0,
+                        "actual_gflops": 0.0,
+                        "max_error": float("inf"),
+                        "accuracy_status": "ERROR",
+                    }
+                )
 
         # Resumen final
         print("\n📊 RESUMEN DE VALIDACIÓN")
@@ -202,6 +220,7 @@ class TensorCoreMLIntegrationValidator:
         else:
             print("⚠️ INTEGRACIÓN REQUIERE AJUSTES")
             return False
+
 
 if __name__ == "__main__":
     validator = TensorCoreMLIntegrationValidator()

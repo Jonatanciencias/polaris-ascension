@@ -1,0 +1,32 @@
+{
+  "review_id": "week5-block1-t3-production-controlled-2026-02-07",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "t3_controlled_production_integration_first_gate",
+  "tracks": [
+    {
+      "track": "t3_online_control",
+      "decision": "iterate",
+      "evidence": [
+        "research/breakthrough_lab/t3_online_control/policy_controlled_block1.json",
+        "research/breakthrough_lab/t3_online_control/week5_t3_controlled_production_20260207_231451.json",
+        "research/breakthrough_lab/t3_online_control/week5_t3_controlled_production_20260207_231451.md",
+        "research/breakthrough_lab/t3_online_control/results.json",
+        "research/breakthrough_lab/t3_online_control/report.md",
+        "research/breakthrough_lab/ACTA_WEEK5_BLOCK1_T3_PRODUCTION_CONTROLLED_2026-02-07.md",
+        "src/optimization_engines/t3_controlled_policy.py",
+        "src/optimization_engines/adaptive_kernel_selector.py",
+        "src/benchmarking/production_kernel_benchmark.py",
+        "src/cli.py"
+      ],
+      "rationale": "Controlled production mode passed safety guardrails with deterministic behavior (fallback 0, correctness 0, latency stable), but aggregate uplift (+2.053%) did not meet the +5.0% promotion threshold."
+    }
+  ],
+  "summary": {
+    "promote": 0,
+    "iterate": 1,
+    "refine": 0,
+    "stop": 0
+  },
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK5_BLOCK1_T3_PRODUCTION_CONTROLLED_2026-02-07.md"
+}

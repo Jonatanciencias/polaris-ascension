@@ -12,14 +12,14 @@ __description__ = "Energy-efficient deep learning inference framework for AMD Po
 
 # Submodules available for import
 __all__ = [
-    'core',
-    'experiments',
-    'inference',
-    'utils',
-    'optimization_engines',
-    'benchmarking',
-    'ml_models',
-    'hardware_abstraction',
-    'utilities',
-    'kernels'
+    "core",
+    "experiments",
+    "inference",
+    "utils",
+    "optimization_engines",
+    "benchmarking",
+    "ml_models",
+    "hardware_abstraction",
+    "utilities",
+    "kernels",
 ]

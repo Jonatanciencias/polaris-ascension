@@ -25,6 +25,7 @@ Workflow principal para testing y code quality.
 
 **Características:**
 - ✅ Multi-version Python testing (3.8-3.11)
+- ✅ Unified validation gate en job primario (`scripts/run_validation_suite.py --tier canonical --driver-smoke`)
 - ✅ Parallel test execution con pytest-xdist
 - ✅ Coverage reporting con comentarios en PRs
 - ✅ Timeouts para evitar jobs colgados
@@ -124,12 +125,13 @@ Workflow con separación explícita entre pruebas rápidas CPU y validación GPU
 - Manual dispatch: permite activar tier GPU/OpenCL
 
 **Jobs:**
-- **cpu-fast**: `pytest -m "not slow and not gpu and not opencl"`
+- **cpu-fast**: `python scripts/run_validation_suite.py --tier cpu-fast --allow-no-tests --driver-smoke`
 - **gpu-opencl** (manual): `pytest -m "gpu or opencl"` + bucle anti-flakiness
 
 **Características:**
 - ✅ Feedback rápido en CI estándar
 - ✅ Validación de hardware en runner dedicado
+- ✅ Smoke de diagnóstico de drivers (`verify_drivers.py --json`)
 - ✅ Repetición de pruebas críticas para detectar flakiness
 
 **Duración estimada:** 5-10 min (CPU), 15-45 min (GPU)

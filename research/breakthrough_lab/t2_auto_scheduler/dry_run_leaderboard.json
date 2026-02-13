@@ -1,0 +1,61 @@
+{
+  "timestamp_utc": "2026-02-07T17:22:30.955137+00:00",
+  "mode": "bounded_dry_run",
+  "sizes": [
+    1400,
+    2048
+  ],
+  "kernels": [
+    "tile20",
+    "tile24"
+  ],
+  "runs": 3,
+  "warmup": 1,
+  "records": [
+    {
+      "kernel": "tile24",
+      "size": 2048,
+      "gflops": 786.0769603572605,
+      "avg_time_ms": 21.8552,
+      "max_error": 0.00164794921875,
+      "baseline_peak_gflops": 774.3,
+      "delta_vs_baseline_percent": 1.5209815778458708
+    },
+    {
+      "kernel": "tile20",
+      "size": 1400,
+      "gflops": 772.5631226866277,
+      "avg_time_ms": 7.103626666666666,
+      "max_error": 0.0010986328125,
+      "baseline_peak_gflops": 776.1,
+      "delta_vs_baseline_percent": -0.45572443156452974
+    },
+    {
+      "kernel": "tile24",
+      "size": 1400,
+      "gflops": 764.033264033264,
+      "avg_time_ms": 7.182933333333334,
+      "max_error": 0.001068115234375,
+      "baseline_peak_gflops": 776.1,
+      "delta_vs_baseline_percent": -1.5547913885757014
+    },
+    {
+      "kernel": "tile20",
+      "size": 2048,
+      "gflops": 290.0144656760708,
+      "avg_time_ms": 59.237973333333336,
+      "max_error": 0.001708984375,
+      "baseline_peak_gflops": 774.3,
+      "delta_vs_baseline_percent": -62.54494825312271
+    }
+  ],
+  "best": {
+    "kernel": "tile24",
+    "size": 2048,
+    "gflops": 786.0769603572605,
+    "avg_time_ms": 21.8552,
+    "max_error": 0.00164794921875,
+    "baseline_peak_gflops": 774.3,
+    "delta_vs_baseline_percent": 1.5209815778458708
+  }
+}

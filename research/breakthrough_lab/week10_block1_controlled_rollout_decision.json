@@ -1,0 +1,55 @@
+{
+  "review_id": "week10-block1-controlled-rollout-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "controlled_low_scope_rollout_with_auto_rollback_guardrails_and_dashboard_extension",
+  "tracks": [
+    {
+      "track": "week10_block1_controlled_rollout_scope_low",
+      "decision": "iterate",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/run_week10_block1_controlled_rollout.py",
+        "research/breakthrough_lab/platform_compatibility/week10_block1_controlled_rollout_20260208_160122.json",
+        "research/breakthrough_lab/platform_compatibility/week10_block1_controlled_rollout_20260208_160122.md"
+      ],
+      "rationale": "Controlled rollout stopped at snapshot 2 due to T5 hard guardrail (disable event) after a prior soft overhead warning."
+    },
+    {
+      "track": "week10_block1_auto_rollback_operability",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh",
+        "research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260208_160103.md",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_160122.json"
+      ],
+      "rationale": "Automatic rollback executed successfully on guardrail trigger and canonical post-rollback gate remained promote."
+    },
+    {
+      "track": "week10_block2_dashboard_extension_block6_weekly_drift",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/build_week9_comparative_dashboard.py",
+        "research/breakthrough_lab/week9_comparative_dashboard_20260208_160146.json",
+        "research/breakthrough_lab/week9_comparative_dashboard_20260208_160146.md"
+      ],
+      "rationale": "Dashboard now includes explicit Block6 and Block10 plus weekly drift transitions across active stages."
+    }
+  ],
+  "summary": {
+    "promote": 2,
+    "iterate": 1,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "iterate",
+  "block_rationale": "Rollout path needs additional T5 hardening before promotion, while rollback control and dashboard extension are production-ready.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK10_BLOCK1_CONTROLLED_ROLLOUT_2026-02-08.md",
+  "required_gate": {
+    "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_160122.json",
+    "decision": "promote"
+  },
+  "depends_on": [
+    "research/breakthrough_lab/week9_block6_preprod_signoff_decision.json"
+  ]
+}
+

@@ -1,0 +1,137 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-08T02:44:45.858713+00:00",
+    "branch": "feat/breakthrough-roadmap-2026q1",
+    "artifacts": {
+      "week6_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week6_final_suite_20260208_024315.json",
+      "t3_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_024412.json",
+      "t4_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t4_approximate_gemm/week8_t4_mixed_campaign_20260208_024414.json",
+      "t5_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/week8_t5_maturation_20260208_024445.json"
+    }
+  },
+  "steps": {
+    "week6_suite": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "research/breakthrough_lab/run_week6_final_suite.py",
+        "--size",
+        "1400",
+        "--sessions",
+        "5",
+        "--iterations",
+        "10",
+        "--seed",
+        "42"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Model loaded: R\u00b2=1.0000, MAE=0.0 GFLOPS\n\u2713 Model loaded: R\u00b2=1.0000, MAE=0.0 GFLOPS\n\u2713 Model loaded: R\u00b2=1.0000, MAE=0.0 GFLOPS\nWeek6 final suite JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week6_final_suite_20260208_024315.json\nWeek6 final suite MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week6_final_suite_20260208_024315.md\nDecision: promote\nFailed checks: []\n",
+      "stderr": "2026-02-07 21:43:10,048 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:11,407 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:11,823 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:12,237 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.41 s)\n2026-02-07 21:43:13,628 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:14,038 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.41 s)\n2026-02-07 21:43:14,447 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.41 s)\n"
+    },
+    "t3_drift": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "research/breakthrough_lab/t3_online_control/run_week8_t3_drift_campaign.py",
+        "--sessions",
+        "2",
+        "--iterations",
+        "6",
+        "--sizes",
+        "1400",
+        "1536",
+        "2048",
+        "--seed",
+        "42",
+        "--pressure-size",
+        "896",
+        "--pressure-iterations",
+        "3",
+        "--pressure-pulses",
+        "2",
+        "--pressure-pause-ms",
+        "20"
+      ],
+      "returncode": 0,
+      "stdout": "T3 drift JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_024412.json\nT3 drift MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t3_online_control/week8_t3_drift_campaign_20260208_024412.md\nDecision: promote\nWarm+pressure delta vs auto: +19.445%\nWarm+pressure fallback rate: 0.000\n",
+      "stderr": "2026-02-07 21:43:17,928 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.45 s)\n2026-02-07 21:43:18,690 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.45 s)\n2026-02-07 21:43:19,729 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.47 s)\n2026-02-07 21:43:20,977 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:21,401 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:21,826 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:22,589 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:23,014 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:23,441 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:24,318 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.45 s)\n2026-02-07 21:43:24,750 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:25,189 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:26,433 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.46 s)\n2026-02-07 21:43:27,036 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.47 s)\n2026-02-07 21:43:27,795 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.46 s)\n2026-02-07 21:43:28,451 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:29,477 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.47 s)\n2026-02-07 21:43:30,260 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.47 s)\n2026-02-07 21:43:31,506 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:31,939 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:32,363 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:32,950 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:33,389 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:33,821 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:34,585 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:35,013 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:35,435 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:36,051 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:36,479 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:36,910 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:37,783 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:38,208 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:38,634 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:39,402 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:39,826 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:40,252 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:41,491 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.47 s)\n2026-02-07 21:43:42,088 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.45 s)\n2026-02-07 21:43:42,520 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:42,948 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:43,476 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:43,904 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:44,329 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:44,863 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.46 s)\n2026-02-07 21:43:45,621 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.45 s)\n2026-02-07 21:43:46,285 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:46,717 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:47,140 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:47,670 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:48,094 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:48,524 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:49,032 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:50,077 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.47 s)\n2026-02-07 21:43:50,839 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:51,264 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:51,697 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:52,221 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:52,666 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:53,088 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:53,625 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.47 s)\n2026-02-07 21:43:54,846 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:55,269 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:55,699 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:56,283 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:56,714 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:57,141 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:57,671 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:58,095 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:43:58,528 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:59,044 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:43:59,471 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:43:59,910 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:44:00,679 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.45 s)\n2026-02-07 21:44:01,104 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:44:01,533 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:44:02,148 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:44:02,579 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:44:03,005 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:44:03,534 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:44:03,960 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:44:04,383 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:44:04,902 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:44:05,324 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:44:05,774 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.45 s)\n2026-02-07 21:44:06,638 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.45 s)\n2026-02-07 21:44:07,061 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.42 s)\n2026-02-07 21:44:07,490 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:44:08,253 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:44:08,695 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:44:09,121 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:44:09,650 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:44:10,088 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.44 s)\n2026-02-07 21:44:10,523 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:44:11,037 - INFO - build program: kernel 'gemm_tile20_optimized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:44:11,466 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n2026-02-07 21:44:11,893 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.43 s)\n"
+    },
+    "t4_mixed": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "research/breakthrough_lab/t4_approximate_gemm/run_week8_t4_mixed_campaign.py",
+        "--sessions",
+        "6",
+        "--seed",
+        "42"
+      ],
+      "returncode": 0,
+      "stdout": "T4 mixed JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t4_approximate_gemm/week8_t4_mixed_campaign_20260208_024414.json\nT4 mixed MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t4_approximate_gemm/week8_t4_mixed_campaign_20260208_024414.md\nDecision: promote\nFallback reduction abs: 0.194\n",
+      "stderr": ""
+    },
+    "t5_maturation": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "research/breakthrough_lab/t5_reliability_abft/run_week8_t5_maturation.py"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Model loaded: R\u00b2=1.0000, MAE=0.0 GFLOPS\n\u2713 Model loaded: R\u00b2=1.0000, MAE=0.0 GFLOPS\nT5 maturation JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/week8_t5_maturation_20260208_024445.json\nT5 maturation MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/week8_t5_maturation_20260208_024445.md\nDecision: promote\nUniform recall delta vs baseline: +0.017\nOverhead delta vs baseline (%): -0.056\n",
+      "stderr": "2026-02-07 21:44:17,141 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.45 s)\n2026-02-07 21:44:21,137 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.45 s)\n2026-02-07 21:44:31,588 - INFO - build program: kernel 'gemm_tile20_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.45 s)\n2026-02-07 21:44:35,532 - INFO - build program: kernel 'gemm_tile24_vectorized' was part of a lengthy source build resulting from a binary cache miss (0.45 s)\n"
+    }
+  },
+  "summary": {
+    "week6_decision": "promote",
+    "t3_decision": "promote",
+    "t4_decision": "promote",
+    "t5_decision": "promote",
+    "week6_auto_peak_mean_gflops": 901.8955388545179,
+    "t3_delta_vs_auto_pressure_percent": 19.44496233771593,
+    "t4_fallback_reduction_abs": 0.19444444444444445,
+    "t5_uniform_recall_delta": 0.016666666666666607
+  },
+  "evaluation": {
+    "checks": {
+      "week6_suite_command_green": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "t3_drift_command_green": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "t4_mixed_command_green": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "t5_maturation_command_green": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "week6_decision_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "t3_decision_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "t4_decision_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "t5_decision_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Integrated rerun remains green across week6 suite and promoted T3/T4/T5 tracks."
+  }
+}

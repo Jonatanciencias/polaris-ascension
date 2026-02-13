@@ -1,0 +1,54 @@
+{
+  "review_id": "week12-block2-platform-split-policy-2026-02-09",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "weekly_clover_rusticl_split_against_formal_policy",
+  "tracks": [
+    {
+      "track": "week12_block2_platform_split_execution",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block2_platform_split_20260209_012324.json",
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block2_platform_split_20260209_012324.md"
+      ],
+      "rationale": "Weekly Clover/rusticl split run completed successfully with promote decision."
+    },
+    {
+      "track": "week12_block2_platform_split_policy_eval",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week12_controlled_rollout/evaluate_week12_platform_split_policy.py",
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block2_platform_split_eval_20260209_012330.json",
+        "research/breakthrough_lab/week12_controlled_rollout/week12_block2_platform_split_eval_20260209_012330.md"
+      ],
+      "rationale": "Formal policy split evaluation passed all checks including rusticl/clover ratio threshold."
+    },
+    {
+      "track": "week12_block2_mandatory_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012354.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012354.md"
+      ],
+      "rationale": "Canonical validation gate remained promote at split closure."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Weekly platform split remains healthy and policy-compliant for Clover and rusticl.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK12_BLOCK2_PLATFORM_SPLIT_POLICY_2026-02-09.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260209_012354.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week12_block1_weekly_automation_decision.json"
+  ]
+}

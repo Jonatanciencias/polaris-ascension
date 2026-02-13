@@ -1,0 +1,70 @@
+{
+  "review_id": "week10-block1-4-1-5-longwindow-split-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "long_equivalent_window_1400_2048_and_split_canary_clover_rusticl_with_mandatory_gates",
+  "tracks": [
+    {
+      "track": "week10_block1_4_long_window_1400_2048",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week10_block1_4_long_window_20260208_165345.json",
+        "research/breakthrough_lab/platform_compatibility/week10_block1_4_long_window_20260208_165345.md",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165410.json"
+      ],
+      "rationale": "Extended equivalent window completed with 6/6 snapshots, no rollback and no T5 disable events."
+    },
+    {
+      "track": "week10_block1_5_platform_split_clover_rusticl",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/platform_compatibility/week10_block1_5_platform_split_20260208_165631.json",
+        "research/breakthrough_lab/platform_compatibility/week10_block1_5_platform_split_20260208_165631.md",
+        "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165700.json"
+      ],
+      "rationale": "Split Clover/rusticl canary passed with ratio floor and stable T3/T5 guardrails while keeping rollback SLA path configured."
+    },
+    {
+      "track": "week10_block1_4_and_1_5_mandatory_canonical_gates",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165410.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165700.json"
+      ],
+      "rationale": "Mandatory canonical gate executed and passed before each promotion decision."
+    },
+    {
+      "track": "week10_block2_dashboard_refresh_post_split",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week9_comparative_dashboard_20260208_165707.json",
+        "research/breakthrough_lab/week9_comparative_dashboard_20260208_165707.md"
+      ],
+      "rationale": "Comparative chain remains promote after long-window and split canary closure."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Both long-window and split-platform rollout checks passed under mandatory canonical gates.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK10_BLOCK1_4_1_5_LONGWINDOW_SPLIT_2026-02-08.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165410.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_165700.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week10_block1_2_1_3_scope_expansion_decision.json"
+  ]
+}
+

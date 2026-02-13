@@ -1,0 +1,54 @@
+{
+  "sla_id": "week12-weekly-alert-sla-v1-2026-02-09",
+  "scope": {
+    "cadence": "weekly",
+    "platforms": ["Clover", "rusticl"],
+    "sizes": [1400, 2048, 3072],
+    "kernels": ["auto_t3_controlled", "auto_t5_guarded"]
+  },
+  "severity_levels": {
+    "sev1_critical": {
+      "triggers": [
+        "correctness_error_gt_0.001",
+        "t5_disable_events_total_gt_0",
+        "missing_required_split_size"
+      ],
+      "response_sla_minutes": 15,
+      "action": "auto_rollback_immediate"
+    },
+    "sev2_high": {
+      "triggers": [
+        "t5_overhead_percent_gt_3.0",
+        "t3_fallback_rate_gt_0.08",
+        "rusticl_ratio_vs_clover_lt_0.85"
+      ],
+      "response_sla_minutes": 60,
+      "action": "freeze_promotion_and_refine"
+    },
+    "sev3_medium": {
+      "triggers": [
+        "abs_throughput_drift_percent_gt_3.0",
+        "p95_drift_percent_gt_8.0"
+      ],
+      "response_sla_minutes": 240,
+      "action": "open_iteration_ticket"
+    },
+    "sev4_info": {
+      "triggers": [
+        "all_checks_promote"
+      ],
+      "response_sla_minutes": 1440,
+      "action": "record_and_continue"
+    }
+  },
+  "rollback": {
+    "script": "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh",
+    "sla_reference": "research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_ROLLBACK_SLA.md",
+    "post_rollback_gate": "scripts/run_validation_suite.py --tier canonical --driver-smoke"
+  },
+  "notification_channels": {
+    "primary": "project_git_issue",
+    "secondary": "weekly_ops_report",
+    "audit": "research/breakthrough_lab/week12_controlled_rollout"
+  }
+}

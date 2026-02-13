@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-11T01:20:10.561181+00:00",
+    "stable_tag": "v0.15.0",
+    "stable_manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json",
+    "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+    "t5_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json",
+    "baseline_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_canary_20260211_004858.json",
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ],
+    "snapshots": 6,
+    "seed": 27211
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011608.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011608.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "replay_automation": {
+      "command": [
+        "./venv/bin/python",
+        "research/breakthrough_lab/week12_controlled_rollout/run_week12_weekly_replay_automation.py",
+        "--mode",
+        "local",
+        "--policy-path",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+        "--t5-policy-path",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json",
+        "--baseline-path",
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_canary_20260211_004858.json",
+        "--sizes",
+        "1400",
+        "2048",
+        "3072",
+        "--snapshots",
+        "6",
+        "--snapshot-interval-minutes",
+        "60",
+        "--sessions",
+        "1",
+        "--iterations",
+        "8",
+        "--seed",
+        "27211",
+        "--validation-report-dir",
+        "research/breakthrough_lab/week8_validation_discipline",
+        "--output-dir",
+        "research/breakthrough_lab/week17_controlled_rollout",
+        "--output-prefix",
+        "week17_block4_posthardening_replay_automation"
+      ],
+      "returncode": 0,
+      "stdout": "Week12 block1 JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_automation_20260211_011608.json\nWeek12 block1 MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_automation_20260211_011608.md\nDecision: promote\nFailed checks: []\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_012010.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_012010.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "replay_cmd_pretty": "./venv/bin/python research/breakthrough_lab/week12_controlled_rollout/run_week12_weekly_replay_automation.py --mode local --policy-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json --t5-policy-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json --baseline-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_canary_20260211_004858.json --sizes 1400 2048 3072 --snapshots 6 --snapshot-interval-minutes 60 --sessions 1 --iterations 8 --seed 27211 --validation-report-dir research/breakthrough_lab/week8_validation_discipline --output-dir research/breakthrough_lab/week17_controlled_rollout --output-prefix week17_block4_posthardening_replay_automation"
+  },
+  "artifacts": {
+    "replay_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_automation_20260211_011608.json",
+    "replay_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_automation_20260211_011608.md",
+    "replay_eval_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_automation_eval_20260211_011930.json",
+    "replay_canary_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block4_posthardening_replay_automation_canary_20260211_011930.json",
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011608.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_012010.json"
+  },
+  "drift": {
+    "max_abs_throughput_drift_percent": 0.6065075586318003,
+    "max_positive_p95_drift_percent": 0.32414501905815746
+  },
+  "evaluation": {
+    "checks": {
+      "stable_manifest_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "stable_tag_v0_15_0": {
+        "observed": "v0.15.0",
+        "required": "v0.15.0",
+        "pass": true
+      },
+      "replay_automation_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "replay_eval_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "throughput_drift_bound": {
+        "observed_max_abs_percent": 0.6065075586318003,
+        "required_max_abs_percent": 15.0,
+        "pass": true
+      },
+      "p95_drift_bound": {
+        "observed_max_percent": 0.32414501905815746,
+        "required_max_percent": 20.0,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "pre_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "post_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Post-hardening weekly replay is stable with bounded drift and green pytest-tier gates."
+  }
+}

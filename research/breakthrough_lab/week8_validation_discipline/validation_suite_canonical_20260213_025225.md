@@ -1,0 +1,29 @@
+# Validation Suite Report
+
+- Date: 2026-02-13T02:52:25.897445+00:00
+- Branch: `feat/breakthrough-roadmap-2026q1`
+- Tier: `canonical`
+- Driver smoke enabled: `True`
+
+## Command Status
+
+- `validate_breakthrough_results.py`: rc=0
+- `pytest` tier command: rc=1
+- `pytest` counts: passed=84 failed=1 skipped=None
+- `verify_drivers.py --json`: rc=0
+- Driver JSON parse: `True`
+- Driver status: `good`
+
+## Evaluation
+
+| Check | Pass |
+| --- | --- |
+| results_schema_green | True |
+| pytest_tier_green | False |
+| verify_drivers_json_smoke | True |
+
+## Decision
+
+- Decision: `iterate`
+- Rationale: One or more validation checks failed; keep rollout blocked until fixed.
+

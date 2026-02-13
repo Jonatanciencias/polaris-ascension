@@ -1,0 +1,88 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-13T17:14:20.274673+00:00",
+    "branch": "feat/breakthrough-roadmap-2026q1",
+    "tier": "canonical",
+    "driver_smoke": true
+  },
+  "commands": {
+    "validate_results_schema": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "scripts/validate_breakthrough_results.py"
+      ],
+      "returncode": 0,
+      "stdout": "Schema: research/breakthrough_lab/results.schema.json\nValidated: 6 files\nPassed: 6\nFailed: 0\n\nAll breakthrough results contracts are valid.\n",
+      "stderr": ""
+    },
+    "pytest_tier": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/"
+      ],
+      "returncode": 0,
+      "stdout": "........................................................................ [ 84%]\n.............                                                            [100%]\n================================ tests coverage ================================\n_______________ coverage: platform linux, python 3.12.3-final-0 ________________\n\nName                                                           Stmts   Miss Branch BrPart   Cover   Missing\n-----------------------------------------------------------------------------------------------------------\nsrc/__init__.py                                                    4      0      0      0 100.00%\nsrc/benchmarking/__init__.py                                      16     10      2      0  33.33%   29-40\nsrc/benchmarking/comprehensive_breakthrough_benchmark.py         117    117     18      0   0.00%   10-198\nsrc/benchmarking/fast_integrated_benchmark.py                    207    207     44      0   0.00%   12-396\nsrc/benchmarking/gemm_progress_report.py                          93     93      4      0   0.00%   10-118\nsrc/benchmarking/integrated_breakthrough_benchmark.py            220    220     44      0   0.00%   12-422\nsrc/benchmarking/performance_summary.py                           57     57      2      0   0.00%   7-82\nsrc/benchmarking/polaris_breakthrough_benchmark.py               234    234     48      0   0.00%   34-424\nsrc/benchmarking/production_kernel_benchmark.py                  372    296     70      4  20.81%   87, 105-106, 108->107, 120-133, 154-155, 171-172, 185-187, 191-197, 207-212, 224-263, 273-279, 285-297, 301-304, 314-320, 329-338, 348-356, 360-361, 373-378, 398-512, 553-677, 731-898, 954-1013\nsrc/benchmarking/reporting.py                                     24     24      0      0   0.00%   5-56\nsrc/cli.py                                                       219    219     54      0   0.00%   6-471\nsrc/compute/__init__.py                                            9      9      0      0   0.00%   17-44\nsrc/compute/nas_darts.py                                         302    302     70      0   0.00%   45-812\nsrc/core/__init__.py                                               4      4      0      0   0.00%   7-11\nsrc/core/gpu.py                                                   89     89     22      0   0.00%   5-161\nsrc/core/memory.py                                               109    109     34      0   0.00%   5-188\nsrc/core/profiler.py                                              50     50     16      0   0.00%   5-81\nsrc/experiments/__init__.py                                        4      4      0      0   0.00%   3-7\nsrc/experiments/precision_experiments.py                          20     20      0      0   0.00%   5-55\nsrc/experiments/quantization_analysis.py                          56     56      6      0   0.00%   5-109\nsrc/experiments/sparse_networks.py                                35     35      6      0   0.00%   5-84\nsrc/hardware_abstraction/__init__.py                               9      9      0      0   0.00%   4-14\nsrc/hardware_abstraction/check_integration_status.py             139    139     52      0   0.00%   12-260\nsrc/hardware_abstraction/debug_test.py                            29     29      0      0   0.00%   6-52\nsrc/inference/__init__.py                                          3      3      0      0   0.00%   5-8\nsrc/inference/base.py                                             20     20      6      0   0.00%   5-30\nsrc/inference/enhanced.py                                         32     32      6      0   0.00%   5-56\nsrc/inference/model_loaders.py                                   110    110     28      0   0.00%   5-171\nsrc/inference/onnx_engine.py                                     168    168     50      0   0.00%   5-298\nsrc/inference/onnx_export.py                                      34     34      6      0   0.00%   5-70\nsrc/inference/real_models.py                                      20     20      0      0   0.00%   5-42\nsrc/ml_models/__init__.py                                         24     13      0      0  45.83%   6-7, 11-12, 16-17, 21-22, 31-35\nsrc/ml_models/ai_kernel_predictor_fine_tuning.py                 177    154     32      0  11.00%   36-47, 51-71, 75-109, 113-149, 152-173, 177-242, 246-259, 263-291, 295-326, 331-339\nsrc/ml_models/ai_kernel_predictor_fine_tuning_corrected.py       177    154     32      0  11.00%   39-51, 55-75, 79-113, 117-154, 158-179, 183-250, 254-267, 271-300, 304-335, 340-348\nsrc/ml_models/calibrated_intelligent_selector.py                 350    115    118     26  63.03%   151, 155->172, 161->164, 167-169, 173, 177->exit, 185-186, 207->exit, 209->208, 226, 241->239, 301->297, 319, 349-350, 358-359, 365, 367, 369, 421-422, 426-428, 458, 499, 511->515, 515->518, 539-541, 563->575, 571-572, 620, 625-628, 648-649, 653-667, 671, 680-715, 721-796\nsrc/ml_models/ml_dataset_collector.py                            210    184     40      0  10.40%   31-38, 50-55, 59-78, 82-86, 99-108, 112-151, 160-196, 216-290, 294-297, 301-328, 331-392\nsrc/ml_models/recalibrate_selector.py                             52     48     20      0   5.56%   12-99\nsrc/opencl/__init__.py                                            38      1     20      1  96.55%   38\nsrc/opencl/ops.py                                                 21      0      2      0 100.00%\nsrc/optimization_engines/__init__.py                              29     10      0      0  65.52%   7-8, 12-13, 17-18, 22-23, 32-33\nsrc/optimization_engines/adaptive_kernel_selector.py             166    142     44      0  11.43%   27-29, 67-153, 159-185, 189-210, 222-234, 242, 252-255, 265-275, 297-330, 357-367, 371-394, 408-429, 432-434, 447-448\nsrc/optimization_engines/advanced_memory_manager.py              405    176    118     14  51.05%   69, 71, 87, 91, 95, 116-117, 122-124, 127, 237-238, 247, 254, 265, 281, 286-290, 304-336, 340-341, 345-346, 350-361, 408-419, 436-459, 479-508, 512-515, 519-521, 571, 575, 612-615, 689->695, 700-705, 725, 747->753, 800-816, 824-829, 834-920\nsrc/optimization_engines/advanced_polaris_opencl_engine.py       201    152     18      0  22.37%   94-117, 121-164, 168-212, 221-280, 292-306, 322-437, 441-449, 462-474, 488-496\nsrc/optimization_engines/coppersmith_winograd_gpu.py             186    169     26      0   8.02%   27-28, 32-55, 60-94, 106-168, 174-211, 215-231, 236-253, 258-298, 303-381\nsrc/optimization_engines/low_rank_matrix_approximator.py         191    175     14      0   7.80%   32-34, 46-94, 107-152, 158-182, 196-284, 298-320, 326-360, 367-394, 399-445\nsrc/optimization_engines/low_rank_matrix_approximator_gcn.py     214    198     36      0   6.40%   34-39, 43-93, 98-191, 197-239, 246-328, 333-373, 378-402, 407-476\nsrc/optimization_engines/low_rank_matrix_approximator_gpu.py     240    221     28      0   7.09%   35-40, 44-87, 91-127, 139-198, 211-307, 321-438, 442-463, 468-491, 496-561\nsrc/optimization_engines/optimized_kernel_engine.py              432    193    126     17  49.46%   31-32, 81-83, 87-89, 113, 128-132, 136-149, 153-160, 164-173, 177-178, 182-189, 372-377, 393->390, 396-399, 424-426, 431->434, 454->445, 460, 499-515, 519, 551, 553, 583-594, 603, 683, 693, 713-720, 734-739, 758, 772-779, 825-919, 938-984, 988-1019, 1023-1025, 1029-1033, 1048-1051\nsrc/optimization_engines/optimized_opencl_engine.py              263    226     18      0  13.17%   62-80, 84-110, 114-135, 140-147, 162-230, 243-287, 300-342, 355-408, 420-511, 515-522, 535-573\nsrc/optimization_engines/quantum_annealing_optimizer.py          259    235     38      0   8.08%   34-37, 41-76, 80-144, 159-200, 208-227, 247-304, 310-313, 317-326, 330-345, 351-354, 358-360, 364-379, 388-397, 404-441, 446-480, 485-562\nsrc/optimization_engines/t3_controlled_policy.py                 173     66     60     12  57.94%   64, 82-85, 89-153, 161-200, 213, 230, 251, 253, 280, 299-303, 312, 343->347, 348, 362-364, 378->384, 396-410\nsrc/optimization_engines/t5_abft_guardrails.py                   101      7     30      6  90.08%   82, 126, 132, 234-235, 237, 240, 243->241\nsrc/utilities/__init__.py                                          9      9      0      0   0.00%   4-14\nsrc/utilities/advanced_techniques_investigation.py               219    219     20      0   0.00%   20-787\nsrc/utilities/quick_analysis.py                                   43     43      4      0   0.00%   6-92\nsrc/utils/__init__.py                                              2      2      0      0   0.00%   3-5\nsrc/utils/logging_config.py                                        9      9      2      0   0.00%   5-22\n-----------------------------------------------------------------------------------------------------------\nTOTAL                                                           6996   5640   1434     80  18.74%\nCoverage HTML written to dir htmlcov\nCoverage XML written to file coverage.xml\n85 passed in 16.59s\n",
+      "stderr": "",
+      "counts": {
+        "passed": 85,
+        "skipped": null,
+        "failed": null
+      }
+    },
+    "verify_drivers_smoke": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "scripts/verify_drivers.py",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"kernel_driver\": {\n    \"loaded\": true,\n    \"version\": \"4F6C330FEE273BA166A6837\",\n    \"name\": \"amdgpu\"\n  },\n  \"mesa_version\": \"25.0.7\",\n  \"opencl\": {\n    \"available\": true,\n    \"platform\": \"Clover\",\n    \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\",\n    \"implementation\": \"Mesa (Clover/RustiCL)\",\n    \"source\": \"pyopencl\",\n    \"device\": \"AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)\",\n    \"driver\": \"25.0.7-0ubuntu0.24.04.2\",\n    \"inventory\": [\n      {\n        \"index\": 0,\n        \"name\": \"Clover\",\n        \"vendor\": \"Mesa\",\n        \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\",\n        \"devices\": [\n          {\n            \"name\": \"AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)\",\n            \"vendor\": \"AMD\",\n            \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\",\n            \"driver\": \"25.0.7-0ubuntu0.24.04.2\"\n          }\n        ]\n      },\n      {\n        \"index\": 1,\n        \"name\": \"rusticl\",\n        \"vendor\": \"Mesa/X.org\",\n        \"version\": \"OpenCL 3.0\",\n        \"devices\": []\n      }\n    ]\n  },\n  \"vulkan\": {\n    \"version\": \"1.3.275\",\n    \"driver\": \"AMD Radeon RX 590 GME (RADV POLARIS10)\",\n    \"implementation\": \"Mesa RADV\",\n    \"available\": true\n  },\n  \"rocm\": null,\n  \"recommendations\": [],\n  \"overall_status\": \"good\"\n}\n",
+      "stderr": "",
+      "json_parse_ok": true,
+      "parsed_keys": [
+        "kernel_driver",
+        "mesa_version",
+        "opencl",
+        "overall_status",
+        "recommendations",
+        "rocm",
+        "vulkan"
+      ],
+      "overall_status": "good"
+    }
+  },
+  "evaluation": {
+    "checks": {
+      "results_schema_green": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "pytest_tier_green": {
+        "observed": 0,
+        "required": 0,
+        "pass": true,
+        "allow_no_tests": false
+      },
+      "verify_drivers_json_smoke": {
+        "observed": {
+          "returncode": 0,
+          "json_parse_ok": true,
+          "has_required_keys": true,
+          "overall_status": "good"
+        },
+        "required": {
+          "json_parse_ok": true,
+          "has_required_keys": true
+        },
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Validation runner checks passed for the selected tier."
+  }
+}

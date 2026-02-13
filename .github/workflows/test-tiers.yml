@@ -39,17 +39,12 @@ jobs:
           pip install -e .
           pip install pytest pytest-cov
 
-      - name: Run fast test tier
+      - name: Run unified validation suite (CPU fast + driver smoke)
         run: |
-          set +e
-          pytest tests/ -m "not slow and not gpu and not opencl" -q
-          status=$?
-          set -e
-          if [ "$status" -eq 5 ]; then
-            echo "No CPU-only tests were collected for this tier; continuing."
-            exit 0
-          fi
-          exit "$status"
+          python scripts/run_validation_suite.py \
+            --tier cpu-fast \
+            --allow-no-tests \
+            --driver-smoke
 
   gpu-opencl:
     name: GPU/OpenCL Full Tests

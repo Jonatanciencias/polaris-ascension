@@ -1,0 +1,179 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-10T01:54:24.835046+00:00",
+    "canary_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week16_controlled_rollout/week16_block2_weekly_rc_replay_rerun_automation_canary_20260210_015424.json",
+    "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week11_controlled_rollout/policy_week11_block3_weekly_slo_v1.json",
+    "policy_id": "week11-block3-weekly-slo-v1-2026-02-09"
+  },
+  "evaluation": {
+    "summary": {
+      "max_correctness_error": 0.0009307861328125,
+      "max_t3_fallback_rate": 0.0,
+      "max_t5_overhead_percent": 1.1594517049944042,
+      "t5_disable_events_total": 0
+    },
+    "rows": {
+      "auto_t3_controlled:1400": {
+        "kernel": "auto_t3_controlled",
+        "size": 1400,
+        "samples": 6,
+        "avg_gflops_mean": 876.8720040515539,
+        "p95_time_ms_mean": 6.141746166273758,
+        "throughput_drift_percent": -0.026134311438424575,
+        "p95_drift_percent": 0.7179164668911601,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.0,
+        "t5_disable_events_total": 0
+      },
+      "auto_t3_controlled:2048": {
+        "kernel": "auto_t3_controlled",
+        "size": 2048,
+        "samples": 6,
+        "avg_gflops_mean": 772.5136464867496,
+        "p95_time_ms_mean": 22.187010833325377,
+        "throughput_drift_percent": -0.12407553043157189,
+        "p95_drift_percent": 0.06305979028126586,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.0,
+        "t5_disable_events_total": 0
+      },
+      "auto_t3_controlled:3072": {
+        "kernel": "auto_t3_controlled",
+        "size": 3072,
+        "samples": 6,
+        "avg_gflops_mean": 704.9472848622994,
+        "p95_time_ms_mean": 72.07019783360617,
+        "throughput_drift_percent": -0.26688452886475816,
+        "p95_drift_percent": 0.015532967900377288,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.0,
+        "t5_disable_events_total": 0
+      },
+      "auto_t5_guarded:1400": {
+        "kernel": "auto_t5_guarded",
+        "size": 1400,
+        "samples": 6,
+        "avg_gflops_mean": 898.5163997289583,
+        "p95_time_ms_mean": 6.007557333305158,
+        "throughput_drift_percent": -0.0943991200330135,
+        "p95_drift_percent": 0.22207864718429265,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 1.1594517049944042,
+        "t5_disable_events_total": 0
+      },
+      "auto_t5_guarded:2048": {
+        "kernel": "auto_t5_guarded",
+        "size": 2048,
+        "samples": 6,
+        "avg_gflops_mean": 777.8640554469725,
+        "p95_time_ms_mean": 21.973705000012462,
+        "throughput_drift_percent": -0.0520212339418327,
+        "p95_drift_percent": 0.06730106643441643,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.5822725865748118,
+        "t5_disable_events_total": 0
+      },
+      "auto_t5_guarded:3072": {
+        "kernel": "auto_t5_guarded",
+        "size": 3072,
+        "samples": 6,
+        "avg_gflops_mean": 803.1226900611664,
+        "p95_time_ms_mean": 71.99755500005267,
+        "throughput_drift_percent": 0.4916250601627208,
+        "p95_drift_percent": -0.08412627472685259,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.346566933489025,
+        "t5_disable_events_total": 0
+      }
+    },
+    "checks": {
+      "minimum_snapshots": {
+        "observed": 6,
+        "required_min": 6,
+        "pass": true
+      },
+      "correctness_error_bound": {
+        "observed_max": 0.0009307861328125,
+        "required_max": 0.001,
+        "pass": true
+      },
+      "t3_fallback_bound": {
+        "observed_max": 0.0,
+        "required_max": 0.08,
+        "pass": true
+      },
+      "t5_disable_events_total_bound": {
+        "observed": 0,
+        "required_max": 0,
+        "pass": true
+      },
+      "t5_overhead_bound": {
+        "observed_max": 1.1594517049944042,
+        "required_max": 3.0,
+        "pass": true
+      },
+      "all_policy_rows_present": {
+        "missing_rows": [],
+        "pass": true
+      },
+      "per_kernel_size_slo": {
+        "rows": [
+          {
+            "key": "auto_t3_controlled:1400",
+            "observed_avg_gflops": 876.8720040515539,
+            "required_min_avg_gflops": 838.53369520755,
+            "avg_pass": true,
+            "observed_p95_time_ms": 6.141746166273758,
+            "required_max_p95_time_ms": 6.607722621,
+            "p95_pass": true,
+            "pass": true
+          },
+          {
+            "key": "auto_t3_controlled:2048",
+            "observed_avg_gflops": 772.5136464867496,
+            "required_min_avg_gflops": 734.362551143711,
+            "avg_pass": true,
+            "observed_p95_time_ms": 22.187010833325377,
+            "required_max_p95_time_ms": 23.9542948803,
+            "p95_pass": true,
+            "pass": true
+          },
+          {
+            "key": "auto_t5_guarded:1400",
+            "observed_avg_gflops": 898.5163997289583,
+            "required_min_avg_gflops": 861.45373533445,
+            "avg_pass": true,
+            "observed_p95_time_ms": 6.007557333305158,
+            "required_max_p95_time_ms": 6.47939053952,
+            "p95_pass": true,
+            "pass": true
+          },
+          {
+            "key": "auto_t5_guarded:2048",
+            "observed_avg_gflops": 777.8640554469725,
+            "required_min_avg_gflops": 738.647517126106,
+            "avg_pass": true,
+            "observed_p95_time_ms": 21.973705000012462,
+            "required_max_p95_time_ms": 23.7647097615,
+            "p95_pass": true,
+            "pass": true
+          }
+        ],
+        "pass": true
+      },
+      "throughput_drift_abs_bound": {
+        "observed_max_abs_percent": 0.4916250601627208,
+        "required_max_abs_percent": 3.0,
+        "pass": true
+      },
+      "p95_drift_bound": {
+        "observed_max_percent": 0.7179164668911601,
+        "required_max_percent": 8.0,
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Weekly replay satisfies all global guardrails, per-kernel SLO rows, and drift bounds."
+  }
+}

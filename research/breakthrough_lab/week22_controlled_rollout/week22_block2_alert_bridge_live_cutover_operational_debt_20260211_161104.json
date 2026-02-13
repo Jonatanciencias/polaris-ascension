@@ -1,0 +1,31 @@
+{
+  "matrix_id": "week22-block2-alert-bridge-live-cutover-debt-v1",
+  "timestamp_utc": "2026-02-11T16:11:04.387969+00:00",
+  "debts": [
+    {
+      "debt_id": "week22_block2_webhook_live_cutover",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Completar cutover del bridge de alertas de dry-run a endpoint webhook real.",
+      "mitigation": "Mantener endpoint controlado y monitorear delivery success 2xx.",
+      "target_window": "week22_block2"
+    },
+    {
+      "debt_id": "week22_block2_rollback_explicit_path",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Definir y validar rollback expl\u00edcito de canal ante falla de dispatch live.",
+      "mitigation": "Registrar rollback record y spool de payload para retry seguro.",
+      "target_window": "week22_block2"
+    }
+  ],
+  "summary": {
+    "total": 2,
+    "open": 0,
+    "high_or_critical_open": 0
+  }
+}

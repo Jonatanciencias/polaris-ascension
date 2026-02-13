@@ -1,0 +1,146 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-11T01:11:49.521939+00:00",
+    "stable_tag": "v0.15.0",
+    "stable_manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json",
+    "dependent_project_dir": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/dependent_projects/rx590_stable_integration_pilot_v2",
+    "plugin_id": "rx590_dependent_project_week17_block2",
+    "owner": "dependent-project-team-v2",
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ]
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011026.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011026.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "plugin_pilot": {
+      "command": [
+        "./venv/bin/python",
+        "research/breakthrough_lab/week15_controlled_rollout/run_week15_block2_plugin_pilot.py",
+        "--plugin-id",
+        "rx590_dependent_project_week17_block2",
+        "--owner",
+        "dependent-project-team-v2",
+        "--sizes",
+        "1400",
+        "2048",
+        "3072",
+        "--sessions",
+        "1",
+        "--iterations",
+        "8",
+        "--seed",
+        "27111",
+        "--t5-policy-path",
+        "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json",
+        "--baseline-path",
+        "research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_rerun_canary_20260211_004858.json",
+        "--template-path",
+        "research/breakthrough_lab/preprod_signoff/WEEK14_BLOCK6_PLUGIN_TEMPLATE.md",
+        "--output-dir",
+        "research/breakthrough_lab/week17_controlled_rollout",
+        "--output-prefix",
+        "week17_block2_second_dependent_pilot_plugin"
+      ],
+      "returncode": 0,
+      "stdout": "Week15 block2 JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block2_second_dependent_pilot_plugin_20260211_011129.json\nWeek15 block2 MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block2_second_dependent_pilot_plugin_20260211_011129.md\nWeek15 block2 results.json: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week15_block2_plugin_pilot_results.json\nDecision: promote\nFailed checks: []\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011149.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011149.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    }
+  },
+  "artifacts": {
+    "integration_profile_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/dependent_projects/rx590_stable_integration_pilot_v2/week17_block2_integration_profile.json",
+    "plugin_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block2_second_dependent_pilot_plugin_20260211_011129.json",
+    "plugin_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block2_second_dependent_pilot_plugin_20260211_011129.md",
+    "plugin_results_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week15_block2_plugin_pilot_results.json",
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011026.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_011149.json"
+  },
+  "evaluation": {
+    "checks": {
+      "stable_manifest_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "stable_tag_v0_15_0": {
+        "observed": "v0.15.0",
+        "required": "v0.15.0",
+        "pass": true
+      },
+      "stable_status_proposed_or_stable": {
+        "observed": "proposed_stable",
+        "required_in": [
+          "proposed_stable",
+          "stable"
+        ],
+        "pass": true
+      },
+      "stable_manifest_references_exist": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "plugin_template_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "integration_profile_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "plugin_pilot_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "plugin_results_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Second dependent pilot is stable over v0.15.0 manifest with mandatory gates green."
+  }
+}

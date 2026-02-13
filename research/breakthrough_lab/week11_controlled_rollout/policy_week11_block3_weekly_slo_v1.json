@@ -1,0 +1,79 @@
+{
+  "policy_id": "week11-block3-weekly-slo-v1-2026-02-09",
+  "status": "candidate_weekly_monitoring_policy",
+  "inherits_from": "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week10_block2_4_long_horizon.json",
+  "scope": {
+    "campaign": "week11_weekly_monitoring",
+    "sizes": [
+      1400,
+      2048
+    ],
+    "kernels": [
+      "auto_t3_controlled",
+      "auto_t5_guarded"
+    ],
+    "snapshot_target": 6,
+    "platform": "Clover"
+  },
+  "baseline": {
+    "artifact": "research/breakthrough_lab/week11_controlled_rollout/week11_block2_continuous_canary_20260209_005442.json",
+    "captured_at": "2026-02-09T00:54:42.830408+00:00",
+    "means": {
+      "auto_t3_controlled:1400": {
+        "avg_gflops": 882.6670475868948,
+        "p95_time_ms": 6.118261685999944
+      },
+      "auto_t3_controlled:2048": {
+        "avg_gflops": 773.0132117302221,
+        "p95_time_ms": 22.179902666903217
+      },
+      "auto_t5_guarded:1400": {
+        "avg_gflops": 906.7934056152105,
+        "p95_time_ms": 5.999435684740699
+      },
+      "auto_t5_guarded:2048": {
+        "avg_gflops": 777.5237022380061,
+        "p95_time_ms": 22.00436089030215
+      }
+    }
+  },
+  "weekly_slo": {
+    "global_guardrails": {
+      "minimum_snapshots": 6,
+      "max_correctness_error": 0.001,
+      "max_t3_fallback_rate": 0.08,
+      "max_t5_disable_events_total": 0,
+      "max_t5_overhead_percent": 3.0,
+      "max_abs_throughput_drift_percent": 3.0,
+      "max_p95_drift_percent": 8.0
+    },
+    "per_kernel_size": {
+      "auto_t3_controlled:1400": {
+        "min_avg_gflops": 838.53369520755,
+        "max_p95_time_ms": 6.607722621,
+        "notes": "95% floor over Block2 baseline mean and 8% p95 headroom."
+      },
+      "auto_t3_controlled:2048": {
+        "min_avg_gflops": 734.362551143711,
+        "max_p95_time_ms": 23.9542948803,
+        "notes": "95% floor over Block2 baseline mean and 8% p95 headroom."
+      },
+      "auto_t5_guarded:1400": {
+        "min_avg_gflops": 861.45373533445,
+        "max_p95_time_ms": 6.47939053952,
+        "notes": "95% floor over Block2 baseline mean and 8% p95 headroom."
+      },
+      "auto_t5_guarded:2048": {
+        "min_avg_gflops": 738.647517126106,
+        "max_p95_time_ms": 23.7647097615,
+        "notes": "95% floor over Block2 baseline mean and 8% p95 headroom."
+      }
+    }
+  },
+  "rollback_defaults": {
+    "auto_rollback_enabled": true,
+    "rollback_after_consecutive_soft_overhead_violations": 2,
+    "rollback_script_path": "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh",
+    "rollback_sla_path": "research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_ROLLBACK_SLA.md"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "review_id": "week37-stable-release-freeze-v0-15-0-2026-02-13",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "stable_release_freeze_after_week37_promote_and_rx590_wallclock_go",
+  "tracks": [
+    {
+      "track": "week37_release_docs_package",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_NOTES.md",
+        "research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_RUNBOOK.md",
+        "research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_CHECKLIST.md",
+        "research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_MANIFEST.json"
+      ],
+      "rationale": "Final release package was generated with stable scope, constraints and operational guidance."
+    },
+    {
+      "track": "week37_release_gate_pre_freeze",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_183821.json"
+      ],
+      "rationale": "Canonical gate immediately before freeze remained promote."
+    },
+    {
+      "track": "week37_release_tag_freeze",
+      "decision": "promote",
+      "evidence": [
+        "git_tag:v0.15.0"
+      ],
+      "rationale": "Stable tag freeze applied over validated Week37 closure state."
+    }
+  ],
+  "summary": {
+    "promote": 3,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "ready-for-week38-continuity",
+  "block_rationale": "Stable release freeze is justified by sustained promote chain and extended wall-clock go/no-go closure.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK37_STABLE_RELEASE_FREEZE_2026-02-13.md",
+  "depends_on": [
+    "research/breakthrough_lab/week37_rx590_extended_wallclock_decision.json"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "review_id": "week17-block3-pytest-flake-hardening-2026-02-11",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "early_hardening_of_pytest_tier_green_flake",
+  "tracks": [
+    {
+      "track": "week17_block3_baseline_failure_characterization",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260210_014604.json"
+      ],
+      "rationale": "Baseline includes a concrete pytest_tier_green failure event for traceability."
+    },
+    {
+      "track": "week17_block3_rectangular_test_hardening",
+      "decision": "promote",
+      "evidence": [
+        "tests/test_optimized_kernel_engine.py"
+      ],
+      "rationale": "Rectangular GEMM test now uses deterministic input and robust numeric metrics."
+    },
+    {
+      "track": "week17_block3_repeat_campaign",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week17_controlled_rollout/week17_block3_pytest_flake_hardening_20260211_005256.json"
+      ],
+      "rationale": "Repeat campaign completed 20/20 passing runs for the previously flaky target test."
+    },
+    {
+      "track": "week17_block3_post_hardening_canonical_gate",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_005256.json"
+      ],
+      "rationale": "Canonical gate is green after hardening, including pytest_tier_green."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "block_rationale": "Flaky pytest behavior was stabilized with deterministic and robust correctness assertions.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK17_BLOCK3_PYTEST_FLAKE_HARDENING_2026-02-11.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_005256.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week17_block1_stable_rollout_decision.json"
+  ]
+}

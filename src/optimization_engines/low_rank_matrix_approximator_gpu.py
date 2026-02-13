@@ -19,6 +19,7 @@ import pyopencl.array as cl_array
 from pyopencl.elementwise import ElementwiseKernel
 from pyopencl.reduction import ReductionKernel
 
+
 class GPUAcceleratedLowRankApproximator:
     """
     Aproximador de bajo rango acelerado por GPU para operaciones GEMM optimizadas.
@@ -46,7 +47,7 @@ class GPUAcceleratedLowRankApproximator:
             platforms = cl.get_platforms()
             amd_platform = None
             for platform in platforms:
-                if 'AMD' in platform.name.upper() or 'ATI' in platform.name.upper():
+                if "AMD" in platform.name.upper() or "ATI" in platform.name.upper():
                     amd_platform = platform
                     break
 
@@ -62,7 +63,7 @@ class GPUAcceleratedLowRankApproximator:
             # Seleccionar Radeon RX 580 (si está disponible)
             target_device = None
             for device in devices:
-                if '580' in device.name or 'RX 580' in device.name:
+                if "580" in device.name or "RX 580" in device.name:
                     target_device = device
                     break
 
@@ -76,8 +77,9 @@ class GPUAcceleratedLowRankApproximator:
 
             # Crear contexto y cola de comandos
             self.ctx = cl.Context([target_device])
-            self.queue = cl.CommandQueue(self.ctx,
-                                       properties=cl.command_queue_properties.PROFILING_ENABLE)
+            self.queue = cl.CommandQueue(
+                self.ctx, properties=cl.command_queue_properties.PROFILING_ENABLE
+            )
 
             # Cargar kernels OpenCL
             self._load_kernels()
@@ -148,8 +150,9 @@ class GPUAcceleratedLowRankApproximator:
         singular_values_gpu = cl_array.empty(self.queue, size, dtype=np.float32)
 
         # Ejecutar kernel de estimación
-        self.program.estimate_rank(self.queue, (size,), None,
-                                  matrix_gpu.data, singular_values_gpu.data, np.int32(size))
+        self.program.estimate_rank(
+            self.queue, (size,), None, matrix_gpu.data, singular_values_gpu.data, np.int32(size)
+        )
 
         # Transferir resultados de vuelta
         estimated_sv = singular_values_gpu.get()
@@ -180,13 +183,13 @@ class GPUAcceleratedLowRankApproximator:
         analysis_time = time.time() - start_time
 
         analysis = {
-            'matrix_shape': matrix.shape,
-            'theoretical_rank': min(matrix.shape),
-            'effective_rank': int(effective_rank),
-            'estimated_singular_values': estimated_sv[:20].tolist(),
-            'rank_reduction_ratio': effective_rank / min(matrix.shape),
-            'compressibility_score': 1.0 - (effective_rank / min(matrix.shape)),
-            'analysis_time_gpu': analysis_time
+            "matrix_shape": matrix.shape,
+            "theoretical_rank": min(matrix.shape),
+            "effective_rank": int(effective_rank),
+            "estimated_singular_values": estimated_sv[:20].tolist(),
+            "rank_reduction_ratio": effective_rank / min(matrix.shape),
+            "compressibility_score": 1.0 - (effective_rank / min(matrix.shape)),
+            "analysis_time_gpu": analysis_time,
         }
 
         print(f"   Rango teórico: {analysis['theoretical_rank']}")
@@ -197,7 +200,9 @@ class GPUAcceleratedLowRankApproximator:
 
         return analysis
 
-    def low_rank_approximation_gpu(self, matrix: np.ndarray, rank: int) -> Tuple[np.ndarray, Dict[str, Any]]:
+    def low_rank_approximation_gpu(
+        self, matrix: np.ndarray, rank: int
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
         """
         Crea aproximación de bajo rango usando GPU.
 
@@ -233,7 +238,9 @@ class GPUAcceleratedLowRankApproximator:
         temp_gpu = cl_array.empty(self.queue, (matrix.shape[0], rank), dtype=np.float32)
 
         # U @ diag(s)
-        prg = cl.Program(self.ctx, """
+        prg = cl.Program(
+            self.ctx,
+            """
         __kernel void scale_rows(__global float* U, __global const float* s, int rank) {
             int i = get_global_id(0);
             int j = get_global_id(1);
@@ -241,7 +248,8 @@ class GPUAcceleratedLowRankApproximator:
                 U[i * rank + j] *= s[j];
             }
         }
-        """).build()
+        """,
+        ).build()
 
         prg.scale_rows(self.queue, U_r.shape, None, U_gpu.data, s_gpu.data, np.int32(rank))
 
@@ -251,12 +259,23 @@ class GPUAcceleratedLowRankApproximator:
         # Usar GEMM estándar de clBLAS si está disponible, sino kernel personalizado
         try:
             import clblas
+
             # Usar clBLAS para multiplicación optimizada
-            clblas.sgemm(self.queue, clblas.clblasNoTrans, clblas.clblasNoTrans,
-                        np.float32(1.0), U_gpu, Vt_gpu, np.float32(0.0), approximated_gpu)
+            clblas.sgemm(
+                self.queue,
+                clblas.clblasNoTrans,
+                clblas.clblasNoTrans,
+                np.float32(1.0),
+                U_gpu,
+                Vt_gpu,
+                np.float32(0.0),
+                approximated_gpu,
+            )
         except ImportError:
             # Fallback a kernel personalizado
-            gemm_kernel = cl.Program(self.ctx, """
+            gemm_kernel = cl.Program(
+                self.ctx,
+                """
             __kernel void matrix_multiply(__global const float* A, __global const float* B,
                                         __global float* C, int M, int K, int N) {
                 int i = get_global_id(0);
@@ -270,11 +289,20 @@ class GPUAcceleratedLowRankApproximator:
                     C[i * N + j] = sum;
                 }
             }
-            """).build()
+            """,
+            ).build()
 
-            gemm_kernel.matrix_multiply(self.queue, matrix.shape, None,
-                                      U_gpu.data, Vt_gpu.data, approximated_gpu.data,
-                                      np.int32(matrix.shape[0]), np.int32(rank), np.int32(matrix.shape[1]))
+            gemm_kernel.matrix_multiply(
+                self.queue,
+                matrix.shape,
+                None,
+                U_gpu.data,
+                Vt_gpu.data,
+                approximated_gpu.data,
+                np.int32(matrix.shape[0]),
+                np.int32(rank),
+                np.int32(matrix.shape[1]),
+            )
 
         # Transferir resultado de vuelta a CPU
         approximated = approximated_gpu.get()
@@ -282,21 +310,21 @@ class GPUAcceleratedLowRankApproximator:
         decomposition_time = time.time() - start_time
 
         # Calcular métricas de calidad
-        frobenius_error = np.linalg.norm(matrix - approximated, 'fro')
-        frobenius_norm = np.linalg.norm(matrix, 'fro')
+        frobenius_error = np.linalg.norm(matrix - approximated, "fro")
+        frobenius_norm = np.linalg.norm(matrix, "fro")
         relative_error = frobenius_error / frobenius_norm
 
         compression_ratio = (matrix.size) / (U_r.size + s_r.size + Vt_r.size)
 
         info = {
-            'original_shape': matrix.shape,
-            'approximated_rank': rank,
-            'decomposition_time': decomposition_time,
-            'frobenius_error': frobenius_error,
-            'relative_error': relative_error,
-            'compression_ratio': compression_ratio,
-            'storage_savings': 1.0 - (1.0 / compression_ratio),
-            'gpu_accelerated': True
+            "original_shape": matrix.shape,
+            "approximated_rank": rank,
+            "decomposition_time": decomposition_time,
+            "frobenius_error": frobenius_error,
+            "relative_error": relative_error,
+            "compression_ratio": compression_ratio,
+            "storage_savings": 1.0 - (1.0 / compression_ratio),
+            "gpu_accelerated": True,
         }
 
         print(f"   Tiempo de descomposición GPU: {decomposition_time:.3f}s")
@@ -306,8 +334,9 @@ class GPUAcceleratedLowRankApproximator:
 
         return approximated, info
 
-    def optimized_gemm_gpu(self, A: np.ndarray, B: np.ndarray,
-                          target_rank: Optional[int] = None) -> Tuple[np.ndarray, Dict[str, Any]]:
+    def optimized_gemm_gpu(
+        self, A: np.ndarray, B: np.ndarray, target_rank: Optional[int] = None
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
         """
         Realiza GEMM optimizada usando aproximaciones de bajo rango en GPU.
 
@@ -329,7 +358,7 @@ class GPUAcceleratedLowRankApproximator:
 
         # Determinar rango óptimo
         if target_rank is None:
-            effective_rank = min(rank_A['effective_rank'], rank_B['effective_rank'])
+            effective_rank = min(rank_A["effective_rank"], rank_B["effective_rank"])
             target_rank = max(1, int(effective_rank * 0.5))
 
         print(f"   Rango objetivo: {target_rank}")
@@ -352,9 +381,17 @@ class GPUAcceleratedLowRankApproximator:
         local_size = None  # Dejar que OpenCL determine el tamaño óptimo
 
         kernel_start = time.time()
-        self.program.low_rank_gemm(self.queue, global_size, local_size,
-                                  A_gpu.data, B_gpu.data, C_gpu.data,
-                                  np.int32(M), np.int32(N), np.int32(R))
+        self.program.low_rank_gemm(
+            self.queue,
+            global_size,
+            local_size,
+            A_gpu.data,
+            B_gpu.data,
+            C_gpu.data,
+            np.int32(M),
+            np.int32(N),
+            np.int32(R),
+        )
         self.queue.finish()  # Asegurar que termine
         kernel_time = time.time() - kernel_start
 
@@ -365,8 +402,8 @@ class GPUAcceleratedLowRankApproximator:
         try:
             if A.shape[1] == B.shape[0]:
                 result_exact = A @ B
-                error = np.linalg.norm(result_exact - result_approx, 'fro')
-                relative_error = error / np.linalg.norm(result_exact, 'fro')
+                error = np.linalg.norm(result_exact - result_approx, "fro")
+                relative_error = error / np.linalg.norm(result_exact, "fro")
             else:
                 relative_error = None
         except:
@@ -399,32 +436,26 @@ class GPUAcceleratedLowRankApproximator:
         gflops_achieved = (total_operations / total_time) / 1e9 if total_time > 0 else 0.0
 
         results = {
-            'result_matrix': result_approx,
-            'computation_time': total_time,
-            'kernel_time': kernel_time,
-            'target_rank': target_rank,
-            'matrix_analysis': {
-                'A': rank_A,
-                'B': rank_B
+            "result_matrix": result_approx,
+            "computation_time": total_time,
+            "kernel_time": kernel_time,
+            "target_rank": target_rank,
+            "matrix_analysis": {"A": rank_A, "B": rank_B},
+            "approximation_info": {"A": info_A, "B": info_B},
+            "quality_metrics": {
+                "relative_error": relative_error,
+                "actual_speedup": actual_speedup,
+                "gflops_achieved": gflops_achieved,
             },
-            'approximation_info': {
-                'A': info_A,
-                'B': info_B
+            "performance_summary": {
+                "original_operations": full_multiplication_ops,
+                "performed_operations": total_operations,
+                "svd_operations_a": svd_ops_a,
+                "svd_operations_b": svd_ops_b,
+                "low_rank_operations": low_rank_ops,
+                "speedup_achieved": actual_speedup,
+                "gpu_accelerated": True,
             },
-            'quality_metrics': {
-                'relative_error': relative_error,
-                'actual_speedup': actual_speedup,
-                'gflops_achieved': gflops_achieved
-            },
-            'performance_summary': {
-                'original_operations': full_multiplication_ops,
-                'performed_operations': total_operations,
-                'svd_operations_a': svd_ops_a,
-                'svd_operations_b': svd_ops_b,
-                'low_rank_operations': low_rank_ops,
-                'speedup_achieved': actual_speedup,
-                'gpu_accelerated': True
-            }
         }
 
         print(f"   Tiempo total GPU: {total_time:.3f}s")
@@ -437,7 +468,9 @@ class GPUAcceleratedLowRankApproximator:
 
         return result_approx, results
 
-    def _random_low_rank_approximation(self, matrix: np.ndarray, rank: int) -> Tuple[np.ndarray, Dict[str, Any]]:
+    def _random_low_rank_approximation(
+        self, matrix: np.ndarray, rank: int
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
         """Fallback: aproximación aleatoria para matrices problemáticas."""
         print("   Usando aproximación aleatoria de bajo rango")
 
@@ -449,16 +482,12 @@ class GPUAcceleratedLowRankApproximator:
         approximated = U @ np.diag(s) @ V.T
 
         # Escalar para aproximar la norma original
-        original_norm = np.linalg.norm(matrix, 'fro')
-        approx_norm = np.linalg.norm(approximated, 'fro')
+        original_norm = np.linalg.norm(matrix, "fro")
+        approx_norm = np.linalg.norm(approximated, "fro")
         if approx_norm > 0:
-            approximated *= (original_norm / approx_norm)
+            approximated *= original_norm / approx_norm
 
-        info = {
-            'method': 'random_approximation',
-            'rank': rank,
-            'gpu_accelerated': False
-        }
+        info = {"method": "random_approximation", "rank": rank, "gpu_accelerated": False}
 
         return approximated, info
 
@@ -511,14 +540,14 @@ def main():
         result, metrics = approximator.optimized_gemm_gpu(A, B)
 
         # Comparación con baseline
-        print("\n" + "="*65)
+        print("\n" + "=" * 65)
         print("🎯 GPU LOW-RANK MATRIX APPROXIMATION PERFORMANCE REPORT")
         print("=" * 65)
 
         baseline_gflops = 890.3
-        achieved_gflops = metrics['quality_metrics']['gflops_achieved']
-        speedup = metrics['quality_metrics']['actual_speedup']
-        error = metrics['quality_metrics']['relative_error']
+        achieved_gflops = metrics["quality_metrics"]["gflops_achieved"]
+        speedup = metrics["quality_metrics"]["actual_speedup"]
+        error = metrics["quality_metrics"]["relative_error"]
 
         print("🏆 RESULTADOS GPU:")
         print(f"   GFLOPS logrados: {achieved_gflops:.2f}")
@@ -545,9 +574,7 @@ def main():
         print(f"   • Considerar precomputación de descomposiciones SVD")
 
         # Guardar resultados
-        np.savez('low_rank_gpu_results.npz',
-                matrix_A=A, matrix_B=B, result=result,
-                metrics=metrics)
+        np.savez("low_rank_gpu_results.npz", matrix_A=A, matrix_B=B, result=result, metrics=metrics)
 
         print("\n💾 Resultados GPU guardados en: low_rank_gpu_results.npz")
         print("✅ Demostración GPU completada exitosamente!")
@@ -555,6 +582,7 @@ def main():
     except Exception as e:
         print(f"❌ Error en demostración GPU: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 

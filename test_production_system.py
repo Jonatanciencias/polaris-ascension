@@ -150,6 +150,19 @@ def test_production_selector():
         for M, N, K, category in test_cases:
             rec = selector.select_kernel(M, N, K)
             print(f"{M:<10} {category:<15} {rec['kernel_key']:<15} {rec['predicted_gflops']:<20.1f}")
+
+        # Integration checks for scoped promotion + fallback behavior.
+        promoted = selector.select_kernel(1400, 1400, 1400)
+        fallback_large = selector.select_kernel(2048, 2048, 2048)
+        fallback_very_large = selector.select_kernel(3072, 3072, 3072)
+        if promoted["kernel_key"] != "tile20_v3_1400":
+            raise AssertionError(
+                "Expected promoted scoped kernel tile20_v3_1400 for 1400x1400x1400"
+            )
+        if fallback_large["kernel_key"] != "tile24":
+            raise AssertionError("Expected tile24 fallback for 2048x2048x2048")
+        if fallback_very_large["kernel_key"] != "tile24":
+            raise AssertionError("Expected tile24 fallback for 3072x3072x3072")
         
         print("\n✅ Selector test PASSED")
         return True
@@ -164,6 +177,7 @@ def test_kernels_exist():
     
     kernels_to_check = [
         "src/kernels/gemm_tile20_production.cl",
+        "src/kernels/gemm_tile20_v3_vectorized.cl",
         "src/kernels/gemm_tile24_production.cl",
         "src/ml_models/kernel_selector_model.pkl",
         "src/ml_models/kernel_selector_dataset.json"
@@ -204,23 +218,28 @@ def test_real_hardware_performance():
     
     # Load kernels
     tile20_path = Path("src/kernels/gemm_tile20_production.cl")
+    tile20_v3_path = Path("src/kernels/gemm_tile20_v3_vectorized.cl")
     tile24_path = Path("src/kernels/gemm_tile24_production.cl")
     
     if not tile20_path.exists():
         print("❌ tile20 kernel not found")
         return False
-    
+
+    if not tile20_v3_path.exists():
+        print("❌ tile20_v3 kernel not found")
+        return False
+
     if not tile24_path.exists():
         print("❌ tile24 kernel not found")
         return False
-    
-    tile20_src = tile20_path.read_text()
+
+    tile20_v3_src = tile20_v3_path.read_text()
     tile24_src = tile24_path.read_text()
     
     # Test configurations
     tests = [
         # (M, N, K, kernel_src, kernel_name, local_size, expected_min)
-        (1400, 1400, 1400, tile20_src, "gemm_tile20_optimized", (10, 10), 700),  # Sweet spot
+        (1400, 1400, 1400, tile20_v3_src, "gemm_tile20_vectorized", (10, 10), 820),  # Promoted scope
         (2048, 2048, 2048, tile24_src, "gemm_tile24_vectorized", (12, 12), 650),  # Large
         (512, 512, 512, tile24_src, "gemm_tile24_vectorized", (12, 12), 300),     # Small
     ]

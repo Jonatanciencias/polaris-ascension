@@ -1,0 +1,223 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-12T00:55:29.705523+00:00",
+    "workflow_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/.github/workflows/week20-monthly-cycle.yml",
+    "scheduler_spec_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_scheduler_spec_20260211_140738.json",
+    "source_cycle_report_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week23_controlled_rollout/week23_block1_monthly_continuity_20260212_003814.json",
+    "source_alerts_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week20_controlled_rollout/week20_block2_monthly_scheduler_automation_alerts_20260211_140738.json",
+    "mode": "local",
+    "endpoint": "http://127.0.0.1:8775/alerts",
+    "health_url": "http://127.0.0.1:8775/health",
+    "retry_attempts": 3,
+    "backoff_seconds": 0.3,
+    "backoff_multiplier": 2.0
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_005509.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_005509.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_005529.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_005529.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "pre_gate_cmd_pretty": "./venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline"
+  },
+  "artifacts": {
+    "bridge_payload_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week23_controlled_rollout/week23_block2_alert_bridge_hardening_bridge_payload_20260212_005510.json",
+    "dispatch_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week23_controlled_rollout/week23_block2_alert_bridge_hardening_dispatch_20260212_005510.json",
+    "scheduler_health_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week23_controlled_rollout/week23_block2_alert_bridge_hardening_scheduler_health_20260212_005510.json",
+    "rollback_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week23_controlled_rollout/week23_block2_alert_bridge_hardening_rollback_20260212_005510.json",
+    "rollback_spool_json": "",
+    "operational_debt_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week23_controlled_rollout/week23_block2_alert_bridge_hardening_operational_debt_20260212_005510.json",
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_005509.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260212_005529.json"
+  },
+  "highlights": {
+    "source_cycle_decision": "promote",
+    "source_alerts_decision": "promote",
+    "bridged_alerts_count": 1,
+    "heartbeat_emitted": true,
+    "dispatch_sent": true,
+    "dispatch_http_status": 200,
+    "attempts_executed": 2,
+    "retries_used": true,
+    "pre_health_ok": true,
+    "post_health_ok": true,
+    "rollback_triggered": false
+  },
+  "evaluation": {
+    "checks": {
+      "workflow_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "scheduler_spec_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "scheduler_health_all_checks": {
+        "observed": {
+          "has_schedule": true,
+          "has_expected_cron": true,
+          "has_upload_artifact_step": true,
+          "has_expected_retention_days": true,
+          "has_alert_summary_gate": true
+        },
+        "required": "all_true",
+        "pass": true
+      },
+      "source_cycle_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "source_alerts_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "endpoint_present_for_live": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "delivery_healthcheck_pre_ok": {
+        "observed": {
+          "url": "http://127.0.0.1:8775/health",
+          "status": 200,
+          "ok": true,
+          "error": null
+        },
+        "required": "http_2xx",
+        "pass": true
+      },
+      "delivery_healthcheck_post_ok": {
+        "observed": {
+          "url": "http://127.0.0.1:8775/health",
+          "status": 200,
+          "ok": true,
+          "error": null
+        },
+        "required": "http_2xx",
+        "pass": true
+      },
+      "retry_configured": {
+        "observed": 3,
+        "required_min": 2,
+        "pass": true
+      },
+      "retry_path_exercised": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "dispatch_live_success": {
+        "observed": {
+          "mode": "live",
+          "sent": true,
+          "http_status": 200,
+          "error": null,
+          "attempts": [
+            {
+              "attempt": 1,
+              "timestamp_utc": "2026-02-12T00:55:10.043552+00:00",
+              "sent": false,
+              "http_status": 503,
+              "error": "HTTP Error 503: Service Unavailable",
+              "elapsed_ms": 1.0258990000693302,
+              "backoff_applied_seconds": 0.3
+            },
+            {
+              "attempt": 2,
+              "timestamp_utc": "2026-02-12T00:55:10.345268+00:00",
+              "sent": true,
+              "http_status": 200,
+              "error": null,
+              "elapsed_ms": 1.5663689998746122,
+              "backoff_applied_seconds": 0.0
+            }
+          ],
+          "attempts_executed": 2,
+          "retries_used": true
+        },
+        "required": "sent_true_http_2xx",
+        "pass": true
+      },
+      "bridge_payload_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "dispatch_record_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "rollback_record_written": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "rollback_triggered_on_failure_or_not_needed": {
+        "observed": {
+          "dispatch_sent": true,
+          "rollback_triggered": false,
+          "rollback_reason": "not_required"
+        },
+        "required": "dispatch_success_or_triggered_fallback",
+        "pass": true
+      },
+      "no_high_critical_open_debt": {
+        "observed": 0,
+        "required_max": 0,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "pre_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "post_gate_pytest_tier_green": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Alert bridge hardening validated retry/backoff and delivery health checks with canonical gates green."
+  }
+}

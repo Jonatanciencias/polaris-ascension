@@ -1,0 +1,41 @@
+{
+  "matrix_id": "week23-block2-alert-bridge-hardening-debt-v1",
+  "timestamp_utc": "2026-02-12T00:55:10.348140+00:00",
+  "debts": [
+    {
+      "debt_id": "week23_block2_retry_backoff_hardening",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Validar ruta de retry/backoff en dispatch live ante falla transitoria.",
+      "mitigation": "Mantener retry determinista con backoff exponencial acotado.",
+      "target_window": "week23_block2"
+    },
+    {
+      "debt_id": "week23_block2_delivery_healthcheck",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear salud del endpoint de delivery antes y despues del dispatch.",
+      "mitigation": "Agregar health-check GET pre/post al bridge y alertar si falla.",
+      "target_window": "week23_block2"
+    },
+    {
+      "debt_id": "week23_block2_live_dispatch_reliability",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Asegurar entrega live del bridge con resultado 2xx.",
+      "mitigation": "Continuar monitoreo de success ratio y fallback controlado.",
+      "target_window": "week23_block2"
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "open": 0,
+    "high_or_critical_open": 0
+  }
+}

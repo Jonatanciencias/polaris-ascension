@@ -1,0 +1,185 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-11T00:35:12.394919+00:00",
+    "scope": "week17_block1_initial_stable_rollout",
+    "stable_tag": "v0.15.0",
+    "rollback_sla_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_ROLLBACK_SLA.md",
+    "stable_manifest_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK16_BLOCK3_V0_15_0_STABLE_MANIFEST.json",
+    "params": {
+      "duration_minutes": 10.0,
+      "snapshot_interval_minutes": 1.0,
+      "target_snapshots": 10,
+      "sizes": [
+        1400,
+        2048,
+        3072
+      ],
+      "kernels": [
+        "auto_t3_controlled",
+        "auto_t5_guarded"
+      ],
+      "sessions": 1,
+      "iterations": 8,
+      "seed": 27011
+    }
+  },
+  "commands": {
+    "pre_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_002452.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_002452.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    },
+    "canary": {
+      "command": [
+        "./venv/bin/python",
+        "research/breakthrough_lab/platform_compatibility/run_week9_block6_wallclock_canary.py",
+        "--duration-minutes",
+        "10.0",
+        "--snapshot-interval-minutes",
+        "1.0",
+        "--sizes",
+        "1400",
+        "2048",
+        "3072",
+        "--kernels",
+        "auto_t3_controlled",
+        "auto_t5_guarded",
+        "--sessions",
+        "1",
+        "--iterations",
+        "8",
+        "--pressure-size",
+        "896",
+        "--pressure-iterations",
+        "3",
+        "--pressure-pulses-per-snapshot",
+        "2",
+        "--seed",
+        "27011",
+        "--t5-policy-path",
+        "research/breakthrough_lab/t5_reliability_abft/policy_hardening_week15_block1_expanded_sizes.json",
+        "--baseline-block5-path",
+        "research/breakthrough_lab/week15_controlled_rollout/week15_block1_expanded_pilot_rerun_canary_20260210_011736.json",
+        "--output-dir",
+        "research/breakthrough_lab/week17_controlled_rollout",
+        "--output-prefix",
+        "week17_block1_stable_rollout_canary"
+      ],
+      "returncode": 0,
+      "stdout": "Week9 block6 JSON: /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_canary_20260211_003452.json\nWeek9 block6 MD:   /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_canary_20260211_003452.md\nDecision: iterate\nFailed checks: ['t5_guardrails_all_runs']\nActual wall-clock minutes: 10.00\n",
+      "stderr": ""
+    },
+    "rollback_dry_run": {
+      "command": [
+        "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh",
+        "dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "Generated rollback runtime profile: results/runtime_states/week9_block5_runtime_env.sh\nGenerated rollback note: research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260211_003452.md\nDry-run only. No process-wide env was modified.\n",
+      "stderr": ""
+    },
+    "post_gate": {
+      "command": [
+        "./venv/bin/python",
+        "scripts/run_validation_suite.py",
+        "--tier",
+        "canonical",
+        "--driver-smoke",
+        "--report-dir",
+        "research/breakthrough_lab/week8_validation_discipline"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_003512.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_003512.md\nTier: canonical\nDecision: promote\n",
+      "stderr": ""
+    }
+  },
+  "artifacts": {
+    "pre_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_002452.json",
+    "post_gate_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260211_003512.json",
+    "canary_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_canary_20260211_003452.json",
+    "canary_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week17_controlled_rollout/week17_block1_stable_rollout_canary_20260211_003452.md",
+    "checklist_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/preprod_signoff/WEEK17_BLOCK1_GO_NO_GO_CHECKLIST.md"
+  },
+  "summary": {
+    "pre_gate_decision": "promote",
+    "canary_decision": "iterate",
+    "canary_t5_disable_total": 0,
+    "canary_correctness_max": 0.00091552734375,
+    "executed_snapshots": -1,
+    "post_gate_decision": "promote"
+  },
+  "evaluation": {
+    "checks": {
+      "stable_manifest_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "stable_tag_v0_15_0": {
+        "observed": "v0.15.0",
+        "required": "v0.15.0",
+        "pass": true
+      },
+      "stable_runbook_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "pre_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      },
+      "canary_returncode_zero": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "canary_promote": {
+        "observed": "iterate",
+        "required": "promote",
+        "pass": false
+      },
+      "canary_t5_disable_zero": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "extended_snapshots_reached": {
+        "observed": -1,
+        "required_min": 10,
+        "pass": false
+      },
+      "rollback_dry_run_ok": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "rollback_sla_exists": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "post_gate_promote": {
+        "observed": "promote",
+        "required": "promote",
+        "pass": true
+      }
+    },
+    "failed_checks": [
+      "canary_promote",
+      "extended_snapshots_reached"
+    ],
+    "decision": "no-go",
+    "rationale": "One or more stable rollout gates failed; keep no-go and iterate."
+  }
+}

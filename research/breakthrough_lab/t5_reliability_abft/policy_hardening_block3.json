@@ -1,0 +1,36 @@
+{
+  "policy_id": "t5-abft-detect-only-block3-2026-02-07",
+  "status": "candidate_for_shadow_integration",
+  "scope": {
+    "sizes": [1400, 2048],
+    "kernel_selector_mode": "production_auto"
+  },
+  "abft_mode": {
+    "sampling_period": 8,
+    "row_samples": 16,
+    "col_samples": 16,
+    "projection_count": 4,
+    "faults_per_matrix_modelled": 2,
+    "residual_scale": 5.0,
+    "residual_margin": 0.01,
+    "residual_floor": 0.05
+  },
+  "runtime_guardrails": {
+    "disable_if_false_positive_rate_gt": 0.05,
+    "disable_if_effective_overhead_percent_gt": 3.0,
+    "disable_if_correctness_error_gt": 0.001,
+    "disable_if_uniform_recall_lt": 0.95,
+    "disable_if_critical_recall_lt": 0.99
+  },
+  "stress_evidence": {
+    "artifact_json": "research/breakthrough_lab/t5_reliability_abft/week4_t5_abft_detect_only_20260207_222151.json",
+    "artifact_md": "research/breakthrough_lab/t5_reliability_abft/week4_t5_abft_detect_only_20260207_222151.md",
+    "recommended_mode": "periodic_8",
+    "effective_overhead_percent": 1.2090438814520617,
+    "critical_recall": 1.0,
+    "uniform_recall": 0.9666666666666667,
+    "critical_misses": 0,
+    "false_positive_rate": 0.0
+  },
+  "next_gate": "week4_block4_shadow_integration_canary"
+}

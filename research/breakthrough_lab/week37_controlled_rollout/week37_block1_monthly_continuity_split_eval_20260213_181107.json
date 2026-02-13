@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-13T18:11:07.996766+00:00",
+    "split_artifact": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week37_controlled_rollout/week37_block1_monthly_continuity_split_canary_20260213_181107.json",
+    "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json",
+    "min_rusticl_ratio": 0.85
+  },
+  "evaluation": {
+    "checks": {
+      "all_runs_success": {
+        "pass": true
+      },
+      "platform_split_present": {
+        "pass": true
+      },
+      "correctness_error_bound": {
+        "observed_max": 0.0008087158203125,
+        "required_max": 0.001,
+        "pass": true
+      },
+      "t3_fallback_bound": {
+        "observed_max": 0.0,
+        "required_max": 0.08,
+        "pass": true
+      },
+      "t5_overhead_bound": {
+        "observed_max": 1.9357040320234071,
+        "required_max": 3.0,
+        "pass": true
+      },
+      "t5_disable_events_total_bound": {
+        "observed": 0,
+        "required_max": 0,
+        "pass": true
+      },
+      "clover_policy_rows": {
+        "rows": [
+          {
+            "platform": "clover",
+            "key": "auto_t3_controlled:1400",
+            "observed_avg_gflops": 875.0472316044609,
+            "required_min_avg_gflops": 843.788871,
+            "observed_p95_time_ms": 6.118207499639539,
+            "required_max_p95_time_ms": 6.539484,
+            "pass": true
+          },
+          {
+            "platform": "clover",
+            "key": "auto_t3_controlled:2048",
+            "observed_avg_gflops": 772.575440182082,
+            "required_min_avg_gflops": 740.044586,
+            "observed_p95_time_ms": 22.20058800003244,
+            "required_max_p95_time_ms": 23.688076,
+            "pass": true
+          },
+          {
+            "platform": "clover",
+            "key": "auto_t5_guarded:1400",
+            "observed_avg_gflops": 908.4331883635182,
+            "required_min_avg_gflops": 868.504071,
+            "observed_p95_time_ms": 5.985171499560238,
+            "required_max_p95_time_ms": 6.406774,
+            "pass": true
+          },
+          {
+            "platform": "clover",
+            "key": "auto_t5_guarded:2048",
+            "observed_avg_gflops": 778.5894607511411,
+            "required_min_avg_gflops": 744.221401,
+            "observed_p95_time_ms": 21.993056000155775,
+            "required_max_p95_time_ms": 23.497411,
+            "pass": true
+          }
+        ],
+        "pass": true
+      },
+      "rusticl_ratio_vs_clover": {
+        "rows": [
+          {
+            "key": "auto_t3_controlled:1400",
+            "clover_avg_gflops": 875.0472316044609,
+            "rusticl_avg_gflops": 870.8395072435775,
+            "ratio_rusticl_vs_clover": 0.9951914317205847,
+            "required_min_ratio": 0.85,
+            "pass": true
+          },
+          {
+            "key": "auto_t3_controlled:2048",
+            "clover_avg_gflops": 772.575440182082,
+            "rusticl_avg_gflops": 711.571260975672,
+            "ratio_rusticl_vs_clover": 0.9210378999466609,
+            "required_min_ratio": 0.85,
+            "pass": true
+          },
+          {
+            "key": "auto_t3_controlled:3072",
+            "clover_avg_gflops": 708.295573232148,
+            "rusticl_avg_gflops": 658.1523731830132,
+            "ratio_rusticl_vs_clover": 0.9292058260080357,
+            "required_min_ratio": 0.85,
+            "pass": true
+          },
+          {
+            "key": "auto_t5_guarded:1400",
+            "clover_avg_gflops": 908.4331883635182,
+            "rusticl_avg_gflops": 915.4004832689012,
+            "ratio_rusticl_vs_clover": 1.0076695732769674,
+            "required_min_ratio": 0.85,
+            "pass": true
+          },
+          {
+            "key": "auto_t5_guarded:2048",
+            "clover_avg_gflops": 778.5894607511411,
+            "rusticl_avg_gflops": 717.8826650037765,
+            "ratio_rusticl_vs_clover": 0.9220297746018833,
+            "required_min_ratio": 0.85,
+            "pass": true
+          },
+          {
+            "key": "auto_t5_guarded:3072",
+            "clover_avg_gflops": 804.2404777840511,
+            "rusticl_avg_gflops": 746.3114162461525,
+            "ratio_rusticl_vs_clover": 0.9279704725910932,
+            "required_min_ratio": 0.85,
+            "pass": true
+          }
+        ],
+        "pass": true
+      },
+      "required_sizes_present_on_split": {
+        "required_sizes": [
+          1400,
+          2048,
+          3072
+        ],
+        "missing": [],
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Platform split satisfies formal policy guardrails and rusticl/clover ratio requirements."
+  }
+}

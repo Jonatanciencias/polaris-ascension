@@ -1,0 +1,31 @@
+{
+  "review_id": "week8-block1-validation-discipline-2026-02-08",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "validation_runner_unification_and_driver_smoke_ci",
+  "tracks": [
+    {
+      "track": "validation_discipline",
+      "decision": "promote",
+      "evidence": [
+        "scripts/run_validation_suite.py",
+        ".github/workflows/test-tiers.yml",
+        "scripts/verify_drivers.py",
+        "research/breakthrough_lab/week8_validation_discipline/README.md",
+        "research/breakthrough_lab/week8_validation_discipline/acta_template.md",
+        "research/breakthrough_lab/week8_validation_discipline/decision_template.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_cpu-fast_20260208_012317.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260208_012325.json",
+        "research/breakthrough_lab/ACTA_WEEK8_BLOCK1_VALIDATION_DISCIPLINE_2026-02-08.md"
+      ],
+      "rationale": "A single validation runner now drives contract checks, pytest tier execution and driver diagnostics smoke in both local and CI paths, with green formal evidence for cpu-fast and canonical tiers."
+    }
+  ],
+  "summary": {
+    "promote": 1,
+    "iterate": 0,
+    "refine": 0,
+    "stop": 0
+  },
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK8_BLOCK1_VALIDATION_DISCIPLINE_2026-02-08.md"
+}

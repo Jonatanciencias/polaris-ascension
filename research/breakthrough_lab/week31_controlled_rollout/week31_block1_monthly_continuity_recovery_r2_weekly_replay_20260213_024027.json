@@ -1,0 +1,54 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-13T02:44:02.201093+00:00",
+    "mode": "local",
+    "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json",
+    "t5_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json",
+    "baseline_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week30_controlled_rollout/week30_block1_monthly_continuity_20260213_013243.json",
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ],
+    "snapshots": 8,
+    "seed": 31021,
+    "output_dir": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week31_controlled_rollout"
+  },
+  "steps": {
+    "pre_validation": {
+      "returncode": 0,
+      "decision": "promote",
+      "command": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline",
+      "report_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024046.json"
+    },
+    "canary_run": {
+      "returncode": 0,
+      "decision": "promote",
+      "command": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python research/breakthrough_lab/platform_compatibility/run_week10_block1_controlled_rollout.py --snapshots 8 --snapshot-interval-minutes 60.0 --sleep-between-snapshots-seconds 0 --sizes 1400 2048 3072 --kernels auto_t3_controlled auto_t5_guarded --sessions 1 --iterations 4 --pressure-size 512 --pressure-iterations 0 --pressure-pulses-per-snapshot 0 --seed 31021 --t5-policy-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json --baseline-block6-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week30_controlled_rollout/week30_block1_monthly_continuity_20260213_013243.json --output-dir /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week31_controlled_rollout --output-prefix week31_block1_monthly_continuity_recovery_r2_weekly_replay_canary"
+    },
+    "policy_eval": {
+      "returncode": 0,
+      "decision": "promote",
+      "command": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python research/breakthrough_lab/week11_controlled_rollout/evaluate_week11_weekly_replay.py --canary-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_weekly_replay_canary_20260213_024342.json --policy-path /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json --output-dir /home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week31_controlled_rollout --output-prefix week31_block1_monthly_continuity_recovery_r2_weekly_replay_eval"
+    },
+    "post_validation": {
+      "returncode": 0,
+      "decision": "promote",
+      "command": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python scripts/run_validation_suite.py --tier canonical --driver-smoke --report-dir research/breakthrough_lab/week8_validation_discipline",
+      "report_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024402.json"
+    }
+  },
+  "artifacts": {
+    "canary_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_weekly_replay_canary_20260213_024342.json",
+    "canary_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_weekly_replay_canary_20260213_024342.md",
+    "eval_json": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_weekly_replay_eval_20260213_024342.json",
+    "eval_md": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_weekly_replay_eval_20260213_024342.md",
+    "pre_validation_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024046.json",
+    "post_validation_json": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024402.json"
+  },
+  "evaluation": {
+    "decision": "promote",
+    "failed_checks": [],
+    "rationale": "Automated weekly replay completed with promote in canary, policy evaluation, and both canonical gates."
+  }
+}

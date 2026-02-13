@@ -7,6 +7,7 @@ Script rápido para mostrar los resultados clave del benchmark comprehensivo
 import sys
 from pathlib import Path
 
+
 def print_performance_summary():
     """Imprimir resumen de performance basado en resultados obtenidos."""
 
@@ -80,6 +81,7 @@ def print_performance_summary():
     print("=" * 80)
     print("🏆 PROYECTO EXITOSO - BREAKTHROUGH VALIDADO")
     print("=" * 80)
+
 
 if __name__ == "__main__":
     print_performance_summary()

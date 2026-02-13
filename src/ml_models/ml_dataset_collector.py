@@ -21,7 +21,8 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Any
 import json
 import warnings
-warnings.filterwarnings('ignore')
+
+warnings.filterwarnings("ignore")
 
 # Importar técnicas disponibles
 try:
@@ -39,6 +40,7 @@ try:
 except ImportError as e:
     print(f"⚠️  Algunas técnicas no disponibles: {e}")
     TECHNIQUES_AVAILABLE = False
+
 
 class MLDatasetCollector:
     """
@@ -60,19 +62,19 @@ class MLDatasetCollector:
             return
 
         try:
-            self.techniques['low_rank'] = GPUAcceleratedLowRankApproximator()
+            self.techniques["low_rank"] = GPUAcceleratedLowRankApproximator()
             print("✅ Low-Rank GPU inicializado")
         except Exception as e:
             print(f"⚠️  Low-Rank no disponible: {e}")
 
         try:
-            self.techniques['cw'] = CoppersmithWinogradGPU()
+            self.techniques["cw"] = CoppersmithWinogradGPU()
             print("✅ Coppersmith-Winograd GPU inicializado")
         except Exception as e:
             print(f"⚠️  CW no disponible: {e}")
 
         try:
-            self.techniques['quantum'] = QuantumAnnealingMatrixOptimizer()
+            self.techniques["quantum"] = QuantumAnnealingMatrixOptimizer()
             print("✅ Quantum Annealing inicializado")
         except Exception as e:
             print(f"⚠️  Quantum no disponible: {e}")
@@ -85,7 +87,9 @@ class MLDatasetCollector:
         except Exception as e:
             print(f"⚠️  Predictor no disponible: {e}")
 
-    def generate_matrix_suite(self, sizes: List[int], types: List[str]) -> List[Tuple[np.ndarray, np.ndarray, str]]:
+    def generate_matrix_suite(
+        self, sizes: List[int], types: List[str]
+    ) -> List[Tuple[np.ndarray, np.ndarray, str]]:
         """
         Genera suite de matrices de prueba con diferentes características.
 
@@ -111,12 +115,12 @@ class MLDatasetCollector:
         """Genera un par de matrices del tipo especificado."""
         np.random.seed(42)  # Para reproducibilidad
 
-        if matrix_type == 'dense':
+        if matrix_type == "dense":
             # Matrices densas aleatorias
             A = np.random.randn(size, size).astype(np.float32)
             B = np.random.randn(size, size).astype(np.float32)
 
-        elif matrix_type == 'sparse':
+        elif matrix_type == "sparse":
             # Matrices sparse (90% zeros)
             A = np.random.randn(size, size).astype(np.float32)
             mask_a = np.random.random((size, size)) > 0.9
@@ -126,7 +130,7 @@ class MLDatasetCollector:
             mask_b = np.random.random((size, size)) > 0.9
             B[~mask_b] = 0
 
-        elif matrix_type == 'low_rank':
+        elif matrix_type == "low_rank":
             # Matrices de bajo rango efectivo
             rank = max(2, size // 8)  # Rango efectivo bajo
             U = np.random.randn(size, rank)
@@ -140,7 +144,7 @@ class MLDatasetCollector:
             A += 0.01 * np.random.randn(size, size)
             B += 0.01 * np.random.randn(size, size)
 
-        elif matrix_type == 'random':
+        elif matrix_type == "random":
             # Matrices completamente aleatorias
             A = np.random.randn(size, size).astype(np.float32)
             B = np.random.randn(size, size).astype(np.float32)
@@ -150,7 +154,9 @@ class MLDatasetCollector:
 
         return A.astype(np.float32), B.astype(np.float32)
 
-    def benchmark_technique(self, technique_name: str, A: np.ndarray, B: np.ndarray) -> Dict[str, Any]:
+    def benchmark_technique(
+        self, technique_name: str, A: np.ndarray, B: np.ndarray
+    ) -> Dict[str, Any]:
         """
         Ejecuta benchmark de una técnica específica.
 
@@ -158,51 +164,53 @@ class MLDatasetCollector:
             Diccionario con métricas de performance
         """
         if technique_name not in self.techniques:
-            return {'error': f'Técnica {technique_name} no disponible'}
+            return {"error": f"Técnica {technique_name} no disponible"}
 
         technique = self.techniques[technique_name]
 
         try:
             start_time = time.time()
 
-            if technique_name == 'low_rank':
+            if technique_name == "low_rank":
                 result, metrics = technique.optimized_gemm_gpu(A, B)
-                gflops = metrics['quality_metrics']['gflops_achieved']
-                error = metrics['quality_metrics']['relative_error']
+                gflops = metrics["quality_metrics"]["gflops_achieved"]
+                error = metrics["quality_metrics"]["relative_error"]
 
-            elif technique_name == 'cw':
+            elif technique_name == "cw":
                 result, metrics = technique.cw_matrix_multiply_gpu(A, B)
-                gflops = metrics['gflops_achieved']
-                error = metrics['relative_error']
+                gflops = metrics["gflops_achieved"]
+                error = metrics["relative_error"]
 
-            elif technique_name == 'quantum':
+            elif technique_name == "quantum":
                 # Quantum annealing es muy lento, usar versión limitada
                 result, metrics = technique.quantum_annealing_optimization(
-                    A, B, max_sweeps=10)  # Limitado para dataset
-                gflops = metrics.get('gflops_achieved', 0.1)  # Estimación conservadora
-                error = metrics.get('error', 1.0)
+                    A, B, max_sweeps=10
+                )  # Limitado para dataset
+                gflops = metrics.get("gflops_achieved", 0.1)  # Estimación conservadora
+                error = metrics.get("error", 1.0)
 
             execution_time = time.time() - start_time
 
             return {
-                'technique': technique_name,
-                'gflops': gflops,
-                'error': error,
-                'time': execution_time,
-                'success': True
+                "technique": technique_name,
+                "gflops": gflops,
+                "error": error,
+                "time": execution_time,
+                "success": True,
             }
 
         except Exception as e:
             return {
-                'technique': technique_name,
-                'error': str(e),
-                'gflops': 0.0,
-                'time': 0.0,
-                'success': False
+                "technique": technique_name,
+                "error": str(e),
+                "gflops": 0.0,
+                "time": 0.0,
+                "success": False,
             }
 
-    def collect_dataset(self, matrices: List[Tuple[np.ndarray, np.ndarray, str]],
-                       techniques: List[str] = None) -> pd.DataFrame:
+    def collect_dataset(
+        self, matrices: List[Tuple[np.ndarray, np.ndarray, str]], techniques: List[str] = None
+    ) -> pd.DataFrame:
         """
         Recopila dataset completo ejecutando todas las técnicas en todas las matrices.
 
@@ -256,22 +264,22 @@ class MLDatasetCollector:
 
                 # Crear registro de datos
                 data_point = {
-                    'matrix_size': matrix_size,
-                    'matrix_type': matrix_name.split('_')[0],
-                    'technique': result.get('technique', technique),
-                    'gflops_achieved': result.get('gflops', 0.0),
-                    'relative_error': result.get('error', 1.0),
-                    'execution_time': result.get('time', 0.0),
-                    'success': result.get('success', False),
-                    'sparsity_a': sparsity_a,
-                    'sparsity_b': sparsity_b,
-                    'rank_a': rank_a,
-                    'rank_b': rank_b,
-                    'rank_ratio_a': rank_a / A.shape[0],
-                    'rank_ratio_b': rank_b / B.shape[0],
-                    'computational_intensity': computational_intensity,
-                    'memory_usage_mb': (A.nbytes + B.nbytes) / (1024**2),
-                    'timestamp': pd.Timestamp.now()
+                    "matrix_size": matrix_size,
+                    "matrix_type": matrix_name.split("_")[0],
+                    "technique": result.get("technique", technique),
+                    "gflops_achieved": result.get("gflops", 0.0),
+                    "relative_error": result.get("error", 1.0),
+                    "execution_time": result.get("time", 0.0),
+                    "success": result.get("success", False),
+                    "sparsity_a": sparsity_a,
+                    "sparsity_b": sparsity_b,
+                    "rank_a": rank_a,
+                    "rank_b": rank_b,
+                    "rank_ratio_a": rank_a / A.shape[0],
+                    "rank_ratio_b": rank_b / B.shape[0],
+                    "computational_intensity": computational_intensity,
+                    "memory_usage_mb": (A.nbytes + B.nbytes) / (1024**2),
+                    "timestamp": pd.Timestamp.now(),
                 }
 
                 dataset.append(data_point)
@@ -280,12 +288,12 @@ class MLDatasetCollector:
         df = pd.DataFrame(dataset)
 
         # Añadir columna de mejor técnica por matriz
-        df['is_best'] = False
-        for matrix_name in df['matrix_type'].unique():
-            matrix_data = df[df['matrix_type'] == matrix_name]
+        df["is_best"] = False
+        for matrix_name in df["matrix_type"].unique():
+            matrix_data = df[df["matrix_type"] == matrix_name]
             if not matrix_data.empty:
-                best_idx = matrix_data['gflops_achieved'].idxmax()
-                df.loc[best_idx, 'is_best'] = True
+                best_idx = matrix_data["gflops_achieved"].idxmax()
+                df.loc[best_idx, "is_best"] = True
 
         return df
 
@@ -307,12 +315,12 @@ class MLDatasetCollector:
         print(f"Tamaños de matriz: {sorted(df['matrix_size'].unique())}")
 
         print("\n🎯 PERFORMANCE POR TÉCNICA:")
-        for technique in df['technique'].unique():
-            tech_data = df[df['technique'] == technique]
-            successful = tech_data[tech_data['success']]
+        for technique in df["technique"].unique():
+            tech_data = df[df["technique"] == technique]
+            successful = tech_data[tech_data["success"]]
             if not successful.empty:
-                avg_gflops = successful['gflops_achieved'].mean()
-                max_gflops = successful['gflops_achieved'].max()
+                avg_gflops = successful["gflops_achieved"].mean()
+                max_gflops = successful["gflops_achieved"].max()
                 success_rate = len(successful) / len(tech_data) * 100
 
                 print(f"   {technique}:")
@@ -321,11 +329,13 @@ class MLDatasetCollector:
                 print(f"     Tasa de éxito: {success_rate:.1f}%")
 
         print("\n🏆 TÉCNICAS MÁS EXITOSAS:")
-        best_by_matrix = df[df['is_best']].groupby('technique').size()
+        best_by_matrix = df[df["is_best"]].groupby("technique").size()
         if not best_by_matrix.empty:
             for technique, count in best_by_matrix.items():
-                percentage = count / len(df['matrix_type'].unique()) * 100
+                percentage = count / len(df["matrix_type"].unique()) * 100
                 print(f"   {technique}: {count} matrices ({percentage:.1f}%)")
+
+
 def main():
     """Función principal para recopilación de dataset."""
     print("🎯 ML DATASET COLLECTION FOR AI KERNEL PREDICTOR")
@@ -335,10 +345,10 @@ def main():
 
     # Configurar tamaños y tipos de matriz
     matrix_sizes = [128, 256, 512]  # Tamaños manejables para recopilación rápida
-    matrix_types = ['dense', 'sparse', 'low_rank', 'random']
+    matrix_types = ["dense", "sparse", "low_rank", "random"]
 
     # Técnicas a evaluar
-    techniques_to_test = ['low_rank', 'cw']  # Excluir quantum por ser muy lento
+    techniques_to_test = ["low_rank", "cw"]  # Excluir quantum por ser muy lento
 
     print("🔧 CONFIGURACIÓN:")
     print(f"   Tamaños de matriz: {matrix_sizes}")
@@ -373,16 +383,18 @@ def main():
     collector.save_dataset(dataset, filename)
 
     # Guardar también en formato numpy para uso posterior
-    np.savez(f"ml_training_dataset_{timestamp}.npz",
-             data=dataset.to_numpy(),
-             columns=dataset.columns.tolist(),
-             metadata={
-                 'collection_time': collection_time,
-                 'matrix_sizes': matrix_sizes,
-                 'matrix_types': matrix_types,
-                 'techniques': techniques_to_test,
-                 'total_tests': len(dataset)
-             })
+    np.savez(
+        f"ml_training_dataset_{timestamp}.npz",
+        data=dataset.to_numpy(),
+        columns=dataset.columns.tolist(),
+        metadata={
+            "collection_time": collection_time,
+            "matrix_sizes": matrix_sizes,
+            "matrix_types": matrix_types,
+            "techniques": techniques_to_test,
+            "total_tests": len(dataset),
+        },
+    )
 
     print("\n✅ RECOPILACIÓN DE DATASET COMPLETADA")
     print("🎯 PRÓXIMOS PASOS:")
@@ -390,6 +402,7 @@ def main():
     print("   2. Limpiar datos outliers")
     print("   3. Re-entrenar AI Kernel Predictor")
     print("   4. Validar mejoras en accuracy")
+
 
 if __name__ == "__main__":
     main()

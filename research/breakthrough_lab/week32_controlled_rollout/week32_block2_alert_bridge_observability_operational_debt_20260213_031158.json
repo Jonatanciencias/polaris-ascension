@@ -1,0 +1,41 @@
+{
+  "matrix_id": "week30-block2-alert-bridge-observability-debt-v1",
+  "timestamp_utc": "2026-02-13T03:11:58.921873+00:00",
+  "debts": [
+    {
+      "debt_id": "week30_block2_delivery_success_ratio_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear success ratio de delivery en bridge live.",
+      "mitigation": "Alertar si ratio cae bajo threshold y activar rollback operativo.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week30_block2_delivery_latency_monitoring",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Monitorear latencia p95 de delivery para detectar degradaci\u00f3n.",
+      "mitigation": "Publicar m\u00e9tricas por ciclo y alertar si p95 excede policy.",
+      "target_window": "week30_block2"
+    },
+    {
+      "debt_id": "week30_block2_degradation_alerting",
+      "area": "operations",
+      "severity": "medium",
+      "status": "closed",
+      "owner": "ops-observability",
+      "description": "Emitir alertas de degradaci\u00f3n para bridge live.",
+      "mitigation": "Mantener cat\u00e1logo de alertas y acciones operativas de contenci\u00f3n.",
+      "target_window": "week30_block2"
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "open": 0,
+    "high_or_critical_open": 0
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-07T23:49:02.381681+00:00",
+    "hostname": "XeonStation",
+    "python": "3.12.3"
+  },
+  "verify_hardware": {
+    "command": [
+      "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+      "scripts/verify_hardware.py"
+    ],
+    "returncode": 0,
+    "stdout": "============================================================\nRadeon RX 580 Hardware Verification\n============================================================\n\n[1/3] Detecting GPU...\nOK GPU Detected: AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)\n   Vendor: AMD\n   Platform: Clover\n   Driver: 25.0.7-0ubuntu0.24.04.2\n   OpenCL: OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\n\n[2/3] Checking compute capabilities...\n   Recommended backend: OPENCL\n   OK OpenCL: Available\n   OK ROCm: Available\n\n[3/3] Checking memory...\n   System RAM: 62.7 GB\n   Available RAM: 59.3 GB\n   GPU VRAM: 8.0 GB\n\n============================================================\nRecommendations:\n============================================================\nOK System RAM is sufficient for typical offloading.\n\nOK System is ready for AI workloads on OpenCL.\n\nNext steps:\n  1. Run diagnostics: ./venv/bin/python scripts/diagnostics.py\n  2. Run validation: ./venv/bin/python test_production_system.py\n  3. Run test suite: ./venv/bin/pytest tests/ -v\n",
+    "stderr": ""
+  },
+  "verify_drivers": {
+    "command": [
+      "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+      "scripts/verify_drivers.py",
+      "--json"
+    ],
+    "returncode": 1,
+    "stdout": "Running driver diagnostics...\n\n{\n  \"kernel_driver\": {\n    \"loaded\": true,\n    \"version\": \"37316FBEB018C901DC68DC9\",\n    \"name\": \"amdgpu\"\n  },\n  \"mesa_version\": null,\n  \"opencl\": {\n    \"available\": false,\n    \"platform\": \"None (AMD platform not found)\",\n    \"version\": \"N/A\",\n    \"implementation\": \"N/A\"\n  },\n  \"vulkan\": {\n    \"version\": \"1.3.275\",\n    \"driver\": \"AMD Radeon RX 590 GME (RADV POLARIS10)\",\n    \"implementation\": \"Mesa RADV\",\n    \"available\": true\n  },\n  \"rocm\": null,\n  \"recommendations\": [\n    \"\\u26a0\\ufe0f  Mesa not detected\\n   Fix: sudo apt install mesa-common-dev libgl1-mesa-dri\",\n    \"\\u274c OpenCL not available (REQUIRED for GPU inference)\\n   Fix: sudo apt install mesa-opencl-icd clinfo ocl-icd-opencl-dev opencl-headers\\n   Verify: clinfo --list\"\n  ],\n  \"overall_status\": \"error\"\n}\n",
+    "stderr": ""
+  },
+  "clinfo": {
+    "command": [
+      "clinfo",
+      "--list"
+    ],
+    "returncode": 0,
+    "stdout": "dlerror: libpocl.so.3: cannot open shared object file: No such file or directory\nPlatform #0: Clover\n `-- Device #0: AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)\nPlatform #1: rusticl\n",
+    "stderr": ""
+  },
+  "rocminfo": {
+    "command": [
+      "rocminfo"
+    ],
+    "returncode": 127,
+    "stdout": "",
+    "stderr": "[Errno 2] No such file or directory: 'rocminfo'"
+  },
+  "rocm_smi": {
+    "command": [
+      "rocm-smi",
+      "--showproductname"
+    ],
+    "returncode": 127,
+    "stdout": "",
+    "stderr": "[Errno 2] No such file or directory: 'rocm-smi'"
+  },
+  "inventory_default": {
+    "command": [
+      "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+      "-c",
+      "\nimport json\nimport pyopencl as cl\n\nrows = []\nfor i, platform in enumerate(cl.get_platforms()):\n    try:\n        devices = platform.get_devices(device_type=cl.device_type.GPU)\n    except Exception as exc:\n        rows.append({\n            \"platform_index\": i,\n            \"platform_name\": platform.name,\n            \"vendor\": platform.vendor,\n            \"version\": platform.version,\n            \"error\": str(exc),\n        })\n        continue\n\n    rows.append(\n        {\n            \"platform_index\": i,\n            \"platform_name\": platform.name,\n            \"vendor\": platform.vendor,\n            \"version\": platform.version,\n            \"gpu_device_count\": len(devices),\n            \"devices\": [\n                {\n                    \"name\": dev.name,\n                    \"vendor\": dev.vendor,\n                    \"version\": dev.version,\n                    \"driver\": dev.driver_version,\n                    \"global_mem_gb\": round(dev.global_mem_size / (1024 ** 3), 3),\n                    \"max_work_group_size\": int(dev.max_work_group_size),\n                }\n                for dev in devices\n            ],\n        }\n    )\n\nprint(json.dumps({\"platforms\": rows}))\n"
+    ],
+    "returncode": 0,
+    "stdout": "{\"platforms\": [{\"platform_index\": 0, \"platform_name\": \"Clover\", \"vendor\": \"Mesa\", \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\", \"gpu_device_count\": 1, \"devices\": [{\"name\": \"AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)\", \"vendor\": \"AMD\", \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\", \"driver\": \"25.0.7-0ubuntu0.24.04.2\", \"global_mem_gb\": 8.0, \"max_work_group_size\": 256}]}, {\"platform_index\": 1, \"platform_name\": \"rusticl\", \"vendor\": \"Mesa/X.org\", \"version\": \"OpenCL 3.0 \", \"gpu_device_count\": 0, \"devices\": []}]}\n",
+    "stderr": "",
+    "json": {
+      "platforms": [
+        {
+          "platform_index": 0,
+          "platform_name": "Clover",
+          "vendor": "Mesa",
+          "version": "OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2",
+          "gpu_device_count": 1,
+          "devices": [
+            {
+              "name": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+              "vendor": "AMD",
+              "version": "OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2",
+              "driver": "25.0.7-0ubuntu0.24.04.2",
+              "global_mem_gb": 8.0,
+              "max_work_group_size": 256
+            }
+          ]
+        },
+        {
+          "platform_index": 1,
+          "platform_name": "rusticl",
+          "vendor": "Mesa/X.org",
+          "version": "OpenCL 3.0 ",
+          "gpu_device_count": 0,
+          "devices": []
+        }
+      ]
+    }
+  },
+  "inventory_rusticl_enabled": {
+    "command": [
+      "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+      "-c",
+      "\nimport json\nimport pyopencl as cl\n\nrows = []\nfor i, platform in enumerate(cl.get_platforms()):\n    try:\n        devices = platform.get_devices(device_type=cl.device_type.GPU)\n    except Exception as exc:\n        rows.append({\n            \"platform_index\": i,\n            \"platform_name\": platform.name,\n            \"vendor\": platform.vendor,\n            \"version\": platform.version,\n            \"error\": str(exc),\n        })\n        continue\n\n    rows.append(\n        {\n            \"platform_index\": i,\n            \"platform_name\": platform.name,\n            \"vendor\": platform.vendor,\n            \"version\": platform.version,\n            \"gpu_device_count\": len(devices),\n            \"devices\": [\n                {\n                    \"name\": dev.name,\n                    \"vendor\": dev.vendor,\n                    \"version\": dev.version,\n                    \"driver\": dev.driver_version,\n                    \"global_mem_gb\": round(dev.global_mem_size / (1024 ** 3), 3),\n                    \"max_work_group_size\": int(dev.max_work_group_size),\n                }\n                for dev in devices\n            ],\n        }\n    )\n\nprint(json.dumps({\"platforms\": rows}))\n"
+    ],
+    "returncode": 0,
+    "stdout": "{\"platforms\": [{\"platform_index\": 0, \"platform_name\": \"Clover\", \"vendor\": \"Mesa\", \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\", \"gpu_device_count\": 1, \"devices\": [{\"name\": \"AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)\", \"vendor\": \"AMD\", \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\", \"driver\": \"25.0.7-0ubuntu0.24.04.2\", \"global_mem_gb\": 8.0, \"max_work_group_size\": 256}]}, {\"platform_index\": 1, \"platform_name\": \"rusticl\", \"vendor\": \"Mesa/X.org\", \"version\": \"OpenCL 3.0 \", \"gpu_device_count\": 1, \"devices\": [{\"name\": \"AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)\", \"vendor\": \"AMD\", \"version\": \"OpenCL 3.0 \", \"driver\": \"25.0.7 (git-35721f1986)\", \"global_mem_gb\": 8.0, \"max_work_group_size\": 1024}]}]}\n",
+    "stderr": "",
+    "json": {
+      "platforms": [
+        {
+          "platform_index": 0,
+          "platform_name": "Clover",
+          "vendor": "Mesa",
+          "version": "OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2",
+          "gpu_device_count": 1,
+          "devices": [
+            {
+              "name": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+              "vendor": "AMD",
+              "version": "OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2",
+              "driver": "25.0.7-0ubuntu0.24.04.2",
+              "global_mem_gb": 8.0,
+              "max_work_group_size": 256
+            }
+          ]
+        },
+        {
+          "platform_index": 1,
+          "platform_name": "rusticl",
+          "vendor": "Mesa/X.org",
+          "version": "OpenCL 3.0 ",
+          "gpu_device_count": 1,
+          "devices": [
+            {
+              "name": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+              "vendor": "AMD",
+              "version": "OpenCL 3.0 ",
+              "driver": "25.0.7 (git-35721f1986)",
+              "global_mem_gb": 8.0,
+              "max_work_group_size": 1024
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "microbench_default": {
+    "command": [
+      "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+      "-c",
+      "\nimport json\nimport time\nimport warnings\nfrom pathlib import Path\n\nimport numpy as np\nimport pyopencl as cl\n\nwarnings.filterwarnings(\"ignore\", message=\".*PyOpenCL compiler caching failed.*\")\n\nsize = 1024\niterations = 5\nwarmup = 2\nrng = np.random.default_rng(123)\nkernel_source = Path(\"src/kernels/gemm_tile24_production.cl\").read_text()\nkernel_name = \"gemm_tile24_vectorized\"\n\nresults = []\n\nfor platform in cl.get_platforms():\n    try:\n        gpu_devices = platform.get_devices(device_type=cl.device_type.GPU)\n    except Exception as exc:\n        results.append(\n            {\n                \"platform\": platform.name,\n                \"status\": \"error\",\n                \"error\": f\"get_devices_failed: {exc}\",\n            }\n        )\n        continue\n\n    amd_devices = [\n        dev\n        for dev in gpu_devices\n        if \"amd\" in (dev.vendor or \"\").lower() or \"radeon\" in (dev.name or \"\").lower()\n    ]\n    if not amd_devices:\n        results.append({\"platform\": platform.name, \"status\": \"skip_no_amd_gpu\"})\n        continue\n\n    dev = amd_devices[0]\n    try:\n        ctx = cl.Context([dev])\n        queue = cl.CommandQueue(ctx)\n        program = cl.Program(ctx, kernel_source).build(options=[\"-cl-fast-relaxed-math\"])\n        kernel = getattr(program, kernel_name)\n\n        a = rng.standard_normal((size, size), dtype=np.float32)\n        b = rng.standard_normal((size, size), dtype=np.float32)\n        c = np.zeros((size, size), dtype=np.float32)\n\n        mf = cl.mem_flags\n        a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=a)\n        b_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=b)\n        c_buf = cl.Buffer(ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=c)\n\n        local_size = (12, 12)\n        tile = 24\n        global_size = (\n            ((size + tile - 1) // tile) * local_size[0],\n            ((size + tile - 1) // tile) * local_size[1],\n        )\n\n        kernel.set_args(\n            np.int32(size),\n            np.int32(size),\n            np.int32(size),\n            np.float32(1.0),\n            a_buf,\n            b_buf,\n            np.float32(0.0),\n            c_buf,\n        )\n\n        for _ in range(warmup):\n            cl.enqueue_nd_range_kernel(queue, kernel, global_size, local_size)\n            queue.finish()\n\n        elapsed = []\n        for _ in range(iterations):\n            t0 = time.perf_counter()\n            cl.enqueue_nd_range_kernel(queue, kernel, global_size, local_size)\n            queue.finish()\n            elapsed.append(time.perf_counter() - t0)\n\n        out = np.empty_like(c)\n        cl.enqueue_copy(queue, out, c_buf).wait()\n\n        flops = 2 * size * size * size\n        peak_gflops = float(flops / min(elapsed) / 1e9)\n        avg_gflops = float(flops / (sum(elapsed) / len(elapsed)) / 1e9)\n        max_error = float(np.max(np.abs(out - (a @ b))))\n\n        results.append(\n            {\n                \"platform\": platform.name,\n                \"platform_version\": platform.version,\n                \"device\": dev.name,\n                \"driver\": dev.driver_version,\n                \"status\": \"ok\",\n                \"size\": size,\n                \"peak_gflops\": peak_gflops,\n                \"avg_gflops\": avg_gflops,\n                \"max_error\": max_error,\n            }\n        )\n    except Exception as exc:\n        results.append(\n            {\n                \"platform\": platform.name,\n                \"device\": dev.name,\n                \"status\": \"error\",\n                \"error\": str(exc),\n            }\n        )\n\nprint(json.dumps({\"microbench\": results}))\n"
+    ],
+    "returncode": 0,
+    "stdout": "{\"microbench\": [{\"platform\": \"Clover\", \"platform_version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\", \"device\": \"AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)\", \"driver\": \"25.0.7-0ubuntu0.24.04.2\", \"status\": \"ok\", \"size\": 1024, \"peak_gflops\": 694.610316338451, \"avg_gflops\": 638.6360694135635, \"max_error\": 0.000213623046875}, {\"platform\": \"rusticl\", \"status\": \"skip_no_amd_gpu\"}]}\n",
+    "stderr": "",
+    "json": {
+      "microbench": [
+        {
+          "platform": "Clover",
+          "platform_version": "OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2",
+          "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+          "driver": "25.0.7-0ubuntu0.24.04.2",
+          "status": "ok",
+          "size": 1024,
+          "peak_gflops": 694.610316338451,
+          "avg_gflops": 638.6360694135635,
+          "max_error": 0.000213623046875
+        },
+        {
+          "platform": "rusticl",
+          "status": "skip_no_amd_gpu"
+        }
+      ]
+    }
+  },
+  "microbench_rusticl_enabled": {
+    "command": [
+      "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+      "-c",
+      "\nimport json\nimport time\nimport warnings\nfrom pathlib import Path\n\nimport numpy as np\nimport pyopencl as cl\n\nwarnings.filterwarnings(\"ignore\", message=\".*PyOpenCL compiler caching failed.*\")\n\nsize = 1024\niterations = 5\nwarmup = 2\nrng = np.random.default_rng(123)\nkernel_source = Path(\"src/kernels/gemm_tile24_production.cl\").read_text()\nkernel_name = \"gemm_tile24_vectorized\"\n\nresults = []\n\nfor platform in cl.get_platforms():\n    try:\n        gpu_devices = platform.get_devices(device_type=cl.device_type.GPU)\n    except Exception as exc:\n        results.append(\n            {\n                \"platform\": platform.name,\n                \"status\": \"error\",\n                \"error\": f\"get_devices_failed: {exc}\",\n            }\n        )\n        continue\n\n    amd_devices = [\n        dev\n        for dev in gpu_devices\n        if \"amd\" in (dev.vendor or \"\").lower() or \"radeon\" in (dev.name or \"\").lower()\n    ]\n    if not amd_devices:\n        results.append({\"platform\": platform.name, \"status\": \"skip_no_amd_gpu\"})\n        continue\n\n    dev = amd_devices[0]\n    try:\n        ctx = cl.Context([dev])\n        queue = cl.CommandQueue(ctx)\n        program = cl.Program(ctx, kernel_source).build(options=[\"-cl-fast-relaxed-math\"])\n        kernel = getattr(program, kernel_name)\n\n        a = rng.standard_normal((size, size), dtype=np.float32)\n        b = rng.standard_normal((size, size), dtype=np.float32)\n        c = np.zeros((size, size), dtype=np.float32)\n\n        mf = cl.mem_flags\n        a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=a)\n        b_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=b)\n        c_buf = cl.Buffer(ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=c)\n\n        local_size = (12, 12)\n        tile = 24\n        global_size = (\n            ((size + tile - 1) // tile) * local_size[0],\n            ((size + tile - 1) // tile) * local_size[1],\n        )\n\n        kernel.set_args(\n            np.int32(size),\n            np.int32(size),\n            np.int32(size),\n            np.float32(1.0),\n            a_buf,\n            b_buf,\n            np.float32(0.0),\n            c_buf,\n        )\n\n        for _ in range(warmup):\n            cl.enqueue_nd_range_kernel(queue, kernel, global_size, local_size)\n            queue.finish()\n\n        elapsed = []\n        for _ in range(iterations):\n            t0 = time.perf_counter()\n            cl.enqueue_nd_range_kernel(queue, kernel, global_size, local_size)\n            queue.finish()\n            elapsed.append(time.perf_counter() - t0)\n\n        out = np.empty_like(c)\n        cl.enqueue_copy(queue, out, c_buf).wait()\n\n        flops = 2 * size * size * size\n        peak_gflops = float(flops / min(elapsed) / 1e9)\n        avg_gflops = float(flops / (sum(elapsed) / len(elapsed)) / 1e9)\n        max_error = float(np.max(np.abs(out - (a @ b))))\n\n        results.append(\n            {\n                \"platform\": platform.name,\n                \"platform_version\": platform.version,\n                \"device\": dev.name,\n                \"driver\": dev.driver_version,\n                \"status\": \"ok\",\n                \"size\": size,\n                \"peak_gflops\": peak_gflops,\n                \"avg_gflops\": avg_gflops,\n                \"max_error\": max_error,\n            }\n        )\n    except Exception as exc:\n        results.append(\n            {\n                \"platform\": platform.name,\n                \"device\": dev.name,\n                \"status\": \"error\",\n                \"error\": str(exc),\n            }\n        )\n\nprint(json.dumps({\"microbench\": results}))\n"
+    ],
+    "returncode": 0,
+    "stdout": "{\"microbench\": [{\"platform\": \"Clover\", \"platform_version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\", \"device\": \"AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)\", \"driver\": \"25.0.7-0ubuntu0.24.04.2\", \"status\": \"ok\", \"size\": 1024, \"peak_gflops\": 689.243752346012, \"avg_gflops\": 641.6160091439342, \"max_error\": 0.000213623046875}, {\"platform\": \"rusticl\", \"platform_version\": \"OpenCL 3.0 \", \"device\": \"AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)\", \"driver\": \"25.0.7 (git-35721f1986)\", \"status\": \"ok\", \"size\": 1024, \"peak_gflops\": 669.600035156016, \"avg_gflops\": 658.6116135044575, \"max_error\": 0.00019073486328125}]}\n",
+    "stderr": "",
+    "json": {
+      "microbench": [
+        {
+          "platform": "Clover",
+          "platform_version": "OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2",
+          "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+          "driver": "25.0.7-0ubuntu0.24.04.2",
+          "status": "ok",
+          "size": 1024,
+          "peak_gflops": 689.243752346012,
+          "avg_gflops": 641.6160091439342,
+          "max_error": 0.000213623046875
+        },
+        {
+          "platform": "rusticl",
+          "platform_version": "OpenCL 3.0 ",
+          "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.61, 6.14.0-37-generic)",
+          "driver": "25.0.7 (git-35721f1986)",
+          "status": "ok",
+          "size": 1024,
+          "peak_gflops": 669.600035156016,
+          "avg_gflops": 658.6116135044575,
+          "max_error": 0.00019073486328125
+        }
+      ]
+    }
+  },
+  "evaluation": {
+    "checks": {
+      "clover_default_gpu_available": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "rusticl_gpu_visible_without_env": {
+        "observed": false,
+        "required": true,
+        "pass": false
+      },
+      "rusticl_gpu_activatable_with_env": {
+        "observed": true,
+        "required": true,
+        "pass": true
+      },
+      "rusticl_perf_ratio_vs_clover": {
+        "observed": 1.0264887473478093,
+        "required_min": 0.9,
+        "pass": true
+      },
+      "rocm_tools_present": {
+        "observed": false,
+        "required": false,
+        "pass": true
+      },
+      "production_platform_selection_explicit": {
+        "observed": false,
+        "required": true,
+        "pass": false
+      }
+    },
+    "decision": "refine",
+    "rationale": "Rusticl is technically viable in shadow mode, but production path is pinned to platform index 0; selector hardening is required before any canary promotion.",
+    "summary": {
+      "clover_default_gpu_available": true,
+      "rusticl_gpu_visible_without_env": false,
+      "rusticl_gpu_activatable_with_env": true,
+      "rusticl_avg_gflops": 658.6116135044575,
+      "clover_avg_gflops": 641.6160091439342,
+      "rusticl_vs_clover_ratio": 1.0264887473478093,
+      "rocm_tools_available": false,
+      "production_platform_selection_hardcoded": true
+    }
+  }
+}
