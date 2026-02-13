@@ -26,7 +26,7 @@ try:
         CalibratedIntelligentSelector,
         OptimizationTechnique,
         SelectionResult,
-        MatrixCharacteristics
+        MatrixCharacteristics,
     )
 except ImportError:
     CalibratedIntelligentSelector = None
@@ -35,12 +35,12 @@ except ImportError:
     MatrixCharacteristics = None
 
 __all__ = [
-    'AIKernelPredictorFineTuner',
-    'AIKernelPredictorFineTunerCorrected',
-    'MLDatasetCollector',
-    'recalibrate_selector_with_hardware_data',
-    'CalibratedIntelligentSelector',
-    'OptimizationTechnique',
-    'SelectionResult',
-    'MatrixCharacteristics'
+    "AIKernelPredictorFineTuner",
+    "AIKernelPredictorFineTunerCorrected",
+    "MLDatasetCollector",
+    "recalibrate_selector_with_hardware_data",
+    "CalibratedIntelligentSelector",
+    "OptimizationTechnique",
+    "SelectionResult",
+    "MatrixCharacteristics",
 ]

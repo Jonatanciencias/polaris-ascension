@@ -11,7 +11,4 @@ try:
 except (ImportError, AttributeError):
     DebugTest = None
 
-__all__ = [
-    'CheckIntegrationStatus',
-    'DebugTest'
-]
+__all__ = ["CheckIntegrationStatus", "DebugTest"]

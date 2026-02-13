@@ -64,7 +64,11 @@ def get_model_info(model_path: str) -> Dict[str, Any]:
     if HAS_ORT:
         session = ort.InferenceSession(str(path), providers=["CPUExecutionProvider"])
         info["providers"] = session.get_providers()
-        info["inputs"] = [{"name": i.name, "shape": i.shape, "type": i.type} for i in session.get_inputs()]
-        info["outputs"] = [{"name": o.name, "shape": o.shape, "type": o.type} for o in session.get_outputs()]
+        info["inputs"] = [
+            {"name": i.name, "shape": i.shape, "type": i.type} for i in session.get_inputs()
+        ]
+        info["outputs"] = [
+            {"name": o.name, "shape": o.shape, "type": o.type} for o in session.get_outputs()
+        ]
 
     return info

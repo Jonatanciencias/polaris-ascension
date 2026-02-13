@@ -6,7 +6,9 @@ from pathlib import Path
 from src.optimization_engines.t5_abft_guardrails import T5ABFTAutoDisableGuard
 
 
-def _write_policy(path: Path, *, runtime_guardrails_override: dict[str, float | int | bool] | None = None) -> None:
+def _write_policy(
+    path: Path, *, runtime_guardrails_override: dict[str, float | int | bool] | None = None
+) -> None:
     runtime_guardrails = {
         "disable_if_false_positive_rate_gt": 0.05,
         "disable_if_effective_overhead_percent_gt": 3.0,

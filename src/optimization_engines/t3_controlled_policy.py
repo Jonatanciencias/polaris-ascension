@@ -125,9 +125,7 @@ class ControlledT3Policy:
                 ),
             )
         )
-        defaults["freeze_sizes"] = list(
-            bootstrap.get("freeze_sizes", defaults["freeze_sizes"])
-        )
+        defaults["freeze_sizes"] = list(bootstrap.get("freeze_sizes", defaults["freeze_sizes"]))
         defaults["fallback_regression_limit"] = float(
             guardrails.get(
                 "fallback_regression_limit",
@@ -192,9 +190,7 @@ class ControlledT3Policy:
         for size_data in priors.values():
             for arm_data in size_data.values():
                 arm_data["eligible_nonstatic"] = float(
-                    1.0
-                    if arm_data["delta_vs_baseline_percent"] >= min_delta_for_nonstatic
-                    else 0.0
+                    1.0 if arm_data["delta_vs_baseline_percent"] >= min_delta_for_nonstatic else 0.0
                 )
 
         return priors, str(report_path)
@@ -213,16 +209,13 @@ class ControlledT3Policy:
             return
 
         self.stats[context] = {
-            arm: {"count": 0.0, "reward_sum": 0.0}
-            for arm in sorted(arm_priors.keys())
+            arm: {"count": 0.0, "reward_sum": 0.0} for arm in sorted(arm_priors.keys())
         }
         self.context_steps[context] = 0
 
         for arm, prior_reward in arm_priors.items():
             self.stats[context][arm]["count"] += self.bootstrap_weight
-            self.stats[context][arm]["reward_sum"] += self.bootstrap_weight * float(
-                prior_reward
-            )
+            self.stats[context][arm]["reward_sum"] += self.bootstrap_weight * float(prior_reward)
 
     def _mean_reward(self, context: str, arm: str) -> float:
         values = self.stats[context][arm]

@@ -59,7 +59,9 @@ def _matches_selector(candidates: list[str], selector: str) -> bool:
     if normalized == "auto":
         return True
     needle = normalized.lower()
-    return any(needle in str(candidate).lower() for candidate in candidates if candidate is not None)
+    return any(
+        needle in str(candidate).lower() for candidate in candidates if candidate is not None
+    )
 
 
 def _is_amd_device(device: cl.Device) -> bool:
@@ -120,7 +122,9 @@ def _select_opencl_runtime(
         details: list[dict[str, Any]] = []
         for platform in matching_platforms:
             try:
-                gpu_names = [str(dev.name) for dev in platform.get_devices(device_type=cl.device_type.GPU)]
+                gpu_names = [
+                    str(dev.name) for dev in platform.get_devices(device_type=cl.device_type.GPU)
+                ]
             except cl.RuntimeError:
                 gpu_names = []
             details.append({"platform": str(platform.name), "gpu_devices": gpu_names})
@@ -238,8 +242,14 @@ def _benchmark_once(
     )
 
     kernel.set_args(
-        np.int32(size), np.int32(size), np.int32(size),
-        np.float32(1.0), a_buf, b_buf, np.float32(0.0), c_buf
+        np.int32(size),
+        np.int32(size),
+        np.int32(size),
+        np.float32(1.0),
+        a_buf,
+        b_buf,
+        np.float32(0.0),
+        c_buf,
     )
 
     for _ in range(2):
@@ -522,9 +532,7 @@ def _benchmark_once_with_t5_guard(
             "false_positive_count": int(anomalies),
             "false_positive_rate": float(anomalies / max(1, checked_runs)),
             "effective_overhead_percent": (
-                float(verify_total_ms / kernel_total_ms * 100.0)
-                if kernel_total_ms > 0
-                else 0.0
+                float(verify_total_ms / kernel_total_ms * 100.0) if kernel_total_ms > 0 else 0.0
             ),
             "kernel_time_total_ms": kernel_total_ms,
             "verify_time_total_ms": verify_total_ms,
@@ -599,9 +607,7 @@ def _run_t5_guarded_benchmark(
                 session_id=session_idx,
                 metrics={
                     "false_positive_rate": float(t5_metrics["false_positive_rate"]),
-                    "effective_overhead_percent": float(
-                        t5_metrics["effective_overhead_percent"]
-                    ),
+                    "effective_overhead_percent": float(t5_metrics["effective_overhead_percent"]),
                     "max_error": float(t5_metrics["max_error"]),
                 },
             )
@@ -888,12 +894,12 @@ def _run_t3_controlled_benchmark(
     static_mean = float(static_summary["avg_gflops"]["mean"])
     controlled_mean = float(controlled_summary["avg_gflops"]["mean"])
     delta_vs_static_percent = (
-        ((controlled_mean - static_mean) / static_mean * 100.0)
-        if static_mean > 0
-        else 0.0
+        ((controlled_mean - static_mean) / static_mean * 100.0) if static_mean > 0 else 0.0
     )
     policy_snapshot = controlled_selector.get_t3_policy_snapshot()
-    policy_disabled = bool(policy_snapshot.get("disabled", False)) if policy_snapshot is not None else False
+    policy_disabled = (
+        bool(policy_snapshot.get("disabled", False)) if policy_snapshot is not None else False
+    )
 
     return {
         "metadata": {
@@ -983,7 +989,9 @@ def run_production_benchmark(
             platform_selection=platform_selection,
         )
 
-    kernel_file, kernel_name, local_size, tile_size, resolved_kernel = _kernel_spec(size=size, kernel=kernel)
+    kernel_file, kernel_name, local_size, tile_size, resolved_kernel = _kernel_spec(
+        size=size, kernel=kernel
+    )
     ctx = cl.Context([device])
     queue = cl.CommandQueue(ctx)
     source = Path(kernel_file).read_text()

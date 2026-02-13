@@ -73,7 +73,9 @@ class ONNXModelLoader:
         else:
             sess_opts.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_BASIC
 
-        self._session = ort.InferenceSession(str(path), providers=[provider], sess_options=sess_opts)
+        self._session = ort.InferenceSession(
+            str(path), providers=[provider], sess_options=sess_opts
+        )
 
         inputs = self._session.get_inputs()
         outputs = self._session.get_outputs()
@@ -106,7 +108,9 @@ class ONNXModelLoader:
 class PyTorchModelLoader:
     """PyTorch loader compatibility shim."""
 
-    def __init__(self, optimization_level: int = 2, preferred_device: str = "auto", **_: Any) -> None:
+    def __init__(
+        self, optimization_level: int = 2, preferred_device: str = "auto", **_: Any
+    ) -> None:
         self.optimization_level = optimization_level
         self.preferred_device = preferred_device
         self._model: Optional["torch.nn.Module"] = None

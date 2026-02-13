@@ -15,6 +15,7 @@ sys.path.insert(0, str(project_root / "fase_9_breakthrough_integration" / "src")
 
 from intelligent_technique_selector import IntelligentTechniqueSelector
 
+
 def quick_analysis():
     print("🚀 ANÁLISIS RÁPIDO DEL SISTEMA DE SELECCIÓN INTELIGENTE")
     print("=" * 60)
@@ -25,8 +26,11 @@ def quick_analysis():
     test_cases = [
         ("Pequeña densa", np.random.randn(256, 256), np.random.randn(256, 256)),
         ("Mediana densa", np.random.randn(512, 512), np.random.randn(512, 512)),
-        ("Grande sparse", np.random.randn(512, 512) * (np.random.rand(512, 512) > 0.8),
-         np.random.randn(512, 512) * (np.random.rand(512, 512) > 0.8)),
+        (
+            "Grande sparse",
+            np.random.randn(512, 512) * (np.random.rand(512, 512) > 0.8),
+            np.random.randn(512, 512) * (np.random.rand(512, 512) > 0.8),
+        ),
     ]
 
     results = []
@@ -47,13 +51,15 @@ def quick_analysis():
         print(f"   Performance: {result.expected_performance:.1f} GFLOPS")
         print(f"   Tiempo: {elapsed:.3f}s")
 
-        results.append({
-            'case': name,
-            'technique': tech,
-            'confidence': result.selection_confidence,
-            'performance': result.expected_performance,
-            'time': elapsed
-        })
+        results.append(
+            {
+                "case": name,
+                "technique": tech,
+                "confidence": result.selection_confidence,
+                "performance": result.expected_performance,
+                "time": elapsed,
+            }
+        )
 
     print("\n📈 RESUMEN:")
     print(f"   Técnicas distintas usadas: {len(techniques_used)}")
@@ -68,7 +74,7 @@ def quick_analysis():
         "Calibración de pesos": "🔴 ALTA - Sistema usa pesos fijos, necesita optimización automática",
         "Dataset expandido": "🔴 ALTA - No existe dataset de entrenamiento",
         "Combinaciones automáticas": "🟡 MEDIA - Podría mejorar performance significativamente",
-        "Métricas avanzadas": "🟡 MEDIA - Sistema básico funciona, pero se puede enriquecer"
+        "Métricas avanzadas": "🟡 MEDIA - Sistema básico funciona, pero se puede enriquecer",
     }
 
     for improvement, evaluation in improvements.items():
@@ -81,15 +87,20 @@ def quick_analysis():
     output_file = project_root / "fase_9_breakthrough_integration" / "data" / "quick_analysis.json"
     output_file.parent.mkdir(exist_ok=True)
 
-    with open(output_file, 'w') as f:
-        json.dump({
-            'timestamp': time.time(),
-            'results': results,
-            'techniques_used': techniques_used,
-            'recommendations': list(improvements.keys())
-        }, f, indent=2)
+    with open(output_file, "w") as f:
+        json.dump(
+            {
+                "timestamp": time.time(),
+                "results": results,
+                "techniques_used": techniques_used,
+                "recommendations": list(improvements.keys()),
+            },
+            f,
+            indent=2,
+        )
 
     print(f"\n💾 Resultados guardados en: {output_file}")
+
 
 if __name__ == "__main__":
     quick_analysis()

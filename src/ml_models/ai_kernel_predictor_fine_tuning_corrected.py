@@ -21,7 +21,9 @@ from sklearn.metrics import mean_absolute_error, r2_score
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 import joblib
 import matplotlib.pyplot as plt
+
 # import seaborn as sns  # Not available in this environment
+
 
 class AIKernelPredictorFineTunerCorrected:
     """
@@ -42,10 +44,16 @@ class AIKernelPredictorFineTunerCorrected:
         self.label_encoders = {}
         # Features corregidas (sin 'technique' como entrada)
         self.feature_columns = [
-            'matrix_size', 'matrix_type', 'sparsity_a', 'sparsity_b',
-            'rank_ratio_a', 'rank_ratio_b', 'computational_intensity', 'memory_usage_mb'
+            "matrix_size",
+            "matrix_type",
+            "sparsity_a",
+            "sparsity_b",
+            "rank_ratio_a",
+            "rank_ratio_b",
+            "computational_intensity",
+            "memory_usage_mb",
         ]
-        self.target_column = 'gflops_achieved'
+        self.target_column = "gflops_achieved"
 
         print("🎯 AI KERNEL PREDICTOR FINE-TUNING CORREGIDO")
         print("=" * 55)
@@ -54,7 +62,7 @@ class AIKernelPredictorFineTunerCorrected:
         """Carga el dataset más reciente."""
         import glob
 
-        if '*' in self.dataset_path:
+        if "*" in self.dataset_path:
             files = glob.glob(self.dataset_path)
             if not files:
                 raise FileNotFoundError(f"No se encontraron archivos: {self.dataset_path}")
@@ -84,17 +92,17 @@ class AIKernelPredictorFineTunerCorrected:
         print(f"   Removidos NaN/infinitos: {initial_count - len(df)} filas")
 
         # Remover outliers usando IQR method (solo para GFLOPS > 0)
-        valid_data = df[df['gflops_achieved'] > 0].copy()
+        valid_data = df[df["gflops_achieved"] > 0].copy()
         if len(valid_data) > 0:
-            Q1 = valid_data['gflops_achieved'].quantile(0.25)
-            Q3 = valid_data['gflops_achieved'].quantile(0.75)
+            Q1 = valid_data["gflops_achieved"].quantile(0.25)
+            Q3 = valid_data["gflops_achieved"].quantile(0.75)
             IQR = Q3 - Q1
             lower_bound = Q1 - 1.5 * IQR
             upper_bound = Q3 + 1.5 * IQR
 
             outliers = valid_data[
-                (valid_data['gflops_achieved'] < lower_bound) |
-                (valid_data['gflops_achieved'] > upper_bound)
+                (valid_data["gflops_achieved"] < lower_bound)
+                | (valid_data["gflops_achieved"] > upper_bound)
             ]
 
             if len(outliers) > 0:
@@ -103,10 +111,10 @@ class AIKernelPredictorFineTunerCorrected:
                 df = df[~df.index.isin(outliers.index)]
 
         # Asegurar que success=True
-        success_count = len(df[df['success'] == True])
+        success_count = len(df[df["success"] == True])
         if success_count < len(df):
             print(f"   Manteniendo solo ejecuciones exitosas: {success_count}/{len(df)}")
-            df = df[df['success'] == True]
+            df = df[df["success"] == True]
 
         print(f"✅ Dataset limpio: {len(df)} registros")
 
@@ -125,11 +133,17 @@ class AIKernelPredictorFineTunerCorrected:
 
         # Performance por técnica
         print("\n🎯 PERFORMANCE POR TÉCNICA:")
-        technique_stats = df.groupby('technique').agg({
-            'gflops_achieved': ['mean', 'max', 'min', 'std', 'count'],
-            'relative_error': ['mean', 'max'],
-            'execution_time': ['mean', 'max']
-        }).round(3)
+        technique_stats = (
+            df.groupby("technique")
+            .agg(
+                {
+                    "gflops_achieved": ["mean", "max", "min", "std", "count"],
+                    "relative_error": ["mean", "max"],
+                    "execution_time": ["mean", "max"],
+                }
+            )
+            .round(3)
+        )
 
         for technique in technique_stats.index:
             stats = technique_stats.loc[technique]
@@ -140,17 +154,31 @@ class AIKernelPredictorFineTunerCorrected:
 
         # Análisis por tipo de matriz
         print("\n🏷️  PERFORMANCE POR TIPO DE MATRIZ:")
-        matrix_stats = df.groupby(['matrix_type', 'technique'])['gflops_achieved'].agg(['mean', 'max']).round(3)
+        matrix_stats = (
+            df.groupby(["matrix_type", "technique"])["gflops_achieved"]
+            .agg(["mean", "max"])
+            .round(3)
+        )
         for (matrix_type, technique), stats in matrix_stats.iterrows():
-            print(f"   {matrix_type}_{technique}: {stats['mean']:.3f} GFLOPS (max: {stats['max']:.3f})")
+            print(
+                f"   {matrix_type}_{technique}: {stats['mean']:.3f} GFLOPS (max: {stats['max']:.3f})"
+            )
 
         # Correlaciones
-        numeric_cols = ['matrix_size', 'gflops_achieved', 'relative_error', 'sparsity_a',
-                       'sparsity_b', 'rank_ratio_a', 'rank_ratio_b', 'computational_intensity']
-        correlations = df[numeric_cols].corr()['gflops_achieved'].sort_values(ascending=False)
+        numeric_cols = [
+            "matrix_size",
+            "gflops_achieved",
+            "relative_error",
+            "sparsity_a",
+            "sparsity_b",
+            "rank_ratio_a",
+            "rank_ratio_b",
+            "computational_intensity",
+        ]
+        correlations = df[numeric_cols].corr()["gflops_achieved"].sort_values(ascending=False)
         print("\n📈 CORRELACIONES CON GFLOPS:")
         for feature, corr in correlations.items():
-            if feature != 'gflops_achieved':
+            if feature != "gflops_achieved":
                 print(f"   {feature}: {corr:.3f}")
 
     def prepare_features(self, df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
@@ -160,7 +188,7 @@ class AIKernelPredictorFineTunerCorrected:
         # Codificar variables categóricas
         df_processed = df.copy()
 
-        for col in ['matrix_type']:
+        for col in ["matrix_type"]:
             if col not in self.label_encoders:
                 self.label_encoders[col] = LabelEncoder()
             df_processed[col] = self.label_encoders[col].fit_transform(df_processed[col])
@@ -183,24 +211,16 @@ class AIKernelPredictorFineTunerCorrected:
         print("\n🤖 ENTRENANDO MODELO...")
 
         # Dividir datos
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         # Probar diferentes modelos
         models = {
-            'RandomForest': RandomForestRegressor(
-                n_estimators=100,
-                max_depth=10,
-                random_state=42,
-                n_jobs=-1
+            "RandomForest": RandomForestRegressor(
+                n_estimators=100, max_depth=10, random_state=42, n_jobs=-1
             ),
-            'GradientBoosting': GradientBoostingRegressor(
-                n_estimators=100,
-                learning_rate=0.1,
-                max_depth=6,
-                random_state=42
-            )
+            "GradientBoosting": GradientBoostingRegressor(
+                n_estimators=100, learning_rate=0.1, max_depth=6, random_state=42
+            ),
         }
 
         best_model = None
@@ -211,8 +231,7 @@ class AIKernelPredictorFineTunerCorrected:
             print(f"\n   Probando {name}...")
 
             # Cross-validation
-            cv_scores = cross_val_score(model, X_train, y_train, cv=3,
-                                      scoring='r2', n_jobs=-1)
+            cv_scores = cross_val_score(model, X_train, y_train, cv=3, scoring="r2", n_jobs=-1)
             cv_r2 = cv_scores.mean()
 
             # Entrenar modelo completo
@@ -224,7 +243,7 @@ class AIKernelPredictorFineTunerCorrected:
             # Métricas
             r2 = r2_score(y_test, y_pred)
             mae = mean_absolute_error(y_test, y_pred)
-            rmse = np.sqrt(np.mean((y_test - y_pred)**2))
+            rmse = np.sqrt(np.mean((y_test - y_pred) ** 2))
 
             print(f"   CV R²: {cv_r2:.3f}")
             print(f"   Test R²: {r2:.3f}")
@@ -234,13 +253,13 @@ class AIKernelPredictorFineTunerCorrected:
                 best_score = r2
                 best_model = model
                 best_metrics = {
-                    'model_name': name,
-                    'cv_r2': cv_r2,
-                    'test_r2': r2,
-                    'test_mae': mae,
-                    'test_rmse': rmse,
-                    'y_test': y_test,
-                    'y_pred': y_pred
+                    "model_name": name,
+                    "cv_r2": cv_r2,
+                    "test_r2": r2,
+                    "test_mae": mae,
+                    "test_rmse": rmse,
+                    "y_test": y_test,
+                    "y_pred": y_pred,
                 }
 
         self.model = best_model
@@ -255,12 +274,12 @@ class AIKernelPredictorFineTunerCorrected:
             raise ValueError("No hay modelo entrenado para guardar")
 
         model_data = {
-            'model': self.model,
-            'scaler': self.scaler,
-            'label_encoders': self.label_encoders,
-            'feature_columns': self.feature_columns,
-            'target_column': self.target_column,
-            'timestamp': pd.Timestamp.now()
+            "model": self.model,
+            "scaler": self.scaler,
+            "label_encoders": self.label_encoders,
+            "feature_columns": self.feature_columns,
+            "target_column": self.target_column,
+            "timestamp": pd.Timestamp.now(),
         }
 
         joblib.dump(model_data, filename)
@@ -284,13 +303,15 @@ class AIKernelPredictorFineTunerCorrected:
 
         # Análisis por técnica
         print("\n🏷️  PREDICCIÓN POR TÉCNICA:")
-        technique_performance = df.groupby('technique').agg({
-            'gflops_achieved': ['mean', 'std', 'count']
-        }).round(3)
+        technique_performance = (
+            df.groupby("technique").agg({"gflops_achieved": ["mean", "std", "count"]}).round(3)
+        )
 
         for technique in technique_performance.index:
             stats = technique_performance.loc[technique]
-            print(f"   {technique}: {stats['gflops_achieved']['mean']:.3f} ± {stats['gflops_achieved']['std']:.3f} GFLOPS ({int(stats['gflops_achieved']['count'])} muestras)")
+            print(
+                f"   {technique}: {stats['gflops_achieved']['mean']:.3f} ± {stats['gflops_achieved']['std']:.3f} GFLOPS ({int(stats['gflops_achieved']['count'])} muestras)"
+            )
 
         # Próximos pasos
         print("\n🎯 PRÓXIMOS PASOS:")
@@ -331,6 +352,7 @@ class AIKernelPredictorFineTunerCorrected:
         except Exception as e:
             print(f"❌ Error en fine-tuning corregido: {e}")
             import traceback
+
             traceback.print_exc()
             return False
 

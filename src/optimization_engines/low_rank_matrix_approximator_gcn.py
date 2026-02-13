@@ -18,6 +18,7 @@ from typing import Dict, List, Tuple, Optional, Any
 import pyopencl as cl
 import pyopencl.array as cl_array
 
+
 class GCNOptimizedLowRankApproximator:
     """
     Aproximador de bajo rango optimizado para arquitectura GCN 4.0.
@@ -44,7 +45,7 @@ class GCNOptimizedLowRankApproximator:
             platforms = cl.get_platforms()
             amd_platform = None
             for platform in platforms:
-                if 'AMD' in platform.name.upper() or 'ATI' in platform.name.upper():
+                if "AMD" in platform.name.upper() or "ATI" in platform.name.upper():
                     amd_platform = platform
                     break
 
@@ -54,7 +55,10 @@ class GCNOptimizedLowRankApproximator:
             devices = amd_platform.get_devices(device_type=cl.device_type.GPU)
             target_device = None
             for device in devices:
-                if any(keyword in device.name for keyword in ['580', '590', 'RX 580', 'RX 590', 'Polaris']):
+                if any(
+                    keyword in device.name
+                    for keyword in ["580", "590", "RX 580", "RX 590", "Polaris"]
+                ):
                     target_device = device
                     break
 
@@ -74,8 +78,9 @@ class GCNOptimizedLowRankApproximator:
 
             # Configuración optimizada para GCN
             self.ctx = cl.Context([target_device])
-            self.queue = cl.CommandQueue(self.ctx,
-                                       properties=cl.command_queue_properties.PROFILING_ENABLE)
+            self.queue = cl.CommandQueue(
+                self.ctx, properties=cl.command_queue_properties.PROFILING_ENABLE
+            )
 
             # Parámetros optimizados para GCN
             try:
@@ -188,7 +193,9 @@ class GCNOptimizedLowRankApproximator:
         self.program = cl.Program(self.ctx, gcn_kernel_code).build()
 
         # Calcular tamaños óptimos de memoria local
-        self.local_mem_per_workgroup = self.workgroup_size[0] * self.workgroup_size[1] * 4 * 2  # 2 tiles
+        self.local_mem_per_workgroup = (
+            self.workgroup_size[0] * self.workgroup_size[1] * 4 * 2
+        )  # 2 tiles
 
     def analyze_matrix_rank_gcn(self, matrix: np.ndarray) -> Dict[str, Any]:
         """
@@ -203,9 +210,14 @@ class GCNOptimizedLowRankApproximator:
         row_norms_gpu = cl_array.empty(self.queue, matrix.shape[0], dtype=np.float32)
 
         # Ejecutar kernel de análisis GCN
-        self.program.gcn_rank_analysis(self.queue, (matrix.shape[0],), None,
-                                      matrix_gpu.data, row_norms_gpu.data,
-                                      np.int32(matrix.shape[0]))
+        self.program.gcn_rank_analysis(
+            self.queue,
+            (matrix.shape[0],),
+            None,
+            matrix_gpu.data,
+            row_norms_gpu.data,
+            np.int32(matrix.shape[0]),
+        )
 
         # Transferir normas de filas
         row_norms = row_norms_gpu.get()
@@ -223,13 +235,13 @@ class GCNOptimizedLowRankApproximator:
         analysis_time = time.time() - start_time
 
         analysis = {
-            'matrix_shape': matrix.shape,
-            'theoretical_rank': min(matrix.shape),
-            'effective_rank': int(effective_rank),
-            'row_norms': row_norms[:20].tolist(),
-            'rank_reduction_ratio': effective_rank / min(matrix.shape),
-            'compressibility_score': 1.0 - (effective_rank / min(matrix.shape)),
-            'analysis_time_gcn': analysis_time
+            "matrix_shape": matrix.shape,
+            "theoretical_rank": min(matrix.shape),
+            "effective_rank": int(effective_rank),
+            "row_norms": row_norms[:20].tolist(),
+            "rank_reduction_ratio": effective_rank / min(matrix.shape),
+            "compressibility_score": 1.0 - (effective_rank / min(matrix.shape)),
+            "analysis_time_gcn": analysis_time,
         }
 
         print(f"   Rango efectivo estimado: {analysis['effective_rank']}")
@@ -238,8 +250,9 @@ class GCNOptimizedLowRankApproximator:
 
         return analysis
 
-    def optimized_gemm_gcn(self, A: np.ndarray, B: np.ndarray,
-                          target_rank: Optional[int] = None) -> Tuple[np.ndarray, Dict[str, Any]]:
+    def optimized_gemm_gcn(
+        self, A: np.ndarray, B: np.ndarray, target_rank: Optional[int] = None
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
         """
         GEMM optimizada usando aproximaciones de bajo rango en GCN.
         """
@@ -253,7 +266,7 @@ class GCNOptimizedLowRankApproximator:
         rank_B = self.analyze_matrix_rank_gcn(B)
 
         if target_rank is None:
-            effective_rank = min(rank_A['effective_rank'], rank_B['effective_rank'])
+            effective_rank = min(rank_A["effective_rank"], rank_B["effective_rank"])
             target_rank = max(1, int(effective_rank * 0.5))
 
         print(f"   Rango objetivo: {target_rank}")
@@ -271,23 +284,37 @@ class GCNOptimizedLowRankApproximator:
         global_size = (M, N)
 
         # Asegurar que global_size sea múltiplo del workgroup_size
-        global_size = ((global_size[0] + self.workgroup_size[0] - 1) // self.workgroup_size[0] * self.workgroup_size[0],
-                      (global_size[1] + self.workgroup_size[1] - 1) // self.workgroup_size[1] * self.workgroup_size[1])
+        global_size = (
+            (global_size[0] + self.workgroup_size[0] - 1)
+            // self.workgroup_size[0]
+            * self.workgroup_size[0],
+            (global_size[1] + self.workgroup_size[1] - 1)
+            // self.workgroup_size[1]
+            * self.workgroup_size[1],
+        )
 
         local_size = self.workgroup_size
 
         # Ejecutar kernel GCN optimizado
         kernel_start = time.time()
-        self.program.low_rank_gemm_gcn(self.queue, global_size, local_size,
-                                      A_gpu.data, B_gpu.data, C_gpu.data,
-                                      np.int32(A.shape[0]), np.int32(B.shape[1]), np.int32(target_rank),
-                                      cl.LocalMemory(4 * 256),  # Memoria local para tiles
-                                      cl.LocalMemory(4 * 256))
+        self.program.low_rank_gemm_gcn(
+            self.queue,
+            global_size,
+            local_size,
+            A_gpu.data,
+            B_gpu.data,
+            C_gpu.data,
+            np.int32(A.shape[0]),
+            np.int32(B.shape[1]),
+            np.int32(target_rank),
+            cl.LocalMemory(4 * 256),  # Memoria local para tiles
+            cl.LocalMemory(4 * 256),
+        )
         self.queue.finish()
         kernel_time = time.time() - kernel_start
 
         # Transferir resultado
-        result = C_gpu.get()[:A.shape[0], :B.shape[1]]  # Recortar al tamaño correcto
+        result = C_gpu.get()[: A.shape[0], : B.shape[1]]  # Recortar al tamaño correcto
 
         # Calcular métricas
         total_time = time.time() - start_time
@@ -300,22 +327,22 @@ class GCNOptimizedLowRankApproximator:
         try:
             if A.shape[1] == B.shape[0]:
                 result_exact = A @ B
-                error = np.linalg.norm(result_exact - result, 'fro')
-                relative_error = error / np.linalg.norm(result_exact, 'fro')
+                error = np.linalg.norm(result_exact - result, "fro")
+                relative_error = error / np.linalg.norm(result_exact, "fro")
             else:
                 relative_error = None
         except:
             relative_error = None
 
         results = {
-            'result_matrix': result,
-            'computation_time': total_time,
-            'kernel_time': kernel_time,
-            'target_rank': target_rank,
-            'gflops_achieved': gflops_achieved,
-            'speedup': speedup,
-            'relative_error': relative_error,
-            'matrix_analysis': {'A': rank_A, 'B': rank_B}
+            "result_matrix": result,
+            "computation_time": total_time,
+            "kernel_time": kernel_time,
+            "target_rank": target_rank,
+            "gflops_achieved": gflops_achieved,
+            "speedup": speedup,
+            "relative_error": relative_error,
+            "matrix_analysis": {"A": rank_A, "B": rank_B},
         }
 
         print(f"   Tiempo total GCN: {total_time:.3f}s")
@@ -327,8 +354,11 @@ class GCNOptimizedLowRankApproximator:
 
         return result, results
 
-    def _create_low_rank_approximations(self, A: np.ndarray, B: np.ndarray, rank: int) -> Tuple[np.ndarray, np.ndarray]:
+    def _create_low_rank_approximations(
+        self, A: np.ndarray, B: np.ndarray, rank: int
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Crea aproximaciones de bajo rango usando power iteration acelerado."""
+
         # Power iteration para aproximación rápida
         def power_iteration_approximation(matrix, k):
             m, n = matrix.shape
@@ -422,14 +452,14 @@ def main():
         result, metrics = approximator.optimized_gemm_gcn(A, B)
 
         # Reporte de performance
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("🎯 GCN LOW-RANK MATRIX APPROXIMATION PERFORMANCE REPORT")
         print("=" * 60)
 
         baseline_gflops = 890.3
-        achieved_gflops = metrics['gflops_achieved']
-        speedup = metrics['speedup']
-        error = metrics['relative_error']
+        achieved_gflops = metrics["gflops_achieved"]
+        speedup = metrics["speedup"]
+        error = metrics["relative_error"]
 
         print("🏆 RESULTADOS GCN OPTIMIZADOS:")
         print(f"   GFLOPS logrados: {achieved_gflops:.2f}")
@@ -460,9 +490,7 @@ def main():
         print(f"   • Considerar fused kernels para SVD + GEMM")
 
         # Guardar resultados
-        np.savez('low_rank_gcn_results.npz',
-                matrix_A=A, matrix_B=B, result=result,
-                metrics=metrics)
+        np.savez("low_rank_gcn_results.npz", matrix_A=A, matrix_B=B, result=result, metrics=metrics)
 
         print("\n💾 Resultados GCN guardados en: low_rank_gcn_results.npz")
         print("✅ Demostración GCN completada exitosamente!")
@@ -470,6 +498,7 @@ def main():
     except Exception as e:
         print(f"❌ Error en demostración GCN: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 

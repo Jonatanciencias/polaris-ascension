@@ -17,6 +17,7 @@ from typing import Dict, List, Tuple, Optional, Any
 import pyopencl as cl
 import pyopencl.array as cl_array
 
+
 class QuantumAnnealingMatrixOptimizer:
     """
     Optimizador de matrices usando simulación de quantum annealing.
@@ -42,7 +43,7 @@ class QuantumAnnealingMatrixOptimizer:
             platforms = cl.get_platforms()
             amd_platform = None
             for platform in platforms:
-                if 'AMD' in platform.name.upper():
+                if "AMD" in platform.name.upper():
                     amd_platform = platform
                     break
 
@@ -56,7 +57,9 @@ class QuantumAnnealingMatrixOptimizer:
                 print(f"🎮 Usando GPU: {self.device.name}")
             else:
                 # Fallback a CPU
-                cpu_devices = [d for d in amd_platform.get_devices() if d.type == cl.device_type.CPU]
+                cpu_devices = [
+                    d for d in amd_platform.get_devices() if d.type == cl.device_type.CPU
+                ]
                 self.device = cpu_devices[0] if cpu_devices else amd_platform.get_devices()[0]
                 print(f"💻 Usando CPU: {self.device.name}")
 
@@ -143,9 +146,9 @@ class QuantumAnnealingMatrixOptimizer:
             print(f"❌ Error OpenCL: {e}")
             raise
 
-    def quantum_annealing_optimization(self, matrix_A: np.ndarray,
-                                     matrix_B: np.ndarray,
-                                     num_sweeps: int = 100) -> Tuple[np.ndarray, Dict[str, Any]]:
+    def quantum_annealing_optimization(
+        self, matrix_A: np.ndarray, matrix_B: np.ndarray, num_sweeps: int = 100
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
         """
         Optimiza multiplicación de matrices usando quantum annealing.
 
@@ -168,7 +171,9 @@ class QuantumAnnealingMatrixOptimizer:
         ground_state, energy_history = self._run_quantum_annealing(hamiltonian, num_sweeps)
 
         # Convertir estado base de vuelta a resultado de multiplicación
-        result_matrix = self._ising_to_matrix_result(ground_state, matrix_A.shape[0], matrix_B.shape[1])
+        result_matrix = self._ising_to_matrix_result(
+            ground_state, matrix_A.shape[0], matrix_B.shape[1]
+        )
 
         total_time = time.time() - start_time
 
@@ -178,17 +183,18 @@ class QuantumAnnealingMatrixOptimizer:
 
         # Calcular error relativo (comparado con multiplicación exacta)
         exact_result = matrix_A @ matrix_B
-        error = np.linalg.norm(result_matrix - exact_result, 'fro')
-        relative_error = error / np.linalg.norm(exact_result, 'fro')
+        error = np.linalg.norm(result_matrix - exact_result, "fro")
+        relative_error = error / np.linalg.norm(exact_result, "fro")
 
         metrics = {
-            'result_matrix': result_matrix,
-            'computation_time': total_time,
-            'gflops_achieved': gflops,
-            'relative_error': relative_error,
-            'energy_history': energy_history,
-            'final_energy': energy_history[-1] if energy_history else 0,
-            'convergence': len(energy_history) > 1 and abs(energy_history[-1] - energy_history[-2]) < 1e-6
+            "result_matrix": result_matrix,
+            "computation_time": total_time,
+            "gflops_achieved": gflops,
+            "relative_error": relative_error,
+            "energy_history": energy_history,
+            "final_energy": energy_history[-1] if energy_history else 0,
+            "convergence": len(energy_history) > 1
+            and abs(energy_history[-1] - energy_history[-2]) < 1e-6,
         }
 
         print(f"   Tiempo total: {total_time:.3f}s")
@@ -226,8 +232,9 @@ class QuantumAnnealingMatrixOptimizer:
 
         return hamiltonian
 
-    def _run_quantum_annealing(self, hamiltonian: np.ndarray,
-                              num_sweeps: int) -> Tuple[np.ndarray, List[float]]:
+    def _run_quantum_annealing(
+        self, hamiltonian: np.ndarray, num_sweeps: int
+    ) -> Tuple[np.ndarray, List[float]]:
         """
         Ejecuta simulación de quantum annealing OPTIMIZADA.
 
@@ -255,19 +262,23 @@ class QuantumAnnealingMatrixOptimizer:
         # Parámetros de early stopping
         patience = 10  # Número de sweeps sin mejora antes de parar
         min_delta = 1e-6  # Cambio mínimo de energía para considerar mejora
-        best_energy = float('inf')
+        best_energy = float("inf")
         patience_counter = 0
 
         # Schedule de temperatura adaptativo
         beta_current = self.beta_init
         beta_target = self.beta_final
 
-        print(f"🔬 Iniciando quantum annealing optimizado: {num_spins} spins, max {num_sweeps} sweeps")
+        print(
+            f"🔬 Iniciando quantum annealing optimizado: {num_spins} spins, max {num_sweeps} sweeps"
+        )
 
         for sweep in range(num_sweeps):
             # Actualizar temperatura (schedule adaptativo)
             progress = sweep / num_sweeps
-            beta_current = self.beta_init + (beta_target - self.beta_init) * (progress ** 1.5)  # Schedule no lineal
+            beta_current = self.beta_init + (beta_target - self.beta_init) * (
+                progress**1.5
+            )  # Schedule no lineal
 
             # Un sweep optimizado: procesar spins en lotes para paralelización
             energy_changes = self._calculate_energy_changes_batch(hamiltonian, state)
@@ -293,17 +304,23 @@ class QuantumAnnealingMatrixOptimizer:
 
             # Logging optimizado (menos frecuente)
             if sweep % 10 == 0 or sweep == num_sweeps - 1:
-                print(f"   Sweep {sweep+1}/{num_sweeps}: E={current_energy:.6f}, β={beta_current:.3f}, patience={patience_counter}")
+                print(
+                    f"   Sweep {sweep+1}/{num_sweeps}: E={current_energy:.6f}, β={beta_current:.3f}, patience={patience_counter}"
+                )
 
             # Early stopping condition
             if patience_counter >= patience and sweep > 20:  # Mínimo 20 sweeps
                 print(f"   🏁 Early stopping en sweep {sweep+1} (convergencia alcanzada)")
                 break
 
-        print(f"   ✅ Annealing completado: {len(energy_history)} sweeps, energía final: {energy_history[-1]:.6f}")
+        print(
+            f"   ✅ Annealing completado: {len(energy_history)} sweeps, energía final: {energy_history[-1]:.6f}"
+        )
         return state, energy_history
 
-    def _calculate_energy_changes_batch(self, hamiltonian: np.ndarray, state: np.ndarray) -> np.ndarray:
+    def _calculate_energy_changes_batch(
+        self, hamiltonian: np.ndarray, state: np.ndarray
+    ) -> np.ndarray:
         """
         Calcula cambios de energía para todos los spins usando GPU si disponible.
         """
@@ -312,7 +329,9 @@ class QuantumAnnealingMatrixOptimizer:
         else:
             return self._calculate_energy_changes_cpu(hamiltonian, state)
 
-    def _calculate_energy_changes_cpu(self, hamiltonian: np.ndarray, state: np.ndarray) -> np.ndarray:
+    def _calculate_energy_changes_cpu(
+        self, hamiltonian: np.ndarray, state: np.ndarray
+    ) -> np.ndarray:
         """Versión CPU optimizada con vectorización."""
         num_spins = len(state)
 
@@ -321,21 +340,35 @@ class QuantumAnnealingMatrixOptimizer:
         hamiltonian_sum = np.sum(hamiltonian * state_expanded, axis=1)  # [N]
 
         # Campo local + interacciones
-        energy_changes = 2 * state * (np.diag(hamiltonian) + hamiltonian_sum - hamiltonian.diagonal() * state)
+        energy_changes = (
+            2 * state * (np.diag(hamiltonian) + hamiltonian_sum - hamiltonian.diagonal() * state)
+        )
 
         return energy_changes
 
-    def _calculate_energy_changes_gpu(self, hamiltonian: np.ndarray, state: np.ndarray) -> np.ndarray:
+    def _calculate_energy_changes_gpu(
+        self, hamiltonian: np.ndarray, state: np.ndarray
+    ) -> np.ndarray:
         """Versión GPU usando OpenCL."""
         num_spins = len(state)
 
         # Crear buffers OpenCL
-        hamiltonian_buf = cl.Buffer(self.context, cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR, hostbuf=hamiltonian.astype(np.float32))
-        state_buf = cl.Buffer(self.context, cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR, hostbuf=state.astype(np.int32))
+        hamiltonian_buf = cl.Buffer(
+            self.context,
+            cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR,
+            hostbuf=hamiltonian.astype(np.float32),
+        )
+        state_buf = cl.Buffer(
+            self.context,
+            cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR,
+            hostbuf=state.astype(np.int32),
+        )
         energy_changes_buf = cl.Buffer(self.context, cl.mem_flags.WRITE_ONLY, size=num_spins * 4)
 
         # Ejecutar kernel
-        self.kernel_energy_changes.set_args(hamiltonian_buf, state_buf, energy_changes_buf, np.int32(num_spins))
+        self.kernel_energy_changes.set_args(
+            hamiltonian_buf, state_buf, energy_changes_buf, np.int32(num_spins)
+        )
         cl.enqueue_nd_range_kernel(self.queue, self.kernel_energy_changes, (num_spins,), None)
 
         # Leer resultado
@@ -344,7 +377,9 @@ class QuantumAnnealingMatrixOptimizer:
 
         return energy_changes
 
-    def _calculate_total_energy_optimized(self, hamiltonian: np.ndarray, state: np.ndarray) -> float:
+    def _calculate_total_energy_optimized(
+        self, hamiltonian: np.ndarray, state: np.ndarray
+    ) -> float:
         """
         Calcula energía total usando GPU si disponible.
         """
@@ -364,12 +399,22 @@ class QuantumAnnealingMatrixOptimizer:
         num_spins = len(state)
 
         # Crear buffers OpenCL
-        hamiltonian_buf = cl.Buffer(self.context, cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR, hostbuf=hamiltonian.astype(np.float32))
-        state_buf = cl.Buffer(self.context, cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR, hostbuf=state.astype(np.int32))
+        hamiltonian_buf = cl.Buffer(
+            self.context,
+            cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR,
+            hostbuf=hamiltonian.astype(np.float32),
+        )
+        state_buf = cl.Buffer(
+            self.context,
+            cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR,
+            hostbuf=state.astype(np.int32),
+        )
         result_buf = cl.Buffer(self.context, cl.mem_flags.WRITE_ONLY, size=4)
 
         # Ejecutar kernel
-        self.kernel_total_energy.set_args(hamiltonian_buf, state_buf, result_buf, np.int32(num_spins))
+        self.kernel_total_energy.set_args(
+            hamiltonian_buf, state_buf, result_buf, np.int32(num_spins)
+        )
         cl.enqueue_nd_range_kernel(self.queue, self.kernel_total_energy, (1,), None)
 
         # Leer resultado
@@ -396,7 +441,9 @@ class QuantumAnnealingMatrixOptimizer:
 
         return result
 
-    def hybrid_quantum_classical_gemm(self, A: np.ndarray, B: np.ndarray) -> Tuple[np.ndarray, Dict[str, Any]]:
+    def hybrid_quantum_classical_gemm(
+        self, A: np.ndarray, B: np.ndarray
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
         """
         Enfoque híbrido: usar quantum annealing para encontrar estructura óptima,
         luego ejecutar multiplicación clásica optimizada.
@@ -415,22 +462,22 @@ class QuantumAnnealingMatrixOptimizer:
         classical_time = time.time() - start_classical
 
         # Combinar métricas
-        total_time = qa_metrics['computation_time'] + classical_time
+        total_time = qa_metrics["computation_time"] + classical_time
         operations = 2 * A.shape[0] * A.shape[1] * B.shape[1]
         gflops_hybrid = (operations / total_time) / 1e9
 
         # Calcular speedup híbrido
-        speedup_qa = qa_metrics['gflops_achieved'] / gflops_hybrid
+        speedup_qa = qa_metrics["gflops_achieved"] / gflops_hybrid
 
         metrics_hybrid = {
-            'result_matrix': result_classical,
-            'total_time': total_time,
-            'qa_time': qa_metrics['computation_time'],
-            'classical_time': classical_time,
-            'gflops_hybrid': gflops_hybrid,
-            'speedup_hybrid': speedup_qa,
-            'qa_convergence': qa_metrics['convergence'],
-            'relative_error': 0.0  # Resultado clásico es exacto
+            "result_matrix": result_classical,
+            "total_time": total_time,
+            "qa_time": qa_metrics["computation_time"],
+            "classical_time": classical_time,
+            "gflops_hybrid": gflops_hybrid,
+            "speedup_hybrid": speedup_qa,
+            "qa_convergence": qa_metrics["convergence"],
+            "relative_error": 0.0,  # Resultado clásico es exacto
         }
 
         print(f"   Tiempo QA: {qa_metrics['computation_time']:.3f}s")
@@ -465,17 +512,14 @@ def benchmark_quantum_techniques():
             # Benchmark híbrido
             result_hybrid, metrics_hybrid = qa.hybrid_quantum_classical_gemm(A, B)
 
-            results[size] = {
-                'quantum_direct': metrics_qa,
-                'quantum_hybrid': metrics_hybrid
-            }
+            results[size] = {"quantum_direct": metrics_qa, "quantum_hybrid": metrics_hybrid}
 
             print(f"   QA Directo: {metrics_qa['gflops_achieved']:.2f} GFLOPS")
             print(f"   QA Híbrido: {metrics_hybrid['gflops_hybrid']:.2f} GFLOPS")
 
         except Exception as e:
             print(f"   ❌ Error: {e}")
-            results[size] = {'error': str(e)}
+            results[size] = {"error": str(e)}
 
     return results
 
@@ -512,13 +556,13 @@ def main():
         benchmark_results = benchmark_quantum_techniques()
 
         # Reporte final
-        print("\n" + "="*45)
+        print("\n" + "=" * 45)
         print("🎯 QUANTUM ANNEALING PERFORMANCE REPORT")
         print("=" * 45)
 
         baseline_gflops = 890.3
-        qa_gflops = metrics_qa['gflops_achieved']
-        hybrid_gflops = metrics_hybrid['gflops_hybrid']
+        qa_gflops = metrics_qa["gflops_achieved"]
+        hybrid_gflops = metrics_hybrid["gflops_hybrid"]
 
         print("🏆 RESULTADOS QUANTUM:")
         print(f"   QA Directo: {qa_gflops:.2f} GFLOPS")
@@ -529,7 +573,9 @@ def main():
         print(f"\n💹 COMPARACIÓN CON BASELINE:")
         print(f"   Baseline (manual): {baseline_gflops:.1f} GFLOPS")
         print(f"   QA Directo: {qa_gflops:.2f} GFLOPS ({(qa_gflops/baseline_gflops-1)*100:+.1f}%)")
-        print(f"   QA Híbrido: {hybrid_gflops:.2f} GFLOPS ({(hybrid_gflops/baseline_gflops-1)*100:+.1f}%)")
+        print(
+            f"   QA Híbrido: {hybrid_gflops:.2f} GFLOPS ({(hybrid_gflops/baseline_gflops-1)*100:+.1f}%)"
+        )
 
         if qa_gflops > baseline_gflops or hybrid_gflops > baseline_gflops:
             print("   ✅ ¡QUANTUM ANNEALING SUPERA EL LÍMITE!")
@@ -544,11 +590,16 @@ def main():
         print(f"   • Explorar QAOA (Quantum Approximate Optimization Algorithm)")
 
         # Guardar resultados
-        np.savez('quantum_annealing_results.npz',
-                matrix_A=A, matrix_B=B,
-                result_qa=result_qa, result_hybrid=result_hybrid,
-                metrics_qa=metrics_qa, metrics_hybrid=metrics_hybrid,
-                benchmark=benchmark_results)
+        np.savez(
+            "quantum_annealing_results.npz",
+            matrix_A=A,
+            matrix_B=B,
+            result_qa=result_qa,
+            result_hybrid=result_hybrid,
+            metrics_qa=metrics_qa,
+            metrics_hybrid=metrics_hybrid,
+            benchmark=benchmark_results,
+        )
 
         print("\n💾 Resultados quantum guardados en: quantum_annealing_results.npz")
         print("✅ Demostración quantum completada exitosamente!")
@@ -556,6 +607,7 @@ def main():
     except Exception as e:
         print(f"❌ Error en demostración quantum: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 

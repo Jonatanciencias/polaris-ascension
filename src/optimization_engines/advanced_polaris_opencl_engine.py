@@ -47,12 +47,14 @@ from concurrent.futures import ThreadPoolExecutor
 import threading
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class PolarisOptimizationConfig:
     """Configuración avanzada para optimizaciones Polaris"""
+
     tile_size: int = 16
     micro_tile: int = 4
     vector_width: int = 4
@@ -64,18 +66,22 @@ class PolarisOptimizationConfig:
     wavefront_optimization: bool = True
     dual_fma_utilization: bool = True
 
+
 @dataclass
 class TransferMetrics:
     """Métricas de transferencias optimizadas"""
+
     host_to_device_time: float
     device_to_host_time: float
     overlap_efficiency: float
     bandwidth_achieved: float
     zero_copy_used: bool
 
+
 @dataclass
 class PolarisPerformanceMetrics:
     """Métricas de performance Polaris avanzadas"""
+
     gflops_achieved: float
     memory_bandwidth: float
     kernel_efficiency: float
@@ -83,6 +89,7 @@ class PolarisPerformanceMetrics:
     lds_utilization: float
     transfer_metrics: TransferMetrics
     theoretical_peak_gflops: float = 6170.0
+
 
 class AdvancedPolarisOpenCLEngine:
     """
@@ -114,19 +121,30 @@ class AdvancedPolarisOpenCLEngine:
         # Initialize breakthrough OpenCL system
         self._initialize_polaris_opencl()
 
-        logger.info("🚀 Advanced Polaris OpenCL Engine initialized - Breakthrough optimizations active")
+        logger.info(
+            "🚀 Advanced Polaris OpenCL Engine initialized - Breakthrough optimizations active"
+        )
 
     def _initialize_polaris_opencl(self):
         """Inicializar OpenCL con optimizaciones específicas para Polaris"""
         try:
             # Get AMD platform
             platforms = cl.get_platforms()
-            amd_platforms = [p for p in platforms if 'AMD' in p.name or 'Advanced Micro Devices' in p.name]
+            amd_platforms = [
+                p for p in platforms if "AMD" in p.name or "Advanced Micro Devices" in p.name
+            ]
             self.platform = amd_platforms[0] if amd_platforms else platforms[0]
 
             # Get Polaris device (RX 580/590)
             devices = self.platform.get_devices(device_type=cl.device_type.GPU)
-            polaris_devices = [d for d in devices if any(model in d.name for model in ['Radeon RX 580', 'Radeon RX 590', 'Polaris', 'Ellesmere'])]
+            polaris_devices = [
+                d
+                for d in devices
+                if any(
+                    model in d.name
+                    for model in ["Radeon RX 580", "Radeon RX 590", "Polaris", "Ellesmere"]
+                )
+            ]
             self.device = polaris_devices[0] if polaris_devices else devices[0]
 
             logger.info(f"🎯 Selected Polaris device: {self.device.name}")
@@ -150,11 +168,7 @@ class AdvancedPolarisOpenCLEngine:
                 queue_properties |= cl.command_queue_properties.OUT_OF_ORDER_EXEC_MODE_ENABLE
                 logger.info("✅ Async transfer mode enabled")
 
-            self.queue = cl.CommandQueue(
-                self.context,
-                self.device,
-                properties=queue_properties
-            )
+            self.queue = cl.CommandQueue(self.context, self.device, properties=queue_properties)
 
             # Load breakthrough Polaris kernels
             self._load_polaris_kernels()
@@ -168,34 +182,30 @@ class AdvancedPolarisOpenCLEngine:
         try:
             # Load the breakthrough kernel
             kernel_path = "src/opencl/kernels/gemm_polaris_breakthrough.cl"
-            with open(kernel_path, 'r') as f:
+            with open(kernel_path, "r") as f:
                 kernel_source = f.read()
 
             # Polaris-specific build options for maximum performance
             build_options = [
                 # Math optimizations
-                '-cl-mad-enable',
-                '-cl-no-signed-zeros',
-                '-cl-unsafe-math-optimizations',
-                '-cl-finite-math-only',
-                '-cl-fast-relaxed-math',
-
+                "-cl-mad-enable",
+                "-cl-no-signed-zeros",
+                "-cl-unsafe-math-optimizations",
+                "-cl-finite-math-only",
+                "-cl-fast-relaxed-math",
                 # Polaris GCN4 specific optimizations
-                '-cl-denorms-are-zero',
-                '-cl-single-precision-constant',
-
+                "-cl-denorms-are-zero",
+                "-cl-single-precision-constant",
                 # Memory optimizations
-                '-cl-strict-aliasing',
-
+                "-cl-strict-aliasing",
                 # Define constants for Polaris architecture
-                f'-DPOLARIS_TILE_SIZE={self.config.tile_size}',
-                f'-DPOLARIS_MICRO_TILE={self.config.micro_tile}',
-                f'-DPOLARIS_LDS_BANKS=32',
-                f'-DPOLARIS_WAVEFRONT_SIZE=64',
-                f'-DPOLARIS_PREFETCH_DISTANCE={self.config.prefetch_distance}',
-
+                f"-DPOLARIS_TILE_SIZE={self.config.tile_size}",
+                f"-DPOLARIS_MICRO_TILE={self.config.micro_tile}",
+                f"-DPOLARIS_LDS_BANKS=32",
+                f"-DPOLARIS_WAVEFRONT_SIZE=64",
+                f"-DPOLARIS_PREFETCH_DISTANCE={self.config.prefetch_distance}",
                 # Workgroup optimizations
-                '-cl-uniform-work-group-size',
+                "-cl-uniform-work-group-size",
             ]
 
             # Build program with Polaris optimizations
@@ -208,10 +218,14 @@ class AdvancedPolarisOpenCLEngine:
 
         except Exception as e:
             logger.error(f"❌ Failed to load Polaris kernels: {e}")
-            logger.error(f"Build log: {self.program.get_build_info(self.device, cl.program_build_info.LOG) if self.program else 'No program'}")
+            logger.error(
+                f"Build log: {self.program.get_build_info(self.device, cl.program_build_info.LOG) if self.program else 'No program'}"
+            )
             raise
 
-    def _create_optimized_buffers(self, A: np.ndarray, B: np.ndarray, C: np.ndarray) -> Tuple[cl.Buffer, cl.Buffer, cl.Buffer, List[cl.Event]]:
+    def _create_optimized_buffers(
+        self, A: np.ndarray, B: np.ndarray, C: np.ndarray
+    ) -> Tuple[cl.Buffer, cl.Buffer, cl.Buffer, List[cl.Event]]:
         """
         Crear buffers con optimizaciones avanzadas de memoria para Polaris
 
@@ -227,8 +241,12 @@ class AdvancedPolarisOpenCLEngine:
                 # Zero-copy buffers for minimum latency
                 logger.info("🔄 Using zero-copy buffers for minimum latency")
 
-                A_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.USE_HOST_PTR, hostbuf=A.astype(np.float32))
-                B_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.USE_HOST_PTR, hostbuf=B.astype(np.float32))
+                A_buf = cl.Buffer(
+                    self.context, mf.READ_ONLY | mf.USE_HOST_PTR, hostbuf=A.astype(np.float32)
+                )
+                B_buf = cl.Buffer(
+                    self.context, mf.READ_ONLY | mf.USE_HOST_PTR, hostbuf=B.astype(np.float32)
+                )
                 C_buf = cl.Buffer(self.context, mf.WRITE_ONLY | mf.USE_HOST_PTR, hostbuf=C)
 
                 # No transfer events for zero-copy
@@ -245,20 +263,22 @@ class AdvancedPolarisOpenCLEngine:
 
                 # Map and copy to pinned memory asynchronously
                 A_mapped, A_event = cl.enqueue_map_buffer(
-                    self.queue, A_pinned, cl.map_flags.WRITE,
-                    0, A.shape, A.dtype, is_blocking=False
+                    self.queue, A_pinned, cl.map_flags.WRITE, 0, A.shape, A.dtype, is_blocking=False
                 )
                 np.copyto(A_mapped, A.astype(np.float32))
 
                 B_mapped, B_event = cl.enqueue_map_buffer(
-                    self.queue, B_pinned, cl.map_flags.WRITE,
-                    0, B.shape, B.dtype, is_blocking=False
+                    self.queue, B_pinned, cl.map_flags.WRITE, 0, B.shape, B.dtype, is_blocking=False
                 )
                 np.copyto(B_mapped, B.astype(np.float32))
 
                 # Create device buffers
-                A_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32))
-                B_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32))
+                A_buf = cl.Buffer(
+                    self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32)
+                )
+                B_buf = cl.Buffer(
+                    self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32)
+                )
                 C_buf = cl.Buffer(self.context, mf.WRITE_ONLY, size=C.nbytes)
 
                 transfer_events = [A_event, B_event]
@@ -267,8 +287,12 @@ class AdvancedPolarisOpenCLEngine:
                 # Standard COPY_HOST_PTR (current implementation)
                 logger.info("📋 Using standard host pointer copy")
 
-                A_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32))
-                B_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32))
+                A_buf = cl.Buffer(
+                    self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32)
+                )
+                B_buf = cl.Buffer(
+                    self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32)
+                )
                 C_buf = cl.Buffer(self.context, mf.WRITE_ONLY, size=C.nbytes)
 
                 transfer_events = []
@@ -279,7 +303,9 @@ class AdvancedPolarisOpenCLEngine:
             logger.error(f"❌ Failed to create optimized buffers: {e}")
             raise
 
-    def _calculate_polaris_work_groups(self, M: int, N: int) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+    def _calculate_polaris_work_groups(
+        self, M: int, N: int
+    ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
         """
         Calcular configuración óptima de work groups para Polaris GCN4
 
@@ -294,19 +320,22 @@ class AdvancedPolarisOpenCLEngine:
         # Global work size multiple of local for full occupancy
         global_work_size = (
             ((N + self.config.tile_size - 1) // self.config.tile_size) * self.config.tile_size,
-            ((M + self.config.tile_size - 1) // self.config.tile_size) * self.config.tile_size
+            ((M + self.config.tile_size - 1) // self.config.tile_size) * self.config.tile_size,
         )
 
         # Ensure global is multiple of local for optimal scheduling
         global_work_size = (
-            ((global_work_size[0] + local_work_size[0] - 1) // local_work_size[0]) * local_work_size[0],
-            ((global_work_size[1] + local_work_size[1] - 1) // local_work_size[1]) * local_work_size[1]
+            ((global_work_size[0] + local_work_size[0] - 1) // local_work_size[0])
+            * local_work_size[0],
+            ((global_work_size[1] + local_work_size[1] - 1) // local_work_size[1])
+            * local_work_size[1],
         )
 
         return global_work_size, local_work_size
 
-    def breakthrough_polaris_gemm(self, A: np.ndarray, B: np.ndarray,
-                                  alpha: float = 1.0, beta: float = 0.0) -> Tuple[np.ndarray, PolarisPerformanceMetrics]:
+    def breakthrough_polaris_gemm(
+        self, A: np.ndarray, B: np.ndarray, alpha: float = 1.0, beta: float = 0.0
+    ) -> Tuple[np.ndarray, PolarisPerformanceMetrics]:
         """
         Breakthrough GEMM implementation optimized for Polaris 10
 
@@ -346,7 +375,9 @@ class AdvancedPolarisOpenCLEngine:
             # Verify LDS size fits in available local memory
             available_lds = self.device.local_mem_size
             if total_lds_size > available_lds:
-                logger.warning(f"⚠️ LDS requirement ({total_lds_size} bytes) exceeds available ({available_lds} bytes)")
+                logger.warning(
+                    f"⚠️ LDS requirement ({total_lds_size} bytes) exceeds available ({available_lds} bytes)"
+                )
                 # Fallback to smaller tile size
                 self.config.tile_size = 8
                 global_work_size, local_work_size = self._calculate_polaris_work_groups(M, N)
@@ -356,11 +387,16 @@ class AdvancedPolarisOpenCLEngine:
 
             # Set kernel arguments with Polaris optimizations
             kernel.set_args(
-                np.int32(M), np.int32(N), np.int32(K),
-                np.float32(alpha), np.float32(beta),
-                A_buf, B_buf, C_buf,
+                np.int32(M),
+                np.int32(N),
+                np.int32(K),
+                np.float32(alpha),
+                np.float32(beta),
+                A_buf,
+                B_buf,
+                C_buf,
                 cl.LocalMemory(lds_size_a),  # A tile in LDS
-                cl.LocalMemory(lds_size_b)   # B tile in LDS
+                cl.LocalMemory(lds_size_b),  # B tile in LDS
             )
 
             # Execute kernel with Polaris optimizations
@@ -393,7 +429,7 @@ class AdvancedPolarisOpenCLEngine:
             gflops_achieved = operations / (kernel_time * 1e9)
 
             # Memory bandwidth calculation
-            bytes_transferred = (A.nbytes + B.nbytes + C.nbytes)
+            bytes_transferred = A.nbytes + B.nbytes + C.nbytes
             memory_bandwidth = bytes_transferred / (total_time * 1e9)  # GB/s
 
             # Calculate transfer metrics
@@ -403,7 +439,7 @@ class AdvancedPolarisOpenCLEngine:
                     device_to_host_time=0.0,  # Zero-copy
                     overlap_efficiency=1.0,
                     bandwidth_achieved=memory_bandwidth,
-                    zero_copy_used=True
+                    zero_copy_used=True,
                 )
             else:
                 transfer_metrics = TransferMetrics(
@@ -411,7 +447,7 @@ class AdvancedPolarisOpenCLEngine:
                     device_to_host_time=total_time - kernel_time,
                     overlap_efficiency=kernel_time / total_time,
                     bandwidth_achieved=memory_bandwidth,
-                    zero_copy_used=False
+                    zero_copy_used=False,
                 )
 
             # Create comprehensive metrics
@@ -419,9 +455,13 @@ class AdvancedPolarisOpenCLEngine:
                 gflops_achieved=gflops_achieved,
                 memory_bandwidth=memory_bandwidth,
                 kernel_efficiency=gflops_achieved / self.device.max_compute_units,
-                wavefront_occupancy=min(1.0, (global_work_size[0] * global_work_size[1]) / (self.device.max_compute_units * 64)),
+                wavefront_occupancy=min(
+                    1.0,
+                    (global_work_size[0] * global_work_size[1])
+                    / (self.device.max_compute_units * 64),
+                ),
                 lds_utilization=total_lds_size / available_lds,
-                transfer_metrics=transfer_metrics
+                transfer_metrics=transfer_metrics,
             )
 
             self.performance_history.append(metrics)
@@ -454,7 +494,7 @@ class AdvancedPolarisOpenCLEngine:
             "polaris_optimizations_active": True,
             "zero_copy_enabled": self.config.use_zero_copy,
             "async_transfers_enabled": self.config.use_async_transfers,
-            "total_runs": len(self.performance_history)
+            "total_runs": len(self.performance_history),
         }
 
     def cleanup(self):
@@ -473,8 +513,11 @@ class AdvancedPolarisOpenCLEngine:
         except Exception as e:
             logger.warning(f"⚠️ Cleanup warning: {e}")
 
+
 # Convenience function for easy usage
-def create_polaris_engine(use_zero_copy: bool = True, use_async: bool = True) -> AdvancedPolarisOpenCLEngine:
+def create_polaris_engine(
+    use_zero_copy: bool = True, use_async: bool = True
+) -> AdvancedPolarisOpenCLEngine:
     """
     Crear motor Polaris con configuración optimizada
 
@@ -490,7 +533,7 @@ def create_polaris_engine(use_zero_copy: bool = True, use_async: bool = True) ->
         use_async_transfers=use_async,
         use_pinned_memory=not use_zero_copy,  # Use pinned if not zero-copy
         wavefront_optimization=True,
-        dual_fma_utilization=True
+        dual_fma_utilization=True,
     )
 
     return AdvancedPolarisOpenCLEngine(config)

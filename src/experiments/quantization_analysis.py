@@ -28,7 +28,9 @@ def _snr(reference: np.ndarray, candidate: np.ndarray) -> float:
 class QuantizationAnalyzer:
     """Analyze ranking and safety impact of reduced precision."""
 
-    def test_medical_safety(self, predictions: np.ndarray, bits: int = 8, task: str = "classification") -> Dict[str, float]:
+    def test_medical_safety(
+        self, predictions: np.ndarray, bits: int = 8, task: str = "classification"
+    ) -> Dict[str, float]:
         pred = predictions.astype(np.float32, copy=False)
         quant = _quantize_dequantize(pred, bits)
         base_label = np.argmax(pred, axis=-1)
@@ -78,7 +80,9 @@ class QuantizationAnalyzer:
             "is_safe_for_genomics": bool(rho >= 0.995 and overlap >= 0.98),
         }
 
-    def test_drug_discovery_sensitivity(self, scores: np.ndarray, bits: int = 8) -> Dict[str, float]:
+    def test_drug_discovery_sensitivity(
+        self, scores: np.ndarray, bits: int = 8
+    ) -> Dict[str, float]:
         base = scores.astype(np.float32, copy=False)
         quant = _quantize_dequantize(base, bits)
         err = np.abs(base - quant)

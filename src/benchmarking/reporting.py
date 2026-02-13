@@ -54,4 +54,3 @@ def markdown_table(headers: Sequence[str], rows: Iterable[Sequence[Any]]) -> str
     sep = "| " + " | ".join(["---"] * len(headers)) + " |"
     body = ["| " + " | ".join(str(cell) for cell in row) + " |" for row in rows]
     return "\n".join([head, sep, *body])
-

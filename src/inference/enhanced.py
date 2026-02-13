@@ -31,7 +31,9 @@ class MultiModelServer:
         self.memory_limit_mb = float(memory_limit_mb)
         self._engines: "OrderedDict[str, ONNXInferenceEngine]" = OrderedDict()
 
-    def load_model(self, model_name: str, model_path: str, config: Optional[InferenceConfig] = None) -> None:
+    def load_model(
+        self, model_name: str, model_path: str, config: Optional[InferenceConfig] = None
+    ) -> None:
         if model_name in self._engines:
             self._engines.move_to_end(model_name)
             return

@@ -174,9 +174,7 @@ class T5ABFTAutoDisableGuard:
                 ),
             },
             "fallback_action": (
-                "auto_disable_abft_runtime"
-                if disable_signal
-                else "continue_abft_runtime"
+                "auto_disable_abft_runtime" if disable_signal else "continue_abft_runtime"
             ),
         }
         self.evaluations.append(entry)

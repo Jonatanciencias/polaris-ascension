@@ -11,7 +11,4 @@ try:
 except (ImportError, AttributeError):
     AdvancedTechniquesInvestigation = None
 
-__all__ = [
-    'QuickAnalysis',
-    'AdvancedTechniquesInvestigation'
-]
+__all__ = ["QuickAnalysis", "AdvancedTechniquesInvestigation"]

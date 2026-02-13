@@ -140,7 +140,7 @@ class CLI:
     def _print_result(image_path: str, result: dict[str, Any], top_k: int) -> None:
         print(Path(image_path).name)
         print(f"   Top prediction: Class {result['top1_class']} ({result['top1_confidence']:.1%})")
-        preds = result.get("predictions", [])[:max(1, top_k)]
+        preds = result.get("predictions", [])[: max(1, top_k)]
         if len(preds) > 1:
             print(f"   Top {len(preds)} predictions:")
             for idx, pred in enumerate(preds, 1):

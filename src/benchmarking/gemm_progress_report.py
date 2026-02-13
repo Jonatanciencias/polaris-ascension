@@ -11,6 +11,7 @@ import json
 import os
 from datetime import datetime
 
+
 def generate_progress_report():
     """Generate comprehensive progress report"""
 
@@ -28,12 +29,12 @@ def generate_progress_report():
     # Load latest results
     results_file = "wave_fixed_benchmark_20260124_223137.json"
     if os.path.exists(results_file):
-        with open(results_file, 'r') as f:
+        with open(results_file, "r") as f:
             results = json.load(f)
 
         for size_key, result in results.items():
-            gflops = result['gflops']
-            error = result['relative_error']
+            gflops = result["gflops"]
+            error = result["relative_error"]
             status = "✓ PASS" if error < 1e-4 else "✗ FAIL"
             print(f"  {size_key}: {gflops:6.2f} GFLOPS, Error: {error:.2e} {status}")
     else:
@@ -116,6 +117,7 @@ def generate_progress_report():
     print("=" * 80)
     print("END OF PROGRESS REPORT")
     print("=" * 80)
+
 
 if __name__ == "__main__":
     generate_progress_report()

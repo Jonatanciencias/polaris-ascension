@@ -92,4 +92,3 @@ def test_fallback_rate_guard_disables_policy() -> None:
     assert feedback["fallback_reason"] == "regression_guard"
     assert feedback["disable_signal"] is True
     assert "fallback_rate_guard" in str(feedback["disable_reason"])
-
