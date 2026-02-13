@@ -1041,6 +1041,18 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_020538.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_021026.json`
   - Key finding: split Clover/rusticl y gates canónicos pre/post cierran en `promote`, pero el replay semanal cae en `iterate` por `snapshots=4/6`, `t5_disable_total=1` y `t5_overhead_max=10.8918%` (rollback en snapshot 4); se requiere rerun de recuperación con hardening T5 antes de Block 2.
+- Week 31 - Block 1 Recovery Rerun (T5 hardening + extended snapshots): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK31_BLOCK1_RECOVERY_RERUN_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week31_block1_recovery_rerun_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_20260213_023854.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_weekly_replay_eval_20260213_023710.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_20260213_024515.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_weekly_replay_eval_20260213_024342.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_r2_split_eval_20260213_024515.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024027.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024535.json`
+  - Key finding: recovery `r1` elimina fallos de snapshots/disable events pero queda `iterate` por overhead (`4.3320% > 3.0%`); recovery `r2` reduce presión y cierra en `promote` (`snapshots=8`, `t5_disable_total=0`, `t5_overhead_max=2.2758%`, split ratio min `0.9221`).
 
 ## Governance Rules
 
@@ -1117,7 +1129,6 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 31 - Block 1 recovery rerun: ejecutar hardening T5 + ventana completa de snapshots para buscar `promote`.
-2. Week 31 - Block 2: hardening incremental del alert bridge live sobre evidencia del cierre Week31 Block1 recovery.
-3. Week 31 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y actualización de política si aplica.
-4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
+1. Week 31 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week31 Block1 recuperado.
+2. Week 31 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y actualización de política si aplica.
+3. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.

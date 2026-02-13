@@ -1,0 +1,181 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-13T02:37:10.500122+00:00",
+    "canary_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_recovery_weekly_replay_canary_20260213_023710.json",
+    "policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week19_controlled_rollout/policy_week19_block2_weekly_slo_v3.json",
+    "policy_id": "week19-block2-weekly-slo-v3-2026-02-11"
+  },
+  "evaluation": {
+    "summary": {
+      "max_correctness_error": 0.0008544921875,
+      "max_t3_fallback_rate": 0.0,
+      "max_t5_overhead_percent": 4.3320278502529534,
+      "t5_disable_events_total": 0
+    },
+    "rows": {
+      "auto_t3_controlled:1400": {
+        "kernel": "auto_t3_controlled",
+        "size": 1400,
+        "samples": 8,
+        "avg_gflops_mean": 875.2865070762,
+        "p95_time_ms_mean": 6.1364313751255395,
+        "throughput_drift_percent": -0.738179768518072,
+        "p95_drift_percent": 0.2761288984153204,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.0,
+        "t5_disable_events_total": 0
+      },
+      "auto_t3_controlled:2048": {
+        "kernel": "auto_t3_controlled",
+        "size": 2048,
+        "samples": 8,
+        "avg_gflops_mean": 772.856064290836,
+        "p95_time_ms_mean": 22.184030874996097,
+        "throughput_drift_percent": 0.020387670433559824,
+        "p95_drift_percent": -0.12191590089749448,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.0,
+        "t5_disable_events_total": 0
+      },
+      "auto_t3_controlled:3072": {
+        "kernel": "auto_t3_controlled",
+        "size": 3072,
+        "samples": 8,
+        "avg_gflops_mean": 708.7750927162301,
+        "p95_time_ms_mean": 72.09773862518887,
+        "throughput_drift_percent": -0.5687106257852496,
+        "p95_drift_percent": 0.00699232314748372,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.0,
+        "t5_disable_events_total": 0
+      },
+      "auto_t5_guarded:1400": {
+        "kernel": "auto_t5_guarded",
+        "size": 1400,
+        "samples": 8,
+        "avg_gflops_mean": 908.0523545933303,
+        "p95_time_ms_mean": 5.9894697499203176,
+        "throughput_drift_percent": -0.291748553743874,
+        "p95_drift_percent": 0.37064545435284574,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 1.4863440837803379,
+        "t5_disable_events_total": 0
+      },
+      "auto_t5_guarded:2048": {
+        "kernel": "auto_t5_guarded",
+        "size": 2048,
+        "samples": 8,
+        "avg_gflops_mean": 777.642858230003,
+        "p95_time_ms_mean": 21.98029600015161,
+        "throughput_drift_percent": -1.3825431883511228,
+        "p95_drift_percent": -0.04213172799335383,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 4.3320278502529534,
+        "t5_disable_events_total": 0
+      },
+      "auto_t5_guarded:3072": {
+        "kernel": "auto_t5_guarded",
+        "size": 3072,
+        "samples": 8,
+        "avg_gflops_mean": 803.7957830239839,
+        "p95_time_ms_mean": 71.97994349996861,
+        "throughput_drift_percent": 0.03281892045279323,
+        "p95_drift_percent": -0.014314874140386144,
+        "t3_fallback_max": 0.0,
+        "t5_overhead_max": 0.44998240307910514,
+        "t5_disable_events_total": 0
+      }
+    },
+    "checks": {
+      "minimum_snapshots": {
+        "observed": 8,
+        "required_min": 6,
+        "pass": true
+      },
+      "correctness_error_bound": {
+        "observed_max": 0.0008544921875,
+        "required_max": 0.001,
+        "pass": true
+      },
+      "t3_fallback_bound": {
+        "observed_max": 0.0,
+        "required_max": 0.08,
+        "pass": true
+      },
+      "t5_disable_events_total_bound": {
+        "observed": 0,
+        "required_max": 0,
+        "pass": true
+      },
+      "t5_overhead_bound": {
+        "observed_max": 4.3320278502529534,
+        "required_max": 3.0,
+        "pass": false
+      },
+      "all_policy_rows_present": {
+        "missing_rows": [],
+        "pass": true
+      },
+      "per_kernel_size_slo": {
+        "rows": [
+          {
+            "key": "auto_t3_controlled:1400",
+            "observed_avg_gflops": 875.2865070762,
+            "required_min_avg_gflops": 843.788871,
+            "avg_pass": true,
+            "observed_p95_time_ms": 6.1364313751255395,
+            "required_max_p95_time_ms": 6.539484,
+            "p95_pass": true,
+            "pass": true
+          },
+          {
+            "key": "auto_t3_controlled:2048",
+            "observed_avg_gflops": 772.856064290836,
+            "required_min_avg_gflops": 740.044586,
+            "avg_pass": true,
+            "observed_p95_time_ms": 22.184030874996097,
+            "required_max_p95_time_ms": 23.688076,
+            "p95_pass": true,
+            "pass": true
+          },
+          {
+            "key": "auto_t5_guarded:1400",
+            "observed_avg_gflops": 908.0523545933303,
+            "required_min_avg_gflops": 868.504071,
+            "avg_pass": true,
+            "observed_p95_time_ms": 5.9894697499203176,
+            "required_max_p95_time_ms": 6.406774,
+            "p95_pass": true,
+            "pass": true
+          },
+          {
+            "key": "auto_t5_guarded:2048",
+            "observed_avg_gflops": 777.642858230003,
+            "required_min_avg_gflops": 744.221401,
+            "avg_pass": true,
+            "observed_p95_time_ms": 21.98029600015161,
+            "required_max_p95_time_ms": 23.497411,
+            "p95_pass": true,
+            "pass": true
+          }
+        ],
+        "pass": true
+      },
+      "throughput_drift_abs_bound": {
+        "observed_max_abs_percent": 1.3825431883511228,
+        "required_max_abs_percent": 2.5,
+        "pass": true
+      },
+      "p95_drift_bound": {
+        "observed_max_percent": 0.37064545435284574,
+        "required_max_percent": 5.0,
+        "pass": true
+      }
+    },
+    "failed_checks": [
+      "t5_overhead_bound"
+    ],
+    "decision": "iterate",
+    "rationale": "Weekly replay violated one or more formal SLO checks; keep iterate."
+  }
+}
