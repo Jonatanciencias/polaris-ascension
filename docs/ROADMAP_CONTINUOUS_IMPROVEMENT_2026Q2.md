@@ -1015,6 +1015,19 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_015239.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_015259.json`
   - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=14.087ms`, `retries_rate=0.25`) con retry real (`503 -> 200`) y sin alertas de degradación.
+- Week 30 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK30_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week30_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block3_biweekly_comparative_20260213_020104.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_020104.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week30_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week30_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_020104.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_020123.json`
+  - Key finding: comparativo mensual cierra en `promote`; por deriva relativa, la política de producción queda en `clover_primary_rusticl_canary` manteniendo deuda high/critical en `0`.
 
 ## Governance Rules
 
@@ -1091,7 +1104,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 30 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y actualización de política si aplica.
-2. Week 31 - Block 1: iniciar nuevo ciclo mensual recurrente contra baseline Week30 tras cierre de Block 3.
-3. Week 31 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week31 Block1.
+1. Week 31 - Block 1: iniciar nuevo ciclo mensual recurrente contra baseline Week30 y cerrar acta/decisión formal.
+2. Week 31 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week31 Block1.
+3. Week 31 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y actualización de política si aplica.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
