@@ -1053,6 +1053,36 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024027.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_024535.json`
   - Key finding: recovery `r1` elimina fallos de snapshots/disable events pero queda `iterate` por overhead (`4.3320% > 3.0%`); recovery `r2` reduce presión y cierra en `promote` (`snapshots=8`, `t5_disable_total=0`, `t5_overhead_max=2.2758%`, split ratio min `0.9221`).
+- Week 31 - Block 2 (alert bridge observability hardening: success ratio + latency + degradation alerts): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK31_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week31_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block2_alert_bridge_observability.py`
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block2_local_webhook_receiver.py`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block2_alert_bridge_observability_20260213_025112.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block2_alert_bridge_observability_dispatch_20260213_025112.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block2_alert_bridge_observability_scheduler_health_20260213_025112.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block2_alert_bridge_observability_alerts_20260213_025112.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block2_alert_bridge_observability_operational_debt_20260213_025112.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block2_live_webhook_capture_20260212_215051.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025111.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025131.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=11.9797ms`, `retries_rate=0.3333`) con retry real (`503 -> 200`) y gates canónicos pre/post en verde.
+- Week 31 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK31_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week31_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week30_controlled_rollout/run_week30_block3_biweekly_comparative_platform_decision.py`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block3_biweekly_comparative_20260213_025206.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block3_biweekly_comparative_rerun_20260213_025342.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_025342.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.md`
+    - `research/breakthrough_lab/week31_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025312.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025342.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025402.json`
+  - Key finding: intento inicial quedó `iterate` por flake post-gate (`pytest_tier_green`), pero rerun estricto cerró `promote` y mantuvo política `clover_primary_rusticl_canary` con deuda high/critical en `0`.
 
 ## Governance Rules
 
@@ -1129,6 +1159,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 31 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week31 Block1 recuperado.
-2. Week 31 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y actualización de política si aplica.
-3. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
+1. Week 32 - Block 1: ejecutar nuevo ciclo mensual recurrente contra baseline Week31 y cerrar acta/decisión formal.
+2. Week 32 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week32 Block1.
+3. Week 32 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y actualización de política si aplica.
+4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.

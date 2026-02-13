@@ -1,0 +1,80 @@
+{
+  "review_id": "week31-block3-biweekly-comparative-platform-decision-2026-02-13",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "monthly_dual_platform_comparative_and_formal_policy_decision",
+  "tracks": [
+    {
+      "track": "week31_block3_comparative_execution_initial",
+      "decision": "iterate",
+      "evidence": [
+        "research/breakthrough_lab/week31_controlled_rollout/week31_block3_biweekly_comparative_20260213_025206.json",
+        "research/breakthrough_lab/week31_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_025206.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025225.json"
+      ],
+      "rationale": "Initial execution failed only post-gate pytest_tier_green and required strict rerun."
+    },
+    {
+      "track": "week31_block3_comparative_execution_rerun",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week31_controlled_rollout/week31_block3_biweekly_comparative_rerun_20260213_025342.json",
+        "research/breakthrough_lab/week31_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_025342.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025342.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025402.json"
+      ],
+      "rationale": "Strict rerun closed all checks and produced stable promote result."
+    },
+    {
+      "track": "week31_block3_platform_policy_decision",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week31_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json",
+        "research/breakthrough_lab/week31_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.md"
+      ],
+      "rationale": "Policy remains operationally valid with conservative production posture."
+    },
+    {
+      "track": "week31_block3_operational_debt_review",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week31_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json"
+      ],
+      "rationale": "Operational debt review reports zero high/critical open debt."
+    },
+    {
+      "track": "week31_block3_canonical_gate_internal",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025312.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025342.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025402.json"
+      ],
+      "rationale": "Canonical gate recovered to promote and remained green through strict rerun closure."
+    }
+  ],
+  "summary": {
+    "promote": 4,
+    "iterate": 1,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "ready-for-week32-block1",
+  "block_rationale": "Week31 comparative closure is stable after strict rerun and enables next monthly continuity cycle.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK31_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025342.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_025402.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week31_block1_recovery_rerun_decision.json",
+    "research/breakthrough_lab/week31_block2_alert_bridge_observability_decision.json"
+  ]
+}
