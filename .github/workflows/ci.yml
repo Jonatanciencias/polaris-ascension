@@ -201,7 +201,8 @@ jobs:
         run: |
           python scripts/run_validation_suite.py \
             --tier canonical \
-            --driver-smoke
+            --driver-smoke \
+            --skip-pytest
       
       - name: Run tests with coverage
         timeout-minutes: 10

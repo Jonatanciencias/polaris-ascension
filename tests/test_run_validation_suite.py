@@ -17,7 +17,9 @@ def _base_report(pytest_rc: int) -> dict:
 
 
 def test_extract_json_payload_from_plain_json() -> None:
-    payload = rvs._extract_json_payload('{"overall_status":"good","opencl":{},"recommendations":[]}')
+    payload = rvs._extract_json_payload(
+        '{"overall_status":"good","opencl":{},"recommendations":[]}'
+    )
     assert payload is not None
     assert payload["overall_status"] == "good"
 
@@ -69,3 +71,12 @@ def test_evaluate_smoke_json_requires_expected_keys() -> None:
     evaluation_missing = rvs._evaluate(report, allow_no_tests=True)
     assert evaluation_missing["decision"] == "iterate"
     assert "verify_drivers_json_smoke" in evaluation_missing["failed_checks"]
+
+
+def test_evaluate_accepts_skipped_pytest_by_flag() -> None:
+    report = _base_report(pytest_rc=0)
+    report["commands"]["pytest_tier"]["skipped_by_flag"] = True
+
+    evaluation = rvs._evaluate(report, allow_no_tests=False)
+    assert evaluation["decision"] == "promote"
+    assert evaluation["checks"]["pytest_tier_green"]["pass"] is True

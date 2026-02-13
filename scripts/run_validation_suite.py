@@ -53,14 +53,16 @@ def _extract_json_payload(text: str) -> dict[str, Any] | None:
     if not body:
         return None
     try:
-        return json.loads(body)
+        payload = json.loads(body)
+        return payload if isinstance(payload, dict) else None
     except json.JSONDecodeError:
         # Fallback: parse from the first JSON object marker.
         start = body.find("{")
         if start < 0:
             return None
         try:
-            return json.loads(body[start:])
+            payload = json.loads(body[start:])
+            return payload if isinstance(payload, dict) else None
         except json.JSONDecodeError:
             return None
 
@@ -189,6 +191,7 @@ def run_suite(
     tier: str,
     driver_smoke: bool,
     allow_no_tests: bool,
+    skip_pytest: bool,
 ) -> dict[str, Any]:
     branch = subprocess.check_output(
         ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=str(REPO_ROOT), text=True
@@ -199,9 +202,21 @@ def run_suite(
         [sys.executable, "scripts/validate_breakthrough_results.py"]
     )
 
-    pytest_cmd = _tier_pytest_command(tier)
-    commands["pytest_tier"] = _run_command(pytest_cmd)
-    commands["pytest_tier"]["counts"] = _extract_pytest_counts(commands["pytest_tier"]["stdout"])
+    if skip_pytest:
+        commands["pytest_tier"] = {
+            "command": ["<skipped>", "--skip-pytest"],
+            "returncode": 0,
+            "stdout": "pytest execution skipped by --skip-pytest",
+            "stderr": "",
+            "counts": {"passed": None, "skipped": None, "failed": None},
+            "skipped_by_flag": True,
+        }
+    else:
+        pytest_cmd = _tier_pytest_command(tier)
+        commands["pytest_tier"] = _run_command(pytest_cmd)
+        commands["pytest_tier"]["counts"] = _extract_pytest_counts(
+            commands["pytest_tier"]["stdout"]
+        )
 
     if driver_smoke:
         smoke = _run_command([sys.executable, "scripts/verify_drivers.py", "--json"])
@@ -243,6 +258,11 @@ def parse_args() -> argparse.Namespace:
         help="Treat pytest exit code 5 (no tests collected) as pass.",
     )
     parser.add_argument(
+        "--skip-pytest",
+        action="store_true",
+        help="Skip pytest execution in this runner (useful when another CI step runs pytest).",
+    )
+    parser.add_argument(
         "--report-dir",
         default="",
         help="Optional report output directory relative to repo root.",
@@ -262,6 +282,7 @@ def main() -> int:
         tier=args.tier,
         driver_smoke=bool(args.driver_smoke),
         allow_no_tests=bool(args.allow_no_tests),
+        skip_pytest=bool(args.skip_pytest),
     )
 
     if args.report_dir:
@@ -290,4 +311,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

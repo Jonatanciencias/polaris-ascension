@@ -1,4 +1,4 @@
-# Week 10 Block 1 - Controlled Low-Scope Rollout
+# Week 10 Block 2.1 - Preproduction Scaled
 
 - Date: 2026-02-08T17:10:24.395039+00:00
 - Planned snapshots: 4

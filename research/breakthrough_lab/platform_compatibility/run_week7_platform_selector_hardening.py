@@ -16,6 +16,24 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
+def _extract_json_payload(text: str) -> dict[str, Any] | None:
+    body = text.strip()
+    if not body:
+        return None
+    try:
+        payload = json.loads(body)
+        return payload if isinstance(payload, dict) else None
+    except json.JSONDecodeError:
+        start = body.find("{")
+        if start < 0:
+            return None
+        try:
+            payload = json.loads(body[start:])
+            return payload if isinstance(payload, dict) else None
+        except json.JSONDecodeError:
+            return None
+
+
 def _run_one(
     *,
     platform_selector: str,
@@ -59,19 +77,32 @@ def _run_one(
             "stderr": proc.stderr,
             "status": "error",
         }
+    metrics = _extract_json_payload(proc.stdout)
+    if metrics is None:
+        return {
+            "selector": platform_selector,
+            "returncode": int(proc.returncode),
+            "stdout": proc.stdout,
+            "stderr": proc.stderr,
+            "status": "error",
+            "error": "benchmark stdout did not contain valid JSON payload",
+        }
+
     return {
         "selector": platform_selector,
         "returncode": int(proc.returncode),
         "stdout": proc.stdout,
         "stderr": proc.stderr,
         "status": "ok",
-        "metrics": json.loads(proc.stdout),
+        "metrics": metrics,
     }
 
 
 def _evaluate(clover: dict[str, Any], rusticl: dict[str, Any]) -> dict[str, Any]:
     clover_ok = clover["status"] == "ok" and str(clover["metrics"]["platform"]).lower() == "clover"
-    rusticl_ok = rusticl["status"] == "ok" and str(rusticl["metrics"]["platform"]).lower() == "rusticl"
+    rusticl_ok = (
+        rusticl["status"] == "ok" and str(rusticl["metrics"]["platform"]).lower() == "rusticl"
+    )
 
     clover_peak = float(clover["metrics"]["peak_mean_gflops"]) if clover_ok else 0.0
     rusticl_peak = float(rusticl["metrics"]["peak_mean_gflops"]) if rusticl_ok else 0.0
@@ -82,8 +113,14 @@ def _evaluate(clover: dict[str, Any], rusticl: dict[str, Any]) -> dict[str, Any]
     perf_ratio_ok = peak_ratio >= 0.85
 
     checks = {
-        "clover_explicit_selection": {"pass": bool(clover_ok), "observed": clover.get("metrics", {})},
-        "rusticl_canary_selection": {"pass": bool(rusticl_ok), "observed": rusticl.get("metrics", {})},
+        "clover_explicit_selection": {
+            "pass": bool(clover_ok),
+            "observed": clover.get("metrics", {}),
+        },
+        "rusticl_canary_selection": {
+            "pass": bool(rusticl_ok),
+            "observed": rusticl.get("metrics", {}),
+        },
         "correctness_bound_clover": {
             "pass": bool(clover_error_ok),
             "observed": clover.get("metrics", {}).get("max_error_max"),

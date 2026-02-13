@@ -15,6 +15,7 @@ New to this project? Start with these documents in order:
 4. [PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md](PHASE3_REPRODUCIBLE_PERFORMANCE_BASELINE_FEB2026.md) - Reproducible baseline protocol (Feb 7, 2026)
 5. [ROADMAP_BREAKTHROUGH_2026Q1.md](ROADMAP_BREAKTHROUGH_2026Q1.md) - New breakthrough roadmap (math/physics/CS/quantum + language strategy)
 6. [ROADMAP_CONTINUOUS_IMPROVEMENT_2026Q2.md](ROADMAP_CONTINUOUS_IMPROVEMENT_2026Q2.md) - Continuous-improvement roadmap after 2026Q1 closure
+7. [ROADMAP_EJECUCION_INMEDIATA_WEEK38.md](ROADMAP_EJECUCION_INMEDIATA_WEEK38.md) - Immediate execution plan (0-24h, 72h, Week38)
 
 ---
 
@@ -63,6 +64,10 @@ New to this project? Start with these documents in order:
   - Post-closure execution blocks for reliability and maintainability
   - Explicit exit gates by week
   - Immediate actionable backlog for Week 8 kickoff
+- [ROADMAP_EJECUCION_INMEDIATA_WEEK38.md](ROADMAP_EJECUCION_INMEDIATA_WEEK38.md) ⭐
+  - Prioritized backlog P0/P1/P2 for current branch execution
+  - 0-24h unblock path for CI + PR readiness
+  - Week38 continuity sequence with concrete outputs
 
 ---
 

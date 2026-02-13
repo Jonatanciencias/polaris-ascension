@@ -1,4 +1,4 @@
-# Week 9 Block 5 - Controlled Pre-Production Pilot (RX590)
+# Week 10 Block 1.5 - Controlled Pre-Production Pilot (RX590)
 
 - Date: 2026-02-08T16:56:31.279417+00:00
 - Hourly snapshots (logical): [1, 2, 3, 4]
