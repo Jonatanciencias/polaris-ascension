@@ -1289,6 +1289,56 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_175518.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_175628.json`
   - Key finding: comparativo mensual cierra en `promote`, eleva política a `dual_go_clover_rusticl`, mejora overhead T5 (`-28.8086%` vs baseline) y mantiene deuda high/critical en `0`.
+- Week 37 - Block 1 (monthly continuity against Week36 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK37_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week37_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block1_monthly_continuity_20260213_181108.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block1_monthly_continuity_weekly_replay_eval_20260213_180932.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block1_monthly_continuity_split_eval_20260213_181107.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_180547.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181150.json`
+  - Key finding: continuidad mensual cierra en `promote` con `split_ratio_min=0.9210`, `split_t5_overhead_max=1.9357`, `split_t5_disable_total=0` y gates canónicos explícitos/internos en verde.
+- Week 37 - Block 2 (alert bridge observability hardening): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK37_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week37_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block2_alert_bridge_observability_20260213_181244.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block2_alert_bridge_observability_dispatch_20260213_181244.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block2_alert_bridge_observability_scheduler_health_20260213_181244.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block2_alert_bridge_observability_operational_debt_20260213_181244.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181214.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181336.json`
+  - Key finding: observabilidad bridge cierra en `promote` (`cycle_success_ratio=1.0`, `latency_p95=11.8989ms`, `retries_rate=0.3333`) con retry real ejercitado y sin deuda high/critical abierta.
+- Week 37 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote (via recovery rerun)**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK37_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week37_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block3_biweekly_comparative_20260213_181427.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_block3_biweekly_comparative_rerun_20260213_181550.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_181550.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181522.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_181633.json`
+  - Key finding: intento inicial cayó por error operativo de path en `split_eval`; rerun de recovery cierra en `promote` con política `dual_go_clover_rusticl` y deuda high/critical en `0`.
+- Week 37 - RX590 Extended Wall-Clock + GO/NO-GO: **go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK37_RX590_EXTENDED_WALLCLOCK_GO_NO_GO_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week37_rx590_extended_wallclock_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_rx590_wallclock_extended_20260213_183741.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/week37_rx590_wallclock_extended_canary_20260213_183722.json`
+    - `research/breakthrough_lab/week37_controlled_rollout/WEEK14_BLOCK5_GO_NO_GO_CHECKLIST.md`
+  - Key finding: canary extendido (20 min reales) cierra en `promote/go` con `t5_disable_total=0`, `t5_overhead_max=2.0164%`, `max_error=0.0005493`, `rusticl_ratio_min=0.9211`.
+- Week 37 - Stable Release Freeze (`v0.15.0`): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK37_STABLE_RELEASE_FREEZE_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week37_stable_release_freeze_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_NOTES.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_RUNBOOK.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_CHECKLIST.md`
+    - `research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_183821.json`
+  - Key finding: freeze estable cerrado con cadena técnica en verde (Week37 Blocks `promote`, wall-clock `go`, gate final `promote`) y paquete de release final publicado.
 
 ## Governance Rules
 
@@ -1365,7 +1415,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Arrancar Week37 Block1 contra baseline Week36 con gate canónico pre/post.
-2. Ejecutar Week37 Block2 (hardening incremental del alert bridge live) con gate canónico pre/post.
-3. Ejecutar Week37 Block3 (comparativo mensual dual plataforma + decisión formal) y cerrar paquete semanal.
+1. Arrancar Week38 Block1 contra baseline Week37 con gate canónico pre/post.
+2. Ejecutar Week38 Block2 (hardening incremental del alert bridge live) con gate canónico pre/post.
+3. Ejecutar Week38 Block3 (comparativo mensual dual plataforma + decisión formal) y cerrar paquete mensual.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.

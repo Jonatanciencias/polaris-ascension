@@ -1,0 +1,23 @@
+{
+  "release_tag": "v0.15.0",
+  "status": "frozen_stable_candidate",
+  "timestamp_utc": "2026-02-13T18:38:21Z",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "evidence": {
+    "week37_block1_decision": "research/breakthrough_lab/week37_block1_monthly_continuity_decision.json",
+    "week37_block2_decision": "research/breakthrough_lab/week37_block2_alert_bridge_observability_decision.json",
+    "week37_block3_decision": "research/breakthrough_lab/week37_block3_biweekly_comparative_decision.json",
+    "week37_rx590_wallclock_decision": "research/breakthrough_lab/week37_rx590_extended_wallclock_decision.json",
+    "canonical_gate_before_freeze": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_183821.json"
+  },
+  "release_docs": {
+    "notes": "research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_NOTES.md",
+    "runbook": "research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_RUNBOOK.md",
+    "checklist": "research/breakthrough_lab/preprod_signoff/WEEK37_STABLE_RELEASE_CHECKLIST.md"
+  },
+  "platform_policy": "dual_go_clover_rusticl",
+  "constraints": {
+    "sizes": [1400, 2048, 3072],
+    "mandatory_gate": "scripts/run_validation_suite.py --tier canonical --driver-smoke"
+  }
+}
