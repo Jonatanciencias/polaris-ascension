@@ -89,7 +89,6 @@ setup(
             "polaris-energy-efficient=src.cli:main",
             "polaris-verify=scripts.deployment.verify_hardware:main",
             "polaris-benchmark=src.benchmarking.comprehensive_performance_validation:main",
-            "polaris-paper=docs.paper.paper-energy-efficient-polaris.main:compile_paper",
         ],
     },
     include_package_data=True,
