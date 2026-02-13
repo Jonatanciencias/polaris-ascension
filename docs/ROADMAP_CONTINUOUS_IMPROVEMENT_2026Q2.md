@@ -1183,6 +1183,37 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_042219.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_042821.json`
   - Key finding: continuidad mensual Week34 cierra en `promote` con `t5_disable_total=0`, `weekly_t5_overhead_max=2.3030%`, `split_ratio_min=0.9124` y gates canónicos pre/post en verde.
+- Week 34 - Block 2 (alert bridge observability hardening): **promote (after recovery)**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK34_BLOCK2_ALERT_BRIDGE_OBSERVABILITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week34_block2_alert_bridge_observability_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block2_alert_bridge_observability_20260213_161653.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block2_alert_bridge_observability_recovery_20260213_161831.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block2_alert_bridge_observability_recovery_dispatch_20260213_161831.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block2_live_webhook_capture_recovery_20260213_161739.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_161806.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_161921.json`
+  - Key finding: attempt inicial quedó `iterate` por endpoint no disponible (`connection refused`); recovery inmediato cerró `promote` con `cycle_success_ratio=1.0`, `latency_p95=12.0797ms`, `retries_rate=0.3333` y gates canónicos en verde.
+- Week 34 - Block 3 (monthly dual-platform comparative + formal platform decision): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK34_BLOCK3_BIWEEKLY_COMPARATIVE_PLATFORM_DECISION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week34_block3_biweekly_comparative_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_block3_biweekly_comparative_20260213_162016.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/week30_block3_biweekly_comparative_dashboard_20260213_162016.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/WEEK30_BLOCK3_PLATFORM_POLICY_DECISION.json`
+    - `research/breakthrough_lab/week34_controlled_rollout/WEEK30_BLOCK3_OPERATIONAL_DEBT_REVIEW.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_161949.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_162100.json`
+  - Key finding: comparativo mensual cierra en `promote`, mantiene política `clover_primary_rusticl_canary` y conserva deuda high/critical en `0`.
+- Week 34 - RC Validation (go/no-go closeout against Week33 RC runbook): **go**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK34_RX590_EXTENDED_RC_VALIDATION_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week34_rx590_extended_rc_validation_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/preprod_signoff/WEEK34_RX590_EXTENDED_RC_GO_NO_GO_CHECKLIST.md`
+    - `research/breakthrough_lab/week34_controlled_rollout/week34_rc_driver_inventory_20260213_162152.json`
+    - `research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260213_162111.md`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_162100.json`
+  - Key finding: RC extendido queda habilitado en modo controlado con cadena Week34 en `promote`, drivers `good`, rollback path validado y checklist formal en `GO`.
 
 ## Governance Rules
 
@@ -1259,8 +1290,8 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 34 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week34 Block1.
-2. Week 34 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y recalibración conservadora si aplica.
-3. Week 34 - RC Validation: completar validación extendida RX590 del runbook (`step 4` bridge observability + checklist go/no-go formal).
-4. Preparar commit técnico limpio de Week34 Block1/2/3 + RC validation y push de rama.
+1. Preparar commit técnico limpio de Week34 Block2/3 + RC validation (actas + decisions + evidencia + roadmap) y push de rama.
+2. Week 35 - Block 1: ejecutar nuevo ciclo mensual recurrente contra baseline Week34 Block1 con gate canónico pre/post.
+3. Week 35 - Block 2: hardening incremental del alert bridge live sobre evidencia Week35 Block1 con gate canónico pre/post.
+4. Week 35 - Block 3: comparativo mensual dual plataforma + decisión formal por entorno y cierre de continuidad.
 5. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
