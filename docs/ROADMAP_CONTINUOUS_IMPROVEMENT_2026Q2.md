@@ -1214,6 +1214,16 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260213_162111.md`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_162100.json`
   - Key finding: RC extendido queda habilitado en modo controlado con cadena Week34 en `promote`, drivers `good`, rollback path validado y checklist formal en `GO`.
+- Week 35 - Block 1 (monthly continuity against Week34 baseline): **promote**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK35_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week35_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_20260213_163831.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_weekly_replay_eval_20260213_163658.json`
+    - `research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_split_eval_20260213_163831.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_163318.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_163916.json`
+  - Key finding: continuidad mensual Week35 cierra en `promote` con `t5_disable_total=0`, `weekly_t5_overhead_max=2.4137%`, `split_ratio_min=0.9211` y gates canónicos pre/post en verde.
 
 ## Governance Rules
 
@@ -1290,8 +1300,8 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Preparar commit técnico limpio de Week34 Block2/3 + RC validation (actas + decisions + evidencia + roadmap) y push de rama.
-2. Week 35 - Block 1: ejecutar nuevo ciclo mensual recurrente contra baseline Week34 Block1 con gate canónico pre/post.
-3. Week 35 - Block 2: hardening incremental del alert bridge live sobre evidencia Week35 Block1 con gate canónico pre/post.
-4. Week 35 - Block 3: comparativo mensual dual plataforma + decisión formal por entorno y cierre de continuidad.
+1. Week 35 - Block 2: hardening incremental del alert bridge live sobre evidencia Week35 Block1 con gate canónico pre/post.
+2. Week 35 - Block 3: comparativo mensual dual plataforma + decisión formal por entorno y cierre de continuidad.
+3. Cerrar Week35 con paquete formal (actas + decisions + evidencia + roadmap) y push de rama.
+4. Arrancar Week36 Block1 contra baseline Week35 (mismo gate canónico pre/post).
 5. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
