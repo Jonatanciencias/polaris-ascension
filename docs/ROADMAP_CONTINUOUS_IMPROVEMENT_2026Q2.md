@@ -1028,6 +1028,19 @@ Advance from roadmap closure to continuous, low-risk production improvement:
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_020104.json`
     - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_020123.json`
   - Key finding: comparativo mensual cierra en `promote`; por deriva relativa, la política de producción queda en `clover_primary_rusticl_canary` manteniendo deuda high/critical en `0`.
+- Week 31 - Block 1 (new recurrent monthly continuity cycle against Week30 baseline): **iterate**
+  - Acta: `research/breakthrough_lab/ACTA_WEEK31_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md`
+  - Decision: `research/breakthrough_lab/week31_block1_monthly_continuity_decision.json`
+  - Evidence:
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_20260213_021006.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_weekly_replay_20260213_020538.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_weekly_replay_eval_20260213_020811.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_split_canary_20260213_021006.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/week31_block1_monthly_continuity_split_eval_20260213_021006.json`
+    - `research/breakthrough_lab/week31_controlled_rollout/WEEK20_BLOCK1_MONTHLY_CYCLE_MANIFEST.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_020538.json`
+    - `research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_021026.json`
+  - Key finding: split Clover/rusticl y gates canónicos pre/post cierran en `promote`, pero el replay semanal cae en `iterate` por `snapshots=4/6`, `t5_disable_total=1` y `t5_overhead_max=10.8918%` (rollback en snapshot 4); se requiere rerun de recuperación con hardening T5 antes de Block 2.
 
 ## Governance Rules
 
@@ -1104,7 +1117,7 @@ Advance from roadmap closure to continuous, low-risk production improvement:
 
 ## Immediate Backlog (Next Actions)
 
-1. Week 31 - Block 1: iniciar nuevo ciclo mensual recurrente contra baseline Week30 y cerrar acta/decisión formal.
-2. Week 31 - Block 2: hardening incremental del alert bridge live sobre evidencia de continuidad Week31 Block1.
+1. Week 31 - Block 1 recovery rerun: ejecutar hardening T5 + ventana completa de snapshots para buscar `promote`.
+2. Week 31 - Block 2: hardening incremental del alert bridge live sobre evidencia del cierre Week31 Block1 recovery.
 3. Week 31 - Block 3: comparativo mensual dual plataforma con decisión formal por entorno y actualización de política si aplica.
 4. Mantener `scripts/run_validation_suite.py --tier canonical --driver-smoke` como gate obligatorio antes de cada cierre de bloque y antes de cualquier aumento de alcance productivo.
