@@ -1,0 +1,81 @@
+{
+  "review_id": "week36-block1-monthly-continuity-2026-02-13",
+  "branch": "feat/breakthrough-roadmap-2026q1",
+  "status": "completed",
+  "scope": "recurrent_monthly_continuity_against_week35_block1_baseline_with_targeted_recovery",
+  "tracks": [
+    {
+      "track": "week36_block1_initial_execution",
+      "decision": "iterate",
+      "evidence": [
+        "research/breakthrough_lab/week36_controlled_rollout/week36_block1_monthly_continuity_20260213_171401.json",
+        "research/breakthrough_lab/week36_controlled_rollout/week36_block1_monthly_continuity_weekly_replay_eval_20260213_171228.json"
+      ],
+      "rationale": "Initial run failed weekly replay due T5 disable event, overhead spike, and drift breach."
+    },
+    {
+      "track": "week36_block1_recovery1_execution",
+      "decision": "iterate",
+      "evidence": [
+        "research/breakthrough_lab/week36_controlled_rollout/week36_block1_monthly_continuity_recovery_20260213_172206.json",
+        "research/breakthrough_lab/week36_controlled_rollout/week36_block1_monthly_continuity_recovery_weekly_replay_eval_20260213_172033.json"
+      ],
+      "rationale": "Recovery #1 removed disable events and major overhead spikes but kept a marginal drift breach."
+    },
+    {
+      "track": "week36_block1_recovery2_execution",
+      "decision": "iterate",
+      "evidence": [
+        "research/breakthrough_lab/week36_controlled_rollout/week36_block1_monthly_continuity_recovery2_20260213_172906.json",
+        "research/breakthrough_lab/week36_controlled_rollout/week36_block1_monthly_continuity_recovery2_split_eval_20260213_172906.json"
+      ],
+      "rationale": "Recovery #2 made weekly replay pass but failed split T5 overhead guardrail."
+    },
+    {
+      "track": "week36_block1_1_targeted_execution",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week36_controlled_rollout/week36_block1_1_monthly_continuity_targeted_20260213_174540.json",
+        "research/breakthrough_lab/week36_controlled_rollout/week36_block1_1_monthly_continuity_targeted_weekly_replay_eval_20260213_174405.json",
+        "research/breakthrough_lab/week36_controlled_rollout/week36_block1_1_monthly_continuity_targeted_split_eval_20260213_174540.json"
+      ],
+      "rationale": "Targeted Block1.1 closes weekly and split simultaneously in promote with low T5 overhead and zero disable events."
+    },
+    {
+      "track": "week36_block1_canonical_gate_explicit_and_internal",
+      "decision": "promote",
+      "evidence": [
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_174020.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_174623.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_174045.json",
+        "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_174559.json"
+      ],
+      "rationale": "Explicit and internal canonical gates remained promote for the targeted closure run."
+    }
+  ],
+  "summary": {
+    "promote": 2,
+    "iterate": 3,
+    "refine": 0,
+    "stop": 0
+  },
+  "block_decision": "promote",
+  "operational_decision": "ready-for-week36-block2",
+  "block_rationale": "Block1.1 targeted run resolved weekly+split simultaneously and supersedes prior iterate attempts.",
+  "acta_path": "research/breakthrough_lab/ACTA_WEEK36_BLOCK1_MONTHLY_CONTINUITY_2026-02-13.md",
+  "required_gates": [
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_174020.json",
+      "decision": "promote"
+    },
+    {
+      "path": "research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_174623.json",
+      "decision": "promote"
+    }
+  ],
+  "depends_on": [
+    "research/breakthrough_lab/week35_block1_monthly_continuity_decision.json",
+    "research/breakthrough_lab/week35_block2_alert_bridge_observability_decision.json",
+    "research/breakthrough_lab/week35_block3_biweekly_comparative_decision.json"
+  ]
+}

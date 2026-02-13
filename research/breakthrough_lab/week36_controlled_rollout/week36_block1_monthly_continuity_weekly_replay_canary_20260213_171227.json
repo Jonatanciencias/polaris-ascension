@@ -1,0 +1,1954 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-13T17:12:27.970706+00:00",
+    "planned_snapshots": 8,
+    "executed_snapshots": 6,
+    "snapshot_interval_minutes": 60.0,
+    "sleep_between_snapshots_seconds": 0.0,
+    "sizes": [
+      1400,
+      2048,
+      3072
+    ],
+    "kernels": [
+      "auto_t3_controlled",
+      "auto_t5_guarded"
+    ],
+    "sessions": 1,
+    "iterations": 4,
+    "seed": 36021,
+    "pressure": {
+      "size": 512,
+      "iterations": 0,
+      "pulses_per_snapshot": 0
+    },
+    "t5_policy_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/t5_reliability_abft/policy_hardening_week17_block1_stable_low_overhead.json",
+    "baseline_block6_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/week35_controlled_rollout/week35_block1_monthly_continuity_20260213_163831.json",
+    "rollback_script_path": "research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh",
+    "rollback_sla_path": "research/breakthrough_lab/preprod_signoff/WEEK9_BLOCK6_ROLLBACK_SLA.md",
+    "auto_rollback_enabled": true,
+    "rollback_after_consecutive_soft_overhead_violations": 2
+  },
+  "snapshots": [
+    {
+      "snapshot": 1,
+      "pressure": {
+        "snapshot": 1,
+        "requested": 0,
+        "completed": 0,
+        "failures": 0,
+        "errors": []
+      },
+      "runs": [
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 1400,
+          "seed": 38421,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 897.4251843886602,
+            "avg_mean_gflops": 874.6026846991506,
+            "p95_time_ms": 6.115273000432353,
+            "max_error_max": 0.0003204345703125,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 1
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 2048,
+          "seed": 39069,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 775.2493918558662,
+            "avg_mean_gflops": 772.9203008833163,
+            "p95_time_ms": 22.160442000313196,
+            "max_error_max": 0.00049591064453125,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 1
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 3072,
+          "seed": 40093,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 803.8857790108997,
+            "avg_mean_gflops": 712.0173853793341,
+            "p95_time_ms": 72.12723500015272,
+            "max_error_max": 0.0007781982421875,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 1
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 1400,
+          "seed": 38421,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 913.666962799725,
+            "avg_mean_gflops": 908.9241219790791,
+            "p95_time_ms": 6.006564999552211,
+            "max_error_max": 0.00029754638671875,
+            "t5_overhead_percent": 2.23082656293516,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 1
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 2048,
+          "seed": 39069,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 781.3776896119309,
+            "avg_mean_gflops": 779.4024672822054,
+            "p95_time_ms": 21.98663899980602,
+            "max_error_max": 0.0005645751953125,
+            "t5_overhead_percent": 1.0653657686459252,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 1
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 3072,
+          "seed": 40093,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 805.5738856596888,
+            "avg_mean_gflops": 804.3682456044708,
+            "p95_time_ms": 71.97609000013472,
+            "max_error_max": 0.0006866455078125,
+            "t5_overhead_percent": 0.678237454146345,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 1
+        }
+      ],
+      "evaluation": {
+        "checks": {
+          "all_runs_success": {
+            "pass": true
+          },
+          "pressure_failures_zero": {
+            "observed": 0,
+            "required": 0,
+            "pass": true
+          },
+          "correctness_bound_all_runs": {
+            "observed_max": 0.0007781982421875,
+            "required_max": 0.001,
+            "pass": true
+          },
+          "t3_guardrails_all_runs": {
+            "observed_fallback_max": 0.0,
+            "observed_policy_disabled_total": 0,
+            "pass": true
+          },
+          "t5_guardrails_hard": {
+            "observed_disable_total": 0,
+            "observed_fp_max": 0.0,
+            "observed_overhead_max": 2.23082656293516,
+            "soft_limit_percent": 3.0,
+            "hard_limit_percent": 5.0,
+            "pass": true
+          },
+          "t5_overhead_soft_limit": {
+            "observed_overhead_max": 2.23082656293516,
+            "required_max": 3.0,
+            "pass": true
+          },
+          "no_regression_vs_block6_clover": {
+            "pass": true
+          }
+        },
+        "failed_checks": [],
+        "hard_failed_checks": [],
+        "soft_overhead_violation": false,
+        "decision": "continue",
+        "regression_rows": [],
+        "soft_overhead_streak": 0
+      }
+    },
+    {
+      "snapshot": 2,
+      "pressure": {
+        "snapshot": 2,
+        "requested": 0,
+        "completed": 0,
+        "failures": 0,
+        "errors": []
+      },
+      "runs": [
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 1400,
+          "seed": 39421,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 896.5798127515782,
+            "avg_mean_gflops": 875.3736248757136,
+            "p95_time_ms": 6.121038999481243,
+            "max_error_max": 0.0002899169921875,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 2
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 2048,
+          "seed": 40069,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 772.3635076037632,
+            "avg_mean_gflops": 771.747570052906,
+            "p95_time_ms": 22.243243000048096,
+            "max_error_max": 0.0005950927734375,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 2
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 3072,
+          "seed": 41093,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 804.7233682670189,
+            "avg_mean_gflops": 710.7909917377079,
+            "p95_time_ms": 72.05216200054565,
+            "max_error_max": 0.0008087158203125,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 2
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 1400,
+          "seed": 39421,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 916.3539798215601,
+            "avg_mean_gflops": 911.1858607699116,
+            "p95_time_ms": 5.988951999825076,
+            "max_error_max": 0.00030517578125,
+            "t5_overhead_percent": 2.2748722976996,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 2
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 2048,
+          "seed": 40069,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 781.9005299435421,
+            "avg_mean_gflops": 780.2490566198469,
+            "p95_time_ms": 21.971936999761965,
+            "max_error_max": 0.000579833984375,
+            "t5_overhead_percent": 1.0591314409788595,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 2
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 3072,
+          "seed": 41093,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 805.4212076456232,
+            "avg_mean_gflops": 802.4805914219022,
+            "p95_time_ms": 71.98973399954411,
+            "max_error_max": 0.0008087158203125,
+            "t5_overhead_percent": 0.6744382934400533,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 2
+        }
+      ],
+      "evaluation": {
+        "checks": {
+          "all_runs_success": {
+            "pass": true
+          },
+          "pressure_failures_zero": {
+            "observed": 0,
+            "required": 0,
+            "pass": true
+          },
+          "correctness_bound_all_runs": {
+            "observed_max": 0.0008087158203125,
+            "required_max": 0.001,
+            "pass": true
+          },
+          "t3_guardrails_all_runs": {
+            "observed_fallback_max": 0.0,
+            "observed_policy_disabled_total": 0,
+            "pass": true
+          },
+          "t5_guardrails_hard": {
+            "observed_disable_total": 0,
+            "observed_fp_max": 0.0,
+            "observed_overhead_max": 2.2748722976996,
+            "soft_limit_percent": 3.0,
+            "hard_limit_percent": 5.0,
+            "pass": true
+          },
+          "t5_overhead_soft_limit": {
+            "observed_overhead_max": 2.2748722976996,
+            "required_max": 3.0,
+            "pass": true
+          },
+          "no_regression_vs_block6_clover": {
+            "pass": true
+          }
+        },
+        "failed_checks": [],
+        "hard_failed_checks": [],
+        "soft_overhead_violation": false,
+        "decision": "continue",
+        "regression_rows": [],
+        "soft_overhead_streak": 0
+      }
+    },
+    {
+      "snapshot": 3,
+      "pressure": {
+        "snapshot": 3,
+        "requested": 0,
+        "completed": 0,
+        "failures": 0,
+        "errors": []
+      },
+      "runs": [
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 1400,
+          "seed": 40421,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 888.2058307085719,
+            "avg_mean_gflops": 873.0075815066513,
+            "p95_time_ms": 6.178747999911138,
+            "max_error_max": 0.00032806396484375,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 3
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 2048,
+          "seed": 41069,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 773.2273519510528,
+            "avg_mean_gflops": 772.4182357334051,
+            "p95_time_ms": 22.218393000002834,
+            "max_error_max": 0.000518798828125,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 3
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 3072,
+          "seed": 42093,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 804.0654158786122,
+            "avg_mean_gflops": 711.1069010167203,
+            "p95_time_ms": 72.11112099957973,
+            "max_error_max": 0.0008087158203125,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 3
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 1400,
+          "seed": 40421,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 913.8117957902574,
+            "avg_mean_gflops": 908.8635727705216,
+            "p95_time_ms": 6.0056129996155505,
+            "max_error_max": 0.0003509521484375,
+            "t5_overhead_percent": 2.2180212665295396,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 3
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 2048,
+          "seed": 41069,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 781.4073655893097,
+            "avg_mean_gflops": 780.1177523147588,
+            "p95_time_ms": 21.98580399999628,
+            "max_error_max": 0.0006256103515625,
+            "t5_overhead_percent": 1.1670114611720876,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 3
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 3072,
+          "seed": 42093,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 805.5542325648089,
+            "avg_mean_gflops": 802.6834771068674,
+            "p95_time_ms": 71.97784599975421,
+            "max_error_max": 0.0007476806640625,
+            "t5_overhead_percent": 0.6711721201292911,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 3
+        }
+      ],
+      "evaluation": {
+        "checks": {
+          "all_runs_success": {
+            "pass": true
+          },
+          "pressure_failures_zero": {
+            "observed": 0,
+            "required": 0,
+            "pass": true
+          },
+          "correctness_bound_all_runs": {
+            "observed_max": 0.0008087158203125,
+            "required_max": 0.001,
+            "pass": true
+          },
+          "t3_guardrails_all_runs": {
+            "observed_fallback_max": 0.0,
+            "observed_policy_disabled_total": 0,
+            "pass": true
+          },
+          "t5_guardrails_hard": {
+            "observed_disable_total": 0,
+            "observed_fp_max": 0.0,
+            "observed_overhead_max": 2.2180212665295396,
+            "soft_limit_percent": 3.0,
+            "hard_limit_percent": 5.0,
+            "pass": true
+          },
+          "t5_overhead_soft_limit": {
+            "observed_overhead_max": 2.2180212665295396,
+            "required_max": 3.0,
+            "pass": true
+          },
+          "no_regression_vs_block6_clover": {
+            "pass": true
+          }
+        },
+        "failed_checks": [],
+        "hard_failed_checks": [],
+        "soft_overhead_violation": false,
+        "decision": "continue",
+        "regression_rows": [],
+        "soft_overhead_streak": 0
+      }
+    },
+    {
+      "snapshot": 4,
+      "pressure": {
+        "snapshot": 4,
+        "requested": 0,
+        "completed": 0,
+        "failures": 0,
+        "errors": []
+      },
+      "runs": [
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 1400,
+          "seed": 41421,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 887.4405812672347,
+            "avg_mean_gflops": 865.5528876976263,
+            "p95_time_ms": 6.184075999954075,
+            "max_error_max": 0.000335693359375,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 4
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 2048,
+          "seed": 42069,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 774.385040238222,
+            "avg_mean_gflops": 772.276725932252,
+            "p95_time_ms": 22.185177000210388,
+            "max_error_max": 0.000640869140625,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 4
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 3072,
+          "seed": 43093,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 804.0302603123572,
+            "avg_mean_gflops": 710.9700743065416,
+            "p95_time_ms": 72.11427399943204,
+            "max_error_max": 0.0008392333984375,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 4
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 1400,
+          "seed": 41421,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 907.3658497446045,
+            "avg_mean_gflops": 902.5453324122532,
+            "p95_time_ms": 6.048277000445523,
+            "max_error_max": 0.0003204345703125,
+            "t5_overhead_percent": 2.1782252392432073,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 4
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 2048,
+          "seed": 42069,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 781.0429159005988,
+            "avg_mean_gflops": 779.9493021802812,
+            "p95_time_ms": 21.99606300018786,
+            "max_error_max": 0.0005645751953125,
+            "t5_overhead_percent": 1.0710197364266656,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 4
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 3072,
+          "seed": 43093,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 805.4896280766995,
+            "avg_mean_gflops": 804.7480600627118,
+            "p95_time_ms": 71.98361900009331,
+            "max_error_max": 0.000762939453125,
+            "t5_overhead_percent": 0.667332512396057,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 4
+        }
+      ],
+      "evaluation": {
+        "checks": {
+          "all_runs_success": {
+            "pass": true
+          },
+          "pressure_failures_zero": {
+            "observed": 0,
+            "required": 0,
+            "pass": true
+          },
+          "correctness_bound_all_runs": {
+            "observed_max": 0.0008392333984375,
+            "required_max": 0.001,
+            "pass": true
+          },
+          "t3_guardrails_all_runs": {
+            "observed_fallback_max": 0.0,
+            "observed_policy_disabled_total": 0,
+            "pass": true
+          },
+          "t5_guardrails_hard": {
+            "observed_disable_total": 0,
+            "observed_fp_max": 0.0,
+            "observed_overhead_max": 2.1782252392432073,
+            "soft_limit_percent": 3.0,
+            "hard_limit_percent": 5.0,
+            "pass": true
+          },
+          "t5_overhead_soft_limit": {
+            "observed_overhead_max": 2.1782252392432073,
+            "required_max": 3.0,
+            "pass": true
+          },
+          "no_regression_vs_block6_clover": {
+            "pass": true
+          }
+        },
+        "failed_checks": [],
+        "hard_failed_checks": [],
+        "soft_overhead_violation": false,
+        "decision": "continue",
+        "regression_rows": [],
+        "soft_overhead_streak": 0
+      }
+    },
+    {
+      "snapshot": 5,
+      "pressure": {
+        "snapshot": 5,
+        "requested": 0,
+        "completed": 0,
+        "failures": 0,
+        "errors": []
+      },
+      "runs": [
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 1400,
+          "seed": 42421,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 899.5481115772349,
+            "avg_mean_gflops": 870.3246070605118,
+            "p95_time_ms": 6.100840999351931,
+            "max_error_max": 0.00031280517578125,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 5
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 2048,
+          "seed": 43069,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 773.4802307606585,
+            "avg_mean_gflops": 772.2410832407926,
+            "p95_time_ms": 22.211128999515495,
+            "max_error_max": 0.0005645751953125,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 5
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 3072,
+          "seed": 44093,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 804.9077597851466,
+            "avg_mean_gflops": 710.5248453946108,
+            "p95_time_ms": 72.03565600048023,
+            "max_error_max": 0.00079345703125,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 5
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 1400,
+          "seed": 42421,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 919.3529149295072,
+            "avg_mean_gflops": 911.7311582461647,
+            "p95_time_ms": 5.969415999970806,
+            "max_error_max": 0.0003204345703125,
+            "t5_overhead_percent": 2.3497677682153113,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 5
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 2048,
+          "seed": 43069,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 781.934267236203,
+            "avg_mean_gflops": 780.0631585362912,
+            "p95_time_ms": 21.970988999783003,
+            "max_error_max": 0.00048828125,
+            "t5_overhead_percent": 1.0641768024955667,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 5
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 3072,
+          "seed": 44093,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 805.2478644976756,
+            "avg_mean_gflops": 804.4122414482657,
+            "p95_time_ms": 72.00523100073042,
+            "max_error_max": 0.000823974609375,
+            "t5_overhead_percent": 0.6753181150967434,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 5
+        }
+      ],
+      "evaluation": {
+        "checks": {
+          "all_runs_success": {
+            "pass": true
+          },
+          "pressure_failures_zero": {
+            "observed": 0,
+            "required": 0,
+            "pass": true
+          },
+          "correctness_bound_all_runs": {
+            "observed_max": 0.000823974609375,
+            "required_max": 0.001,
+            "pass": true
+          },
+          "t3_guardrails_all_runs": {
+            "observed_fallback_max": 0.0,
+            "observed_policy_disabled_total": 0,
+            "pass": true
+          },
+          "t5_guardrails_hard": {
+            "observed_disable_total": 0,
+            "observed_fp_max": 0.0,
+            "observed_overhead_max": 2.3497677682153113,
+            "soft_limit_percent": 3.0,
+            "hard_limit_percent": 5.0,
+            "pass": true
+          },
+          "t5_overhead_soft_limit": {
+            "observed_overhead_max": 2.3497677682153113,
+            "required_max": 3.0,
+            "pass": true
+          },
+          "no_regression_vs_block6_clover": {
+            "pass": true
+          }
+        },
+        "failed_checks": [],
+        "hard_failed_checks": [],
+        "soft_overhead_violation": false,
+        "decision": "continue",
+        "regression_rows": [],
+        "soft_overhead_streak": 0
+      }
+    },
+    {
+      "snapshot": 6,
+      "pressure": {
+        "snapshot": 6,
+        "requested": 0,
+        "completed": 0,
+        "failures": 0,
+        "errors": []
+      },
+      "runs": [
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 1400,
+          "seed": 43421,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 898.0443154776581,
+            "avg_mean_gflops": 874.5441828769691,
+            "p95_time_ms": 6.111056999543507,
+            "max_error_max": 0.0003204345703125,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 6
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 2048,
+          "seed": 44069,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 773.2428387861722,
+            "avg_mean_gflops": 772.290395486142,
+            "p95_time_ms": 22.21794800061616,
+            "max_error_max": 0.000579833984375,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 6
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t3_controlled",
+          "size": 3072,
+          "seed": 45093,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 804.7767801769148,
+            "avg_mean_gflops": 712.2701591749981,
+            "p95_time_ms": 72.04737999927602,
+            "max_error_max": 0.0008087158203125,
+            "t3_fallback_rate": 0.0,
+            "t3_policy_disabled": false
+          },
+          "snapshot": 6
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 1400,
+          "seed": 43421,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 903.0960495660852,
+            "avg_mean_gflops": 801.9807521466524,
+            "p95_time_ms": 6.076872999983607,
+            "max_error_max": 0.0003204345703125,
+            "t5_overhead_percent": 37.01564593291252,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 1,
+            "t5_disable_reason": "guardrail_violation:effective_overhead_percent_hard"
+          },
+          "snapshot": 6
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 2048,
+          "seed": 44069,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 781.0298845625424,
+            "avg_mean_gflops": 779.7512217910172,
+            "p95_time_ms": 21.996430000399414,
+            "max_error_max": 0.00048828125,
+            "t5_overhead_percent": 1.0870838282570099,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 6
+        },
+        {
+          "status": "ok",
+          "returncode": 0,
+          "platform_selector": "Clover",
+          "kernel": "auto_t5_guarded",
+          "size": 3072,
+          "seed": 45093,
+          "metrics": {
+            "platform": "Clover",
+            "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+            "peak_mean_gflops": 804.9879281926247,
+            "avg_mean_gflops": 804.4118006336587,
+            "p95_time_ms": 72.0284819999506,
+            "max_error_max": 0.000762939453125,
+            "t5_overhead_percent": 0.6756264297276698,
+            "t5_false_positive_rate": 0.0,
+            "t5_disable_events": 0,
+            "t5_disable_reason": null
+          },
+          "snapshot": 6
+        }
+      ],
+      "evaluation": {
+        "checks": {
+          "all_runs_success": {
+            "pass": true
+          },
+          "pressure_failures_zero": {
+            "observed": 0,
+            "required": 0,
+            "pass": true
+          },
+          "correctness_bound_all_runs": {
+            "observed_max": 0.0008087158203125,
+            "required_max": 0.001,
+            "pass": true
+          },
+          "t3_guardrails_all_runs": {
+            "observed_fallback_max": 0.0,
+            "observed_policy_disabled_total": 0,
+            "pass": true
+          },
+          "t5_guardrails_hard": {
+            "observed_disable_total": 1,
+            "observed_fp_max": 0.0,
+            "observed_overhead_max": 37.01564593291252,
+            "soft_limit_percent": 3.0,
+            "hard_limit_percent": 5.0,
+            "pass": false
+          },
+          "t5_overhead_soft_limit": {
+            "observed_overhead_max": 37.01564593291252,
+            "required_max": 3.0,
+            "pass": false
+          },
+          "no_regression_vs_block6_clover": {
+            "pass": true
+          }
+        },
+        "failed_checks": [
+          "t5_guardrails_hard",
+          "t5_overhead_soft_limit"
+        ],
+        "hard_failed_checks": [
+          "t5_guardrails_hard"
+        ],
+        "soft_overhead_violation": true,
+        "decision": "rollback",
+        "regression_rows": [],
+        "soft_overhead_streak": 1
+      }
+    }
+  ],
+  "pressure": [
+    {
+      "snapshot": 1,
+      "requested": 0,
+      "completed": 0,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "snapshot": 2,
+      "requested": 0,
+      "completed": 0,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "snapshot": 3,
+      "requested": 0,
+      "completed": 0,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "snapshot": 4,
+      "requested": 0,
+      "completed": 0,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "snapshot": 5,
+      "requested": 0,
+      "completed": 0,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "snapshot": 6,
+      "requested": 0,
+      "completed": 0,
+      "failures": 0,
+      "errors": []
+    }
+  ],
+  "runs": [
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 1400,
+      "seed": 38421,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 897.4251843886602,
+        "avg_mean_gflops": 874.6026846991506,
+        "p95_time_ms": 6.115273000432353,
+        "max_error_max": 0.0003204345703125,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 1
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 2048,
+      "seed": 39069,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 775.2493918558662,
+        "avg_mean_gflops": 772.9203008833163,
+        "p95_time_ms": 22.160442000313196,
+        "max_error_max": 0.00049591064453125,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 1
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 3072,
+      "seed": 40093,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 803.8857790108997,
+        "avg_mean_gflops": 712.0173853793341,
+        "p95_time_ms": 72.12723500015272,
+        "max_error_max": 0.0007781982421875,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 1
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 1400,
+      "seed": 38421,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 913.666962799725,
+        "avg_mean_gflops": 908.9241219790791,
+        "p95_time_ms": 6.006564999552211,
+        "max_error_max": 0.00029754638671875,
+        "t5_overhead_percent": 2.23082656293516,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 1
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 2048,
+      "seed": 39069,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 781.3776896119309,
+        "avg_mean_gflops": 779.4024672822054,
+        "p95_time_ms": 21.98663899980602,
+        "max_error_max": 0.0005645751953125,
+        "t5_overhead_percent": 1.0653657686459252,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 1
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 3072,
+      "seed": 40093,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 805.5738856596888,
+        "avg_mean_gflops": 804.3682456044708,
+        "p95_time_ms": 71.97609000013472,
+        "max_error_max": 0.0006866455078125,
+        "t5_overhead_percent": 0.678237454146345,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 1
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 1400,
+      "seed": 39421,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 896.5798127515782,
+        "avg_mean_gflops": 875.3736248757136,
+        "p95_time_ms": 6.121038999481243,
+        "max_error_max": 0.0002899169921875,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 2
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 2048,
+      "seed": 40069,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 772.3635076037632,
+        "avg_mean_gflops": 771.747570052906,
+        "p95_time_ms": 22.243243000048096,
+        "max_error_max": 0.0005950927734375,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 2
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 3072,
+      "seed": 41093,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 804.7233682670189,
+        "avg_mean_gflops": 710.7909917377079,
+        "p95_time_ms": 72.05216200054565,
+        "max_error_max": 0.0008087158203125,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 2
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 1400,
+      "seed": 39421,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 916.3539798215601,
+        "avg_mean_gflops": 911.1858607699116,
+        "p95_time_ms": 5.988951999825076,
+        "max_error_max": 0.00030517578125,
+        "t5_overhead_percent": 2.2748722976996,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 2
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 2048,
+      "seed": 40069,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 781.9005299435421,
+        "avg_mean_gflops": 780.2490566198469,
+        "p95_time_ms": 21.971936999761965,
+        "max_error_max": 0.000579833984375,
+        "t5_overhead_percent": 1.0591314409788595,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 2
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 3072,
+      "seed": 41093,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 805.4212076456232,
+        "avg_mean_gflops": 802.4805914219022,
+        "p95_time_ms": 71.98973399954411,
+        "max_error_max": 0.0008087158203125,
+        "t5_overhead_percent": 0.6744382934400533,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 2
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 1400,
+      "seed": 40421,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 888.2058307085719,
+        "avg_mean_gflops": 873.0075815066513,
+        "p95_time_ms": 6.178747999911138,
+        "max_error_max": 0.00032806396484375,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 3
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 2048,
+      "seed": 41069,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 773.2273519510528,
+        "avg_mean_gflops": 772.4182357334051,
+        "p95_time_ms": 22.218393000002834,
+        "max_error_max": 0.000518798828125,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 3
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 3072,
+      "seed": 42093,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 804.0654158786122,
+        "avg_mean_gflops": 711.1069010167203,
+        "p95_time_ms": 72.11112099957973,
+        "max_error_max": 0.0008087158203125,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 3
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 1400,
+      "seed": 40421,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 913.8117957902574,
+        "avg_mean_gflops": 908.8635727705216,
+        "p95_time_ms": 6.0056129996155505,
+        "max_error_max": 0.0003509521484375,
+        "t5_overhead_percent": 2.2180212665295396,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 3
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 2048,
+      "seed": 41069,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 781.4073655893097,
+        "avg_mean_gflops": 780.1177523147588,
+        "p95_time_ms": 21.98580399999628,
+        "max_error_max": 0.0006256103515625,
+        "t5_overhead_percent": 1.1670114611720876,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 3
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 3072,
+      "seed": 42093,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 805.5542325648089,
+        "avg_mean_gflops": 802.6834771068674,
+        "p95_time_ms": 71.97784599975421,
+        "max_error_max": 0.0007476806640625,
+        "t5_overhead_percent": 0.6711721201292911,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 3
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 1400,
+      "seed": 41421,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 887.4405812672347,
+        "avg_mean_gflops": 865.5528876976263,
+        "p95_time_ms": 6.184075999954075,
+        "max_error_max": 0.000335693359375,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 4
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 2048,
+      "seed": 42069,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 774.385040238222,
+        "avg_mean_gflops": 772.276725932252,
+        "p95_time_ms": 22.185177000210388,
+        "max_error_max": 0.000640869140625,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 4
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 3072,
+      "seed": 43093,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 804.0302603123572,
+        "avg_mean_gflops": 710.9700743065416,
+        "p95_time_ms": 72.11427399943204,
+        "max_error_max": 0.0008392333984375,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 4
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 1400,
+      "seed": 41421,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 907.3658497446045,
+        "avg_mean_gflops": 902.5453324122532,
+        "p95_time_ms": 6.048277000445523,
+        "max_error_max": 0.0003204345703125,
+        "t5_overhead_percent": 2.1782252392432073,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 4
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 2048,
+      "seed": 42069,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 781.0429159005988,
+        "avg_mean_gflops": 779.9493021802812,
+        "p95_time_ms": 21.99606300018786,
+        "max_error_max": 0.0005645751953125,
+        "t5_overhead_percent": 1.0710197364266656,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 4
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 3072,
+      "seed": 43093,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 805.4896280766995,
+        "avg_mean_gflops": 804.7480600627118,
+        "p95_time_ms": 71.98361900009331,
+        "max_error_max": 0.000762939453125,
+        "t5_overhead_percent": 0.667332512396057,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 4
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 1400,
+      "seed": 42421,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 899.5481115772349,
+        "avg_mean_gflops": 870.3246070605118,
+        "p95_time_ms": 6.100840999351931,
+        "max_error_max": 0.00031280517578125,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 5
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 2048,
+      "seed": 43069,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 773.4802307606585,
+        "avg_mean_gflops": 772.2410832407926,
+        "p95_time_ms": 22.211128999515495,
+        "max_error_max": 0.0005645751953125,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 5
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 3072,
+      "seed": 44093,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 804.9077597851466,
+        "avg_mean_gflops": 710.5248453946108,
+        "p95_time_ms": 72.03565600048023,
+        "max_error_max": 0.00079345703125,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 5
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 1400,
+      "seed": 42421,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 919.3529149295072,
+        "avg_mean_gflops": 911.7311582461647,
+        "p95_time_ms": 5.969415999970806,
+        "max_error_max": 0.0003204345703125,
+        "t5_overhead_percent": 2.3497677682153113,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 5
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 2048,
+      "seed": 43069,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 781.934267236203,
+        "avg_mean_gflops": 780.0631585362912,
+        "p95_time_ms": 21.970988999783003,
+        "max_error_max": 0.00048828125,
+        "t5_overhead_percent": 1.0641768024955667,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 5
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 3072,
+      "seed": 44093,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 805.2478644976756,
+        "avg_mean_gflops": 804.4122414482657,
+        "p95_time_ms": 72.00523100073042,
+        "max_error_max": 0.000823974609375,
+        "t5_overhead_percent": 0.6753181150967434,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 5
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 1400,
+      "seed": 43421,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 898.0443154776581,
+        "avg_mean_gflops": 874.5441828769691,
+        "p95_time_ms": 6.111056999543507,
+        "max_error_max": 0.0003204345703125,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 6
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 2048,
+      "seed": 44069,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 773.2428387861722,
+        "avg_mean_gflops": 772.290395486142,
+        "p95_time_ms": 22.21794800061616,
+        "max_error_max": 0.000579833984375,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 6
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t3_controlled",
+      "size": 3072,
+      "seed": 45093,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 804.7767801769148,
+        "avg_mean_gflops": 712.2701591749981,
+        "p95_time_ms": 72.04737999927602,
+        "max_error_max": 0.0008087158203125,
+        "t3_fallback_rate": 0.0,
+        "t3_policy_disabled": false
+      },
+      "snapshot": 6
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 1400,
+      "seed": 43421,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 903.0960495660852,
+        "avg_mean_gflops": 801.9807521466524,
+        "p95_time_ms": 6.076872999983607,
+        "max_error_max": 0.0003204345703125,
+        "t5_overhead_percent": 37.01564593291252,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 1,
+        "t5_disable_reason": "guardrail_violation:effective_overhead_percent_hard"
+      },
+      "snapshot": 6
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 2048,
+      "seed": 44069,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 781.0298845625424,
+        "avg_mean_gflops": 779.7512217910172,
+        "p95_time_ms": 21.996430000399414,
+        "max_error_max": 0.00048828125,
+        "t5_overhead_percent": 1.0870838282570099,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 6
+    },
+    {
+      "status": "ok",
+      "returncode": 0,
+      "platform_selector": "Clover",
+      "kernel": "auto_t5_guarded",
+      "size": 3072,
+      "seed": 45093,
+      "metrics": {
+        "platform": "Clover",
+        "device": "AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)",
+        "peak_mean_gflops": 804.9879281926247,
+        "avg_mean_gflops": 804.4118006336587,
+        "p95_time_ms": 72.0284819999506,
+        "max_error_max": 0.000762939453125,
+        "t5_overhead_percent": 0.6756264297276698,
+        "t5_false_positive_rate": 0.0,
+        "t5_disable_events": 0,
+        "t5_disable_reason": null
+      },
+      "snapshot": 6
+    }
+  ],
+  "rollback_event": {
+    "snapshot": 6,
+    "failed_checks": [
+      "t5_guardrails_hard"
+    ],
+    "trigger_type": "hard_guardrail",
+    "rollback_result": {
+      "invoked": true,
+      "success": true,
+      "returncode": 0,
+      "script_path": "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/research/breakthrough_lab/platform_compatibility/week9_block5_rusticl_rollback.sh",
+      "stdout_tail": "Generated rollback runtime profile: results/runtime_states/week9_block5_runtime_env.sh\nGenerated rollback note: research/breakthrough_lab/platform_compatibility/week9_block5_rollback_20260213_171208.md\nWrote JSON report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_171227.json\nWrote Markdown report: research/breakthrough_lab/week8_validation_discipline/validation_suite_canonical_20260213_171227.md\nTier: canonical\nDecision: promote\nRollback applied and canonical gate executed.",
+      "stderr_tail": ""
+    }
+  },
+  "evaluation": {
+    "checks": {
+      "minimum_snapshots_completed": {
+        "observed": 6,
+        "required_min": 2,
+        "pass": true
+      },
+      "all_snapshot_hard_checks_passed": {
+        "pass": false
+      },
+      "soft_overhead_consecutive_below_limit": {
+        "observed_max_streak": 1,
+        "required_lt": 2,
+        "pass": true
+      },
+      "rollback_policy_enforced": {
+        "pass": true
+      },
+      "drift_abs_percent_bounded": {
+        "required_abs_max": 10.0,
+        "pass": false
+      }
+    },
+    "failed_checks": [
+      "all_snapshot_hard_checks_passed",
+      "drift_abs_percent_bounded"
+    ],
+    "decision": "iterate",
+    "rationale": "Auto rollback triggered by guardrail breach; rollout remains in iterate mode.",
+    "drift_rows": [
+      {
+        "kernel": "auto_t3_controlled",
+        "size": 1400,
+        "first_avg_gflops": 874.6026846991506,
+        "last_avg_gflops": 874.5441828769691,
+        "drift_percent": -0.006688959821979871
+      },
+      {
+        "kernel": "auto_t3_controlled",
+        "size": 2048,
+        "first_avg_gflops": 772.9203008833163,
+        "last_avg_gflops": 772.290395486142,
+        "drift_percent": -0.08149681104952519
+      },
+      {
+        "kernel": "auto_t3_controlled",
+        "size": 3072,
+        "first_avg_gflops": 712.0173853793341,
+        "last_avg_gflops": 712.2701591749981,
+        "drift_percent": 0.03550107073991125
+      },
+      {
+        "kernel": "auto_t5_guarded",
+        "size": 1400,
+        "first_avg_gflops": 908.9241219790791,
+        "last_avg_gflops": 801.9807521466524,
+        "drift_percent": -11.765929327474515
+      },
+      {
+        "kernel": "auto_t5_guarded",
+        "size": 2048,
+        "first_avg_gflops": 779.4024672822054,
+        "last_avg_gflops": 779.7512217910172,
+        "drift_percent": 0.04474639527738591
+      },
+      {
+        "kernel": "auto_t5_guarded",
+        "size": 3072,
+        "first_avg_gflops": 804.3682456044708,
+        "last_avg_gflops": 804.4118006336587,
+        "drift_percent": 0.00541481211198201
+      }
+    ],
+    "warning_snapshots": [],
+    "hard_failure_snapshots": [
+      6
+    ]
+  }
+}
