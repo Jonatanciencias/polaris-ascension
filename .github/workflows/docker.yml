@@ -21,16 +21,13 @@ on:
     branches:
       - main
       - master
+    tags:
+      - 'v*.*.*'
     paths:
       - 'src/**'
       - 'Dockerfile'
       - 'docker-compose.yml'
       - 'requirements.txt'
-  
-  # Ejecutar en tags de versión
-  push:
-    tags:
-      - 'v*.*.*'
   
   # Permitir ejecución manual
   workflow_dispatch:
