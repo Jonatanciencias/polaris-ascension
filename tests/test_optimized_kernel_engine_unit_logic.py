@@ -199,3 +199,216 @@ def test_optimized_gemm_convenience_function(monkeypatch) -> None:
     assert out.shape == (1, 1)
     assert out[0, 0] == 42.0
     assert called["cleanup"] is True
+
+
+def test_gemm_batched_sequential_path() -> None:
+    engine = OptimizedKernelEngine.__new__(OptimizedKernelEngine)
+
+    transfer = TransferMetrics()
+    kernel = KernelMetrics("seq", 1.0, 2.0, 0.1, 1)
+
+    def _fake_gemm(A: np.ndarray, B: np.ndarray):
+        return OperationResult(A @ B, transfer, kernel, 1.0)
+
+    engine.gemm = _fake_gemm
+
+    A_batch = [np.ones((2, 2), dtype=np.float32), np.eye(2, dtype=np.float32)]
+    B_batch = [np.eye(2, dtype=np.float32), np.ones((2, 2), dtype=np.float32)]
+
+    out = engine.gemm_batched(A_batch, B_batch, use_async_transfers=False)
+    assert len(out) == 2
+    assert all(isinstance(item, OperationResult) for item in out)
+
+
+def test_gemm_batched_async_path(monkeypatch) -> None:
+    class _FakeQueue:
+        def __init__(self) -> None:
+            self.finishes = 0
+
+        def finish(self) -> None:
+            self.finishes += 1
+
+    class _FakeBuffer:
+        def __init__(self, context, flags, size) -> None:
+            _ = (context, flags)
+            self.size = size
+            self.released = False
+
+        def release(self) -> None:
+            self.released = True
+
+    class _FakeWaitEvent:
+        def wait(self) -> None:
+            return None
+
+    class _FakeKernelEvent:
+        def __init__(self) -> None:
+            self.profile = type("_P", (), {"start": 0, "end": 1_000_000})()
+
+        def wait(self) -> None:
+            return None
+
+    class _FakeKernel:
+        def __init__(self) -> None:
+            self.calls = 0
+
+        def set_args(self, *args) -> None:
+            _ = args
+            self.calls += 1
+
+    class _FakeMemFlags:
+        READ_ONLY = 1
+        WRITE_ONLY = 2
+
+    def _fake_enqueue_copy(queue, dst, src):
+        _ = (queue, dst, src)
+        return _FakeWaitEvent()
+
+    def _fake_enqueue_nd_range_kernel(queue, kernel, global_size, local_size):
+        _ = (queue, kernel, global_size, local_size)
+        return _FakeKernelEvent()
+
+    fake_cl = type(
+        "_FakeCL",
+        (),
+        {
+            "mem_flags": _FakeMemFlags,
+            "Buffer": _FakeBuffer,
+            "enqueue_copy": staticmethod(_fake_enqueue_copy),
+            "enqueue_nd_range_kernel": staticmethod(_fake_enqueue_nd_range_kernel),
+        },
+    )
+    monkeypatch.setattr(engine_module, "cl", fake_cl)
+
+    engine = OptimizedKernelEngine.__new__(OptimizedKernelEngine)
+    engine.context = object()
+    engine.queue = _FakeQueue()
+    engine.transfer_queue = _FakeQueue()
+    engine.enable_profiling = True
+    engine.THEORETICAL_GFLOPS = 6170.0
+    engine.KERNEL_CONFIGS = OptimizedKernelEngine.KERNEL_CONFIGS
+
+    fake_kernel = _FakeKernel()
+    engine._get_kernel = lambda name: fake_kernel
+    engine._get_optimal_work_size = lambda kernel_type, M, N: ((2, 2), (1, 1))
+
+    A_batch = [np.ones((2, 2), dtype=np.float32) for _ in range(3)]
+    B_batch = [np.eye(2, dtype=np.float32) for _ in range(3)]
+
+    out = engine.gemm_batched(A_batch, B_batch, use_async_transfers=True)
+    assert len(out) == 3
+    assert fake_kernel.calls == 3
+    assert engine.transfer_queue.finishes >= 3
+
+
+def test_benchmark_collects_results_and_handles_errors() -> None:
+    engine = OptimizedKernelEngine.__new__(OptimizedKernelEngine)
+    engine.device = type("_D", (), {"name": "Fake GPU"})()
+    engine.THEORETICAL_GFLOPS = 100.0
+    engine.KERNEL_CONFIGS = OptimizedKernelEngine.KERNEL_CONFIGS
+
+    transfer = TransferMetrics()
+
+    def _fake_gemm(A: np.ndarray, B: np.ndarray, kernel_type=None):
+        _ = (A, B)
+        if kernel_type == KernelType.GEMM_REGISTER_TILED:
+            raise RuntimeError("forced benchmark failure")
+        metrics = KernelMetrics("bench", 1.0, 50.0, 0.5, 1)
+        return OperationResult(np.zeros((2, 2), dtype=np.float32), transfer, metrics, 1.0)
+
+    engine.gemm = _fake_gemm
+
+    results = engine.benchmark(sizes=[64, 256], iterations=2, warmup=1)
+
+    assert results["device"] == "Fake GPU"
+    assert len(results["tests"]) == 2
+    first = results["tests"][0]["kernel_results"]
+    second = results["tests"][1]["kernel_results"]
+    assert "gemm_basic_tiled" in first
+    assert "gemm_register_tiled" not in first
+    assert "gemm_basic_tiled" in second
+    assert "gemm_register_tiled" not in second
+
+
+def test_gemm_batched_async_without_profiling(monkeypatch) -> None:
+    class _FakeQueue:
+        def finish(self) -> None:
+            return None
+
+    class _FakeBuffer:
+        def __init__(self, context, flags, size) -> None:
+            _ = (context, flags)
+            self.size = size
+
+        def release(self) -> None:
+            return None
+
+    class _FakeWaitEvent:
+        def wait(self) -> None:
+            return None
+
+    class _FakeKernelEvent:
+        profile = type("_P", (), {"start": 0, "end": 1_000_000})()
+
+        def wait(self) -> None:
+            return None
+
+    class _FakeKernel:
+        def set_args(self, *args) -> None:
+            _ = args
+
+    class _FakeMemFlags:
+        READ_ONLY = 1
+        WRITE_ONLY = 2
+
+    fake_cl = type(
+        "_FakeCLNoProfile",
+        (),
+        {
+            "mem_flags": _FakeMemFlags,
+            "Buffer": _FakeBuffer,
+            "enqueue_copy": staticmethod(lambda *args, **kwargs: _FakeWaitEvent()),
+            "enqueue_nd_range_kernel": staticmethod(lambda *args, **kwargs: _FakeKernelEvent()),
+        },
+    )
+    monkeypatch.setattr(engine_module, "cl", fake_cl)
+
+    engine = OptimizedKernelEngine.__new__(OptimizedKernelEngine)
+    engine.context = object()
+    engine.queue = _FakeQueue()
+    engine.transfer_queue = _FakeQueue()
+    engine.enable_profiling = False
+    engine.THEORETICAL_GFLOPS = 6170.0
+    engine.KERNEL_CONFIGS = OptimizedKernelEngine.KERNEL_CONFIGS
+    engine._get_kernel = lambda name: _FakeKernel()
+    engine._get_optimal_work_size = lambda kernel_type, M, N: ((2, 2), (1, 1))
+
+    A_batch = [np.ones((1, 1), dtype=np.float32), np.ones((1, 1), dtype=np.float32)]
+    B_batch = [np.ones((1, 1), dtype=np.float32), np.ones((1, 1), dtype=np.float32)]
+
+    out = engine.gemm_batched(A_batch, B_batch, use_async_transfers=True)
+    assert len(out) == 2
+    assert out[0].kernel_metrics.exec_time_ms == 0.0
+
+
+def test_get_memory_stats_none_and_cleanup_buffer_pool_path() -> None:
+    engine = OptimizedKernelEngine.__new__(OptimizedKernelEngine)
+    engine.enable_advanced_memory = False
+    engine.memory_manager = None
+    engine.enable_buffer_pool = True
+    engine._operation_history = [object()]
+
+    class _Pool:
+        def __init__(self) -> None:
+            self.cleared = False
+
+        def clear(self) -> None:
+            self.cleared = True
+
+    pool = _Pool()
+    engine.buffer_pool = pool
+
+    assert engine.get_memory_stats() is None
+    engine.cleanup()
+    assert pool.cleared is True
+    assert engine._operation_history == []

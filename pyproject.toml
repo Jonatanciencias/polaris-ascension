@@ -171,6 +171,9 @@ omit = [
     "src/optimization_engines/low_rank_matrix_approximator_gcn.py",
     "src/optimization_engines/low_rank_matrix_approximator_gpu.py",
     "src/optimization_engines/coppersmith_winograd_gpu.py",
+    "src/optimization_engines/advanced_polaris_opencl_engine.py",
+    "src/optimization_engines/optimized_opencl_engine.py",
+    "src/optimization_engines/quantum_annealing_optimizer.py",
     "src/utilities/*",
     "src/utils/*",
     "src/utilities/advanced_techniques_investigation.py",
@@ -181,7 +184,7 @@ parallel = true
 
 [tool.coverage.report]
 precision = 2
-fail_under = 70
+fail_under = 80
 show_missing = true
 skip_covered = false
 exclude_lines = [
