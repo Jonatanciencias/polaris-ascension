@@ -1,0 +1,88 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-02-14T03:35:32.987267+00:00",
+    "branch": "feat/breakthrough-roadmap-2026q1",
+    "tier": "canonical",
+    "driver_smoke": true
+  },
+  "commands": {
+    "validate_results_schema": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "scripts/validate_breakthrough_results.py"
+      ],
+      "returncode": 0,
+      "stdout": "Schema: research/breakthrough_lab/results.schema.json\nValidated: 6 files\nPassed: 6\nFailed: 0\n\nAll breakthrough results contracts are valid.\n",
+      "stderr": ""
+    },
+    "pytest_tier": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/"
+      ],
+      "returncode": 0,
+      "stdout": "........................................................................ [ 53%]\n...............................................................          [100%]\n================================ tests coverage ================================\n_______________ coverage: platform linux, python 3.12.3-final-0 ________________\n\nName                                                   Stmts   Miss Branch BrPart    Cover   Missing\n----------------------------------------------------------------------------------------------------\nsrc/__init__.py                                            4      0      0      0  100.00%\nsrc/opencl/ops.py                                         21      0      2      0  100.00%\nsrc/optimization_engines/adaptive_kernel_selector.py     159      0     44      0  100.00%\n----------------------------------------------------------------------------------------------------\nTOTAL                                                    184      0     46      0  100.00%\nCoverage HTML written to dir htmlcov\nCoverage XML written to file coverage.xml\nRequired test coverage of 100% reached. Total coverage: 100.00%\n135 passed in 16.56s\n",
+      "stderr": "",
+      "counts": {
+        "passed": 135,
+        "skipped": null,
+        "failed": null
+      }
+    },
+    "verify_drivers_smoke": {
+      "command": [
+        "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580/venv/bin/python",
+        "scripts/verify_drivers.py",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"kernel_driver\": {\n    \"loaded\": true,\n    \"version\": \"4F6C330FEE273BA166A6837\",\n    \"name\": \"amdgpu\"\n  },\n  \"mesa_version\": \"25.0.7\",\n  \"opencl\": {\n    \"available\": true,\n    \"platform\": \"Clover\",\n    \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\",\n    \"implementation\": \"Mesa (Clover/RustiCL)\",\n    \"source\": \"pyopencl\",\n    \"device\": \"AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)\",\n    \"driver\": \"25.0.7-0ubuntu0.24.04.2\",\n    \"inventory\": [\n      {\n        \"index\": 0,\n        \"name\": \"Clover\",\n        \"vendor\": \"Mesa\",\n        \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\",\n        \"devices\": [\n          {\n            \"name\": \"AMD Radeon RX 590 GME (radeonsi, polaris10, ACO, DRM 3.64, 6.17.0-14-generic)\",\n            \"vendor\": \"AMD\",\n            \"version\": \"OpenCL 1.1 Mesa 25.0.7-0ubuntu0.24.04.2\",\n            \"driver\": \"25.0.7-0ubuntu0.24.04.2\"\n          }\n        ]\n      },\n      {\n        \"index\": 1,\n        \"name\": \"rusticl\",\n        \"vendor\": \"Mesa/X.org\",\n        \"version\": \"OpenCL 3.0\",\n        \"devices\": []\n      }\n    ]\n  },\n  \"vulkan\": {\n    \"version\": \"1.3.275\",\n    \"driver\": \"AMD Radeon RX 590 GME (RADV POLARIS10)\",\n    \"implementation\": \"Mesa RADV\",\n    \"available\": true\n  },\n  \"rocm\": null,\n  \"recommendations\": [],\n  \"overall_status\": \"good\"\n}\n",
+      "stderr": "",
+      "json_parse_ok": true,
+      "parsed_keys": [
+        "kernel_driver",
+        "mesa_version",
+        "opencl",
+        "overall_status",
+        "recommendations",
+        "rocm",
+        "vulkan"
+      ],
+      "overall_status": "good"
+    }
+  },
+  "evaluation": {
+    "checks": {
+      "results_schema_green": {
+        "observed": 0,
+        "required": 0,
+        "pass": true
+      },
+      "pytest_tier_green": {
+        "observed": 0,
+        "required": 0,
+        "pass": true,
+        "allow_no_tests": false
+      },
+      "verify_drivers_json_smoke": {
+        "observed": {
+          "returncode": 0,
+          "json_parse_ok": true,
+          "has_required_keys": true,
+          "overall_status": "good"
+        },
+        "required": {
+          "json_parse_ok": true,
+          "has_required_keys": true
+        },
+        "pass": true
+      }
+    },
+    "failed_checks": [],
+    "decision": "promote",
+    "rationale": "Validation runner checks passed for the selected tier."
+  }
+}
