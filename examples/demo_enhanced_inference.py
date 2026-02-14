@@ -19,21 +19,22 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import numpy as np
-import time
 import tempfile
+import time
 
+import numpy as np
+
+from src.inference import InferenceConfig
 from src.inference.enhanced import (
-    EnhancedInferenceEngine,
-    ModelCompressor,
     AdaptiveBatchScheduler,
-    MultiModelServer,
-    CompressionStrategy,
-    CompressionConfig,
     BatchRequest,
     BatchResponse,
+    CompressionConfig,
+    CompressionStrategy,
+    EnhancedInferenceEngine,
+    ModelCompressor,
+    MultiModelServer,
 )
-from src.inference import InferenceConfig
 
 
 def print_section(title: str):

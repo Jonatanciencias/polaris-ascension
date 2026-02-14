@@ -18,12 +18,13 @@ Técnicas de optimización aplicadas:
 Autor: Sistema de Optimización RX 580
 """
 
+import json
+import time
+from pathlib import Path
+from typing import Dict, List, Tuple
+
 import numpy as np
 import pyopencl as cl
-import time
-from typing import Dict, Tuple, List
-import json
-from pathlib import Path
 
 
 class OpenCLKernelBenchmark:

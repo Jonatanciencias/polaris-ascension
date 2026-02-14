@@ -10,10 +10,13 @@ Técnica: Algoritmo CW optimizado para GPU, complementa las aproximaciones de ba
 """
 
 import sys
-import numpy as np
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple
+
+import json
+
+import numpy as np
 import pyopencl as cl
 import pyopencl.array as cl_array
 
@@ -42,7 +45,9 @@ class CoppersmithWinogradGPU:
                 amd_platform = platforms[0]
 
             devices = amd_platform.get_devices(device_type=cl.device_type.GPU)
-            target_device = devices[0] if devices else None
+            if not devices:
+                raise RuntimeError("No OpenCL GPU devices found")
+            target_device = devices[0]
 
             if target_device:
                 print(f"🎮 Usando GPU: {target_device.name}")
@@ -237,9 +242,9 @@ class CoppersmithWinogradGPU:
 
             # Encontrar rango efectivo (valores singulares > 0.01)
             effective_rank = np.sum(sv > 0.01 * sv[0])
-            return min(effective_rank, min(matrix.shape))
+            return int(min(effective_rank, min(matrix.shape)))
         except:
-            return min(matrix.shape) // 2
+            return int(min(matrix.shape) // 2)
 
     def _low_rank_approximation(
         self, A: np.ndarray, B: np.ndarray, rank: int
@@ -267,7 +272,7 @@ class CoppersmithWinogradGPU:
         return A_approx, B_approx
 
 
-def benchmark_cw_techniques():
+def benchmark_cw_techniques():  # pragma: no cover - benchmark helper
     """Benchmark de diferentes técnicas CW."""
     print("📊 BENCHMARK COPPERSMITH-WINOGRAD TECHNIQUES")
     print("=" * 50)
@@ -276,7 +281,7 @@ def benchmark_cw_techniques():
 
     # Matrices de prueba de diferentes tamaños
     sizes = [256, 512, 1024]
-    results = {}
+    results: Dict[int, Dict[str, Any]] = {}
 
     for size in sizes:
         print(f"\n🧪 Probando tamaño {size}x{size}")
@@ -309,7 +314,7 @@ def benchmark_cw_techniques():
     return results
 
 
-def main():
+def main():  # pragma: no cover - manual demo entrypoint
     """Función principal de demostración CW."""
     print("🎯 COPPERSMITH-WINOGRAD ALGORITHM IMPLEMENTATION")
     print("=" * 55)
@@ -376,15 +381,15 @@ def main():
         print(f"   • Explorar implementaciones híbridas CPU/GPU")
 
         # Guardar resultados
-        np.savez(
+        np.savez_compressed(
             "cw_algorithm_results.npz",
             matrix_A=A,
             matrix_B=B,
             result_cw=result_cw,
             result_hybrid=result_hybrid,
-            metrics_cw=metrics_cw,
-            metrics_hybrid=metrics_hybrid,
-            benchmark=benchmark_results,
+            metrics_cw_json=np.array([json.dumps(metrics_cw, default=str)], dtype=object),
+            metrics_hybrid_json=np.array([json.dumps(metrics_hybrid, default=str)], dtype=object),
+            benchmark_json=np.array([json.dumps(benchmark_results, default=str)], dtype=object),
         )
 
         print("\n💾 Resultados CW guardados en: cw_algorithm_results.npz")
@@ -400,5 +405,5 @@ def main():
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     sys.exit(main())

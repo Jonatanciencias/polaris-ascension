@@ -27,12 +27,13 @@ Usage:
 """
 
 import argparse
-import time
-import numpy as np
-import sys
 import os
+import sys
+import time
 from dataclasses import dataclass
 from typing import List
+
+import numpy as np
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))

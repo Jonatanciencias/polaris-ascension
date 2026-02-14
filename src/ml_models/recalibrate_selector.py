@@ -4,8 +4,10 @@ Script simple para recalibrar el selector inteligente con datos de hardware
 """
 
 import json
-import pandas as pd
 from pathlib import Path
+from typing import Any, Dict
+
+import pandas as pd
 
 
 def recalibrate_selector_with_hardware_data(benchmark_data_path: Path):
@@ -80,7 +82,7 @@ def recalibrate_selector_with_hardware_data(benchmark_data_path: Path):
 
     # Guardar nuevos pesos
     # Convertir las claves de tuplas a strings para JSON
-    perf_dict = {}
+    perf_dict: Dict[str, Dict[str, Any]] = {}
     for technique in technique_performance.index:
         perf_dict[technique] = {}
         for col in technique_performance.columns:

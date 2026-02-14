@@ -13,11 +13,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import numpy as np
 import time
-from src.inference.model_loaders import ONNXModelLoader, PyTorchModelLoader, create_loader
-from src.inference.enhanced import MultiModelServer, EnhancedInferenceEngine
+
+import numpy as np
+
 from src.inference.base import InferenceConfig
+from src.inference.enhanced import EnhancedInferenceEngine, MultiModelServer
+from src.inference.model_loaders import ONNXModelLoader, PyTorchModelLoader, create_loader
 
 print("=" * 80)
 print("SESSION 16: REAL MODEL INTEGRATION DEMO")

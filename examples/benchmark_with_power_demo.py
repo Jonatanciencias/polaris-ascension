@@ -15,8 +15,8 @@ Usage:
     python examples/benchmark_with_power_demo.py
 """
 
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
@@ -25,8 +25,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset
 
-from src.profiling.power_profiler import PowerProfiler, BenchmarkWithPower
 from scripts.power_monitor import GPUPowerMonitor
+from src.profiling.power_profiler import BenchmarkWithPower, PowerProfiler
 
 
 # Simple test model

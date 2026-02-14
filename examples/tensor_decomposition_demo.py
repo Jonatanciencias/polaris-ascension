@@ -10,24 +10,25 @@ Comprehensive demo of tensor decomposition methods:
 Shows compression ratios, accuracy preservation, and speedup.
 """
 
+import sys
+import time
+from pathlib import Path
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
-import time
-import sys
-from pathlib import Path
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.compute.tensor_decomposition import (
-    TuckerDecomposer,
     CPDecomposer,
-    TensorTrainDecomposer,
-    decompose_model,
-    compute_compression_ratio,
     DecompositionConfig,
+    TensorTrainDecomposer,
+    TuckerDecomposer,
+    compute_compression_ratio,
+    decompose_model,
 )
 
 

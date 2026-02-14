@@ -3,17 +3,19 @@
 🔍 ANÁLISIS RÁPIDO DEL SISTEMA DE SELECCIÓN INTELIGENTE
 """
 
-import sys
-import numpy as np
 import json
-from pathlib import Path
+import sys
 import time
+from pathlib import Path
+from typing import Dict
+
+import numpy as np
 
 # Agregar path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root / "fase_9_breakthrough_integration" / "src"))
 
-from intelligent_technique_selector import IntelligentTechniqueSelector
+from intelligent_technique_selector import IntelligentTechniqueSelector  # type: ignore[import-not-found]
 
 
 def quick_analysis():
@@ -34,7 +36,7 @@ def quick_analysis():
     ]
 
     results = []
-    techniques_used = {}
+    techniques_used: Dict[str, int] = {}
 
     for name, A, B in test_cases:
         print(f"\n📊 {name} ({A.shape}):")

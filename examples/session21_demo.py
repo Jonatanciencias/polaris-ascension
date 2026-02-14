@@ -12,18 +12,19 @@ Author: Radeon RX 580 Optimized AI Framework
 Session: 21 - Research Integration Phase 2
 """
 
-import torch
-import torch.nn as nn
 import sys
 from pathlib import Path
+
+import torch
+import torch.nn as nn
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from src.compute.mixed_precision import (
+    MixedPrecisionConfig,
     MixedPrecisionOptimizer,
     PhysicsAwareMixedPrecision,
-    MixedPrecisionConfig,
 )
 from src.deployment.neuromorphic import NeuromorphicDeployment, create_neuromorphic_deployer
 

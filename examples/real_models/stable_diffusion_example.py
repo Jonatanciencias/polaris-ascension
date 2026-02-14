@@ -18,13 +18,15 @@ Performance targets:
 
 import sys
 from pathlib import Path
+
 import numpy as np
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from src.inference.real_models import create_stable_diffusion_integration
 import logging
+
+from src.inference.real_models import create_stable_diffusion_integration
 
 logging.basicConfig(level=logging.INFO)
 

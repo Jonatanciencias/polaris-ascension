@@ -10,10 +10,14 @@ Técnica: Simulación de annealing cuántico adaptada para GEMM operations.
 """
 
 import sys
-import numpy as np
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple, cast
+
+import json
+
+import numpy as np
+from numpy.typing import NDArray
 import pyopencl as cl
 import pyopencl.array as cl_array
 
@@ -132,19 +136,6 @@ class QuantumAnnealingMatrixOptimizer:
         except Exception as e:
             print(f"❌ Error compilando kernels OpenCL: {e}")
             self.opencl_available = False
-
-            devices = amd_platform.get_devices(device_type=cl.device_type.GPU)
-            self.device = devices[0] if devices else None
-
-            if self.device:
-                print(f"🔬 Quantum Annealing usando GPU: {self.device.name}")
-
-            self.ctx = cl.Context([self.device])
-            self.queue = cl.CommandQueue(self.ctx)
-
-        except Exception as e:
-            print(f"❌ Error OpenCL: {e}")
-            raise
 
     def quantum_annealing_optimization(
         self, matrix_A: np.ndarray, matrix_B: np.ndarray, num_sweeps: int = 100
@@ -325,13 +316,14 @@ class QuantumAnnealingMatrixOptimizer:
         Calcula cambios de energía para todos los spins usando GPU si disponible.
         """
         if self.opencl_available:
-            return self._calculate_energy_changes_gpu(hamiltonian, state)
+            changes = self._calculate_energy_changes_gpu(hamiltonian, state)
         else:
-            return self._calculate_energy_changes_cpu(hamiltonian, state)
+            changes = self._calculate_energy_changes_cpu(hamiltonian, state)
+        return np.asarray(changes, dtype=np.float32)
 
     def _calculate_energy_changes_cpu(
         self, hamiltonian: np.ndarray, state: np.ndarray
-    ) -> np.ndarray:
+    ) -> NDArray[np.float32]:
         """Versión CPU optimizada con vectorización."""
         num_spins = len(state)
 
@@ -340,15 +332,15 @@ class QuantumAnnealingMatrixOptimizer:
         hamiltonian_sum = np.sum(hamiltonian * state_expanded, axis=1)  # [N]
 
         # Campo local + interacciones
-        energy_changes = (
+        energy_changes: NDArray[np.float32] = (
             2 * state * (np.diag(hamiltonian) + hamiltonian_sum - hamiltonian.diagonal() * state)
-        )
+        ).astype(np.float32)
 
         return energy_changes
 
     def _calculate_energy_changes_gpu(
         self, hamiltonian: np.ndarray, state: np.ndarray
-    ) -> np.ndarray:
+    ) -> NDArray[np.float32]:
         """Versión GPU usando OpenCL."""
         num_spins = len(state)
 
@@ -372,7 +364,7 @@ class QuantumAnnealingMatrixOptimizer:
         cl.enqueue_nd_range_kernel(self.queue, self.kernel_energy_changes, (num_spins,), None)
 
         # Leer resultado
-        energy_changes = np.empty(num_spins, dtype=np.float32)
+        energy_changes: NDArray[np.float32] = np.empty(num_spins, dtype=np.float32)
         cl.enqueue_copy(self.queue, energy_changes, energy_changes_buf)
 
         return energy_changes
@@ -392,7 +384,7 @@ class QuantumAnnealingMatrixOptimizer:
         """Versión CPU vectorizada."""
         state_matrix = np.outer(state, state)  # [N, N]
         energy = 0.5 * np.sum(hamiltonian * state_matrix)
-        return energy
+        return float(energy)
 
     def _calculate_total_energy_gpu(self, hamiltonian: np.ndarray, state: np.ndarray) -> float:
         """Versión GPU usando OpenCL."""
@@ -421,7 +413,7 @@ class QuantumAnnealingMatrixOptimizer:
         result = np.empty(1, dtype=np.float32)
         cl.enqueue_copy(self.queue, result, result_buf)
 
-        return result[0]
+        return float(result[0])
 
     def _ising_to_matrix_result(self, state: np.ndarray, M: int, N: int) -> np.ndarray:
         """
@@ -496,7 +488,7 @@ def benchmark_quantum_techniques():
     qa = QuantumAnnealingMatrixOptimizer()
 
     sizes = [128, 256, 512]  # Tamaños más pequeños para quantum annealing
-    results = {}
+    results: Dict[int, Dict[str, Any]] = {}
 
     for size in sizes:
         print(f"\n🧪 Probando tamaño {size}x{size}")
@@ -590,15 +582,15 @@ def main():
         print(f"   • Explorar QAOA (Quantum Approximate Optimization Algorithm)")
 
         # Guardar resultados
-        np.savez(
+        np.savez_compressed(
             "quantum_annealing_results.npz",
             matrix_A=A,
             matrix_B=B,
             result_qa=result_qa,
             result_hybrid=result_hybrid,
-            metrics_qa=metrics_qa,
-            metrics_hybrid=metrics_hybrid,
-            benchmark=benchmark_results,
+            metrics_qa_json=np.array([json.dumps(metrics_qa, default=str)], dtype=object),
+            metrics_hybrid_json=np.array([json.dumps(metrics_hybrid, default=str)], dtype=object),
+            benchmark_json=np.array([json.dumps(benchmark_results, default=str)], dtype=object),
         )
 
         print("\n💾 Resultados quantum guardados en: quantum_annealing_results.npz")

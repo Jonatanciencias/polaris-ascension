@@ -16,13 +16,13 @@ Date: February 2026
 # NAS/DARTS exports
 try:
     from .nas_darts import (
+        PRIMITIVES,
         DARTSConfig,
-        SearchSpace,
-        SearchResult,
         DARTSNetwork,
         DARTSTrainer,
+        SearchResult,
+        SearchSpace,
         search_architecture,
-        PRIMITIVES,
     )
 
     NAS_AVAILABLE = True

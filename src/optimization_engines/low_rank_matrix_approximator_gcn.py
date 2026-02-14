@@ -11,10 +11,13 @@ para lograr el potencial de +150% y superar 890.3 GFLOPS.
 """
 
 import sys
-import numpy as np
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple
+
+import json
+
+import numpy as np
 import pyopencl as cl
 import pyopencl.array as cl_array
 
@@ -34,7 +37,7 @@ class GCNOptimizedLowRankApproximator:
         """
         self.target_rank = target_rank
         self.rank_tolerance = rank_tolerance
-        self.performance_stats = {}
+        self.performance_stats: Dict[str, Any] = {}
 
         # Inicializar OpenCL optimizado para GCN
         self._init_gcn_opencl()
@@ -403,7 +406,7 @@ class GCNOptimizedLowRankApproximator:
         return A_approx, B_approx
 
 
-def create_test_matrices() -> Tuple[np.ndarray, np.ndarray]:
+def create_test_matrices() -> Tuple[np.ndarray, np.ndarray]:  # pragma: no cover - demo helper
     """Crea matrices de prueba optimizadas para GCN."""
     print("🧪 CREANDO MATRICES DE PRUEBA PARA GCN...")
 
@@ -432,7 +435,7 @@ def create_test_matrices() -> Tuple[np.ndarray, np.ndarray]:
     return A, B
 
 
-def main():
+def main():  # pragma: no cover - manual demo entrypoint
     """Función principal de demostración GCN."""
     print("🎯 LOW-RANK MATRIX APPROXIMATION - GCN OPTIMIZED VERSION")
     print("=" * 60)
@@ -490,7 +493,13 @@ def main():
         print(f"   • Considerar fused kernels para SVD + GEMM")
 
         # Guardar resultados
-        np.savez("low_rank_gcn_results.npz", matrix_A=A, matrix_B=B, result=result, metrics=metrics)
+        np.savez_compressed(
+            "low_rank_gcn_results.npz",
+            matrix_A=A,
+            matrix_B=B,
+            result=result,
+            metrics_json=np.array([json.dumps(metrics, default=str)], dtype=object),
+        )
 
         print("\n💾 Resultados GCN guardados en: low_rank_gcn_results.npz")
         print("✅ Demostración GCN completada exitosamente!")
@@ -505,5 +514,5 @@ def main():
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     sys.exit(main())

@@ -10,24 +10,26 @@ Author: Session 22
 Date: January 2026
 """
 
+import time
+
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
-import time
+
+from src.compute.gnn_optimization import (
+    GATConv,
+    GraphBatch,
+    GraphSAGEConv,
+    OptimizedGCN,
+    create_karate_club_graph,
+)
 
 # Import Session 22 modules
 from src.compute.pinn_interpretability import (
     PINNInterpreter,
+    burgers_equation_residual,
     heat_equation_residual,
     wave_equation_residual,
-    burgers_equation_residual,
-)
-from src.compute.gnn_optimization import (
-    OptimizedGCN,
-    GATConv,
-    GraphSAGEConv,
-    GraphBatch,
-    create_karate_club_graph,
 )
 
 

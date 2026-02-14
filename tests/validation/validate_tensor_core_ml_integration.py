@@ -10,18 +10,19 @@ FASE 10.1: Validación de integración Tensor Core + ML
 """
 
 import sys
-import numpy as np
-import pandas as pd
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+import pandas as pd
 
 # Añadir paths necesarios
 project_root = Path(__file__).parent
 sys.path.append(str(project_root / "fase_9_breakthrough_integration" / "src"))
 
 try:
-    from breakthrough_selector import BreakthroughTechniqueSelector, BreakthroughTechnique
+    from breakthrough_selector import BreakthroughTechnique, BreakthroughTechniqueSelector
 
     SELECTOR_AVAILABLE = True
 except ImportError as e:

@@ -4,7 +4,7 @@ Quantization safety analysis helpers.
 
 from __future__ import annotations
 
-from typing import Dict
+from typing import Any, Dict, cast
 
 import numpy as np
 
@@ -16,7 +16,7 @@ def _quantize_dequantize(values: np.ndarray, bits: int) -> np.ndarray:
     max_abs = float(np.max(np.abs(values)) + 1e-8)
     scale = max_abs / levels
     q = np.clip(np.round(values / scale), -levels, levels)
-    return (q * scale).astype(np.float32)
+    return cast(np.ndarray, (q * scale).astype(np.float32))
 
 
 def _snr(reference: np.ndarray, candidate: np.ndarray) -> float:
@@ -30,7 +30,7 @@ class QuantizationAnalyzer:
 
     def test_medical_safety(
         self, predictions: np.ndarray, bits: int = 8, task: str = "classification"
-    ) -> Dict[str, float]:
+    ) -> Dict[str, Any]:
         pred = predictions.astype(np.float32, copy=False)
         quant = _quantize_dequantize(pred, bits)
         base_label = np.argmax(pred, axis=-1)
@@ -51,7 +51,7 @@ class QuantizationAnalyzer:
         scores: np.ndarray,
         bits: int = 8,
         top_k: int = 1000,
-    ) -> Dict[str, float]:
+    ) -> Dict[str, Any]:
         base = scores.astype(np.float32, copy=False)
         quant = _quantize_dequantize(base, bits)
 
@@ -80,9 +80,7 @@ class QuantizationAnalyzer:
             "is_safe_for_genomics": bool(rho >= 0.995 and overlap >= 0.98),
         }
 
-    def test_drug_discovery_sensitivity(
-        self, scores: np.ndarray, bits: int = 8
-    ) -> Dict[str, float]:
+    def test_drug_discovery_sensitivity(self, scores: np.ndarray, bits: int = 8) -> Dict[str, Any]:
         base = scores.astype(np.float32, copy=False)
         quant = _quantize_dequantize(base, bits)
         err = np.abs(base - quant)

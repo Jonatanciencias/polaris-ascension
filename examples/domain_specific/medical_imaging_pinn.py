@@ -40,27 +40,27 @@ Author: Legacy GPU AI Platform Team
 License: MIT
 """
 
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
+import math
+from typing import Dict, List, Optional, Tuple
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
-from typing import Optional, Tuple, Dict, List
-import math
 
 # Import our physics utilities
 from src.compute.physics_utils import (
-    PINNNetwork,
-    PhysicsConfig,
-    PDEResidual,
     GradientComputer,
+    PDEResidual,
+    PhysicsConfig,
+    PINNNetwork,
     SPIKERegularizer,
 )
-
 
 # ============================================================================
 # Physical Models for Medical Imaging

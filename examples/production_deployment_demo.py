@@ -12,16 +12,17 @@ Date: January 21, 2026
 """
 
 import asyncio
+import logging
+from pathlib import Path
+
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
-from pathlib import Path
-import logging
 
-from src.inference.onnx_export import export_to_onnx, get_model_info
-from src.inference.onnx_engine import ONNXEngine
 from src.api.async_inference import AsyncInferenceQueue, JobPriority
 from src.api.monitoring import InferenceMetrics
+from src.inference.onnx_engine import ONNXEngine
+from src.inference.onnx_export import export_to_onnx, get_model_info
 
 # Setup logging
 logging.basicConfig(

@@ -22,14 +22,13 @@ import sys
 import time
 import urllib.request
 from pathlib import Path
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.inference.onnx_engine import ONNXInferenceEngine
 from src.inference.base import InferenceConfig
-
+from src.inference.onnx_engine import ONNXInferenceEngine
 
 # Public domain wildlife images from Pexels (Creative Commons)
 DEMO_IMAGES = {

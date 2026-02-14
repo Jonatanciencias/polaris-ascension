@@ -8,17 +8,18 @@ FASE 9.3: Fine-tuning del predictor ML para mejorar accuracy en selecci√≥n de t√
 """
 
 import sys
-import numpy as np
-import pandas as pd
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.metrics import mean_absolute_error, r2_score
-from sklearn.preprocessing import StandardScaler, LabelEncoder
-import joblib
+from typing import Any, Dict, List, Optional, Tuple
+
+import joblib  # type: ignore[import-untyped]
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 # import seaborn as sns  # Not available in this environment
 
@@ -28,7 +29,7 @@ class AIKernelPredictorFineTuner:
     Fine-tuner para el AI Kernel Predictor usando dataset recopilado.
     """
 
-    def __init__(self, dataset_path: str = None):
+    def __init__(self, dataset_path: Optional[str] = None):
         """
         Inicializa el fine-tuner.
 
@@ -36,9 +37,9 @@ class AIKernelPredictorFineTuner:
             dataset_path: Ruta al dataset de entrenamiento
         """
         self.dataset_path = dataset_path or "ml_training_dataset_*.csv"
-        self.model = None
+        self.model: Any = None
         self.scaler = StandardScaler()
-        self.label_encoders = {}
+        self.label_encoders: Dict[str, LabelEncoder] = {}
         self.feature_columns = [
             "matrix_size",
             "matrix_type",

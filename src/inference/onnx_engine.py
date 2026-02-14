@@ -4,10 +4,10 @@ ONNX inference engine compatibility implementation.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
+import time
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Union
-import time
 
 import numpy as np
 from PIL import Image
@@ -18,12 +18,12 @@ from ..core.profiler import Profiler
 from .base import InferenceConfig
 
 try:
-    import onnxruntime as ort
+    import onnxruntime as ort  # type: ignore[import-untyped]
 
     HAS_ORT = True
 except ImportError:
     HAS_ORT = False
-    ort = None  # type: ignore[assignment]
+    ort = None
 
 
 ArrayLikeInput = Union[str, Path, np.ndarray, Image.Image]
@@ -51,7 +51,7 @@ def _safe_softmax(values: np.ndarray) -> np.ndarray:
     denom = np.sum(exp_v)
     if denom <= 0:
         return np.full_like(values, 1.0 / values.size)
-    return exp_v / denom
+    return np.asarray(exp_v / denom, dtype=np.float64)
 
 
 class ONNXInferenceEngine:

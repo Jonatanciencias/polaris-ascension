@@ -16,6 +16,7 @@ New to this project? Start with these documents in order:
 5. [ROADMAP_BREAKTHROUGH_2026Q1.md](ROADMAP_BREAKTHROUGH_2026Q1.md) - New breakthrough roadmap (math/physics/CS/quantum + language strategy)
 6. [ROADMAP_CONTINUOUS_IMPROVEMENT_2026Q2.md](ROADMAP_CONTINUOUS_IMPROVEMENT_2026Q2.md) - Continuous-improvement roadmap after 2026Q1 closure
 7. [ROADMAP_EJECUCION_INMEDIATA_WEEK38.md](ROADMAP_EJECUCION_INMEDIATA_WEEK38.md) - Immediate execution plan (0-24h, 72h, Week38)
+8. [CHANGELOG.md](CHANGELOG.md) - CI coverage policy hardening trace (see 1.4.1, runtime-anchor scope + separate hardware validation)
 
 ---
 

@@ -12,23 +12,23 @@ This demo showcases the SNN implementation with practical examples:
 Author: Legacy GPU AI Platform Team
 """
 
+import time
+from typing import List, Tuple
+
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
-from typing import List, Tuple
-import time
 
 from src.compute.snn import (
     LIFNeuron,
     LIFParams,
+    RateEncoder,
+    SpikeDecoder,
     SpikingLayer,
     STDPLearning,
     STDPParams,
-    RateEncoder,
     TemporalEncoder,
-    SpikeDecoder,
 )
-
 
 # ============================================================================
 # Demo 1: LIF Neuron Dynamics

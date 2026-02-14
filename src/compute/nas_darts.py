@@ -42,16 +42,17 @@ Author: AMD GPU Computing Team
 Date: February 2026
 """
 
+import logging
+import time
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-from typing import List, Tuple, Dict, Optional, Callable, Any
-from dataclasses import dataclass, field
-from enum import Enum
-import numpy as np
-import logging
-import time
 
 logger = logging.getLogger(__name__)
 
@@ -372,6 +373,7 @@ class Cell(nn.Module):
         self.reduction = reduction
 
         # Preprocess inputs
+        self.preprocess0: nn.Module
         if reduction_prev:
             self.preprocess0 = FactorizedReduce(C_prev_prev, C, affine=False)
         else:
@@ -587,7 +589,8 @@ class DARTSNetwork(nn.Module):
                         if k != PRIMITIVES.index("none"):
                             if k_best is None or W[j][k] > W[j][k_best]:
                                 k_best = k
-                    gene.append((PRIMITIVES[k_best], j))
+                    if k_best is not None:
+                        gene.append((PRIMITIVES[k_best], j))
 
                 start = end
                 n += 1

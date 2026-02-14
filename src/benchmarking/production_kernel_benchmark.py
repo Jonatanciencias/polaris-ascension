@@ -5,22 +5,22 @@ Production kernel benchmarking helpers for tile20/tile24 GEMM kernels.
 from __future__ import annotations
 
 import os
-from pathlib import Path
 import time
-from typing import Any
 import warnings
+from pathlib import Path
+from typing import Any, cast
 
 import numpy as np
-
 import pyopencl as cl
 
 from src.optimization_engines.adaptive_kernel_selector import ProductionKernelSelector
 from src.optimization_engines.t5_abft_guardrails import (
     DEFAULT_POLICY_PATH as T5_DEFAULT_POLICY_PATH,
-    DEFAULT_STATE_PATH as T5_DEFAULT_STATE_PATH,
+)
+from src.optimization_engines.t5_abft_guardrails import DEFAULT_STATE_PATH as T5_DEFAULT_STATE_PATH
+from src.optimization_engines.t5_abft_guardrails import (
     T5ABFTAutoDisableGuard,
 )
-
 
 KERNEL_IMPLS: dict[str, dict[str, Any]] = {
     "tile20": {
@@ -286,7 +286,8 @@ def _build_program(ctx: cl.Context, source: str) -> cl.Program:
             category=UserWarning,
             message=".*PyOpenCL compiler caching failed.*",
         )
-        return cl.Program(ctx, source).build(options=["-cl-fast-relaxed-math"])
+        program = cl.Program(ctx, source).build(options=["-cl-fast-relaxed-math"])
+        return cast(cl.Program, program)
 
 
 def _build_kernel_cache(
@@ -368,7 +369,7 @@ def _prepare_projection_bank(
 
 def _projection_residuals(c: np.ndarray, projection: dict[str, Any]) -> np.ndarray:
     observed = np.sum(projection["u"] * (c @ projection["v"]).T, axis=1).astype(np.float32)
-    return np.abs(observed - projection["expected"]).astype(np.float32)
+    return cast(np.ndarray, np.abs(observed - projection["expected"]).astype(np.float32))
 
 
 def _run_kernel_with_copy(

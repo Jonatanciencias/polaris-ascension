@@ -6,17 +6,17 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, List, Optional, Sequence, Union, cast
 
 import numpy as np
 
 try:
-    import onnxruntime as ort
+    import onnxruntime as ort  # type: ignore[import-untyped]
 
     HAS_ORT = True
 except ImportError:
     HAS_ORT = False
-    ort = None  # type: ignore[assignment]
+    ort = cast(Any, None)
 
 try:
     import torch
@@ -24,7 +24,7 @@ try:
     HAS_TORCH = True
 except ImportError:
     HAS_TORCH = False
-    torch = None  # type: ignore[assignment]
+    torch = cast(Any, None)
 
 
 @dataclass
@@ -54,7 +54,7 @@ class ONNXModelLoader:
     def get_available_providers() -> List[str]:
         if not HAS_ORT:
             return []
-        return ort.get_available_providers()
+        return cast(List[str], ort.get_available_providers())
 
     def load(self, model_path: Union[str, Path]) -> ModelMetadata:
         if not HAS_ORT:
@@ -98,7 +98,7 @@ class ONNXModelLoader:
             raise RuntimeError("Model not loaded.")
         inp = self._session.get_inputs()[0]
         output = self._session.run(None, {inp.name: input_data.astype(np.float32, copy=False)})
-        return output[0]
+        return cast(np.ndarray, output[0])
 
     def unload(self) -> None:
         self._session = None
@@ -159,13 +159,15 @@ class PyTorchModelLoader:
         tensor = torch.from_numpy(input_data).to(self._device)
         with torch.no_grad():
             out = self._model(tensor)
-        return out.detach().cpu().numpy()
+        return cast(np.ndarray, out.detach().cpu().numpy())
 
     def unload(self) -> None:
         self._model = None
 
 
-def create_loader(model_path: Union[str, Path], optimization_level: int = 2, **kwargs: Any):
+def create_loader(
+    model_path: Union[str, Path], optimization_level: int = 2, **kwargs: Any
+) -> Union[ONNXModelLoader, PyTorchModelLoader]:
     """Factory for loading models by file extension."""
     suffix = Path(model_path).suffix.lower()
     if suffix == ".onnx":

@@ -5,7 +5,7 @@ ONNX export compatibility helpers.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, Optional, Sequence
+from typing import Any, Dict, Optional, Sequence, cast
 
 try:
     import torch
@@ -13,15 +13,15 @@ try:
     HAS_TORCH = True
 except ImportError:
     HAS_TORCH = False
-    torch = None  # type: ignore[assignment]
+    torch = cast(Any, None)
 
 try:
-    import onnxruntime as ort
+    import onnxruntime as ort  # type: ignore[import-untyped]
 
     HAS_ORT = True
 except ImportError:
     HAS_ORT = False
-    ort = None  # type: ignore[assignment]
+    ort = None
 
 
 def export_to_onnx(
@@ -41,7 +41,7 @@ def export_to_onnx(
     model.eval()
     torch.onnx.export(
         model,
-        sample_input,
+        (sample_input,),
         str(path),
         input_names=list(input_names or ["input"]),
         output_names=list(output_names or ["output"]),

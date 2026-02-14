@@ -7,8 +7,8 @@ Tests para verificar el funcionamiento del selector de kernels calibrado
 que usa ML para predecir el mejor kernel.
 """
 
-import pytest
 import numpy as np
+import pytest
 
 
 @pytest.fixture(scope="module")

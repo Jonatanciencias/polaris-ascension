@@ -33,12 +33,11 @@ Quality: 9.8/10 (professional, documented, comprehensive)
 import json
 import random
 import time
-from typing import Dict, Any, List
 from pathlib import Path
+from typing import Any, Dict, List
 
-from locust import HttpUser, TaskSet, task, between, tag, events
+from locust import HttpUser, TaskSet, between, events, tag, task
 from locust.env import Environment
-
 
 # ============================================================================
 # CONFIGURATION

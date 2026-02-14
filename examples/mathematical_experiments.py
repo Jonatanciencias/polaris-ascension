@@ -18,17 +18,18 @@ Real-world impact:
 - Protein Science: Accessible structure prediction
 """
 
-import sys
-from pathlib import Path
-import numpy as np
-import time
 import json
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.experiments.precision_experiments import PrecisionExperiment, compare_precisions
-from src.experiments.sparse_networks import SparseNetwork, sparse_vs_dense_benchmark
 from src.experiments.quantization_analysis import QuantizationAnalyzer, sensitivity_analysis
+from src.experiments.sparse_networks import SparseNetwork, sparse_vs_dense_benchmark
 from src.utils.logging_config import setup_logging
 
 

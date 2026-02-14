@@ -7,10 +7,11 @@ Tests comprehensivos para verificar funcionalidad, precisión y rendimiento
 del engine de kernels optimizados para GCN4/Polaris.
 """
 
-import pytest
-import numpy as np
 import time
 from typing import Tuple
+
+import numpy as np
+import pytest
 
 # Skip tests si OpenCL no está disponible
 try:

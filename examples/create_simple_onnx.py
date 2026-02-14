@@ -4,14 +4,15 @@ Create simple ONNX model using onnx library directly
 Creates a minimal ONNX model for testing without PyTorch.
 """
 
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 
 print("Creating test ONNX model using onnx library...")
 
 try:
     import onnx
-    from onnx import helper, TensorProto
+    from onnx import TensorProto, helper
 
     # Create models directory
     models_dir = Path(__file__).parent / "models"

@@ -1,48 +1,41 @@
 # Optimization Engines Package
 # Contains all matrix multiplication optimization algorithms
+from importlib import import_module
+from typing import Any
 
-# Import individual modules with error handling
-try:
-    from .advanced_polaris_opencl_engine import AdvancedPolarisOpenCLEngine
-except ImportError:
-    AdvancedPolarisOpenCLEngine = None
 
-try:
-    from .optimized_opencl_engine import OptimizedOpenCLEngine
-except ImportError:
-    OptimizedOpenCLEngine = None
+def _load_symbol(module_name: str, symbol_name: str) -> Any:
+    try:
+        module = import_module(f".{module_name}", __name__)
+        return getattr(module, symbol_name)
+    except (ImportError, AttributeError):
+        return None
 
-try:
-    from .low_rank_matrix_approximator import LowRankMatrixApproximator
-except ImportError:
-    LowRankMatrixApproximator = None
 
-try:
-    from .low_rank_matrix_approximator_gcn import GCNOptimizedLowRankApproximator
-except ImportError:
-    GCNOptimizedLowRankApproximator = None
-
-try:
-    from .low_rank_matrix_approximator_gpu import LowRankMatrixApproximatorGPU
-except ImportError:
-    LowRankMatrixApproximatorGPU = None
-
-try:
-    from .coppersmith_winograd_gpu import CoppersmithWinogradGPU
-except ImportError:
-    CoppersmithWinogradGPU = None
-
-try:
-    from .quantum_annealing_optimizer import QuantumAnnealingOptimizer
-except ImportError:
-    QuantumAnnealingOptimizer = None
+AdvancedPolarisOpenCLEngine = _load_symbol(
+    "advanced_polaris_opencl_engine", "AdvancedPolarisOpenCLEngine"
+)
+OptimizedOpenCLEngine = _load_symbol("optimized_opencl_engine", "OptimizedOpenCLEngine")
+LowRankMatrixApproximator = _load_symbol(
+    "low_rank_matrix_approximator", "LowRankMatrixApproximator"
+)
+GCNOptimizedLowRankApproximator = _load_symbol(
+    "low_rank_matrix_approximator_gcn", "GCNOptimizedLowRankApproximator"
+)
+GPUAcceleratedLowRankApproximator = _load_symbol(
+    "low_rank_matrix_approximator_gpu", "GPUAcceleratedLowRankApproximator"
+)
+CoppersmithWinogradGPU = _load_symbol("coppersmith_winograd_gpu", "CoppersmithWinogradGPU")
+QuantumAnnealingMatrixOptimizer = _load_symbol(
+    "quantum_annealing_optimizer", "QuantumAnnealingMatrixOptimizer"
+)
 
 __all__ = [
     "AdvancedPolarisOpenCLEngine",
     "OptimizedOpenCLEngine",
     "LowRankMatrixApproximator",
     "GCNOptimizedLowRankApproximator",
-    "LowRankMatrixApproximatorGPU",
+    "GPUAcceleratedLowRankApproximator",
     "CoppersmithWinogradGPU",
-    "QuantumAnnealingOptimizer",
+    "QuantumAnnealingMatrixOptimizer",
 ]

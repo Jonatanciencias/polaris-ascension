@@ -6,8 +6,7 @@ import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
-
+from typing import Any, cast
 
 DEFAULT_POLICY_PATH = "research/breakthrough_lab/t5_reliability_abft/policy_hardening_block3.json"
 DEFAULT_STATE_PATH = "results/runtime_states/t5_abft_guard_state.json"
@@ -75,7 +74,7 @@ class T5ABFTAutoDisableGuard:
 
     @staticmethod
     def _load_policy(path: Path) -> dict[str, Any]:
-        data = json.loads(path.read_text())
+        data = cast(dict[str, Any], json.loads(path.read_text()))
         required = ["policy_id", "abft_mode", "runtime_guardrails", "stress_evidence"]
         missing = [field for field in required if field not in data]
         if missing:
@@ -107,7 +106,9 @@ class T5ABFTAutoDisableGuard:
         }
 
         for payload in checks.values():
-            payload["pass"] = bool(payload["observed"] <= payload["threshold"])
+            observed = float(cast(Any, payload["observed"]))
+            threshold = float(cast(Any, payload["threshold"]))
+            payload["pass"] = bool(observed <= threshold)
 
         failed = [name for name, payload in checks.items() if not payload["pass"]]
 
@@ -126,7 +127,7 @@ class T5ABFTAutoDisableGuard:
             disable_reasons.append("correctness_error")
         if (
             self.disable_if_effective_overhead_percent_gt_hard is not None
-            and float(checks["effective_overhead_percent"]["observed"])
+            and float(cast(Any, checks["effective_overhead_percent"]["observed"]))
             > self.disable_if_effective_overhead_percent_gt_hard
         ):
             disable_reasons.append("effective_overhead_percent_hard")

@@ -7,8 +7,8 @@ Tests para verificar el funcionamiento del gestor de memoria avanzado
 con prefetch, tiling y buffer pooling.
 """
 
-import pytest
 import numpy as np
+import pytest
 
 # Skip tests si OpenCL no está disponible
 try:

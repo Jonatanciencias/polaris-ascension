@@ -4,6 +4,31 @@
 
 ---
 
+## [1.4.1] - 2026-02-13 🧪 CI COVERAGE POLICY UPDATE
+
+### 🎯 Milestone: Endurecimiento incremental de gate de cobertura CI
+
+- Índice relacionado: [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md)
+
+### ✨ Cambios Principales
+
+- Gate de cobertura CI endurecido incrementalmente hasta **100%** (`pytest.ini`, `pyproject.toml`).
+- Se formaliza un **scope CI más estricto** basado en *runtime anchors* para medir rutas estables y críticas en ejecución continua.
+- Se explicita la separación de validación:
+  - **CI coverage gate** para rutas ancla de runtime.
+  - **Validación hardware dedicada** para capas de orquestación GPU/OpenCL y rutas hardware-bound complejas.
+- Trazabilidad documental alineada en:
+  - `README.md` (Coverage Policy).
+  - `docs/SYSTEM_STATUS_REPORT.md` (política + baseline).
+  - `RELEASE_NOTES_v2.2.0.md` y `GITHUB_RELEASE_DESCRIPTION.md` (nota de alcance CI/hardware).
+
+### 📌 Resultado Validado
+
+- Suite completa: **135 passed**.
+- Cobertura total CI (scope ancla): **100.00%**.
+
+---
+
 ## [1.4.0] - 2026-02-07 ✅ REPAIR ROADMAP PHASES 3-5 CLOSED
 
 ### 🎯 Milestone: Cierre técnico de estabilización, reproducibilidad y CI

@@ -10,9 +10,10 @@ Tests end-to-end que verifican la integración de todos los componentes:
 - Kernels GCN4 optimizados
 """
 
-import pytest
-import numpy as np
 import time
+
+import numpy as np
+import pytest
 
 # Skip tests si OpenCL no está disponible
 try:

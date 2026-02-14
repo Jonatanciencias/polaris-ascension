@@ -16,9 +16,10 @@ Date: 2026-02-02
 """
 
 import sys
-import numpy as np
 import time
 from pathlib import Path
+
+import numpy as np
 
 # Agregar path del proyecto
 project_root = Path(__file__).parent.parent
@@ -33,14 +34,12 @@ from ml_models.calibrated_intelligent_selector import (
 
 def print_banner():
     """Imprime banner de la demo."""
-    print(
-        """
+    print("""
 ╔══════════════════════════════════════════════════════════════════════╗
 ║        🎯 CALIBRATED INTELLIGENT SELECTOR - DEMO                     ║
 ║        AMD Radeon RX 580 Optimization Framework                       ║
 ╚══════════════════════════════════════════════════════════════════════╝
-    """
-    )
+    """)
 
 
 def demo_basic_selection():

@@ -13,10 +13,11 @@ Author: Polaris Ascension Project
 Date: 23 de enero de 2026
 """
 
-import pyopencl as cl
-import numpy as np
-import time
 import sys
+import time
+
+import numpy as np
+import pyopencl as cl
 
 sys.path.insert(0, "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580")
 from scripts.power_monitor import GPUPowerMonitor

@@ -4,10 +4,10 @@ GPU detection and hardware hints for AMD Polaris-class devices.
 
 from __future__ import annotations
 
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterator, Optional, Tuple
-import shutil
+from typing import Any, Dict, Iterator, Optional, Tuple, cast
 
 try:
     import pyopencl as cl
@@ -15,7 +15,7 @@ try:
     HAS_OPENCL = True
 except ImportError:
     HAS_OPENCL = False
-    cl = None  # type: ignore[assignment]
+    cl = cast(Any, None)
 
 
 @dataclass
@@ -103,10 +103,10 @@ class GPUManager:
             return None
 
         candidates: list[GPUInfo] = []
-        for platform in cl.get_platforms():  # type: ignore[union-attr]
+        for platform in cl.get_platforms():
             for device in platform.get_devices(device_type=cl.device_type.GPU):
-                name = device.get_info(cl.device_info.NAME).strip()
-                vendor = device.get_info(cl.device_info.VENDOR).strip()
+                name = cast(str, device.get_info(cl.device_info.NAME)).strip()
+                vendor = cast(str, device.get_info(cl.device_info.VENDOR)).strip()
                 if not _is_amd_radeon(name, vendor):
                     continue
 
@@ -114,9 +114,9 @@ class GPUManager:
                     name=name,
                     vendor=vendor,
                     platform=platform.name.strip(),
-                    driver=device.get_info(cl.device_info.DRIVER_VERSION).strip(),
-                    opencl_version=device.get_info(cl.device_info.VERSION).strip(),
-                    vram_bytes=int(device.get_info(cl.device_info.GLOBAL_MEM_SIZE)),
+                    driver=cast(str, device.get_info(cl.device_info.DRIVER_VERSION)).strip(),
+                    opencl_version=cast(str, device.get_info(cl.device_info.VERSION)).strip(),
+                    vram_bytes=int(cast(Any, device.get_info(cl.device_info.GLOBAL_MEM_SIZE))),
                     architecture="Polaris" if "polaris" in name.lower() else "Unknown",
                     opencl_available=True,
                     rocm_available=_detect_rocm(),

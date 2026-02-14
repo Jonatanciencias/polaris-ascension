@@ -9,7 +9,7 @@ import argparse
 import os
 import time
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import numpy as np
 
@@ -287,7 +287,7 @@ class CLI:
                 print(f"ERROR: production benchmark failed: {exc}")
                 return 2
 
-            summary = report["summary"]
+            summary = cast(Dict[str, Any], report["summary"])
             peak = summary["peak_gflops"]
             avg = summary["avg_gflops"]
             time_stats = summary["time_ms"]

@@ -36,15 +36,16 @@ Author: AI Assistant
 Date: 2026-01-26
 """
 
+import logging
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple, cast
+
 import numpy as np
 import pyopencl as cl
 import pyopencl.array as cl_array
-from typing import Tuple, Optional, Dict, Any, List
-import time
-import logging
-from dataclasses import dataclass
-from concurrent.futures import ThreadPoolExecutor
-import threading
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -165,7 +166,9 @@ class AdvancedPolarisOpenCLEngine:
             # Create command queue with advanced features
             queue_properties = cl.command_queue_properties.PROFILING_ENABLE
             if self.config.use_async_transfers:
-                queue_properties |= cl.command_queue_properties.OUT_OF_ORDER_EXEC_MODE_ENABLE
+                queue_properties = cl.command_queue_properties(
+                    queue_properties | cl.command_queue_properties.OUT_OF_ORDER_EXEC_MODE_ENABLE
+                )
                 logger.info("✅ Async transfer mode enabled")
 
             self.queue = cl.CommandQueue(self.context, self.device, properties=queue_properties)
@@ -180,6 +183,10 @@ class AdvancedPolarisOpenCLEngine:
     def _load_polaris_kernels(self):
         """Cargar kernels breakthrough optimizados para Polaris"""
         try:
+            context = self.context
+            if context is None:
+                raise RuntimeError("OpenCL context not initialized")
+
             # Load the breakthrough kernel
             kernel_path = "src/opencl/kernels/gemm_polaris_breakthrough.cl"
             with open(kernel_path, "r") as f:
@@ -209,7 +216,7 @@ class AdvancedPolarisOpenCLEngine:
             ]
 
             # Build program with Polaris optimizations
-            self.program = cl.Program(self.context, kernel_source).build(options=build_options)
+            self.program = cl.Program(context, kernel_source).build(options=build_options)
 
             logger.info("✅ Breakthrough Polaris kernels loaded successfully")
             logger.info(f"   Tile size: {self.config.tile_size}")
@@ -232,22 +239,28 @@ class AdvancedPolarisOpenCLEngine:
         Returns:
             Tuple of (A_buf, B_buf, C_buf, transfer_events)
         """
-        transfer_events = []
+        transfer_events: List[cl.Event] = []
 
         try:
+            context = self.context
+            queue = self.queue
+            device = self.device
+            if context is None or queue is None or device is None:
+                raise RuntimeError("OpenCL runtime not initialized")
+
             mf = cl.mem_flags
 
-            if self.config.use_zero_copy and self.device.host_unified_memory:
+            if self.config.use_zero_copy and device.host_unified_memory:
                 # Zero-copy buffers for minimum latency
                 logger.info("🔄 Using zero-copy buffers for minimum latency")
 
                 A_buf = cl.Buffer(
-                    self.context, mf.READ_ONLY | mf.USE_HOST_PTR, hostbuf=A.astype(np.float32)
+                    context, mf.READ_ONLY | mf.USE_HOST_PTR, hostbuf=A.astype(np.float32)
                 )
                 B_buf = cl.Buffer(
-                    self.context, mf.READ_ONLY | mf.USE_HOST_PTR, hostbuf=B.astype(np.float32)
+                    context, mf.READ_ONLY | mf.USE_HOST_PTR, hostbuf=B.astype(np.float32)
                 )
-                C_buf = cl.Buffer(self.context, mf.WRITE_ONLY | mf.USE_HOST_PTR, hostbuf=C)
+                C_buf = cl.Buffer(context, mf.WRITE_ONLY | mf.USE_HOST_PTR, hostbuf=C)
 
                 # No transfer events for zero-copy
                 transfer_events = []
@@ -257,29 +270,29 @@ class AdvancedPolarisOpenCLEngine:
                 logger.info("📌 Using pinned memory for async transfers")
 
                 # Create pinned host buffers
-                A_pinned = cl.Buffer(self.context, mf.READ_ONLY | mf.ALLOC_HOST_PTR, size=A.nbytes)
-                B_pinned = cl.Buffer(self.context, mf.READ_ONLY | mf.ALLOC_HOST_PTR, size=B.nbytes)
-                C_pinned = cl.Buffer(self.context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=C.nbytes)
+                A_pinned = cl.Buffer(context, mf.READ_ONLY | mf.ALLOC_HOST_PTR, size=A.nbytes)
+                B_pinned = cl.Buffer(context, mf.READ_ONLY | mf.ALLOC_HOST_PTR, size=B.nbytes)
+                C_pinned = cl.Buffer(context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=C.nbytes)
 
                 # Map and copy to pinned memory asynchronously
                 A_mapped, A_event = cl.enqueue_map_buffer(
-                    self.queue, A_pinned, cl.map_flags.WRITE, 0, A.shape, A.dtype, is_blocking=False
+                    queue, A_pinned, cl.map_flags.WRITE, 0, A.shape, A.dtype, is_blocking=False
                 )
                 np.copyto(A_mapped, A.astype(np.float32))
 
                 B_mapped, B_event = cl.enqueue_map_buffer(
-                    self.queue, B_pinned, cl.map_flags.WRITE, 0, B.shape, B.dtype, is_blocking=False
+                    queue, B_pinned, cl.map_flags.WRITE, 0, B.shape, B.dtype, is_blocking=False
                 )
                 np.copyto(B_mapped, B.astype(np.float32))
 
                 # Create device buffers
                 A_buf = cl.Buffer(
-                    self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32)
+                    context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32)
                 )
                 B_buf = cl.Buffer(
-                    self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32)
+                    context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32)
                 )
-                C_buf = cl.Buffer(self.context, mf.WRITE_ONLY, size=C.nbytes)
+                C_buf = cl.Buffer(context, mf.WRITE_ONLY, size=C.nbytes)
 
                 transfer_events = [A_event, B_event]
 
@@ -288,12 +301,12 @@ class AdvancedPolarisOpenCLEngine:
                 logger.info("📋 Using standard host pointer copy")
 
                 A_buf = cl.Buffer(
-                    self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32)
+                    context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32)
                 )
                 B_buf = cl.Buffer(
-                    self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32)
+                    context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32)
                 )
-                C_buf = cl.Buffer(self.context, mf.WRITE_ONLY, size=C.nbytes)
+                C_buf = cl.Buffer(context, mf.WRITE_ONLY, size=C.nbytes)
 
                 transfer_events = []
 
@@ -359,6 +372,12 @@ class AdvancedPolarisOpenCLEngine:
         transfer_start_time = time.time()
 
         try:
+            queue = self.queue
+            program = self.program
+            device = self.device
+            if queue is None or program is None or device is None:
+                raise RuntimeError("OpenCL runtime not initialized")
+
             # Create optimized buffers with advanced memory management
             A_buf, B_buf, C_buf, transfer_events = self._create_optimized_buffers(A, B, C)
 
@@ -373,7 +392,7 @@ class AdvancedPolarisOpenCLEngine:
             total_lds_size = lds_size_a + lds_size_b
 
             # Verify LDS size fits in available local memory
-            available_lds = self.device.local_mem_size
+            available_lds = device.local_mem_size
             if total_lds_size > available_lds:
                 logger.warning(
                     f"⚠️ LDS requirement ({total_lds_size} bytes) exceeds available ({available_lds} bytes)"
@@ -383,7 +402,7 @@ class AdvancedPolarisOpenCLEngine:
                 global_work_size, local_work_size = self._calculate_polaris_work_groups(M, N)
 
             # Get breakthrough Polaris kernel
-            kernel = self.program.gemm_polaris_breakthrough
+            kernel = program.gemm_polaris_breakthrough
 
             # Set kernel arguments with Polaris optimizations
             kernel.set_args(
@@ -395,8 +414,8 @@ class AdvancedPolarisOpenCLEngine:
                 A_buf,
                 B_buf,
                 C_buf,
-                cl.LocalMemory(lds_size_a),  # A tile in LDS
-                cl.LocalMemory(lds_size_b),  # B tile in LDS
+                cast(Any, cl.LocalMemory(lds_size_a)),  # A tile in LDS
+                cast(Any, cl.LocalMemory(lds_size_b)),  # B tile in LDS
             )
 
             # Execute kernel with Polaris optimizations
@@ -407,19 +426,17 @@ class AdvancedPolarisOpenCLEngine:
                 cl.wait_for_events(transfer_events)
 
             # Execute the breakthrough kernel
-            event = cl.enqueue_nd_range_kernel(
-                self.queue, kernel, global_work_size, local_work_size
-            )
+            event = cl.enqueue_nd_range_kernel(queue, kernel, global_work_size, local_work_size)
 
             # Overlap output transfer with computation if possible
             if self.config.use_async_transfers:
                 # Start async transfer back to host
-                C_event = cl.enqueue_copy(self.queue, C, C_buf, is_blocking=False)
+                C_event = cl.enqueue_copy(queue, C, C_buf, is_blocking=False)
                 # Wait for both kernel and transfer to complete
                 cl.wait_for_events([event, C_event])
             else:
                 # Synchronous transfer
-                cl.enqueue_copy(self.queue, C, C_buf).wait()
+                cl.enqueue_copy(queue, C, C_buf).wait()
 
             kernel_time = time.time() - kernel_start_time
             total_time = time.time() - total_start_time
@@ -454,11 +471,10 @@ class AdvancedPolarisOpenCLEngine:
             metrics = PolarisPerformanceMetrics(
                 gflops_achieved=gflops_achieved,
                 memory_bandwidth=memory_bandwidth,
-                kernel_efficiency=gflops_achieved / self.device.max_compute_units,
+                kernel_efficiency=gflops_achieved / device.max_compute_units,
                 wavefront_occupancy=min(
                     1.0,
-                    (global_work_size[0] * global_work_size[1])
-                    / (self.device.max_compute_units * 64),
+                    (global_work_size[0] * global_work_size[1]) / (device.max_compute_units * 64),
                 ),
                 lds_utilization=total_lds_size / available_lds,
                 transfer_metrics=transfer_metrics,

@@ -5,18 +5,18 @@ Benchmarking Suite Demo - Session 25
 Demonstrates comprehensive benchmarking of tensor decomposition methods.
 """
 
+import sys
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset
 
-import sys
-
 sys.path.insert(0, "/home/jonatanciencias/Proyectos/Programacion/Radeon_RX_580")
 
 from src.compute.tensor_decomposition_benchmark import (
-    TensorDecompositionBenchmark,
     BenchmarkConfig,
+    TensorDecompositionBenchmark,
     quick_benchmark,
 )
 

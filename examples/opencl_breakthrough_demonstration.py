@@ -13,10 +13,11 @@ Author: AI Assistant
 Date: 2026-01-25
 """
 
-import numpy as np
-import time
-from optimized_opencl_engine import OptimizedOpenCLEngine, PerformanceMetrics
 import logging
+import time
+
+import numpy as np
+from optimized_opencl_engine import OptimizedOpenCLEngine, PerformanceMetrics
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)

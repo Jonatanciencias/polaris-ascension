@@ -12,17 +12,17 @@ Implementa las siguientes optimizaciones:
 Autor: Sistema de Optimización RX 580
 """
 
+import hashlib
+import logging
+import time
+from contextlib import contextmanager
+from dataclasses import dataclass, field
+from enum import Enum, auto
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple, cast
+
 import numpy as np
 import pyopencl as cl
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple, Any
-from pathlib import Path
-import time
-import logging
-import hashlib
-import pickle
-from enum import Enum, auto
-from contextlib import contextmanager
 
 # Importar AdvancedMemoryManager
 try:
@@ -359,11 +359,17 @@ class OptimizedKernelEngine:
 
         # Caché de kernels instanciados para evitar RepeatedKernelRetrieval
         self._kernel_cache: Dict[str, cl.Kernel] = {}
+        self._missing_kernels: set[str] = set()
+        self._kernel_aliases: Dict[str, str] = {}
 
         self.enable_buffer_pool = enable_buffer_pool
         self.enable_advanced_memory = enable_advanced_memory and ADVANCED_MEMORY_AVAILABLE
 
         # Sistema de memoria avanzado
+        self.buffer_pool: Any = None
+        self.memory_manager: Optional[AdvancedMemoryManager] = (
+            None if ADVANCED_MEMORY_AVAILABLE else None
+        )
         if self.enable_advanced_memory:
             self.memory_manager = AdvancedMemoryManager(
                 context=self.context,
@@ -406,7 +412,11 @@ class OptimizedKernelEngine:
 
         self.context = cl.Context([self.device])
 
-        queue_props = cl.command_queue_properties.PROFILING_ENABLE if enable_profiling else 0
+        queue_props = (
+            cl.command_queue_properties.PROFILING_ENABLE
+            if enable_profiling
+            else cl.command_queue_properties(0)
+        )
         self.queue = cl.CommandQueue(self.context, self.device, properties=queue_props)
 
         # Queue secundaria para transferencias asíncronas
@@ -423,11 +433,15 @@ class OptimizedKernelEngine:
         Obtener kernel del caché o instanciarlo si no existe.
         Evita el warning de RepeatedKernelRetrieval.
         """
+        if kernel_name in self._missing_kernels:
+            raise RuntimeError(f"Kernel no disponible: {kernel_name}")
+
         if kernel_name not in self._kernel_cache:
             try:
                 self._kernel_cache[kernel_name] = cl.Kernel(self.program, kernel_name)
                 logger.debug(f"Kernel '{kernel_name}' cargado y cacheado")
             except Exception as e:
+                self._missing_kernels.add(kernel_name)
                 logger.error(f"Error cargando kernel '{kernel_name}': {e}")
                 raise
         return self._kernel_cache[kernel_name]
@@ -438,6 +452,7 @@ class OptimizedKernelEngine:
             kernel_dir = Path(__file__).parent.parent / "opencl" / "kernels"
 
         kernel_sources = []
+        kernel_sources_by_name: Dict[str, str] = {}
 
         # Cargar archivos .cl
         kernel_files = [
@@ -452,14 +467,21 @@ class OptimizedKernelEngine:
             filepath = kernel_dir / filename
             if filepath.exists():
                 with open(filepath, "r") as f:
-                    kernel_sources.append(f.read())
+                    source = f.read()
+                    kernel_sources.append(source)
+                    kernel_sources_by_name[filename] = source
                 logger.debug(f"Cargado kernel: {filename}")
             else:
                 # Buscar en directorio alternativo
                 alt_path = Path(__file__).parent.parent / "kernels" / filename
                 if alt_path.exists():
                     with open(alt_path, "r") as f:
-                        kernel_sources.append(f.read())
+                        source = f.read()
+                        kernel_sources.append(source)
+                        kernel_sources_by_name[filename] = source
+                    logger.debug(f"Cargado kernel alternativo: {filename}")
+                else:
+                    logger.warning(f"No se encontró kernel: {filename}")
 
         if not kernel_sources:
             # Kernel mínimo de respaldo
@@ -494,8 +516,7 @@ class OptimizedKernelEngine:
         try:
             # Intentar cargar desde caché
             if cache_file.exists():
-                with open(cache_file, "rb") as f:
-                    binary = pickle.load(f)
+                binary = cache_file.read_bytes()
                 self.program = cl.Program(self.context, [self.device], [binary]).build()
                 logger.info(f"✅ Kernels cargados desde caché (~0ms)")
             else:
@@ -515,13 +536,36 @@ class OptimizedKernelEngine:
 
                 # Guardar binario compilado
                 binary = self.program.get_info(cl.program_info.BINARIES)[0]
-                with open(cache_file, "wb") as f:
-                    pickle.dump(binary, f)
+                cache_file.write_bytes(binary)
                 logger.info(f"⚡ Kernels compilados y guardados en caché (~2.8s)")
 
         except (cl.RuntimeError, Exception) as e:
             logger.error(f"Error compilando kernels: {e}")
-            # Intentar con kernel de respaldo
+            # Intentar compilación reducida con kernels críticos de rendimiento
+            reduced_sources = []
+            for critical_name in ("gemm_float4_clover.cl", "gemm_polaris_breakthrough.cl"):
+                source_opt = kernel_sources_by_name.get(critical_name)
+                if source_opt:
+                    reduced_sources.append(source_opt)
+
+            if reduced_sources:
+                try:
+                    has_basic = any(
+                        "__kernel void gemm_basic_tiled" in src for src in reduced_sources
+                    )
+                    reduced_payload = list(reduced_sources)
+                    if not has_basic:
+                        reduced_payload.append(self._get_fallback_kernel())
+                    reduced_combined = "\n\n".join(reduced_payload)
+                    self.program = cl.Program(self.context, reduced_combined).build(
+                        options=build_options
+                    )
+                    logger.warning("Compilación reducida activada tras fallo de build completo")
+                    return
+                except Exception as reduced_error:
+                    logger.error(f"Error en compilación reducida: {reduced_error}")
+
+            # Último recurso: kernel de respaldo mínimo
             self.program = cl.Program(self.context, self._get_fallback_kernel()).build()
 
     def _get_fallback_kernel(self) -> str:
@@ -529,7 +573,10 @@ class OptimizedKernelEngine:
         return """
         __kernel void gemm_basic_tiled(
             const int M, const int N, const int K,
-            __global const float* A, __global const float* B, __global float* C
+            const float alpha,
+            __global const float* A, __global const float* B,
+            const float beta,
+            __global float* C
         ) {
             const int row = get_global_id(0);
             const int col = get_global_id(1);
@@ -539,7 +586,7 @@ class OptimizedKernelEngine:
                 for (int k = 0; k < K; k++) {
                     sum = mad(A[row * K + k], B[k * N + col], sum);
                 }
-                C[row * N + col] = sum;
+                C[row * N + col] = mad(alpha, sum, beta * C[row * N + col]);
             }
         }
         """
@@ -611,6 +658,9 @@ class OptimizedKernelEngine:
         config = self.KERNEL_CONFIGS[kernel_type]
         local_size = config.local_size
 
+        def round_up(x: int, multiple: int) -> int:
+            return ((x + multiple - 1) // multiple) * multiple
+
         # Ajustar si excede límites
         while local_size[0] * local_size[1] > self.max_work_group_size:
             local_size = (local_size[0] // 2, local_size[1])
@@ -626,10 +676,6 @@ class OptimizedKernelEngine:
 
         # Para FLOAT4_VEC: cada work-item procesa 4 columnas (N/4)
         if kernel_type == KernelType.GEMM_FLOAT4_VEC:
-
-            def round_up(x: int, multiple: int) -> int:
-                return ((x + multiple - 1) // multiple) * multiple
-
             global_size = (
                 round_up(M, local_size[0]),
                 round_up(N // 4, local_size[1]),  # N/4 porque cada work-item hace 4 columnas
@@ -637,9 +683,6 @@ class OptimizedKernelEngine:
             return global_size, local_size
 
         # Para otros kernels, global_size = dimensiones de salida
-        def round_up(x: int, multiple: int) -> int:
-            return ((x + multiple - 1) // multiple) * multiple
-
         global_size = (round_up(M, local_size[0]), round_up(N, local_size[1]))
 
         return global_size, local_size
@@ -719,9 +762,10 @@ class OptimizedKernelEngine:
                 B_buf = self.memory_manager.allocate(B, read_only=True)
                 C_buf = self.memory_manager.buffer_pool.get_buffer(C.nbytes, read_only=False)
             elif self.enable_buffer_pool:
-                A_buf = self.buffer_pool.get_read_buffer(A.nbytes, A)
-                B_buf = self.buffer_pool.get_read_buffer(B.nbytes, B)
-                C_buf = self.buffer_pool.get_write_buffer(C.nbytes)
+                basic_pool = cast(BufferPool, self.buffer_pool)
+                A_buf = basic_pool.get_read_buffer(A.nbytes, A)
+                B_buf = basic_pool.get_read_buffer(B.nbytes, B)
+                C_buf = basic_pool.get_write_buffer(C.nbytes)
             else:
                 A_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A)
                 B_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B)
@@ -736,27 +780,42 @@ class OptimizedKernelEngine:
             global_size, local_size = self._get_optimal_work_size(kernel_type, M, N)
 
             # Seleccionar kernel según el tipo usando caché
-            kernel_name = config.name
+            requested_kernel_name = config.name
+            kernel_name = self._kernel_aliases.get(requested_kernel_name, requested_kernel_name)
             try:
                 kernel = self._get_kernel(kernel_name)
-            except AttributeError:
+            except Exception:
                 # Fallback a kernel básico si no existe
-                logger.warning(f"Kernel {kernel_name} no disponible, usando gemm_basic_tiled")
+                if requested_kernel_name not in self._kernel_aliases:
+                    logger.warning(
+                        f"Kernel {requested_kernel_name} no disponible, usando gemm_basic_tiled"
+                    )
+                self._kernel_aliases[requested_kernel_name] = "gemm_basic_tiled"
                 kernel = self._get_kernel("gemm_basic_tiled")
                 config = self.KERNEL_CONFIGS[KernelType.GEMM_BASIC]
                 global_size, local_size = self._get_optimal_work_size(KernelType.GEMM_BASIC, M, N)
 
-            # Configurar argumentos (kernel tiene alpha y beta)
-            kernel.set_args(
-                np.int32(M),
-                np.int32(N),
-                np.int32(K),
-                np.float32(alpha),
-                A_buf,
-                B_buf,
-                np.float32(beta),
-                C_buf,
-            )
+            # Configurar argumentos según firma de kernel (compatibilidad legacy)
+            if kernel.num_args >= 8:
+                kernel.set_args(
+                    np.int32(M),
+                    np.int32(N),
+                    np.int32(K),
+                    np.float32(alpha),
+                    A_buf,
+                    B_buf,
+                    np.float32(beta),
+                    C_buf,
+                )
+            else:
+                kernel.set_args(
+                    np.int32(M),
+                    np.int32(N),
+                    np.int32(K),
+                    A_buf,
+                    B_buf,
+                    C_buf,
+                )
 
             # Ejecutar con profiling
             event = cl.enqueue_nd_range_kernel(self.queue, kernel, global_size, local_size)
@@ -781,9 +840,10 @@ class OptimizedKernelEngine:
                 self.memory_manager.free(B_buf, read_only=True)
                 self.memory_manager.buffer_pool.return_buffer(C_buf, read_only=False)
             elif self.enable_buffer_pool:
-                self.buffer_pool.return_buffer(A_buf, is_write=False)
-                self.buffer_pool.return_buffer(B_buf, is_write=False)
-                self.buffer_pool.return_buffer(C_buf, is_write=True)
+                basic_pool = cast(BufferPool, self.buffer_pool)
+                basic_pool.return_buffer(A_buf, is_write=False)
+                basic_pool.return_buffer(B_buf, is_write=False)
+                basic_pool.return_buffer(C_buf, is_write=True)
             else:
                 A_buf.release()
                 B_buf.release()
@@ -947,7 +1007,7 @@ class OptimizedKernelEngine:
         Returns:
             Diccionario con resultados del benchmark
         """
-        results = {
+        results: Dict[str, Any] = {
             "device": self.device.name,
             "theoretical_gflops": self.THEORETICAL_GFLOPS,
             "tests": [],
@@ -958,7 +1018,7 @@ class OptimizedKernelEngine:
             A = np.random.randn(M, K).astype(np.float32)
             B = np.random.randn(K, N).astype(np.float32)
 
-            test_result = {"size": size, "kernel_results": {}}
+            test_result: Dict[str, Any] = {"size": size, "kernel_results": {}}
 
             # Probar cada tipo de kernel compatible
             for kernel_type in [KernelType.GEMM_BASIC, KernelType.GEMM_REGISTER_TILED]:
@@ -1009,7 +1069,7 @@ class OptimizedKernelEngine:
         }
 
         if self.enable_buffer_pool and not self.enable_advanced_memory:
-            stats["buffer_pool_hit_rate"] = self.buffer_pool.hit_rate
+            stats["buffer_pool_hit_rate"] = cast(BufferPool, self.buffer_pool).hit_rate
 
         # Estadísticas de memoria avanzada
         if self.enable_advanced_memory and self.memory_manager:

@@ -17,13 +17,14 @@ Autor: AI Assistant
 Fecha: Enero 2026
 """
 
+import math
 import sys
+import time
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
-import time
-import math
 
 
 class AdvancedTechniquesInvestigator:
@@ -588,7 +589,7 @@ class AdvancedTechniquesInvestigator:
         avg_speedup = total_potential_gflops / (len(techniques) * self.current_limit)
 
         # Categorizar por feasibility
-        feasibility_categories = {"High": [], "Medium": [], "Low": []}
+        feasibility_categories: Dict[str, List[str]] = {"High": [], "Medium": [], "Low": []}
 
         for name, tech in techniques.items():
             feasibility = tech.get("feasibility", "Unknown")
@@ -711,7 +712,7 @@ class AdvancedTechniquesInvestigator:
 
         return self.current_limit * combined_gain
 
-    def save_investigation_report(self, report: Dict[str, Any], filename: str = None):
+    def save_investigation_report(self, report: Dict[str, Any], filename: Optional[str] = None):
         """Guarda el reporte de investigación completo."""
         if filename is None:
             timestamp = time.strftime("%Y%m%d_%H%M%S")

@@ -21,14 +21,16 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.inference import ONNXInferenceEngine, InferenceConfig
-from src.core.gpu import GPUManager
-from src.core.memory import MemoryManager
-from src.utils.logging_config import setup_logging
+import logging
+import urllib.request
+
 import numpy as np
 from PIL import Image
-import urllib.request
-import logging
+
+from src.core.gpu import GPUManager
+from src.core.memory import MemoryManager
+from src.inference import InferenceConfig, ONNXInferenceEngine
+from src.utils.logging_config import setup_logging
 
 # ImageNet class labels (1000 classes)
 IMAGENET_CLASSES = None
@@ -181,8 +183,7 @@ def run_classification_demo():
     logger.info("\n" + "=" * 60)
     logger.info("💡 PRACTICAL APPLICATIONS:")
     logger.info("=" * 60)
-    logger.info(
-        """
+    logger.info("""
 This same technology can be applied to:
 
 🏥 MEDICAL IMAGING:
@@ -220,8 +221,7 @@ This same technology can be applied to:
    - Product recognition
    - Document classification
    → Local businesses can leverage AI affordably
-    """
-    )
+    """)
 
     logger.info("\n✅ Demo complete!")
 

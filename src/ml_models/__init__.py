@@ -1,38 +1,33 @@
 # Machine Learning Models Package
 # AI-driven algorithm selection and optimization models
+from importlib import import_module
+from typing import Any
 
-try:
-    from .ai_kernel_predictor_fine_tuning import AIKernelPredictorFineTuner
-except ImportError:
-    AIKernelPredictorFineTuner = None
 
-try:
-    from .ai_kernel_predictor_fine_tuning_corrected import AIKernelPredictorFineTunerCorrected
-except ImportError:
-    AIKernelPredictorFineTunerCorrected = None
+def _load_symbol(module_name: str, symbol_name: str) -> Any:
+    try:
+        module = import_module(f".{module_name}", __name__)
+        return getattr(module, symbol_name)
+    except (ImportError, AttributeError):
+        return None
 
-try:
-    from .ml_dataset_collector import MLDatasetCollector
-except ImportError:
-    MLDatasetCollector = None
 
-try:
-    from .recalibrate_selector import recalibrate_selector_with_hardware_data
-except ImportError:
-    recalibrate_selector_with_hardware_data = None
-
-try:
-    from .calibrated_intelligent_selector import (
-        CalibratedIntelligentSelector,
-        OptimizationTechnique,
-        SelectionResult,
-        MatrixCharacteristics,
-    )
-except ImportError:
-    CalibratedIntelligentSelector = None
-    OptimizationTechnique = None
-    SelectionResult = None
-    MatrixCharacteristics = None
+AIKernelPredictorFineTuner = _load_symbol(
+    "ai_kernel_predictor_fine_tuning", "AIKernelPredictorFineTuner"
+)
+AIKernelPredictorFineTunerCorrected = _load_symbol(
+    "ai_kernel_predictor_fine_tuning_corrected", "AIKernelPredictorFineTunerCorrected"
+)
+MLDatasetCollector = _load_symbol("ml_dataset_collector", "MLDatasetCollector")
+recalibrate_selector_with_hardware_data = _load_symbol(
+    "recalibrate_selector", "recalibrate_selector_with_hardware_data"
+)
+CalibratedIntelligentSelector = _load_symbol(
+    "calibrated_intelligent_selector", "CalibratedIntelligentSelector"
+)
+OptimizationTechnique = _load_symbol("calibrated_intelligent_selector", "OptimizationTechnique")
+SelectionResult = _load_symbol("calibrated_intelligent_selector", "SelectionResult")
+MatrixCharacteristics = _load_symbol("calibrated_intelligent_selector", "MatrixCharacteristics")
 
 __all__ = [
     "AIKernelPredictorFineTuner",
