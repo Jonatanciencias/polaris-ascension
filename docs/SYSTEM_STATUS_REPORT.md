@@ -20,7 +20,7 @@ Se formalizó una política de cobertura con gate estricto, enfocada en rutas pr
 - Evitar sesgo por módulos de investigación/demo fuera del camino operativo.
 
 ### Configuración vigente
-- Gate de cobertura: **40% mínimo**.
+- Gate de cobertura: **60% mínimo**.
 - Fuente de cobertura: `src/`.
 - Comando oficial: `./venv/bin/pytest`.
 
@@ -30,7 +30,7 @@ Se formalizó una política de cobertura con gate estricto, enfocada en rutas pr
 
 ### Baseline validado
 - Suite completa: **124 tests passed**.
-- Cobertura total: **67.64%** (gate 40% en verde).
+- Cobertura total: **67.64%** (gate 60% en verde).
 
 > Nota: se observó una falla puntual/flaky en una prueba numérica GPU de 512×512; se re-ejecutó y la suite completa quedó estable en verde.
 

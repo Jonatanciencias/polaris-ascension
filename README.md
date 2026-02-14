@@ -318,7 +318,7 @@ python test_production_system.py
 
 The repository now enforces a **coverage quality gate focused on production runtime paths**.
 
-- **Current gate**: `--cov-fail-under=40` in `pytest.ini`.
+- **Current gate**: `--cov-fail-under=60` in `pytest.ini`.
 - **Coverage source**: `src/`.
 - **Included by policy**: production selectors, optimization engines in active runtime use, OpenCL runtime paths, and guardrail/control policy modules.
 - **Excluded by policy**: research/demo/benchmark-only modules and experimental pipelines that are not part of production runtime guarantees.
@@ -340,7 +340,7 @@ Validation command:
 Expected (current baseline):
 
 - `124 passed`
-- Coverage gate at `40%` passing with baseline `67.64%`.
+- Coverage gate at `60%` passing with baseline `67.64%`.
 
 ### Phase 5 Final Checklist (2026-02-07)
 
