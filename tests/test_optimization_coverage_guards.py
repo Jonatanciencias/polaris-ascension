@@ -229,6 +229,48 @@ def test_adaptive_selector_summary_snapshot_and_convenience_entrypoint() -> None
     assert "predicted_gflops" in recommendation
 
 
+def test_adaptive_selector_hybrid_model_and_heuristic_override_paths() -> None:
+    selector = ProductionKernelSelector(model_path="/tmp/nonexistent_model.pkl")
+
+    class _FakeModel:
+        def predict(self, features: np.ndarray) -> np.ndarray:
+            tile_size = int(features[0, 3])
+            if tile_size == 24:
+                return np.array([500.0], dtype=np.float32)
+            return np.array([700.0], dtype=np.float32)
+
+    selector.model_available = True
+    selector.model = _FakeModel()
+
+    medium = selector.select_kernel(1024, 1024, 1024)
+    assert medium["selection_method"] == "hybrid (ml primary)"
+
+    large = selector.select_kernel(3072, 3072, 3072)
+    assert large["selection_method"] == "hybrid (heuristic override)"
+
+
+def test_adaptive_selector_t3_policy_fallbacks_to_static_if_online_arm_not_predicted() -> None:
+    selector = ProductionKernelSelector(model_path="/tmp/nonexistent_model.pkl")
+
+    class _FakePolicy:
+        def select(self, *, size: int, static_arm: str, eligible_arms: list[str]):
+            _ = (size, static_arm, eligible_arms)
+            return {
+                "online_arm": "tile16",
+                "selection_reason": "forced_invalid_arm",
+            }
+
+        def snapshot(self) -> dict[str, str]:
+            return {"state": "ok"}
+
+    selector.t3_policy = _FakePolicy()
+    rec = selector.select_kernel(1024, 1024, 1024)
+
+    assert rec["kernel_key"] == rec["static_kernel_key"]
+    assert rec["selection_method"] == rec["static_selection_method"]
+    assert rec["policy"] is None
+
+
 def test_optimized_opencl_benchmark_optimization_covers_error_paths(
     monkeypatch: pytest.MonkeyPatch, tmp_path
 ) -> None:
