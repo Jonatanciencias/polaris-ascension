@@ -14,6 +14,8 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+import json
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -33,7 +35,7 @@ class LowRankMatrixApproximator:
         """
         self.target_rank = target_rank
         self.rank_tolerance = rank_tolerance
-        self.performance_stats = {}
+        self.performance_stats: Dict[str, Any] = {}
 
     def analyze_matrix_rank(self, matrix: np.ndarray) -> Dict[str, Any]:
         """
@@ -286,7 +288,7 @@ class LowRankMatrixApproximator:
 
     def benchmark_different_ranks(
         self, A: np.ndarray, B: np.ndarray, rank_range: List[int]
-    ) -> Dict[str, Any]:
+    ) -> Dict[int, Dict[str, Any]]:
         """
         Benchmark de diferentes rangos de aproximación.
 
@@ -299,7 +301,7 @@ class LowRankMatrixApproximator:
         """
         print(f"📊 BENCHMARK DE DIFERENTES RANGOS: {rank_range}")
 
-        benchmark_results = {}
+        benchmark_results: Dict[int, Dict[str, Any]] = {}
 
         for rank in rank_range:
             print(f"\n🧪 Probando rango {rank}...")
@@ -323,7 +325,7 @@ class LowRankMatrixApproximator:
 
         return benchmark_results
 
-    def generate_performance_report(self, benchmark_results: Dict[str, Any]) -> str:
+    def generate_performance_report(self, benchmark_results: Dict[int, Dict[str, Any]]) -> str:
         """
         Genera reporte de performance detallado.
         """
@@ -432,13 +434,13 @@ def main():
         print(report)
 
         # Guardar resultados
-        np.savez(
+        np.savez_compressed(
             "low_rank_results.npz",
             matrix_A=A,
             matrix_B=B,
             result=result,
-            metrics=metrics,
-            benchmark=benchmark_results,
+            metrics_json=np.array([json.dumps(metrics, default=str)], dtype=object),
+            benchmark_json=np.array([json.dumps(benchmark_results, default=str)], dtype=object),
         )
 
         print("\n💾 Resultados guardados en: low_rank_results.npz")

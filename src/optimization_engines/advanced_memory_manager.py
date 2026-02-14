@@ -388,7 +388,7 @@ class TilingManager:
         self._loaded_tiles: OrderedDict[str, TileDescriptor] = OrderedDict()
 
     def select_strategy(
-        self, matrix_shape: Tuple[int, int], dtype: np.dtype = np.float32
+        self, matrix_shape: Tuple[int, int], dtype: Any = np.float32
     ) -> Tuple[TilingStrategy, int]:
         """
         Selecciona la estrategia de tiling óptima.

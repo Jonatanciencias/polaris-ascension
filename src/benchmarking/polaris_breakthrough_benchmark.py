@@ -40,14 +40,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from advanced_polaris_opencl_engine import (
+from advanced_polaris_opencl_engine import (  # type: ignore[import-not-found]
     AdvancedPolarisOpenCLEngine,
     PolarisOptimizationConfig,
     create_polaris_engine,
 )
 
 # Importar motores OpenCL
-from optimized_opencl_engine import OpenCLOptimizationConfig, OptimizedOpenCLEngine
+from optimized_opencl_engine import (  # type: ignore[import-not-found]
+    OpenCLOptimizationConfig,
+    OptimizedOpenCLEngine,
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")

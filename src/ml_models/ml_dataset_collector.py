@@ -18,7 +18,7 @@ import sys
 import time
 import warnings
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -29,13 +29,15 @@ warnings.filterwarnings("ignore")
 try:
     # Técnicas breakthrough
     sys.path.append(str(Path(__file__).parent / "fase_9_breakthrough_integration" / "src"))
-    from coppersmith_winograd_gpu import CoppersmithWinogradGPU
-    from low_rank_matrix_approximator_gpu import GPUAcceleratedLowRankApproximator
-    from quantum_annealing_optimizer import QuantumAnnealingMatrixOptimizer
+    from coppersmith_winograd_gpu import CoppersmithWinogradGPU  # type: ignore[import-not-found]
+    from low_rank_matrix_approximator_gpu import (  # type: ignore[import-not-found]
+        GPUAcceleratedLowRankApproximator,
+    )
+    from quantum_annealing_optimizer import QuantumAnnealingMatrixOptimizer  # type: ignore[import-not-found]
 
     # AI Kernel Predictor
     sys.path.append(str(Path(__file__).parent / "fase_7_ai_kernel_predictor" / "src"))
-    from kernel_predictor import AIKernelPredictor
+    from kernel_predictor import AIKernelPredictor  # type: ignore[import-not-found]
 
     TECHNIQUES_AVAILABLE = True
 except ImportError as e:
@@ -134,9 +136,9 @@ class MLDatasetCollector:
         elif matrix_type == "low_rank":
             # Matrices de bajo rango efectivo
             rank = max(2, size // 8)  # Rango efectivo bajo
-            U = np.random.randn(size, rank)
-            V = np.random.randn(size, rank)
-            S = np.random.exponential(1.0, rank)
+            U = np.random.randn(size, rank).astype(np.float32)
+            V = np.random.randn(size, rank).astype(np.float32)
+            S = np.random.exponential(1.0, rank).astype(np.float32)
 
             A = U @ np.diag(S) @ V.T
             B = U @ np.diag(S) @ V.T
@@ -210,7 +212,9 @@ class MLDatasetCollector:
             }
 
     def collect_dataset(
-        self, matrices: List[Tuple[np.ndarray, np.ndarray, str]], techniques: List[str] = None
+        self,
+        matrices: List[Tuple[np.ndarray, np.ndarray, str]],
+        techniques: Optional[List[str]] = None,
     ) -> pd.DataFrame:
         """
         Recopila dataset completo ejecutando todas las técnicas en todas las matrices.
@@ -384,17 +388,19 @@ def main():
     collector.save_dataset(dataset, filename)
 
     # Guardar también en formato numpy para uso posterior
+    metadata_payload = {
+        "collection_time": collection_time,
+        "matrix_sizes": matrix_sizes,
+        "matrix_types": matrix_types,
+        "techniques": techniques_to_test,
+        "total_tests": len(dataset),
+    }
+
     np.savez(
         f"ml_training_dataset_{timestamp}.npz",
         data=dataset.to_numpy(),
         columns=dataset.columns.tolist(),
-        metadata={
-            "collection_time": collection_time,
-            "matrix_sizes": matrix_sizes,
-            "matrix_types": matrix_types,
-            "techniques": techniques_to_test,
-            "total_tests": len(dataset),
-        },
+        metadata_json=json.dumps(metadata_payload),
     )
 
     print("\n✅ RECOPILACIÓN DE DATASET COMPLETADA")

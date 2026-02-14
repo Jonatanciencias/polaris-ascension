@@ -11,12 +11,12 @@ from typing import Any, List, Optional, Sequence, Union, cast
 import numpy as np
 
 try:
-    import onnxruntime as ort
+    import onnxruntime as ort  # type: ignore[import-untyped]
 
     HAS_ORT = True
 except ImportError:
     HAS_ORT = False
-    ort = None
+    ort = cast(Any, None)
 
 try:
     import torch
@@ -24,7 +24,7 @@ try:
     HAS_TORCH = True
 except ImportError:
     HAS_TORCH = False
-    torch = None
+    torch = cast(Any, None)
 
 
 @dataclass

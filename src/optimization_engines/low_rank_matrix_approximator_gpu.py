@@ -14,6 +14,8 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+import json
+
 import numpy as np
 import pyopencl as cl
 import pyopencl.array as cl_array
@@ -36,7 +38,7 @@ class GPUAcceleratedLowRankApproximator:
         """
         self.target_rank = target_rank
         self.rank_tolerance = rank_tolerance
-        self.performance_stats = {}
+        self.performance_stats: Dict[str, Any] = {}
 
         # Inicializar OpenCL
         self._init_opencl()
@@ -259,7 +261,7 @@ class GPUAcceleratedLowRankApproximator:
 
         # Usar GEMM estándar de clBLAS si está disponible, sino kernel personalizado
         try:
-            import clblas
+            import clblas  # type: ignore[import-not-found]
 
             # Usar clBLAS para multiplicación optimizada
             clblas.sgemm(
@@ -575,7 +577,13 @@ def main():
         print(f"   • Considerar precomputación de descomposiciones SVD")
 
         # Guardar resultados
-        np.savez("low_rank_gpu_results.npz", matrix_A=A, matrix_B=B, result=result, metrics=metrics)
+        np.savez_compressed(
+            "low_rank_gpu_results.npz",
+            matrix_A=A,
+            matrix_B=B,
+            result=result,
+            metrics_json=np.array([json.dumps(metrics, default=str)], dtype=object),
+        )
 
         print("\n💾 Resultados GPU guardados en: low_rank_gpu_results.npz")
         print("✅ Demostración GPU completada exitosamente!")

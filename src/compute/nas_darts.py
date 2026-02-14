@@ -373,6 +373,7 @@ class Cell(nn.Module):
         self.reduction = reduction
 
         # Preprocess inputs
+        self.preprocess0: nn.Module
         if reduction_prev:
             self.preprocess0 = FactorizedReduce(C_prev_prev, C, affine=False)
         else:
@@ -588,7 +589,8 @@ class DARTSNetwork(nn.Module):
                         if k != PRIMITIVES.index("none"):
                             if k_best is None or W[j][k] > W[j][k_best]:
                                 k_best = k
-                    gene.append((PRIMITIVES[k_best], j))
+                    if k_best is not None:
+                        gene.append((PRIMITIVES[k_best], j))
 
                 start = end
                 n += 1

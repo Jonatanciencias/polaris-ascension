@@ -21,7 +21,7 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 import numpy as np
 
@@ -134,7 +134,7 @@ class CalibratedIntelligentSelector:
         }
 
         # Estadísticas de selección
-        self.selection_stats = {
+        self.selection_stats: Dict[str, Any] = {
             "total_selections": 0,
             "technique_counts": {t.value: 0 for t in OptimizationTechnique},
             "average_confidence": 0.0,
@@ -201,7 +201,7 @@ class CalibratedIntelligentSelector:
             "tensor_core": OptimizationTechnique.TENSOR_CORE,
         }
 
-        max_gflops = 0
+        max_gflops = 0.0
         performances = {}
 
         for tech_name, stats in perf_data.items():
@@ -469,7 +469,7 @@ class CalibratedIntelligentSelector:
         second_best = sorted_scores[1]
 
         # Obtener mejor técnica
-        best_technique = max(scores, key=scores.get)
+        best_technique = max(scores, key=lambda technique: scores[technique])
 
         # Factor 1: Diferencia entre mejor y segundo mejor (25% del peso)
         score_gap = best_score - second_best
@@ -561,7 +561,7 @@ class CalibratedIntelligentSelector:
         scores = self._compute_technique_scores(combined_chars)
 
         # Seleccionar mejor técnica
-        best_technique = max(scores, key=scores.get)
+        best_technique = max(scores, key=lambda technique: scores[technique])
         best_score = scores[best_technique]
 
         # Calcular confianza
@@ -643,32 +643,34 @@ class CalibratedIntelligentSelector:
     def _update_stats(self, technique: OptimizationTechnique, confidence: float):
         """Actualiza estadísticas de selección."""
 
-        self.selection_stats["total_selections"] += 1
-        self.selection_stats["technique_counts"][technique.value] += 1
+        counts = cast(Dict[str, int], self.selection_stats["technique_counts"])
+        total = int(self.selection_stats["total_selections"]) + 1
+        self.selection_stats["total_selections"] = total
+        counts[technique.value] = counts.get(technique.value, 0) + 1
 
         # Media móvil de confianza
-        n = self.selection_stats["total_selections"]
-        old_avg = self.selection_stats["average_confidence"]
+        n = total
+        old_avg = float(self.selection_stats["average_confidence"])
         self.selection_stats["average_confidence"] = (old_avg * (n - 1) + confidence) / n
 
         # Tasa de alta confianza
+        old_rate = float(self.selection_stats["high_confidence_rate"])
         if confidence >= self.HIGH_CONFIDENCE_THRESHOLD:
-            old_rate = self.selection_stats["high_confidence_rate"]
             self.selection_stats["high_confidence_rate"] = (old_rate * (n - 1) + 1) / n
         else:
-            old_rate = self.selection_stats["high_confidence_rate"]
             self.selection_stats["high_confidence_rate"] = (old_rate * (n - 1)) / n
 
     def get_stats(self) -> Dict[str, Any]:
         """Retorna estadísticas de selección."""
-        stats = self.selection_stats.copy()
+        stats: Dict[str, Any] = dict(self.selection_stats)
+        counts = cast(Dict[str, int], stats["technique_counts"])
 
         # Calcular porcentaje de selección de AI Predictor
-        total = stats["total_selections"]
+        total = int(stats["total_selections"])
         if total > 0:
-            ai_count = stats["technique_counts"].get("ai_predictor", 0)
-            opencl_count = stats["technique_counts"].get("opencl_gemm", 0)
-            quantum_count = stats["technique_counts"].get("quantum", 0)
+            ai_count = int(counts.get("ai_predictor", 0))
+            opencl_count = int(counts.get("opencl_gemm", 0))
+            quantum_count = int(counts.get("quantum", 0))
 
             high_perf_count = ai_count + opencl_count + quantum_count
             stats["high_performance_selection_rate"] = high_perf_count / total
@@ -735,12 +737,12 @@ def run_calibration_validation():
     selector = CalibratedIntelligentSelector(prefer_ai_predictor=True)
 
     print("\n⚖️  PESOS CALIBRADOS:")
-    for tech, weight in selector.get_technique_weights().items():
-        print(f"   {tech}: {weight:.3f}")
+    for tech_name, weight in selector.get_technique_weights().items():
+        print(f"   {tech_name}: {weight:.3f}")
 
     print("\n📊 EXPECTED PERFORMANCE (GFLOPS):")
-    for tech, perf in selector.expected_performance.items():
-        print(f"   {tech.value}: {perf:.1f}")
+    for tech_enum, perf in selector.expected_performance.items():
+        print(f"   {tech_enum.value}: {perf:.1f}")
 
     # Test con matrices de diferentes tamaños
     print("\n🔬 TESTING SELECTION ON VARIOUS MATRICES:")

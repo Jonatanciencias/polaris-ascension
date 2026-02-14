@@ -9,6 +9,7 @@ para superar el límite de 890.3 GFLOPS en Radeon RX 580.
 
 import sys
 import time
+import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -34,10 +35,12 @@ def run_baseline_gemm(A: np.ndarray, B: np.ndarray) -> Tuple[np.ndarray, Dict[st
     }
 
 
-def run_low_rank_approximation(A: np.ndarray, B: np.ndarray) -> Tuple[np.ndarray, Dict[str, Any]]:
+def run_low_rank_approximation(
+    A: np.ndarray, B: np.ndarray
+) -> Tuple[Optional[np.ndarray], Dict[str, Any]]:
     """Ejecutar aproximación de bajo rango."""
     try:
-        from low_rank_matrix_approximator import LowRankMatrixApproximator
+        from low_rank_matrix_approximator import LowRankMatrixApproximator  # type: ignore[import-not-found]
 
         print("📊 Ejecutando Low-Rank Approximation...")
         approximator = LowRankMatrixApproximator()
@@ -62,10 +65,12 @@ def run_low_rank_approximation(A: np.ndarray, B: np.ndarray) -> Tuple[np.ndarray
         return None, {"method": "low_rank_cpu", "error": str(e)}
 
 
-def run_coppersmith_winograd(A: np.ndarray, B: np.ndarray) -> Tuple[np.ndarray, Dict[str, Any]]:
+def run_coppersmith_winograd(
+    A: np.ndarray, B: np.ndarray
+) -> Tuple[Optional[np.ndarray], Dict[str, Any]]:
     """Ejecutar algoritmo Coppersmith-Winograd."""
     try:
-        from coppersmith_winograd_gpu import CoppersmithWinogradGPU
+        from coppersmith_winograd_gpu import CoppersmithWinogradGPU  # type: ignore[import-not-found]
 
         print("📊 Ejecutando Coppersmith-Winograd...")
         cw = CoppersmithWinogradGPU()
@@ -186,7 +191,7 @@ def comprehensive_benchmark():
     print(f"\n💾 Resultados guardados en: comprehensive_benchmark_results.npz")
 
     # Guardar resultados
-    np.savez("comprehensive_benchmark_results.npz", results=results)
+    np.savez("comprehensive_benchmark_results.npz", results_json=json.dumps(results, default=str))
 
     return results
 

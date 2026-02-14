@@ -23,7 +23,7 @@ Date: 2026-01-25
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pyopencl as cl
@@ -68,14 +68,14 @@ class OptimizedOpenCLEngine:
         self.config = config or OpenCLOptimizationConfig()
 
         # Initialize OpenCL
-        self.platform = None
-        self.device = None
-        self.context = None
-        self.queue = None
-        self.program = None
+        self.platform: Optional[cl.Platform] = None
+        self.device: Optional[cl.Device] = None
+        self.context: Optional[cl.Context] = None
+        self.queue: Optional[cl.CommandQueue] = None
+        self.program: Optional[cl.Program] = None
 
         # Performance tracking
-        self.metrics_history = []
+        self.metrics_history: List[PerformanceMetrics] = []
 
         # Initialize OpenCL environment
         self._initialize_opencl()
@@ -94,21 +94,23 @@ class OptimizedOpenCLEngine:
                 p for p in platforms if "AMD" in p.name or "Advanced Micro Devices" in p.name
             ]
             self.platform = amd_platforms[0] if amd_platforms else platforms[0]
+            platform = self.platform
 
             # Get Radeon RX 580 device
-            devices = self.platform.get_devices(device_type=cl.device_type.GPU)
+            devices = platform.get_devices(device_type=cl.device_type.GPU)
             radeon_devices = [d for d in devices if "Radeon RX 580" in d.name or "580" in d.name]
             self.device = radeon_devices[0] if radeon_devices else devices[0]
+            device = self.device
 
-            logger.info(f"Selected device: {self.device.name}")
-            logger.info(f"Compute units: {self.device.max_compute_units}")
-            logger.info(f"Max work group size: {self.device.max_work_group_size}")
-            logger.info(f"Local memory size: {self.device.local_mem_size // 1024} KB")
+            logger.info(f"Selected device: {device.name}")
+            logger.info(f"Compute units: {device.max_compute_units}")
+            logger.info(f"Max work group size: {device.max_work_group_size}")
+            logger.info(f"Local memory size: {device.local_mem_size // 1024} KB")
 
             # Create context and queue with optimal settings
-            self.context = cl.Context([self.device])
+            self.context = cl.Context([device])
             self.queue = cl.CommandQueue(
-                self.context, self.device, properties=cl.command_queue_properties.PROFILING_ENABLE
+                self.context, device, properties=cl.command_queue_properties.PROFILING_ENABLE
             )
 
         except Exception as e:
@@ -133,7 +135,11 @@ class OptimizedOpenCLEngine:
                 f"-DWORK_PER_THREAD={self.config.work_per_thread}",
             ]
 
-            self.program = cl.Program(self.context, kernel_source).build(options=build_options)
+            context = self.context
+            if context is None:
+                raise RuntimeError("OpenCL context not initialized")
+
+            self.program = cl.Program(context, kernel_source).build(options=build_options)
             logger.info("✅ Optimized kernels loaded successfully")
 
         except Exception as e:
@@ -172,23 +178,26 @@ class OptimizedOpenCLEngine:
         assert K == K2, "Matrix dimensions don't match"
 
         C = np.zeros((M, N), dtype=np.float32)
+        context = self.context
+        queue = self.queue
+        program = self.program
+        device = self.device
+        if context is None or queue is None or program is None or device is None:
+            raise RuntimeError("OpenCL runtime not initialized")
 
         # Create OpenCL buffers
         mf = cl.mem_flags
-        A_buf = cl.Buffer(
-            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32)
-        )
-        B_buf = cl.Buffer(
-            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32)
-        )
-        C_buf = cl.Buffer(self.context, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=C)
+        A_buf = cl.Buffer(context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32))
+        B_buf = cl.Buffer(context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32))
+        C_buf = cl.Buffer(context, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=C)
 
         # Get optimal work group configuration
         global_work_size, local_work_size = self._get_optimal_work_groups(M, N)
 
         # Select kernel based on configuration
+        kernel_args: tuple[Any, ...]
         if self.config.use_vectorization and N % self.config.vector_size == 0:
-            kernel = self.program.gemm_vectorized_tiled
+            kernel = program.gemm_vectorized_tiled
             logger.info("Using vectorized tiled GEMM kernel")
             kernel_args = (
                 np.int32(M),
@@ -201,7 +210,7 @@ class OptimizedOpenCLEngine:
                 C_buf,
             )
         else:
-            kernel = self.program.gemm_shared_memory_tiled
+            kernel = program.gemm_shared_memory_tiled
             logger.info("Using shared memory tiled GEMM kernel")
             kernel_args = (np.int32(M), np.int32(N), np.int32(K), A_buf, B_buf, C_buf)
 
@@ -210,12 +219,12 @@ class OptimizedOpenCLEngine:
 
         # Execute kernel with timing
         start_time = time.time()
-        event = cl.enqueue_nd_range_kernel(self.queue, kernel, global_work_size, local_work_size)
+        event = cl.enqueue_nd_range_kernel(queue, kernel, global_work_size, local_work_size)
         event.wait()
         kernel_time = (event.profile.end - event.profile.start) * 1e-9  # Convert to seconds
 
         # Read result
-        cl.enqueue_copy(self.queue, C, C_buf)
+        cl.enqueue_copy(queue, C, C_buf)
 
         total_time = time.time() - start_time
 
@@ -223,9 +232,7 @@ class OptimizedOpenCLEngine:
         operations = 2 * M * N * K  # Multiply-add operations
         gflops = operations / (kernel_time * 1e9)
         bandwidth = (A.nbytes + B.nbytes + C.nbytes) / (kernel_time * 1e9) / (1024**3)  # GB/s
-        efficiency = (
-            gflops / self.device.max_compute_units / 100
-        ) * 100  # Rough efficiency estimate
+        efficiency = (gflops / device.max_compute_units / 100) * 100  # Rough efficiency estimate
 
         metrics = PerformanceMetrics(
             gflops=gflops,
@@ -259,31 +266,33 @@ class OptimizedOpenCLEngine:
         assert K == K2, "Matrix dimensions don't match"
 
         C = np.zeros((M, N), dtype=np.float32)
+        context = self.context
+        queue = self.queue
+        program = self.program
+        device = self.device
+        if context is None or queue is None or program is None or device is None:
+            raise RuntimeError("OpenCL runtime not initialized")
 
         # Create OpenCL buffers
         mf = cl.mem_flags
-        A_buf = cl.Buffer(
-            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32)
-        )
-        B_buf = cl.Buffer(
-            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32)
-        )
-        C_buf = cl.Buffer(self.context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=C.nbytes)
+        A_buf = cl.Buffer(context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32))
+        B_buf = cl.Buffer(context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32))
+        C_buf = cl.Buffer(context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=C.nbytes)
 
         # Work group configuration
         global_work_size = (M, N)
         local_work_size = None  # Let OpenCL decide
 
-        kernel = self.program.cw_matrix_multiply_optimized
+        kernel = program.cw_matrix_multiply_optimized
         kernel.set_args(A_buf, B_buf, C_buf, np.int32(M), np.int32(N), np.int32(K))
 
         # Execute kernel
         start_time = time.time()
-        event = cl.enqueue_nd_range_kernel(self.queue, kernel, global_work_size, local_work_size)
+        event = cl.enqueue_nd_range_kernel(queue, kernel, global_work_size, local_work_size)
         event.wait()
         kernel_time = (event.profile.end - event.profile.start) * 1e-9
 
-        cl.enqueue_copy(self.queue, C, C_buf)
+        cl.enqueue_copy(queue, C, C_buf)
         total_time = time.time() - start_time
 
         # Performance metrics
@@ -295,7 +304,7 @@ class OptimizedOpenCLEngine:
             bandwidth_gb_s=(A.nbytes + B.nbytes + C.nbytes) / (kernel_time * 1e9) / (1024**3),
             kernel_time_ms=kernel_time * 1000,
             total_time_ms=total_time * 1000,
-            efficiency_percent=(gflops / self.device.max_compute_units / 100) * 100,
+            efficiency_percent=(gflops / device.max_compute_units / 100) * 100,
         )
 
         logger.info(".2f")
@@ -320,31 +329,37 @@ class OptimizedOpenCLEngine:
         assert R == R2, "Rank dimensions don't match"
 
         C = np.zeros((M, N), dtype=np.float32)
+        context = self.context
+        queue = self.queue
+        program = self.program
+        device = self.device
+        if context is None or queue is None or program is None or device is None:
+            raise RuntimeError("OpenCL runtime not initialized")
 
         # Create OpenCL buffers
         mf = cl.mem_flags
         A_buf = cl.Buffer(
-            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A_approx.astype(np.float32)
+            context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A_approx.astype(np.float32)
         )
         B_buf = cl.Buffer(
-            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B_approx.astype(np.float32)
+            context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B_approx.astype(np.float32)
         )
-        C_buf = cl.Buffer(self.context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=C.nbytes)
+        C_buf = cl.Buffer(context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=C.nbytes)
 
         # Work group configuration
         global_work_size = (M, N)
         local_work_size = None
 
-        kernel = self.program.low_rank_gemm_optimized
+        kernel = program.low_rank_gemm_optimized
         kernel.set_args(A_buf, B_buf, C_buf, np.int32(M), np.int32(N), np.int32(R))
 
         # Execute kernel
         start_time = time.time()
-        event = cl.enqueue_nd_range_kernel(self.queue, kernel, global_work_size, local_work_size)
+        event = cl.enqueue_nd_range_kernel(queue, kernel, global_work_size, local_work_size)
         event.wait()
         kernel_time = (event.profile.end - event.profile.start) * 1e-9
 
-        cl.enqueue_copy(self.queue, C, C_buf)
+        cl.enqueue_copy(queue, C, C_buf)
         total_time = time.time() - start_time
 
         # Performance metrics
@@ -358,10 +373,12 @@ class OptimizedOpenCLEngine:
             / (1024**3),
             kernel_time_ms=kernel_time * 1000,
             total_time_ms=total_time * 1000,
-            efficiency_percent=(gflops / self.device.max_compute_units / 100) * 100,
+            efficiency_percent=(gflops / device.max_compute_units / 100) * 100,
         )
 
         logger.info(".2f")
+
+        return C, metrics
 
     def optimized_gemm_ultra(
         self, A: np.ndarray, B: np.ndarray
@@ -381,33 +398,35 @@ class OptimizedOpenCLEngine:
         assert K == K2, "Matrix dimensions don't match"
 
         C = np.zeros((M, N), dtype=np.float32)
+        context = self.context
+        queue = self.queue
+        program = self.program
+        device = self.device
+        if context is None or queue is None or program is None or device is None:
+            raise RuntimeError("OpenCL runtime not initialized")
 
         # Create OpenCL buffers
         mf = cl.mem_flags
-        A_buf = cl.Buffer(
-            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32)
-        )
-        B_buf = cl.Buffer(
-            self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32)
-        )
-        C_buf = cl.Buffer(self.context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=C.nbytes)
+        A_buf = cl.Buffer(context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A.astype(np.float32))
+        B_buf = cl.Buffer(context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B.astype(np.float32))
+        C_buf = cl.Buffer(context, mf.WRITE_ONLY | mf.ALLOC_HOST_PTR, size=C.nbytes)
 
         # Ultra-optimized work group configuration
         TS = 32  # Tile size
         global_work_size = ((N + TS - 1) // TS * TS, (M + TS - 1) // TS * TS)
         local_work_size = (16, 16)  # Optimized for Radeon RX 580
 
-        kernel = self.program.gemm_ultra_optimized
+        kernel = program.gemm_ultra_optimized
         kernel.set_args(np.int32(M), np.int32(N), np.int32(K), A_buf, B_buf, C_buf)
 
         # Execute kernel with timing
         start_time = time.time()
-        event = cl.enqueue_nd_range_kernel(self.queue, kernel, global_work_size, local_work_size)
+        event = cl.enqueue_nd_range_kernel(queue, kernel, global_work_size, local_work_size)
         event.wait()
         kernel_time = (event.profile.end - event.profile.start) * 1e-9
 
         # Read result
-        cl.enqueue_copy(self.queue, C, C_buf)
+        cl.enqueue_copy(queue, C, C_buf)
         total_time = time.time() - start_time
 
         # Performance metrics
@@ -420,14 +439,14 @@ class OptimizedOpenCLEngine:
             bandwidth_gb_s=bandwidth,
             kernel_time_ms=kernel_time * 1000,
             total_time_ms=total_time * 1000,
-            efficiency_percent=(gflops / self.device.max_compute_units / 100) * 100,
+            efficiency_percent=(gflops / device.max_compute_units / 100) * 100,
         )
 
         logger.info(".2f" ".2f" ".2f" ".1f")
 
         return C, metrics
 
-    def benchmark_optimization(self, sizes: list = None) -> Dict[str, Any]:
+    def benchmark_optimization(self, sizes: Optional[List[int]] = None) -> Dict[str, Any]:
         """
         Comprehensive benchmark of optimization techniques
 
@@ -440,7 +459,7 @@ class OptimizedOpenCLEngine:
         if sizes is None:
             sizes = [512, 1024, 2048, 4096]
 
-        results = {
+        results: Dict[str, Any] = {
             "sizes": sizes,
             "vectorized_gemm": [],
             "shared_memory_gemm": [],
@@ -524,7 +543,15 @@ class OptimizedOpenCLEngine:
         results["best_results"] = best_results
 
         # Save benchmark results
-        np.savez("opencl_optimization_benchmark.npz", **results)
+        np.savez(
+            "opencl_optimization_benchmark.npz",
+            sizes=np.array(sizes, dtype=np.int32),
+            vectorized_gemm=np.array(results["vectorized_gemm"], dtype=np.float32),
+            shared_memory_gemm=np.array(results["shared_memory_gemm"], dtype=np.float32),
+            ultra_optimized_gemm=np.array(results["ultra_optimized_gemm"], dtype=np.float32),
+            cw_gemm=np.array(results["cw_gemm"], dtype=np.float32),
+            low_rank_gemm=np.array(results["low_rank_gemm"], dtype=np.float32),
+        )
 
         logger.info("✅ Benchmark completed")
         logger.info(

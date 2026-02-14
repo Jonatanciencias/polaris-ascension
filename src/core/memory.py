@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
-import psutil
+import psutil  # type: ignore[import-untyped]
 
 from .gpu import GPUManager
 

@@ -14,7 +14,7 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-import joblib
+import joblib  # type: ignore[import-untyped]
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -32,7 +32,7 @@ class AIKernelPredictorFineTunerCorrected:
     Esta versión entrena el modelo sin 'technique' como feature de entrada.
     """
 
-    def __init__(self, dataset_path: str = None):
+    def __init__(self, dataset_path: Optional[str] = None):
         """
         Inicializa el fine-tuner corregido.
 
@@ -40,9 +40,9 @@ class AIKernelPredictorFineTunerCorrected:
             dataset_path: Ruta al dataset de entrenamiento
         """
         self.dataset_path = dataset_path or "ml_training_dataset_*.csv"
-        self.model = None
+        self.model: Any = None
         self.scaler = StandardScaler()
-        self.label_encoders = {}
+        self.label_encoders: Dict[str, LabelEncoder] = {}
         # Features corregidas (sin 'technique' como entrada)
         self.feature_columns = [
             "matrix_size",

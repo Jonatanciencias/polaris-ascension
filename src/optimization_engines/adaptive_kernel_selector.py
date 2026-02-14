@@ -17,7 +17,7 @@ import warnings
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, cast
 
-import joblib
+import joblib  # type: ignore[import-untyped]
 import numpy as np
 
 # Suppress sklearn warnings
@@ -265,7 +265,7 @@ class ProductionKernelSelector:
             return "tile20_v3_1400", "scope override (t2 promoted)"
 
         if self.model_available:
-            ml_choice = max(predictions, key=predictions.get)
+            ml_choice = max(predictions, key=lambda kernel: predictions[kernel])
             heuristic_choice = self._heuristic_selection(M, N, K)
             if max(M, N, K) > 2500:
                 return heuristic_choice, "hybrid (heuristic override)"
@@ -296,7 +296,7 @@ class ProductionKernelSelector:
         eligible_keys = self._eligible_kernel_keys(M, N, K)
 
         # Get predictions for eligible kernels only.
-        predictions: dict[str, Any] = {}
+        predictions: dict[str, float] = {}
         for kernel_key in eligible_keys:
             predictions[kernel_key] = self._predict_performance(M, N, K, kernel_key)
         static_key, static_method = self._select_static_kernel(

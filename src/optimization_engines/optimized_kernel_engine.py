@@ -19,7 +19,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 import numpy as np
 import pyopencl as cl
@@ -366,6 +366,10 @@ class OptimizedKernelEngine:
         self.enable_advanced_memory = enable_advanced_memory and ADVANCED_MEMORY_AVAILABLE
 
         # Sistema de memoria avanzado
+        self.buffer_pool: Any = None
+        self.memory_manager: Optional[AdvancedMemoryManager] = (
+            None if ADVANCED_MEMORY_AVAILABLE else None
+        )
         if self.enable_advanced_memory:
             self.memory_manager = AdvancedMemoryManager(
                 context=self.context,
@@ -408,7 +412,11 @@ class OptimizedKernelEngine:
 
         self.context = cl.Context([self.device])
 
-        queue_props = cl.command_queue_properties.PROFILING_ENABLE if enable_profiling else 0
+        queue_props = (
+            cl.command_queue_properties.PROFILING_ENABLE
+            if enable_profiling
+            else cl.command_queue_properties(0)
+        )
         self.queue = cl.CommandQueue(self.context, self.device, properties=queue_props)
 
         # Queue secundaria para transferencias asíncronas
@@ -536,9 +544,9 @@ class OptimizedKernelEngine:
             # Intentar compilación reducida con kernels críticos de rendimiento
             reduced_sources = []
             for critical_name in ("gemm_float4_clover.cl", "gemm_polaris_breakthrough.cl"):
-                source = kernel_sources_by_name.get(critical_name)
-                if source:
-                    reduced_sources.append(source)
+                source_opt = kernel_sources_by_name.get(critical_name)
+                if source_opt:
+                    reduced_sources.append(source_opt)
 
             if reduced_sources:
                 try:
@@ -650,6 +658,9 @@ class OptimizedKernelEngine:
         config = self.KERNEL_CONFIGS[kernel_type]
         local_size = config.local_size
 
+        def round_up(x: int, multiple: int) -> int:
+            return ((x + multiple - 1) // multiple) * multiple
+
         # Ajustar si excede límites
         while local_size[0] * local_size[1] > self.max_work_group_size:
             local_size = (local_size[0] // 2, local_size[1])
@@ -665,10 +676,6 @@ class OptimizedKernelEngine:
 
         # Para FLOAT4_VEC: cada work-item procesa 4 columnas (N/4)
         if kernel_type == KernelType.GEMM_FLOAT4_VEC:
-
-            def round_up(x: int, multiple: int) -> int:
-                return ((x + multiple - 1) // multiple) * multiple
-
             global_size = (
                 round_up(M, local_size[0]),
                 round_up(N // 4, local_size[1]),  # N/4 porque cada work-item hace 4 columnas
@@ -676,9 +683,6 @@ class OptimizedKernelEngine:
             return global_size, local_size
 
         # Para otros kernels, global_size = dimensiones de salida
-        def round_up(x: int, multiple: int) -> int:
-            return ((x + multiple - 1) // multiple) * multiple
-
         global_size = (round_up(M, local_size[0]), round_up(N, local_size[1]))
 
         return global_size, local_size
@@ -758,9 +762,10 @@ class OptimizedKernelEngine:
                 B_buf = self.memory_manager.allocate(B, read_only=True)
                 C_buf = self.memory_manager.buffer_pool.get_buffer(C.nbytes, read_only=False)
             elif self.enable_buffer_pool:
-                A_buf = self.buffer_pool.get_read_buffer(A.nbytes, A)
-                B_buf = self.buffer_pool.get_read_buffer(B.nbytes, B)
-                C_buf = self.buffer_pool.get_write_buffer(C.nbytes)
+                basic_pool = cast(BufferPool, self.buffer_pool)
+                A_buf = basic_pool.get_read_buffer(A.nbytes, A)
+                B_buf = basic_pool.get_read_buffer(B.nbytes, B)
+                C_buf = basic_pool.get_write_buffer(C.nbytes)
             else:
                 A_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A)
                 B_buf = cl.Buffer(self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B)
@@ -835,9 +840,10 @@ class OptimizedKernelEngine:
                 self.memory_manager.free(B_buf, read_only=True)
                 self.memory_manager.buffer_pool.return_buffer(C_buf, read_only=False)
             elif self.enable_buffer_pool:
-                self.buffer_pool.return_buffer(A_buf, is_write=False)
-                self.buffer_pool.return_buffer(B_buf, is_write=False)
-                self.buffer_pool.return_buffer(C_buf, is_write=True)
+                basic_pool = cast(BufferPool, self.buffer_pool)
+                basic_pool.return_buffer(A_buf, is_write=False)
+                basic_pool.return_buffer(B_buf, is_write=False)
+                basic_pool.return_buffer(C_buf, is_write=True)
             else:
                 A_buf.release()
                 B_buf.release()
@@ -1001,7 +1007,7 @@ class OptimizedKernelEngine:
         Returns:
             Diccionario con resultados del benchmark
         """
-        results = {
+        results: Dict[str, Any] = {
             "device": self.device.name,
             "theoretical_gflops": self.THEORETICAL_GFLOPS,
             "tests": [],
@@ -1012,7 +1018,7 @@ class OptimizedKernelEngine:
             A = np.random.randn(M, K).astype(np.float32)
             B = np.random.randn(K, N).astype(np.float32)
 
-            test_result = {"size": size, "kernel_results": {}}
+            test_result: Dict[str, Any] = {"size": size, "kernel_results": {}}
 
             # Probar cada tipo de kernel compatible
             for kernel_type in [KernelType.GEMM_BASIC, KernelType.GEMM_REGISTER_TILED]:
@@ -1063,7 +1069,7 @@ class OptimizedKernelEngine:
         }
 
         if self.enable_buffer_pool and not self.enable_advanced_memory:
-            stats["buffer_pool_hit_rate"] = self.buffer_pool.hit_rate
+            stats["buffer_pool_hit_rate"] = cast(BufferPool, self.buffer_pool).hit_rate
 
         # Estadísticas de memoria avanzada
         if self.enable_advanced_memory and self.memory_manager:

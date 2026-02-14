@@ -15,7 +15,7 @@ try:
     HAS_OPENCL = True
 except ImportError:
     HAS_OPENCL = False
-    cl = None
+    cl = cast(Any, None)
 
 
 @dataclass

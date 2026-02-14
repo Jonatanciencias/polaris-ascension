@@ -12,7 +12,7 @@ Objetivo: Superar 890.3 GFLOPS usando selección automática e hibridación inte
 import sys
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Tuple, cast
 
 import numpy as np
 import pandas as pd
@@ -23,10 +23,8 @@ sys.path.append(str(project_root))
 
 # Importar sistema integrado de Fase 9
 try:
-    from fase_9_breakthrough_integration.src.breakthrough_selector import (
-        BreakthroughTechniqueSelector,
-    )
-    from fase_9_breakthrough_integration.src.hybrid_optimizer import (
+    from fase_9_breakthrough_integration.src.breakthrough_selector import BreakthroughTechniqueSelector  # type: ignore[import-not-found]
+    from fase_9_breakthrough_integration.src.hybrid_optimizer import (  # type: ignore[import-not-found]
         HybridConfiguration,
         HybridOptimizer,
         HybridStrategy,
@@ -39,9 +37,13 @@ except ImportError as e:
 
 # Importar técnicas individuales para comparación
 try:
-    from coppersmith_winograd_gpu import CoppersmithWinogradGPU
-    from low_rank_matrix_approximator_gpu import GPUAcceleratedLowRankApproximator
-    from quantum_annealing_optimizer import QuantumAnnealingMatrixOptimizer
+    from coppersmith_winograd_gpu import CoppersmithWinogradGPU  # type: ignore[import-not-found]
+    from low_rank_matrix_approximator_gpu import (  # type: ignore[import-not-found]
+        GPUAcceleratedLowRankApproximator,
+    )
+    from quantum_annealing_optimizer import (  # type: ignore[import-not-found]
+        QuantumAnnealingMatrixOptimizer,
+    )
 
     TECHNIQUES_AVAILABLE = True
 except ImportError as e:
@@ -71,7 +73,7 @@ def run_baseline_gemm(A: np.ndarray, B: np.ndarray) -> Tuple[np.ndarray, Dict[st
 
 def run_individual_techniques(A: np.ndarray, B: np.ndarray) -> Dict[str, Dict[str, Any]]:
     """Ejecutar técnicas individuales para comparación."""
-    results = {}
+    results: Dict[str, Dict[str, Any]] = {}
 
     if not TECHNIQUES_AVAILABLE:
         print("⚠️  Técnicas individuales no disponibles")
@@ -145,7 +147,7 @@ def run_individual_techniques(A: np.ndarray, B: np.ndarray) -> Dict[str, Dict[st
 
 def run_integrated_system(A: np.ndarray, B: np.ndarray) -> Dict[str, Dict[str, Any]]:
     """Ejecutar sistema integrado de Fase 9."""
-    results = {}
+    results: Dict[str, Dict[str, Any]] = {}
 
     if not FASE_9_AVAILABLE:
         print("⚠️  Sistema Fase 9 no disponible")
@@ -230,7 +232,7 @@ def integrated_breakthrough_benchmark():
     print()
 
     # Configurar matrices de prueba con diferentes características
-    test_cases = [
+    test_cases: List[Dict[str, Any]] = [
         {
             "name": "dense_high_rank",
             "description": "Matriz densa de alto rango (caso tradicional)",
@@ -252,18 +254,23 @@ def integrated_breakthrough_benchmark():
     ]
 
     baseline_target = 890.3
-    all_results = {}
+    all_results: Dict[str, Dict[str, Dict[str, Any]]] = {}
 
     for test_case in test_cases:
-        print(f"\n🔬 TEST CASE: {test_case['name'].upper()}")
-        print(f"   {test_case['description']}")
-        print(f"   Tamaño: {test_case['size']}x{test_case['size']}")
+        case_name = str(test_case["name"])
+        case_desc = str(test_case["description"])
+        case_size = int(test_case["size"])
+        case_generator = cast(Callable[[int], np.ndarray], test_case["generator"])
+
+        print(f"\n🔬 TEST CASE: {case_name.upper()}")
+        print(f"   {case_desc}")
+        print(f"   Tamaño: {case_size}x{case_size}")
         print("-" * 50)
 
         # Generar matrices
         np.random.seed(42)
-        A = test_case["generator"](test_case["size"])
-        B = test_case["generator"](test_case["size"])
+        A = case_generator(case_size)
+        B = case_generator(case_size)
 
         case_results = {}
 
@@ -279,10 +286,10 @@ def integrated_breakthrough_benchmark():
         integrated_results = run_integrated_system(A, B)
         case_results.update(integrated_results)
 
-        all_results[test_case["name"]] = case_results
+        all_results[case_name] = case_results
 
         # Reporte por caso
-        print(f"\n📈 RESULTADOS PARA {test_case['name'].upper()}:")
+        print(f"\n📈 RESULTADOS PARA {case_name.upper()}:")
 
         baseline_gflops = baseline_metrics["gflops"]
         print(".2f")
@@ -315,21 +322,23 @@ def integrated_breakthrough_benchmark():
     print(f"🤖 ENFOQUE: Sistema ML-based con selección automática e hibridación")
 
     # Encontrar mejores resultados
-    best_results = {}
+    best_results: Dict[str, Dict[str, Any]] = {}
     for case_name, case_data in all_results.items():
-        best_gflops = 0
+        best_gflops = 0.0
         best_method = None
         for method, metrics in case_data.items():
-            if "gflops" in metrics and metrics["gflops"] > best_gflops:
-                best_gflops = metrics["gflops"]
+            current_gflops = float(metrics.get("gflops", 0.0))
+            if current_gflops > best_gflops:
+                best_gflops = current_gflops
                 best_method = method
 
         best_results[case_name] = {"method": best_method, "gflops": best_gflops}
 
     print(f"\n🏆 MEJORES RESULTADOS POR CASO:")
     for case_name, best in best_results.items():
+        best_gflops = float(best.get("gflops", 0.0))
         achievement = (
-            "🎉 ¡BREAKTHROUGH!" if best["gflops"] > baseline_target else "📈 Potencial identificado"
+            "🎉 ¡BREAKTHROUGH!" if best_gflops > baseline_target else "📈 Potencial identificado"
         )
         print(".2f")
 
@@ -338,12 +347,12 @@ def integrated_breakthrough_benchmark():
 
     integrated_improvements = []
     for case_name, case_data in all_results.items():
-        baseline_gflops = case_data["baseline"]["gflops"]
+        baseline_gflops = float(case_data["baseline"].get("gflops", 0.0))
 
         # Mejor técnica individual
         individual_gflops = max(
             [
-                metrics.get("gflops", 0)
+                float(metrics.get("gflops", 0.0))
                 for method, metrics in case_data.items()
                 if method not in ["baseline"]
                 and "hybrid" not in method
@@ -355,7 +364,7 @@ def integrated_breakthrough_benchmark():
         # Mejor resultado integrado
         integrated_gflops = max(
             [
-                metrics.get("gflops", 0)
+                float(metrics.get("gflops", 0.0))
                 for method, metrics in case_data.items()
                 if "hybrid" in method or "breakthrough_selector" in method
             ],
@@ -377,7 +386,7 @@ def integrated_breakthrough_benchmark():
     print(f"   ✅ Optimizador híbrido con múltiples estrategias")
     print(f"   ✅ Framework ML-based extendido con técnicas breakthrough")
 
-    if any(best["gflops"] > baseline_target for best in best_results.values()):
+    if any(float(best.get("gflops", 0.0)) > baseline_target for best in best_results.values()):
         print(f"   🎉 ¡OBJETIVO ALCANZADO! Sistema supera {baseline_target} GFLOPS")
     else:
         print(f"   📈 Sistema muestra potencial - requiere optimización adicional")
@@ -385,7 +394,10 @@ def integrated_breakthrough_benchmark():
     print(f"\n💾 Resultados guardados en: integrated_breakthrough_results.npz")
 
     # Guardar resultados detallados
-    np.savez("integrated_breakthrough_results.npz", results=all_results)
+    np.savez_compressed(
+        "integrated_breakthrough_results.npz",
+        results_json=np.array([str(all_results)], dtype=object),
+    )
 
     # Crear DataFrame para análisis adicional
     results_df = create_results_dataframe(all_results)
