@@ -586,7 +586,7 @@ class OptimizedOpenCLEngine:
         }
 
 
-def main():
+def main():  # pragma: no cover - manual benchmark entrypoint
     """Main function for testing the optimized OpenCL engine"""
     logger.info("🚀 Starting Optimized OpenCL Engine Test")
 
@@ -629,5 +629,5 @@ def main():
     logger.info("✅ OpenCL optimization test completed")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
