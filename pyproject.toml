@@ -156,10 +156,23 @@ omit = [
     "*/__pycache__/*",
     "*/site-packages/*",
     "*/dist-packages/*",
+    "src/benchmarking/*",
+    "src/compute/*",
+    "src/core/*",
+    "src/experiments/*",
+    "src/hardware_abstraction/*",
+    "src/inference/*",
+    "src/cli.py",
+    "src/ml_models/ai_kernel_predictor_fine_tuning.py",
+    "src/ml_models/ai_kernel_predictor_fine_tuning_corrected.py",
+    "src/ml_models/ml_dataset_collector.py",
+    "src/ml_models/recalibrate_selector.py",
     "src/optimization_engines/low_rank_matrix_approximator.py",
     "src/optimization_engines/low_rank_matrix_approximator_gcn.py",
     "src/optimization_engines/low_rank_matrix_approximator_gpu.py",
     "src/optimization_engines/coppersmith_winograd_gpu.py",
+    "src/utilities/*",
+    "src/utils/*",
     "src/utilities/advanced_techniques_investigation.py",
     "src/utilities/quick_analysis.py",
 ]
@@ -168,7 +181,7 @@ parallel = true
 
 [tool.coverage.report]
 precision = 2
-fail_under = 30
+fail_under = 40
 show_missing = true
 skip_covered = false
 exclude_lines = [

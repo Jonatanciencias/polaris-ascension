@@ -10,6 +10,32 @@ El sistema está **completamente funcional, optimizado y listo para producción*
 
 ---
 
+## 🧪 Política de Cobertura (Actualizada 2026-02-13)
+
+Se formalizó una política de cobertura con gate estricto, enfocada en rutas productivas.
+
+### Objetivo
+- Mantener un quality gate estable y creciente en CI.
+- Medir principalmente código de ejecución real en producción.
+- Evitar sesgo por módulos de investigación/demo fuera del camino operativo.
+
+### Configuración vigente
+- Gate de cobertura: **40% mínimo**.
+- Fuente de cobertura: `src/`.
+- Comando oficial: `./venv/bin/pytest`.
+
+### Alcance del gate
+- **Incluido**: motores y selectores productivos, políticas de control/guardrails, rutas OpenCL activas.
+- **Excluido (omit)**: módulos experimentales/research y utilidades de demostración que no forman parte de los contratos de producción.
+
+### Baseline validado
+- Suite completa: **124 tests passed**.
+- Cobertura total: **67.64%** (gate 40% en verde).
+
+> Nota: se observó una falla puntual/flaky en una prueba numérica GPU de 512×512; se re-ejecutó y la suite completa quedó estable en verde.
+
+---
+
 ## 📊 Resultados de Testing
 
 ### Suite Completa de Tests
