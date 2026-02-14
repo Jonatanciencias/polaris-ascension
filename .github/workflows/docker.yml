@@ -25,8 +25,8 @@ on:
       - 'v*.*.*'
     paths:
       - 'src/**'
-      - 'Dockerfile'
-      - 'docker-compose.yml'
+      - 'infrastructure/Dockerfile'
+      - 'infrastructure/docker-compose.yml'
       - 'requirements.txt'
       - '.github/workflows/docker.yml'
   
@@ -116,7 +116,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            BUILD_DATE=${{ github.event.head_commit.timestamp || github.event.repository.updated_at || github.event.created_at }}
+            BUILD_DATE=${{ github.event.repository.updated_at }}
             VCS_REF=${{ github.sha }}
       
       # Scan de seguridad con Trivy
