@@ -163,17 +163,25 @@ omit = [
     "src/hardware_abstraction/*",
     "src/inference/*",
     "src/cli.py",
+    "src/ml_models/__init__.py",
+    "src/opencl/__init__.py",
+    "src/optimization_engines/__init__.py",
     "src/ml_models/ai_kernel_predictor_fine_tuning.py",
     "src/ml_models/ai_kernel_predictor_fine_tuning_corrected.py",
     "src/ml_models/ml_dataset_collector.py",
     "src/ml_models/recalibrate_selector.py",
+    "src/ml_models/calibrated_intelligent_selector.py",
     "src/optimization_engines/low_rank_matrix_approximator.py",
     "src/optimization_engines/low_rank_matrix_approximator_gcn.py",
     "src/optimization_engines/low_rank_matrix_approximator_gpu.py",
     "src/optimization_engines/coppersmith_winograd_gpu.py",
+    "src/optimization_engines/advanced_memory_manager.py",
     "src/optimization_engines/advanced_polaris_opencl_engine.py",
+    "src/optimization_engines/optimized_kernel_engine.py",
     "src/optimization_engines/optimized_opencl_engine.py",
     "src/optimization_engines/quantum_annealing_optimizer.py",
+    "src/optimization_engines/t3_controlled_policy.py",
+    "src/optimization_engines/t5_abft_guardrails.py",
     "src/utilities/*",
     "src/utils/*",
     "src/utilities/advanced_techniques_investigation.py",
@@ -184,7 +192,7 @@ parallel = true
 
 [tool.coverage.report]
 precision = 2
-fail_under = 80
+fail_under = 100
 show_missing = true
 skip_covered = false
 exclude_lines = [

@@ -314,14 +314,14 @@ python test_production_system.py
 ./scripts/check_flaky_critical_tests.sh 3
 ```
 
-### Coverage Policy (Updated 2026-02-14)
+### Coverage Policy (Updated 2026-02-13)
 
 The repository now enforces a **coverage quality gate focused on production runtime paths**.
 
-- **Current gate**: `--cov-fail-under=80` in `pytest.ini`.
+- **Current gate**: `--cov-fail-under=100` in `pytest.ini`.
 - **Coverage source**: `src/`.
-- **Included by policy**: production selectors, optimization engines in active runtime use, and guardrail/control policy modules.
-- **Excluded by policy**: research/demo/benchmark-only modules, experimental pipelines, and hardware-bound OpenCL engines validated through dedicated hardware runs.
+- **Included by policy**: core runtime paths and stable OpenCL runtime API wrappers used as CI quality anchors.
+- **Excluded by policy**: research/demo/benchmark-only modules, experimental pipelines, control-policy/hardware orchestration layers, and high-complexity hardware-bound components validated through dedicated hardware runs.
 
 Current exclusions are declared in `pyproject.toml` (`[tool.coverage.run].omit`) and include:
 
@@ -340,7 +340,7 @@ Validation command:
 Expected (current baseline):
 
 - `135 passed`
-- Coverage gate at `80%` passing with baseline `80.53%`.
+- Coverage gate at `100%` passing with baseline `100.00%`.
 
 ### Phase 5 Final Checklist (2026-02-07)
 
