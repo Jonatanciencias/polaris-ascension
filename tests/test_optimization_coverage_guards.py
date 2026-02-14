@@ -271,6 +271,84 @@ def test_adaptive_selector_t3_policy_fallbacks_to_static_if_online_arm_not_predi
     assert rec["policy"] is None
 
 
+def test_adaptive_selector_init_handles_corrupt_model_file(tmp_path) -> None:
+    bad_model = tmp_path / "broken_model.pkl"
+    bad_model.write_text("not-a-joblib-model", encoding="utf-8")
+
+    selector = ProductionKernelSelector(model_path=str(bad_model))
+    assert selector.model_available is False
+
+
+def test_adaptive_selector_t3_enable_failure_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    from src.optimization_engines import t3_controlled_policy as t3_policy_module
+
+    def _raise(*args, **kwargs):  # noqa: ANN002, ANN003
+        raise RuntimeError("forced policy load error")
+
+    monkeypatch.setattr(t3_policy_module.ControlledT3Policy, "from_policy_file", _raise)
+
+    selector = ProductionKernelSelector(
+        model_path="/tmp/nonexistent_model.pkl",
+        enable_t3_controlled=True,
+    )
+    assert selector.t3_policy is None
+    assert selector.t3_controlled_enabled is False
+
+
+def test_adaptive_selector_predict_performance_falls_back_when_model_fails() -> None:
+    selector = ProductionKernelSelector(model_path="/tmp/nonexistent_model.pkl")
+
+    class _BrokenModel:
+        def predict(self, features: np.ndarray) -> np.ndarray:
+            _ = features
+            raise RuntimeError("forced predict error")
+
+    selector.model_available = True
+    selector.model = _BrokenModel()
+
+    predicted = selector._predict_performance(1024, 1024, 1024, "tile20")
+    assert predicted == 867.0
+
+
+def test_adaptive_selector_summary_feedback_and_snapshot_with_policy() -> None:
+    selector = ProductionKernelSelector(model_path="/tmp/nonexistent_model.pkl")
+    selector.model_available = True
+    selector.metrics = {"r2_train": 0.99, "mae_train": 1.2}
+
+    class _FakePolicy:
+        def record_feedback(self, **kwargs):  # noqa: ANN003
+            _ = kwargs
+            return {"fallback_triggered": False}
+
+        def snapshot(self) -> dict[str, str]:
+            return {"state": "ok"}
+
+    selector.t3_policy = _FakePolicy()
+
+    summary = selector.benchmark_summary()
+    assert "R² Score" in summary
+    assert "MAE" in summary
+
+    feedback = selector.record_runtime_feedback(
+        M=1536,
+        N=1536,
+        K=1536,
+        static_arm="tile20",
+        online_arm="tile20_v3_1400",
+        online_gflops=800.0,
+        static_gflops=790.0,
+        online_max_error=1e-4,
+    )
+    assert feedback["policy_enabled"] is True
+    assert selector.get_t3_policy_snapshot() == {"state": "ok"}
+
+
+def test_adaptive_selector_heuristic_promoted_and_peak_zone_branches() -> None:
+    selector = ProductionKernelSelector(model_path="/tmp/nonexistent_model.pkl")
+    assert selector._heuristic_selection(1400, 1400, 1400) == "tile20_v3_1400"
+    assert selector._heuristic_selection(1600, 1600, 1600) == "tile20"
+
+
 def test_optimized_opencl_benchmark_optimization_covers_error_paths(
     monkeypatch: pytest.MonkeyPatch, tmp_path
 ) -> None:
@@ -368,3 +446,36 @@ def test_optimized_opencl_benchmark_default_sizes_branch(
     # sizes=None hits the default-sizes branch.
     results = engine.benchmark_optimization()
     assert len(results["sizes"]) == 4
+
+
+def test_optimized_opencl_runtime_guards_without_opencl_context() -> None:
+    engine = OptimizedOpenCLEngine.__new__(OptimizedOpenCLEngine)
+    engine.config = OpenCLOptimizationConfig()
+    engine.context = None
+    engine.queue = None
+    engine.program = None
+    engine.device = None
+
+    A = np.ones((2, 2), dtype=np.float32)
+    B = np.ones((2, 2), dtype=np.float32)
+
+    with pytest.raises(RuntimeError, match="OpenCL runtime not initialized"):
+        engine.optimized_gemm(A, B)
+
+    with pytest.raises(RuntimeError, match="OpenCL runtime not initialized"):
+        engine.optimized_cw_gemm(A, B)
+
+    with pytest.raises(RuntimeError, match="OpenCL runtime not initialized"):
+        engine.optimized_gemm_ultra(A, B)
+
+    with pytest.raises(RuntimeError, match="OpenCL runtime not initialized"):
+        engine.optimized_low_rank_gemm(A, B)
+
+
+def test_optimized_opencl_get_optimal_work_groups_rounding() -> None:
+    engine = OptimizedOpenCLEngine.__new__(OptimizedOpenCLEngine)
+    engine.config = OpenCLOptimizationConfig(tile_size=32, local_work_size=(16, 16))
+
+    global_ws, local_ws = engine._get_optimal_work_groups(65, 97)
+    assert local_ws == (16, 16)
+    assert global_ws == (128, 96)

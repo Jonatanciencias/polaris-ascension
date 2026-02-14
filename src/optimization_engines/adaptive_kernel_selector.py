@@ -25,7 +25,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 try:
     from sklearn.ensemble import GradientBoostingRegressor
-except ImportError:
+except ImportError:  # pragma: no cover - optional dependency fallback
     print("⚠️  Warning: scikit-learn not installed. Install with: pip install scikit-learn")
     GradientBoostingRegressor = None
 
@@ -434,7 +434,7 @@ class ProductionKernelSelector:
 
 
 # Convenience function for quick usage
-def select_optimal_kernel(M: int, N: int, K: int) -> Dict:
+def select_optimal_kernel(M: int, N: int, K: int) -> Dict:  # pragma: no cover - convenience API
     """
     Quick function to select optimal kernel
 
@@ -448,7 +448,7 @@ def select_optimal_kernel(M: int, N: int, K: int) -> Dict:
 
 
 # Demo/validation when run directly
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover - manual validation script
     print("=" * 70)
     print("PRODUCTION KERNEL SELECTOR - Validation")
     print("=" * 70)
