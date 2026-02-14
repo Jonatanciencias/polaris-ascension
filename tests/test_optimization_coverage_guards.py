@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import threading
+
 import numpy as np
 import pytest
 
@@ -9,6 +11,15 @@ from src.optimization_engines.advanced_polaris_opencl_engine import (
     PolarisOptimizationConfig,
     PolarisPerformanceMetrics,
     TransferMetrics,
+)
+from src.optimization_engines.advanced_memory_manager import (
+    AdvancedBufferPool,
+    BufferInfo,
+    BufferTier,
+    MemoryStats,
+    TilingManager,
+    TilingStrategy,
+    TileDescriptor,
 )
 from src.optimization_engines.optimized_opencl_engine import (
     OpenCLOptimizationConfig,
@@ -479,3 +490,144 @@ def test_optimized_opencl_get_optimal_work_groups_rounding() -> None:
     global_ws, local_ws = engine._get_optimal_work_groups(65, 97)
     assert local_ws == (16, 16)
     assert global_ws == (128, 96)
+
+
+def test_advanced_memory_manager_dataclass_behaviors() -> None:
+    info = BufferInfo(
+        buffer=object(),
+        size=1024,
+        tier=BufferTier.COLD,
+        last_access=0.0,
+        access_count=3,
+    )
+    info.touch()
+    assert info.tier == BufferTier.WARM
+
+    info.access_count = 10
+    info.touch()
+    assert info.tier == BufferTier.HOT
+
+    tile = TileDescriptor(
+        row_start=2,
+        row_end=6,
+        col_start=3,
+        col_end=8,
+        size_bytes=80,
+    )
+    assert tile.shape == (4, 5)
+    assert tile.rows == 4
+    assert tile.cols == 5
+
+    stats = MemoryStats(total_allocated=200, peak_usage=150, pool_hits=3, pool_misses=1)
+    assert stats.hit_rate == pytest.approx(0.75)
+    assert stats.memory_efficiency == pytest.approx(0.25)
+    summary = stats.summary()
+    assert "MEMORY STATISTICS" in summary
+    assert "Pool Hit Rate" in summary
+
+
+def test_advanced_buffer_pool_internal_branches() -> None:
+    class _DummyBuffer:
+        def __init__(self, size: int) -> None:
+            self.size = size
+            self.released = False
+
+        def release(self) -> None:
+            self.released = True
+
+    pool = AdvancedBufferPool.__new__(AdvancedBufferPool)
+    pool.max_buffers_per_size = 1
+    pool._read_pool = {}
+    pool._write_pool = {}
+    pool._pinned_buffers = set()
+    pool.stats = MemoryStats()
+    pool._current_pool_size = 0
+    pool._lock = threading.Lock()
+
+    exact = BufferInfo(object(), 128, BufferTier.WARM, 0.0, 1)
+    larger = BufferInfo(object(), 150, BufferTier.WARM, 0.0, 1)
+    candidates = {128: [exact], 150: [larger]}
+    assert pool._find_best_match(candidates, 128) is exact
+    assert pool._find_best_match(candidates, 140) is larger
+    assert pool._find_best_match(candidates, 300) is None
+
+    old = _DummyBuffer(64)
+    new = _DummyBuffer(64)
+    pool._read_pool = {64: [BufferInfo(old, 64, BufferTier.WARM, 0.0, 1)]}
+    pool._write_pool = {}
+    pool._current_pool_size = 64
+    pool.return_buffer(new, read_only=True)
+    assert old.released is True
+    assert len(pool._read_pool[64]) == 1
+
+    pinned = _DummyBuffer(32)
+    pool._pinned_buffers.add(id(pinned))
+    pool.return_buffer(pinned, read_only=True)
+    assert id(pinned) in pool._pinned_buffers
+
+    cold = _DummyBuffer(40)
+    warm = _DummyBuffer(30)
+    pool._read_pool = {
+        40: [BufferInfo(cold, 40, BufferTier.COLD, 0.0, 1, is_pinned=False)],
+        30: [BufferInfo(warm, 30, BufferTier.WARM, 1.0, 1, is_pinned=False)],
+    }
+    pool._write_pool = {}
+    pool._current_pool_size = 70
+    pool._evict_cold_buffers(needed_size=35)
+    assert cold.released is True
+    assert pool.stats.evictions >= 1
+
+    pool.pin_buffer(new)
+    assert id(new) in pool._pinned_buffers
+    pool.unpin_buffer(new)
+    assert id(new) not in pool._pinned_buffers
+
+    pool.clear()
+    assert pool._current_pool_size == 0
+    assert pool._pinned_buffers == set()
+    assert pool.get_stats().current_usage == 0
+
+
+def test_tiling_manager_strategy_selection() -> None:
+    manager = TilingManager.__new__(TilingManager)
+
+    small = manager.select_strategy((16, 16), np.float32)
+    medium = manager.select_strategy((2048, 2048), np.float32)
+    large = manager.select_strategy((8192, 8192), np.float32)
+
+    assert small == (TilingStrategy.NONE, 0)
+    assert medium == (TilingStrategy.SQUARE, TilingManager.MEDIUM_TILE_SIZE)
+    assert large == (TilingStrategy.SQUARE, TilingManager.LARGE_TILE_SIZE)
+
+
+def test_tiling_manager_tile_creation_and_cache_lifecycle() -> None:
+    class _DummyPool:
+        def __init__(self) -> None:
+            self.stats = MemoryStats()
+            self.returned = 0
+
+        def get_buffer(self, size: int, read_only: bool, data: np.ndarray):
+            _ = (size, read_only, data)
+            return object()
+
+        def return_buffer(self, buf, read_only: bool = True):  # noqa: ANN001
+            _ = (buf, read_only)
+            self.returned += 1
+
+    manager = TilingManager.__new__(TilingManager)
+    manager.buffer_pool = _DummyPool()
+    manager.queue = None
+    manager.max_tiles_in_memory = 1
+    manager._loaded_tiles = __import__("collections").OrderedDict()
+
+    matrix = np.arange(16, dtype=np.float32).reshape(4, 4)
+    tiles = manager.create_tiles(matrix, tile_size=2)
+    assert len(tiles) == 4
+    assert manager.buffer_pool.stats.tiles_created == 4
+
+    _ = manager.load_tile(matrix, tiles[0], read_only=True)
+    _ = manager.load_tile(matrix, tiles[1], read_only=True)
+    assert manager.buffer_pool.returned >= 1
+
+    manager.unload_tile(tiles[1], read_only=True)
+    manager.clear_cache()

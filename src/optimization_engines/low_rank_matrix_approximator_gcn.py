@@ -406,7 +406,7 @@ class GCNOptimizedLowRankApproximator:
         return A_approx, B_approx
 
 
-def create_test_matrices() -> Tuple[np.ndarray, np.ndarray]:
+def create_test_matrices() -> Tuple[np.ndarray, np.ndarray]:  # pragma: no cover - demo helper
     """Crea matrices de prueba optimizadas para GCN."""
     print("🧪 CREANDO MATRICES DE PRUEBA PARA GCN...")
 
@@ -435,7 +435,7 @@ def create_test_matrices() -> Tuple[np.ndarray, np.ndarray]:
     return A, B
 
 
-def main():
+def main():  # pragma: no cover - manual demo entrypoint
     """Función principal de demostración GCN."""
     print("🎯 LOW-RANK MATRIX APPROXIMATION - GCN OPTIMIZED VERSION")
     print("=" * 60)
@@ -514,5 +514,5 @@ def main():
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     sys.exit(main())

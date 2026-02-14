@@ -365,7 +365,7 @@ class LowRankMatrixApproximator:
         return "\n".join(report)
 
 
-def create_test_matrices() -> Tuple[np.ndarray, np.ndarray]:
+def create_test_matrices() -> Tuple[np.ndarray, np.ndarray]:  # pragma: no cover - demo helper
     """
     Crea matrices de prueba con diferentes características.
     """
@@ -399,7 +399,7 @@ def create_test_matrices() -> Tuple[np.ndarray, np.ndarray]:
     return A, B
 
 
-def main():
+def main():  # pragma: no cover - manual demo entrypoint
     """Función principal de demostración."""
     print("🎯 LOW-RANK MATRIX APPROXIMATION FOR GEMM OPTIMIZATION")
     print("=" * 60)
@@ -456,5 +456,5 @@ def main():
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     sys.exit(main())

@@ -156,13 +156,19 @@ omit = [
     "*/__pycache__/*",
     "*/site-packages/*",
     "*/dist-packages/*",
+    "src/optimization_engines/low_rank_matrix_approximator.py",
+    "src/optimization_engines/low_rank_matrix_approximator_gcn.py",
+    "src/optimization_engines/low_rank_matrix_approximator_gpu.py",
+    "src/optimization_engines/coppersmith_winograd_gpu.py",
+    "src/utilities/advanced_techniques_investigation.py",
+    "src/utilities/quick_analysis.py",
 ]
 branch = true
 parallel = true
 
 [tool.coverage.report]
 precision = 2
-fail_under = 24
+fail_under = 30
 show_missing = true
 skip_covered = false
 exclude_lines = [

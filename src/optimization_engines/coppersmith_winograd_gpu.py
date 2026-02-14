@@ -272,7 +272,7 @@ class CoppersmithWinogradGPU:
         return A_approx, B_approx
 
 
-def benchmark_cw_techniques():
+def benchmark_cw_techniques():  # pragma: no cover - benchmark helper
     """Benchmark de diferentes técnicas CW."""
     print("📊 BENCHMARK COPPERSMITH-WINOGRAD TECHNIQUES")
     print("=" * 50)
@@ -314,7 +314,7 @@ def benchmark_cw_techniques():
     return results
 
 
-def main():
+def main():  # pragma: no cover - manual demo entrypoint
     """Función principal de demostración CW."""
     print("🎯 COPPERSMITH-WINOGRAD ALGORITHM IMPLEMENTATION")
     print("=" * 55)
@@ -405,5 +405,5 @@ def main():
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     sys.exit(main())
