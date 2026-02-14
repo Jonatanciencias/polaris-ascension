@@ -43,6 +43,11 @@ Copia este contenido completo en la descripción del release en GitHub:
 - **Testing Report**: 6/6 tests passing (100% success rate)
 - **40+ docs**: Publication-ready methodology
 
+#### CI Coverage Scope Note (Post-release update, 2026-02-13) 🧪
+- **100% CI coverage gate** is achieved with a stricter CI scope focused on runtime anchors.
+- **Runtime anchors included**: core runtime paths and stable OpenCL runtime API wrappers.
+- **Separate hardware validation**: high-complexity hardware orchestration and GPU-bound paths are validated in dedicated hardware suites/reports, outside the CI coverage denominator.
+
 ---
 
 ### 🔒 SECURITY ENHANCEMENTS
