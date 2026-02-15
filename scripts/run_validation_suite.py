@@ -69,6 +69,10 @@ def _extract_json_payload(text: str) -> dict[str, Any] | None:
 
 def _tier_pytest_command(tier: str) -> list[str]:
     if tier == "cpu-fast":
+        # cpu-fast tier: Quick validation without coverage enforcement
+        # Purpose: Fast feedback loop for development and CI
+        # Coverage is still measured but not enforced (--cov-fail-under=0)
+        # Full coverage validation happens in the canonical tier
         return [
             sys.executable,
             "-m",
@@ -76,6 +80,7 @@ def _tier_pytest_command(tier: str) -> list[str]:
             "tests/",
             "-m",
             "not slow and not gpu and not opencl",
+            "--cov-fail-under=0",
             "-q",
         ]
     if tier == "canonical":
