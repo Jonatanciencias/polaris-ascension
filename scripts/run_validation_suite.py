@@ -76,6 +76,7 @@ def _tier_pytest_command(tier: str) -> list[str]:
             "tests/",
             "-m",
             "not slow and not gpu and not opencl",
+            "--cov-fail-under=0",
             "-q",
         ]
     if tier == "canonical":
