@@ -118,7 +118,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            BUILD_DATE=${{ github.event.repository.updated_at }}
             VCS_REF=${{ github.sha }}
       
       # Scan de seguridad con Trivy

@@ -69,6 +69,10 @@ def _extract_json_payload(text: str) -> dict[str, Any] | None:
 
 def _tier_pytest_command(tier: str) -> list[str]:
     if tier == "cpu-fast":
+        # Coverage threshold set to 0 for fast feedback during development.
+        # This tier runs a subset of tests (excluding slow/gpu/opencl) and is
+        # optimized for quick iteration. Full coverage is enforced in the
+        # canonical tier which runs the complete test suite.
         return [
             sys.executable,
             "-m",
