@@ -56,12 +56,18 @@ RUN pip3 install --no-cache-dir \
 # ------------------------------------------------------------------------------
 FROM ubuntu:22.04
 
+# Build arguments
+ARG BUILD_DATE
+ARG VCS_REF
+
 # Evitar prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Metadata
 LABEL maintainer="Radeon RX 580 AI Framework Team"
 LABEL version="0.6.0-dev"
+LABEL org.opencontainers.image.created="${BUILD_DATE}"
+LABEL org.opencontainers.image.revision="${VCS_REF}"
 
 # Instalar solo runtime dependencies (más ligero)
 RUN apt-get update && apt-get install -y \
